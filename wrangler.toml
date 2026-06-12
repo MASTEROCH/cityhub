@@ -1,0 +1,23 @@
+# Cloudflare Worker config — CityHUB API proxy
+#
+# Setup:
+#   1. npm i -D wrangler   (or use npx wrangler)
+#   2. npx wrangler login
+#   3. npx wrangler kv namespace create RATE_LIMIT       # copy the ID into [[kv_namespaces]] below
+#   4. npx wrangler secret put ANTHROPIC_API_KEY         # paste your sk-ant-... key
+#   5. npx wrangler deploy
+#
+# Update ALLOWED_ORIGIN with your actual frontend domain after deploy.
+
+name = "cityhub-api"
+main = "worker/index.js"
+compatibility_date = "2025-06-01"
+
+[vars]
+ALLOWED_ORIGIN = "*"  # TODO: tighten to https://your-domain.com after deploy
+
+# Bind a KV namespace for rate-limit counters
+# Replace YOUR_KV_NAMESPACE_ID after `wrangler kv namespace create RATE_LIMIT`
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "YOUR_KV_NAMESPACE_ID"

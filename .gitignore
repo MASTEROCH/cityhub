@@ -1,0 +1,19 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Node / build
+node_modules/
+package-lock.json
+.wrangler/
+
+# Backups
+*.bak
+*.bak-*
+
+# Local secrets
+.env
+.dev.vars
