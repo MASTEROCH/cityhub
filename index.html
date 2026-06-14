@@ -1351,8 +1351,8 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
 .taste-head .acc{font-size:12px;font-weight:800;color:var(--lime)}
 .taste-sub{font-size:12.5px;color:var(--txt-2);margin-bottom:16px}
 /* ═══════════════ PREMIUM POLISH CSS ═══════════════ */
-/* Ambient breathing — весь app еле заметно «дышит» */
-@keyframes appBreathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.025)}}
+/* Ambient breathing — мягкая жизнь через bg-color, без filter (чтобы не создавать containing block для fixed-children) */
+@keyframes appBreathe{0%,100%{background-color:#05060a}50%{background-color:#0a0c14}}
 body:not(.quiet) #app{animation:appBreathe 4.4s ease-in-out infinite}
 /* Quiet mode после 22:00 — анимации замедляются */
 body.quiet .blob{animation-duration:80s,30s!important;opacity:.18!important}
