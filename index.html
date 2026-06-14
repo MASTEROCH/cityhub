@@ -3694,10 +3694,7 @@ function placeBid(){
   toast(pos===1?'Ставка ₾'+n+' принята — ты лидируешь! 🏆':'Ставка ₾'+n+' принята — ты на #'+pos);
 }
 function bgo(t){
-  // gate: home/qr/boost требуют verified biz; иначе принудительно redirect в add
-  if(!bizVerified() && (t==='home'||t==='qr'||t==='boost')){t='add';if(typeof toast==='function')toast('Сначала подключи заведение')}
   var ids=['b-intro','b-home','b-add','b-qr','b-boost'];ids.forEach(function(id){var el=document.getElementById(id);if(el){if(id==='b-'+t){el.classList.add('active');el.style.cssText='display:flex;flex-direction:column;position:absolute;inset:0'}else{el.classList.remove('active');el.style.display='none'}}});try{document.querySelectorAll('#bizTabs .tab').forEach(function(x){x.classList.toggle('on',x.dataset.t===t)})}catch(e){}var bt=document.getElementById('bizTabs');if(bt)bt.style.display=(t==='intro')?'none':'flex';var sc=document.getElementById('b-'+t);if(sc){var s=sc.querySelector('.scroll');if(s)s.scrollTop=0}if(t==='add'){setTimeout(function(){try{initBizMap()}catch(e){}try{populateNicheSelect()}catch(e){}},150)}if(t==='home'){try{animROI()}catch(e){}}if(t==='intro'){try{renderAuc()}catch(e){}}
-  try{renderBizLocked()}catch(e){}
   if(navigator.vibrate)navigator.vibrate(8);
 }
 function animNum(id,to,pre,grp){var el=document.getElementById(id);if(!el)return;var t0=Date.now(),dur=1000;(function tick(){var p=Math.min(1,(Date.now()-t0)/dur);var v=Math.floor(to*(1-Math.pow(1-p,3)));el.textContent=(pre||'')+(grp?v.toLocaleString('ru-RU'):v);if(p<1)requestAnimationFrame(tick)})()}
@@ -4173,8 +4170,11 @@ function confirmOTP(){
 }
 // === Render locked/unlocked states for biz screens ===
 function renderBizLocked(){
-  var v=bizVerified();
-  // home screen lockout
+  /* demo mode — гейт отключён, все экраны доступны для просмотра */
+  ['b-home','b-boost'].forEach(function(id){var sc=document.getElementById(id);if(!sc)return;var lo=sc.querySelector('.biz-lock-overlay');if(lo)lo.remove()});
+  return;
+  /* legacy gating отключено */
+  var v=false;
   var home=document.getElementById('b-home');if(home){
     var lock=home.querySelector('.biz-lock-overlay');
     if(!v&&!lock){
@@ -4183,7 +4183,6 @@ function renderBizLocked(){
       home.appendChild(ov);
     }else if(v&&lock){lock.remove()}
   }
-  // boost (auction) — то же
   var boost=document.getElementById('b-boost');if(boost){
     var blo=boost.querySelector('.biz-lock-overlay');
     if(!v&&!blo){
