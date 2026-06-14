@@ -3404,12 +3404,10 @@ async function sendChat(preset){
 }
 // ═══════════════ CITYHUB AI — production via Cloudflare Worker ═══════════════
 // API_BASE автоопределяется. Замени YOUR-SUBDOMAIN на твой после wrangler deploy.
-var API_BASE=(location.hostname==='localhost'||location.hostname==='127.0.0.1')
-  ? 'http://localhost:8787'
-  : 'https://cityhub-api.YOUR-SUBDOMAIN.workers.dev';
+var API_BASE='https://cityhub-api.vercel.app';
 var AI_MODEL='claude-haiku-4-5';
 var AI_MAX_CALLS_DAY=80;/* per-user soft cap для UI */
-function aiHas(){/* AI «работает» только если worker уже задеплоен (URL без placeholder) */return API_BASE.indexOf('YOUR-SUBDOMAIN')<0}
+function aiHas(){return true}/* AI всегда подключён через Vercel proxy */
 function aiUserId(){
   try{
     if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user){
