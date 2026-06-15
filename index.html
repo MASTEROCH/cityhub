@@ -51,7 +51,27 @@
       var tp=TG.themeParams;
       if(tp.bg_color)document.documentElement.style.setProperty('--tg-bg',tp.bg_color);
     }
+    /* Sync layout с TG viewport (вместо 100dvh — корректирует когда TG header виден/скрыт) */
+    function syncVP(){
+      try{
+        var h=TG.viewportStableHeight||TG.viewportHeight||window.innerHeight;
+        document.documentElement.style.setProperty('--tg-vp',h+'px');
+      }catch(e){}
+    }
+    syncVP();
+    TG.onEvent('viewportChanged',syncVP);
   }catch(e){}
+})();
+/* visualViewport listener — для Android virtual keyboard (модальные элементы не перекрываются) */
+(function vvSync(){
+  if(!window.visualViewport)return;
+  function apply(){
+    document.documentElement.style.setProperty('--vv-h',window.visualViewport.height+'px');
+    document.documentElement.style.setProperty('--vv-offset',(window.innerHeight-window.visualViewport.height)+'px');
+  }
+  apply();
+  window.visualViewport.addEventListener('resize',apply);
+  window.visualViewport.addEventListener('scroll',apply);
 })();
 /* Управление видимостью TG BackButton — показ когда есть что закрыть */
 function tgBackShow(){try{if(window.__tgBack)__tgBack.show()}catch(e){}}
@@ -120,7 +140,62 @@ button,a,[onclick],input,textarea{touch-action:manipulation}
   .glass,.glass-soft{background:rgba(20,24,36,.85)}
 }
 .tabular{font-variant-numeric:tabular-nums}
-#app{position:relative;height:100dvh;height:100vh;overflow:hidden;background:var(--bg-0)}
+#app{position:relative;height:100vh;height:100dvh;height:var(--tg-vp,100dvh);overflow:hidden;background:var(--bg-0)}
+/* === ADAPTIVE FOUNDATION — Android + iOS perfect === */
+html,body{overflow-x:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* Grid/flex items never force parent wider than viewport */
+.stat,.roi-i,.qs-card,.vibe-cell,.bh-act,.pf-stat,.pf-tile,.msc-mood,.msc-q,.pf-tiles>*,.stat-grid>*,.pf-stats>*,.bh-actions>*{min-width:0}
+/* Long text wraps gracefully */
+.biz h3,.mini h3,.fm-card .fm-bot b,.pf-name,.bh-act-tx b{overflow-wrap:anywhere;word-break:break-word}
+/* Touch-action for proper Android scroll */
+.scroll,.chat-scroll,.msc-log{touch-action:pan-y}
+.mood-row,.chips-row,.forme-row,.msc-quick,.msc-quick-grid,.taste-chip-row{touch-action:pan-x pan-y}
+/* Android keyboard pushes content (env(keyboard-inset-height) is modern chrome) */
+@supports (padding-bottom:env(keyboard-inset-height,0)){
+  .msc-input,.chat-input{padding-bottom:max(env(keyboard-inset-height,0),calc(var(--safe-b) + 14px))}
+}
+
+/* === NARROW PHONES (≤360px — Galaxy A series, small Android) === */
+@media (max-width:360px){
+  .scroll{padding-left:14px;padding-right:14px}
+  .stat-grid{gap:7px}
+  .stat .v{font-size:18px}
+  .pts-chip{padding:5px 10px;font-size:11.5px}
+  .pf-tile{padding:11px;min-height:80px}
+  .bh-act{padding:10px 11px;min-height:50px}
+  .qs-card{padding:12px;min-height:148px}
+  .qs-card b{font-size:15px}
+  .hdr-title{font-size:18px!important}
+  .greet{font-size:21px}
+  .vibe-cell{padding:13px}
+  .biz h3,.mini h3{font-size:13.5px}
+  .bz-hero h2{font-size:28px}
+  .ach-grid-new{grid-template-columns:1fr;gap:8px}
+}
+
+/* === VERY NARROW (≤340px — iPhone SE 1, ancient Android) === */
+@media (max-width:340px){
+  .scroll{padding-left:11px;padding-right:11px}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .stat .v{font-size:16px}
+  .stat .l{font-size:10px}
+  .pf-stats{gap:6px}
+  .pf-stat{padding:10px 8px}
+  .pf-stat .pf-s-v{font-size:16px}
+  .hdr-title{font-size:17px!important}
+  .vibe-title{font-size:14px}
+  .vibe-sub{font-size:11px}
+}
+
+/* === SHORT SCREENS (≤700px height — landscape, tablet split) === */
+@media (max-height:700px){
+  .scroll{padding-bottom:calc(var(--tab-h) + var(--safe-b) + 16px)}
+  .hdr{padding-top:6px;padding-bottom:6px}
+  .greet{font-size:21px;margin-bottom:2px}
+  .greet-sub{margin-bottom:8px}
+  .balance-card{padding:18px 16px}
+  .bc-v-big{font-size:36px}
+}
 .aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.34;mix-blend-mode:screen;will-change:transform}
 .b1{width:62vw;height:62vw;background:#5b3cff;top:-18%;left:-14%;animation:drift1 38s cubic-bezier(.6,.04,.4,.96) infinite,breath 11s ease-in-out infinite alternate}
