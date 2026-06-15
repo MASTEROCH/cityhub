@@ -1407,6 +1407,27 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
 .ach-reveal .ar-cta{padding:13px 30px;border-radius:99px;background:linear-gradient(180deg,#fff,#ddd);color:#0a0d16;font-weight:800;font-size:14px;cursor:pointer;border:none;box-shadow:0 8px 24px rgba(255,255,255,.18),inset 0 -2px 4px rgba(0,0,0,.12)}
 .ach-reveal .ar-cta:active{transform:scale(.96)}
 
+/* ═══════════════ CHAT MOOD CHIPS — premium concierge UX ═══════════════ */
+.msc-moods{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.msc-moods-lbl{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-3);margin-bottom:8px;padding:0 2px}
+.msc-moods-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.msc-mood{display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 6px 9px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);cursor:pointer;transition:all .2s var(--ease-spring);position:relative;overflow:hidden;text-align:center;color:var(--txt);font-family:inherit}
+.msc-mood::before{content:'';position:absolute;inset:0;background:radial-gradient(80% 80% at 50% 100%,color-mix(in srgb,var(--mc,#7C3AFF) 35%,transparent),transparent 60%);opacity:0;transition:opacity .25s;pointer-events:none}
+.msc-mood:hover::before{opacity:.5}
+.msc-mood:hover{border-color:color-mix(in srgb,var(--mc,#7C3AFF) 45%,transparent);transform:translateY(-1px)}
+.msc-mood:active{transform:scale(.94)}
+.msc-mood .msc-mood-emo{font-size:22px;line-height:1;filter:drop-shadow(0 2px 6px color-mix(in srgb,var(--mc,#7C3AFF) 50%,transparent));position:relative;z-index:1}
+.msc-mood .msc-mood-t{font-size:11.5px;font-weight:700;color:var(--txt);position:relative;z-index:1}
+.msc-quick-grid{display:flex;flex-direction:column;gap:6px}
+/* AI-suggested follow-up chips after each reply */
+.msc-followups{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:2px}
+.msc-followup{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:99px;background:rgba(212,255,79,.08);border:1px solid rgba(212,255,79,.22);color:var(--lime);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
+.msc-followup:hover{background:rgba(212,255,79,.16);border-color:rgba(212,255,79,.42)}
+.msc-followup:active{transform:scale(.96)}
+.msc-followup::before{content:'›';color:var(--lime);font-weight:900;font-size:14px;line-height:1}
+/* Bot meta line — streak/info inside greeting */
+.msc-bot-meta{font-size:11.5px;color:var(--lime);font-weight:700;opacity:.9}
+
 /* ═══════════════ AI MASCOT EXTRAS ═══════════════ */
 /* Inline indicator в шапке чата */
 .msc-info b{display:flex;align-items:center;gap:8px}
@@ -3422,41 +3443,86 @@ function aiUsageInc(){var key=new Date().toISOString().slice(0,10);try{var raw=J
 function aiBuildContext(){
   var C=CITIES[CITY];if(!C)return{name:'',ctx:'',places:'[]'};
   var hh=new Date().getHours();
-  var dayPart=hh<6?'ночь':hh<12?'утро':hh<18?'день':hh<22?'вечер':'поздний вечер';
+  var dayPart=hh<6?'глубокая ночь':hh<9?'раннее утро':hh<12?'утро':hh<14?'полдень':hh<17?'день':hh<19?'предзакатное время':hh<22?'вечер':'поздний вечер';
   var dow=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'][new Date().getDay()];
   var streak=0,mult=1,pts=0;
   try{streak=streakCurrent();mult=streakMultiplier(streak);pts=PTS||0}catch(e){}
   var topTaste=(TASTE||[]).slice(0,3).map(function(t){return t.n+' '+t.v+'%'}).join(', ');
+  /* user name from Telegram or default */
+  var userName='Гость';
+  try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user){userName=Telegram.WebApp.initDataUnsafe.user.first_name||'Гость'}}catch(e){}
+  /* recent visits + wishlist */
+  var visited=[];try{visited=(gameGet('visited',[])||[]).slice(-5)}catch(e){}
+  var loved=[];try{loved=(wlGet()||[]).slice(0,5)}catch(e){}
+  /* session prefs */
+  var prefs={};try{prefs=JSON.parse(localStorage.getItem('cityhub_ai_prefs_v1')||'{}')}catch(e){}
   var places=C.biz.slice(0,40).map(function(b,i){
     var dist='';if(b.o&&C.c){var dm=Math.round(Math.hypot((b.o[0]-C.c[0])*111000,(b.o[1]-C.c[1])*82000));dist=dm<1000?(dm+'м'):(((dm/1000).toFixed(1))+'км')}
     return (i+1)+'. '+b.n+' | '+b.k+' | ★'+b.r+' | +'+b.pts+' Loop | '+dist+' | '+b.why;
   }).join('\n');
-  return {name:C.name,flag:C.flag||'',dayPart:dayPart,dow:dow,streak:streak,mult:mult,pts:pts,topTaste:topTaste,places:places};
+  return {name:C.name,flag:C.flag||'',hh:hh,dayPart:dayPart,dow:dow,streak:streak,mult:mult,pts:pts,topTaste:topTaste,places:places,userName:userName,visited:visited,loved:loved,prefs:prefs};
 }
 function aiSystemPrompt(){
   var c=aiBuildContext();
   if(MODE==='biz'){
-    return 'Ты — CityHUB, бизнес-аналитик владельца заведения в '+c.name+'. '+
-    'Сейчас '+c.dayPart+', '+c.dow+'. Помоги владельцу выбрать стратегию продвижения, объясни метрики, дай совет.\n\n'+
-    'Правила:\n'+
-    '• Отвечай 2-4 предложения, конкретно, на ТЫ, по-русски.\n'+
-    '• Цифры — реалистичные. Если не знаешь точно — оценивай диапазон.\n'+
-    '• Тон: эксперт-партнёр, не корпорат.\n'+
-    '• Если уместно — предложи конкретное действие (буст / акция / событие).\n';
+    return [
+      'Ты — CityHUB, бизнес-партнёр владельца кафе/ресторана в '+c.name+' '+c.flag+'.',
+      'Сейчас '+c.dayPart+', '+c.dow+'.',
+      '',
+      'ХАРАКТЕР: умный, опытный, прямой. Говоришь как партнёр который уже видел 200 таких бизнесов.',
+      'Не льстишь. Не давишь. Не корпорат. Если идея слабая — скажешь почему.',
+      '',
+      'ПРАВИЛА ОТВЕТА:',
+      '• 2-4 коротких предложения. RU, на ТЫ.',
+      '• Цифры конкретные (выручка, конверсия, средний чек). Не «улучшится», а «+15-25%».',
+      '• Сравнения: «у соседей-кофеен ~X гостей/день. У тебя пока меньше».',
+      '• Действие в конце: «попробуй буст на 2 недели» / «сделай завтрак до 11» / «промо во вторник».',
+      '• БЕЗ: «в современном мире», «бесшовно», «синергия», «трансформируем», «бренд-стори».'
+    ].join('\n');
   }
-  return 'Ты — CityHUB, городской консьерж '+c.name+' '+c.flag+'. '+
-  'Сейчас '+c.dayPart+', '+c.dow+'. У юзера: '+c.pts+' Loop баллов, streak '+c.streak+' дней (×'+c.mult+' баллы). '+
-  'Топ вкусы: '+c.topTaste+'.\n\n'+
-  'ЗАВЕДЕНИЯ (используй ТОЛЬКО эти точные названия):\n'+c.places+'\n\n'+
-  'ПРАВИЛА:\n'+
-  '• Отвечай 1-3 коротких предложения, RU, на ТЫ, как друг-местный.\n'+
-  '• Конкретика > вода. Называй ИМЕНА мест, а не "найди кафе".\n'+
-  '• Учитывай день, час, погоду (если знаешь), streak.\n'+
-  '• Если рекомендуешь места — В САМОМ КОНЦЕ ответа добавь строку: REC:[Имя1, Имя2, Имя3]\n'+
-  '• ЗАПРЕЩЕНО выдумывать места вне списка.\n'+
-  '• Если юзер спросил про баллы/квесты/сквад/районы — кратко объясни и предложи действие.\n'+
-  '• Без сухой корпоративной речи. Без «в современном мире», «бесшовно», «синергия».';
+  /* CLIENT MODE — настоящий городской консьерж */
+  var prefStr=Object.keys(c.prefs||{}).length?Object.keys(c.prefs).map(function(k){return k+'='+c.prefs[k]}).join(', '):'';
+  var visitStr=c.visited.length?c.visited.slice(-3).join(', '):'пока нет';
+  var lovedStr=c.loved.length?c.loved.join(', '):'пока нет';
+  return [
+    'Ты — CityHUB, личный городской консьерж в '+c.name+' '+c.flag+'.',
+    'Не Google, не каталог — живой друг с insider-знанием города. Помнишь людей, читаешь настроение, действуешь раньше вопроса.',
+    '',
+    '═══ КОНТЕКСТ ═══',
+    'Юзер: '+c.userName+' · '+c.pts+' Loop баллов · streak '+c.streak+' дн.'+(c.mult>1?' (×'+c.mult+' к баллам)':''),
+    'Сейчас: '+c.dayPart+', '+c.dow,
+    'Вкусы (топ-3): '+c.topTaste,
+    'Недавние визиты: '+visitStr,
+    'В избранном: '+lovedStr,
+    (prefStr?'Предпочтения сессии: '+prefStr:''),
+    '',
+    '═══ КАТАЛОГ МЕСТ ═══ (только эти точные имена, не выдумывай других)',
+    c.places,
+    '',
+    '═══ ХАРАКТЕР ═══',
+    '• Тёплый, экспертный, как сосед-старожил. На ТЫ.',
+    '• Конкретный: называешь ИМЯ места и ОДНУ причину почему именно оно сейчас.',
+    '• Знаешь insider детали (лор, фишку, лучшее время) — упоминаешь когда уместно.',
+    '• Понимаешь подтекст: «хочу что-то спокойное» → не шумный бар. «С кем-то особенным» → атмосфера.',
+    '• Если юзер новый/мало контекста — задай 1 уточняющий вопрос и сразу предложи 1-2 варианта.',
+    '• На «спасибо», «привет», «как дела» — отвечай по-человечески, не как FAQ.',
+    '',
+    '═══ ФОРМАТ ═══',
+    '• 1-3 коротких предложения. Чистый RU. Без markdown-заголовков.',
+    '• Имя места выделяй **жирным** (для парсера).',
+    '• Если рекомендуешь места — В САМОМ КОНЦЕ строка: REC:[Имя1, Имя2, Имя3] (1-3 имени точно из каталога).',
+    '• ЗАПРЕЩЕНО: выдумывать места, корп-речь («бесшовно», «синергия»), длинные списки, эмодзи-бомбы.',
+    '• ОК эмодзи: 1 уместное в начале/конце ответа, не больше.',
+    '',
+    '═══ ПРОАКТИВНОСТЬ ═══',
+    'Если час подходящий ('+c.hh+'ч '+c.dayPart+') — упомяни ситуацию: «утром на боулеваре сейчас тихо», «через час закат — лучшее время для **X**», «вечером пятницы в **Y** живая музыка».',
+    'Если streak растёт — поздравь между делом. Если давно не было визитов — мягко позови.',
+    'Если юзер уже бывал в каком-то месте (см. недавние визиты) — не предлагай его снова, кроме как «снова туда?»'
+  ].filter(Boolean).join('\n');
 }
+/* Session prefs API — сохраняем что юзер сказал ИИ для будущих диалогов */
+function aiPrefSet(k,v){try{var p=JSON.parse(localStorage.getItem('cityhub_ai_prefs_v1')||'{}');p[k]=v;localStorage.setItem('cityhub_ai_prefs_v1',JSON.stringify(p))}catch(e){}}
+function aiPrefGet(k){try{var p=JSON.parse(localStorage.getItem('cityhub_ai_prefs_v1')||'{}');return p[k]}catch(e){return null}}
 
 /* CityHUB Worker call — non-stream (collects full response) */
 async function callClaude(messages){
@@ -4319,14 +4385,47 @@ var MW_QUICK_BIZ=[
   {emo:'🏆',t:'Топ-ниши',s:'в Батуми',q:'topniches'}
 ];
 function getMascotGreeting(){
-  var hh=new Date().getHours();var part=hh<6?'Доброй ночи':hh<12?'Доброе утро':hh<18?'Привет':'Добрый вечер';
-  var C=CITIES[CITY];
+  var hh=new Date().getHours();
+  var dow=new Date().getDay();
+  var C=CITIES[CITY];if(!C)return 'Привет! Я <b>CityHUB</b>.';
+  /* User name from Telegram */
+  var userName='';
+  try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user)userName=Telegram.WebApp.initDataUnsafe.user.first_name||''}catch(e){}
+  var hello=userName?', '+userName:'';
+  /* Streak / mood */
+  var streak=0;try{streak=streakCurrent()}catch(e){}
+  var streakLine=streak>=7?'<br><span class="msc-bot-meta">🔥 '+streak+' дней подряд — так держать!</span>':'';
   if(MODE==='biz'){
-    return part+'! Я <b>CityHUB</b> — твой бизнес-аналитик. В '+C.name+' сейчас: показы растут на <b>+12%</b> за неделю. Чем помочь?';
+    var part=hh<11?'Доброе утро':hh<18?'Привет':'Добрый вечер';
+    return part+hello+'! Я <b>CityHUB</b> — твой бизнес-партнёр. За неделю показы +12%, конверсия 7,2%. О чём поговорим?';
   }
-  var hot=C&&C.biz&&C.biz.length?C.biz.filter(function(b){return b.b==='promo'}).slice(0,2):[];
-  var hint=hot.length?' Горячее сейчас: <b>'+hot.map(function(b){return b.n}).join('</b>, <b>')+'</b>.':'';
-  return part+'! Я <b>CityHUB</b> — городской консьерж '+C.name+'.'+hint+' Чем помочь?';
+  /* CLIENT MODE — выбираем приветствие по времени и ситуации */
+  var greetings, hint;
+  if(hh>=5&&hh<10){
+    greetings=['Доброе утро','С добрым утром','Раннее утро в '+C.name];
+    var morning=C.biz.filter(function(b){return b.k==='coffee'}).slice(0,2);
+    hint=morning.length?'Утро — это <b>'+morning[0].n+'</b> и спокойствие у моря.':'Кофе и набережная — лучший старт.';
+  } else if(hh>=10&&hh<13){
+    greetings=['Привет','Хорошего дня','День в '+C.name];
+    var lunch=C.biz.filter(function(b){return b.k==='food'}).slice(0,2);
+    hint=lunch.length?'К обеду открыты <b>'+lunch.map(function(b){return b.n}).join('</b>, <b>')+'</b>.':'Обедать — самое то.';
+  } else if(hh>=13&&hh<17){
+    greetings=['Привет','Дневной CityHUB'];
+    hint='Сейчас полдень — прогулка, бранч, кофе. Что зашло бы?';
+  } else if(hh>=17&&hh<20){
+    greetings=['Привет','Закатное время','Лучшее время суток'];
+    var sea=C.biz.filter(function(b){return b.k==='sea'}).slice(0,1);
+    hint=sea.length?'Через час солнце сядет — <b>'+sea[0].n+'</b> прямо сейчас идеален для заката.':'Скоро закат — самое время выйти.';
+  } else if(hh>=20&&hh<23){
+    greetings=['Добрый вечер','Привет'];
+    var nightSpots=C.biz.filter(function(b){return b.k==='bar'||b.k==='food'}).slice(0,2);
+    hint=nightSpots.length?'Вечер пятницы '+(dow===5?'обычно гудит ':'')+'— <b>'+nightSpots.map(function(b){return b.n}).join('</b>, <b>')+'</b> уже работают.':'Что-то поесть или попить?';
+  } else {
+    greetings=['Доброй ночи','Привет ночной житель','Город спит, я нет'];
+    hint='Поздно. Если нужно что-то открытое — я знаю.';
+  }
+  var g=greetings[Math.floor(Math.random()*greetings.length)];
+  return g+hello+'! Я <b>CityHUB</b>, твой консьерж '+C.name+'. '+hint+streakLine;
 }
 // Полная история чата (хранится между открытиями sheet)
 var MW_LOG=[]; // [{role:'bot'|'user', html:'...'}]
@@ -4896,7 +4995,38 @@ function renderMascotLog(){
 function renderMascotQuick(){
   var el=document.getElementById('mscQuick');if(!el)return;
   var quick=MODE==='biz'?MW_QUICK_BIZ:MW_QUICK_CLIENT;
-  el.innerHTML=quick.map(function(q){return '<button class="msc-q" onclick="mascotIntent(\''+q.q+'\','+jx(q.t)+')"><span class="msc-q-emo">'+q.emo+'</span><span class="msc-q-t"><b>'+q.t+'</b><span>'+q.s+'</span></span></button>'}).join('');
+  /* Premium mood-chips сверху + quick suggestions */
+  var moods='';
+  if(MODE!=='biz'){
+    var MOODS=[
+      {emo:'🌿',t:'Спокойно',q:'хочу что-то тихое и уютное',c:'#5edc9a'},
+      {emo:'⚡',t:'Энергично',q:'хочу драйв и движуху',c:'#FFB547'},
+      {emo:'💫',t:'Романтично',q:'место для свидания с атмосферой',c:'#ff5d8f'},
+      {emo:'🎉',t:'Тусовка',q:'компания друзей вечером',c:'#A78BFF'},
+      {emo:'🧘',t:'Подышать',q:'тишина и природа',c:'#21d4fd'},
+      {emo:'🎯',t:'Удиви',q:'удиви меня необычным местом',c:'#D4FF4F'}
+    ];
+    moods='<div class="msc-moods"><div class="msc-moods-lbl">Под какое настроение?</div><div class="msc-moods-row">'+
+      MOODS.map(function(m){return '<button class="msc-mood" style="--mc:'+m.c+'" onclick="mascotIntent('+jx(m.q)+','+jx(m.t)+')"><span class="msc-mood-emo">'+m.emo+'</span><span class="msc-mood-t">'+m.t+'</span></button>'}).join('')+
+      '</div></div>';
+  }
+  el.innerHTML=moods+'<div class="msc-quick-grid">'+
+    quick.map(function(q){return '<button class="msc-q" onclick="mascotIntent(\''+q.q+'\','+jx(q.t)+')"><span class="msc-q-emo">'+q.emo+'</span><span class="msc-q-t"><b>'+q.t+'</b><span>'+q.s+'</span></span></button>'}).join('')+
+    '</div>';
+}
+/* AI-generated dynamic follow-ups после каждого ответа */
+function aiGenFollowups(lastReply){
+  /* быстрая эвристика на основе последнего ответа — без API call */
+  var fl=[];
+  var low=(lastReply||'').toLowerCase();
+  if(/кофе|cafe|coffee/.test(low))fl.push('А утром лучше?','Где еда тоже?');
+  else if(/еда|food|ресторан|кухн/.test(low))fl.push('А подешевле?','Где меньше людей');
+  else if(/вечер|бар|клуб/.test(low))fl.push('Что-то поспокойнее','Куда после?');
+  else if(/море|пляж|закат|набережн/.test(low))fl.push('Где поесть рядом?','Машина не нужна?');
+  else if(/спорт|фитнес|зал/.test(low))fl.push('Спа после?','Сколько стоит?');
+  else fl.push('Расскажи подробнее','Что-то ещё рядом');
+  fl.push('Удиви меня');
+  return fl.slice(0,4);
 }
 // mood → real PNG folder (CityHUB использует idle/think/wonder/wink/fun/adoration из roch-audit canon)
 var MASCOT_SRC={idle:'mascot/idle/01.png',think:'mascot/think/02.png',excited:'mascot/fun/02.png',happy:'mascot/adoration/01.png',wow:'mascot/wonder/02.png',sleep:'mascot/idle/03.png',sad:'mascot/idle/02.png',wink:'mascot/wink/02.png'};
@@ -5020,6 +5150,11 @@ function mascotIntent(q,userText){
     var html=parsed.clean.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
     if(parsed.recs.length){
       html+='<div class="msc-recs">'+parsed.recs.slice(0,3).map(function(b){return '<button class="msc-rec" onclick=\'closeMascot();setTimeout(function(){openBiz('+jx(b)+')},260)\'><span class="msc-rec-emo">'+(NICHES.find(function(n){return n.k===b.k})||{q:'📍'}).q+'</span><span class="msc-rec-n">'+b.n+'</span><span class="msc-rec-pts">+'+b.pts+'</span></button>'}).join('')+'</div>';
+    }
+    /* AI follow-up suggestions */
+    var followups=aiGenFollowups(text);
+    if(followups.length){
+      html+='<div class="msc-followups">'+followups.map(function(f){return '<button class="msc-followup" onclick="mascotIntent('+jx(f)+','+jx(f)+')">'+f+'</button>'}).join('')+'</div>';
     }
     if(botEl)botEl.innerHTML=html;
     window._mascotHist.push({role:'assistant',content:text});
