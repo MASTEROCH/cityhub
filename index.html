@@ -1537,7 +1537,7 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
 body:not(.quiet) #app{animation:appBreathe 4.4s ease-in-out infinite}
 /* Quiet mode после 22:00 — анимации замедляются */
 body.quiet .blob{animation-duration:80s,30s!important;opacity:.18!important}
-body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!important}
+body.quiet *:not(.ad-track){animation-duration:1.5s!important;transition-duration:.35s!important}
 @media (prefers-reduced-motion:reduce){body #app{animation:none}}
 
 /* Number bump — реагирует когда число меняется */
