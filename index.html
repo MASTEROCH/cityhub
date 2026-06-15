@@ -341,30 +341,30 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 @media (prefers-reduced-motion:reduce){.fab-mascot,.fab-mascot::before,.fab-mascot::after,.fab-mascot .fab-eye,.fab-mascot .fab-dot{animation:none}}
 /* === MASCOT CHAT v4 — clean messenger, no awkward header slab === */
 /* Full-screen mascot sheet */
-.sheet.sheet-mascot{display:flex!important;flex-direction:column;padding:calc(var(--safe-t) + 14px) 18px calc(var(--safe-b) + 14px)!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important;overflow:hidden!important;animation:sheetFadeIn .35s var(--ease-out)}
+/* full-screen mascot chat — apply to inner .sheet когда outer .sheet-bg имеет .sheet-mascot */
+.sheet-mascot .sheet,.sheet.sheet-mascot{display:flex!important;flex-direction:column;padding:calc(var(--safe-t) + 14px) 18px calc(var(--safe-b) + 14px)!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important;overflow:hidden!important;animation:sheetFadeIn .35s var(--ease-out);position:relative!important}
 @keyframes sheetFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-.sheet.sheet-mascot::before{display:none}
-.sheet-bg.msc-open{align-items:stretch}
+.sheet-mascot .sheet::before,.sheet.sheet-mascot::before{display:none}
+.sheet-bg.msc-open,.sheet-bg.sheet-mascot{align-items:stretch!important;padding:0!important}
 /* Close — fixed top-right (relative to sheet) */
-.sheet.sheet-mascot{position:relative}
-.msc-close{position:absolute;top:calc(var(--safe-t) + 14px);right:14px;z-index:30;width:40px;height:40px;border-radius:50%;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.16);color:var(--txt);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,border-color .2s;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.msc-close{position:fixed!important;top:calc(var(--safe-t) + 14px)!important;right:14px!important;left:auto!important;z-index:9999;width:40px;height:40px;border-radius:50%;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.16);color:var(--txt);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,border-color .2s;box-shadow:0 6px 18px rgba(0,0,0,.5)}
 .msc-close:hover{border-color:var(--rose);color:var(--rose)}
 .msc-close:active{transform:scale(.88);background:rgba(255,93,143,.2);border-color:var(--rose)}
 .msc-close svg{width:18px;height:18px}
 .msc-shell{display:flex;flex-direction:column;flex:1;min-height:0;gap:0;overflow:hidden}
 /* Header — центрированный hero с большим маскотом сверху */
-.msc-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:8px 56px 18px;flex-shrink:0;position:relative}
+.msc-head{display:flex;flex-direction:row;align-items:center;text-align:left;gap:12px;padding:4px 56px 12px 4px;flex-shrink:0;position:relative}
 .msc-head::after{content:'';position:absolute;left:8px;right:8px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);opacity:.6}
-.msc-ava{flex-shrink:0;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(28,34,50,1),rgba(10,14,28,1) 70%);border:2px solid rgba(255,255,255,.14);display:grid;place-items:center;overflow:hidden;box-shadow:0 14px 38px rgba(0,0,0,.6),0 0 0 6px rgba(124,58,255,.14),0 0 50px rgba(124,58,255,.25),inset 0 2px 0 rgba(255,255,255,.2);position:relative;animation:avaFloat 4s ease-in-out infinite}
+.msc-ava{flex-shrink:0;width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(28,34,50,1),rgba(10,14,28,1) 70%);border:1.5px solid rgba(255,255,255,.14);display:grid;place-items:center;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.5),0 0 0 3px rgba(124,58,255,.14),inset 0 1px 0 rgba(255,255,255,.18);position:relative}
 @keyframes avaFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 body.biz .msc-ava{box-shadow:0 14px 38px rgba(0,0,0,.6),0 0 0 6px rgba(255,181,71,.14),0 0 50px rgba(255,181,71,.25),inset 0 2px 0 rgba(255,255,255,.2)}
 .msc-ava::after{display:none}
-.msc-ava .fmascot{width:84px;height:84px}
-.msc-info{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;max-width:280px}
-.msc-info b{font-size:22px;font-weight:900;display:block;letter-spacing:-.025em;line-height:1.1;color:var(--txt)}
-.msc-info .msc-sub{font-size:12.5px;color:var(--txt-2);display:flex;align-items:center;justify-content:center;gap:7px;line-height:1;font-weight:600}
+.msc-ava .fmascot{width:46px;height:46px}
+.msc-info{display:flex;flex-direction:column;align-items:flex-start;gap:3px;flex:1;min-width:0}
+.msc-info b{font-size:17px;font-weight:900;display:block;letter-spacing:-.02em;line-height:1.1;color:var(--txt)}
+.msc-info .msc-sub{font-size:11.5px;color:var(--txt-2);display:flex;align-items:center;gap:6px;line-height:1;font-weight:600}
 .msc-info .msc-sub i{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:livePulse 1.8s ease-in-out infinite;flex-shrink:0}
-.msc-mode-flip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--txt-2);cursor:pointer;transition:all .2s;line-height:1;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.msc-mode-flip{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;padding:6px 10px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--txt-2);cursor:pointer;transition:all .2s;line-height:1;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;margin-top:0}
 .msc-mode-flip:hover{background:rgba(255,255,255,.1);color:var(--txt);border-color:rgba(255,255,255,.2)}
 .msc-mode-flip:active{transform:scale(.94)}
 .msc-mode-flip svg{width:12px;height:12px;color:var(--txt-2)}
@@ -380,7 +380,7 @@ body.biz .msc-ava{box-shadow:0 14px 38px rgba(0,0,0,.6),0 0 0 6px rgba(255,181,7
 .fmascot[data-mood="happy"]{animation:mascotBreath 3s ease-in-out infinite}
 @keyframes mascotBreath{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.02)}}
 @media (prefers-reduced-motion:reduce){.fmascot{animation:none!important}}
-.msc-log{display:flex;flex-direction:column;gap:9px;margin-bottom:12px;min-height:80px;max-height:46vh;overflow-y:auto;padding-right:2px}
+.msc-log{display:flex;flex-direction:column;gap:9px;margin-bottom:12px;min-height:80px;flex:1;overflow-y:auto;padding-right:2px}
 .msc-log::-webkit-scrollbar{display:none}
 .msc-msg{max-width:90%;padding:11px 14px;border-radius:16px;font-size:14px;line-height:1.45;animation:msgIn .35s var(--ease-out) backwards;word-wrap:break-word}
 .msc-msg.bot{background:var(--glass-soft);border:1px solid var(--stroke-soft);border-bottom-left-radius:6px;align-self:flex-start}
@@ -1488,6 +1488,9 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
 
 /* ═══════════════ CHAT MOOD CHIPS — premium concierge UX ═══════════════ */
 .msc-moods{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06)}
+/* Always-visible mood chips above input (outside collapsible quick-wrap) */
+.msc-moods-fixed{flex-shrink:0;padding:10px 0 6px;border-top:1px solid rgba(255,255,255,.06)}
+.msc-moods-fixed:empty{display:none}
 .msc-moods-lbl{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-3);margin-bottom:8px;padding:0 2px}
 .msc-moods-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .msc-mood{display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 6px 9px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);cursor:pointer;transition:all .2s var(--ease-spring);position:relative;overflow:hidden;text-align:center;color:var(--txt);font-family:inherit}
@@ -5184,7 +5187,8 @@ function openMascot(){
     '<button class="msc-mode-flip" onclick="toggleMode();renderMascotLog();renderMascotQuick();var hd=document.querySelector(\'.msc-info .msc-sub\');if(hd)hd.innerHTML=\'<i></i>\'+T(\'online\')+\' · \'+(MODE===\'biz\'?\'бизнес-аналитик\':\'городской консьерж\');var mf=document.querySelector(\'.msc-mode-flip span\');if(mf)mf.textContent=(MODE===\'biz\'?T(\'клиент\'):T(\'бизнес\'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 4v16M4 7l3-3 3 3M17 20V4M14 17l3 3 3-3"/></svg><span>'+(MODE==='biz'?T('клиент'):T('бизнес'))+'</span></button>'+
     '</div>';
   var log='<div class="msc-log" id="mscLog"></div>';
-  var qc='<div class="msc-quick-wrap'+(MW_LOG.length>1?' collapsed':'')+'" id="mscQuickWrap"><button class="msc-quick-toggle" onclick="toggleQuick()"><span id="mqToggleLbl">'+T('Идеи для вопроса')+'</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button><div class="msc-quick" id="mscQuick"></div></div>';
+  var qc='<div id="mscMoods" class="msc-moods-fixed"></div>'+
+    '<div class="msc-quick-wrap'+(MW_LOG.length>1?' collapsed':'')+'" id="mscQuickWrap"><button class="msc-quick-toggle" onclick="toggleQuick()"><span id="mqToggleLbl">'+T('Идеи для вопроса')+'</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button><div class="msc-quick" id="mscQuick"></div></div>';
   var inp='<div class="msc-input"><input id="mascotInput" placeholder="'+(MODE==='biz'?'Спроси про бизнес…':'Куда сходить, что попробовать…')+'" onkeydown="if(event.key===\'Enter\')mascotSend()">'+
     '<button class="msc-mic" id="mscMic" onclick="toggleVoice()" aria-label="Голосовой ввод" title="Голос"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3"/></svg></button>'+
     '<button class="msc-send" onclick="mascotSend()" aria-label="Отправить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button>'+
@@ -5203,24 +5207,29 @@ function renderMascotLog(){
   el.scrollTop=el.scrollHeight;
 }
 function renderMascotQuick(){
+  /* MOODS — always visible (отдельный mscMoods контейнер вне collapsible) */
+  var moodsEl=document.getElementById('mscMoods');
+  if(moodsEl){
+    if(MODE!=='biz'){
+      var MOODS=[
+        {emo:'🌿',t:'Спокойно',q:'хочу что-то тихое и уютное',c:'#5edc9a'},
+        {emo:'⚡',t:'Энергично',q:'хочу драйв и движуху',c:'#FFB547'},
+        {emo:'💫',t:'Романтично',q:'место для свидания с атмосферой',c:'#ff5d8f'},
+        {emo:'🎉',t:'Тусовка',q:'компания друзей вечером',c:'#A78BFF'},
+        {emo:'🧘',t:'Подышать',q:'тишина и природа',c:'#21d4fd'},
+        {emo:'🎯',t:'Удиви',q:'удиви меня необычным местом',c:'#D4FF4F'}
+      ];
+      moodsEl.innerHTML='<div class="msc-moods-lbl">Под какое настроение?</div><div class="msc-moods-row">'+
+        MOODS.map(function(m){return '<button class="msc-mood" style="--mc:'+m.c+'" onclick="mascotIntent('+jx(m.q)+','+jx(m.t)+')"><span class="msc-mood-emo">'+m.emo+'</span><span class="msc-mood-t">'+m.t+'</span></button>'}).join('')+
+        '</div>';
+    } else {
+      moodsEl.innerHTML='';
+    }
+  }
+  /* QUICK suggestions — внутри collapsible wrap */
   var el=document.getElementById('mscQuick');if(!el)return;
   var quick=MODE==='biz'?MW_QUICK_BIZ:MW_QUICK_CLIENT;
-  /* Premium mood-chips сверху + quick suggestions */
-  var moods='';
-  if(MODE!=='biz'){
-    var MOODS=[
-      {emo:'🌿',t:'Спокойно',q:'хочу что-то тихое и уютное',c:'#5edc9a'},
-      {emo:'⚡',t:'Энергично',q:'хочу драйв и движуху',c:'#FFB547'},
-      {emo:'💫',t:'Романтично',q:'место для свидания с атмосферой',c:'#ff5d8f'},
-      {emo:'🎉',t:'Тусовка',q:'компания друзей вечером',c:'#A78BFF'},
-      {emo:'🧘',t:'Подышать',q:'тишина и природа',c:'#21d4fd'},
-      {emo:'🎯',t:'Удиви',q:'удиви меня необычным местом',c:'#D4FF4F'}
-    ];
-    moods='<div class="msc-moods"><div class="msc-moods-lbl">Под какое настроение?</div><div class="msc-moods-row">'+
-      MOODS.map(function(m){return '<button class="msc-mood" style="--mc:'+m.c+'" onclick="mascotIntent('+jx(m.q)+','+jx(m.t)+')"><span class="msc-mood-emo">'+m.emo+'</span><span class="msc-mood-t">'+m.t+'</span></button>'}).join('')+
-      '</div></div>';
-  }
-  el.innerHTML=moods+'<div class="msc-quick-grid">'+
+  el.innerHTML='<div class="msc-quick-grid">'+
     quick.map(function(q){return '<button class="msc-q" onclick="mascotIntent(\''+q.q+'\','+jx(q.t)+')"><span class="msc-q-emo">'+q.emo+'</span><span class="msc-q-t"><b>'+q.t+'</b><span>'+q.s+'</span></span></button>'}).join('')+
     '</div>';
 }
