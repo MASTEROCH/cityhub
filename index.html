@@ -405,7 +405,7 @@ body.biz .msc-msg.user::before{background:linear-gradient(120deg,rgba(255,181,71
 .msc-quick-wrap.collapsed .msc-quick{max-height:0;opacity:0;padding-bottom:0;margin-bottom:0;pointer-events:none}
 .msc-quick-wrap.collapsed .msc-quick-toggle{padding-bottom:2px}
 .msc-quick-wrap.collapsed .msc-quick-toggle svg{transform:rotate(-90deg)}
-.msc-quick{display:flex;gap:7px;overflow-x:auto;padding:2px;scrollbar-width:none;scroll-snap-type:x proximity;transition:max-height .35s,opacity .25s;max-height:60px}
+.msc-quick{padding:2px;scrollbar-width:none;transition:max-height .35s,opacity .25s;max-height:none;overflow:visible}
 .msc-quick::-webkit-scrollbar{display:none}
 .msc-q{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 13px 8px 11px;border-radius:99px;background:var(--glass-soft);border:1px solid var(--stroke-soft);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s var(--ease-spring);color:var(--txt);white-space:nowrap;scroll-snap-align:start}
 .msc-q:active{transform:scale(.94);background:var(--glass-strong);border-color:var(--accent)}
@@ -1500,12 +1500,12 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
 .msc-mood:active{transform:scale(.94)}
 .msc-mood .msc-mood-emo{font-size:22px;line-height:1;filter:drop-shadow(0 2px 6px color-mix(in srgb,var(--mc,#7C3AFF) 50%,transparent));position:relative;z-index:1}
 .msc-mood .msc-mood-t{font-size:11.5px;font-weight:700;color:var(--txt);position:relative;z-index:1}
-.msc-quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.msc-quick-grid .msc-q{flex-shrink:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 6px;border-radius:14px;white-space:normal;text-align:center;min-height:62px}
-.msc-quick-grid .msc-q .msc-q-emo{font-size:18px}
+.msc-quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.msc-quick-grid .msc-q{flex-shrink:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px;border-radius:13px;white-space:normal;text-align:center;min-height:64px}
+.msc-quick-grid .msc-q .msc-q-emo{font-size:18px;line-height:1}
 .msc-quick-grid .msc-q .msc-q-t{display:flex;flex-direction:column;align-items:center;gap:1px;width:100%}
-.msc-quick-grid .msc-q .msc-q-t b{font-size:11.5px;font-weight:700;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-.msc-quick-grid .msc-q .msc-q-t span{display:block;font-size:9.5px;color:var(--txt-3);font-weight:600;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;margin-top:1px}
+.msc-quick-grid .msc-q .msc-q-t b{font-size:11px;font-weight:700;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.msc-quick-grid .msc-q .msc-q-t span{display:block;font-size:9px;color:var(--txt-3);font-weight:600;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;margin-top:1px}
 /* AI-suggested follow-up chips after each reply */
 .msc-followups{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:2px}
 .msc-followup{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:99px;background:rgba(212,255,79,.08);border:1px solid rgba(212,255,79,.22);color:var(--lime);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
@@ -4537,12 +4537,14 @@ function toggleMode(){
 }
 // === Mascot chat sheet ===
 var MW_QUICK_CLIENT=[
-  {emo:'☕',t:'Кофе рядом',s:'3 лучших сейчас',q:'кофе'},
-  {emo:'🌊',t:'Куда вечером?',s:'у моря',q:'вечер у моря'},
-  {emo:'🎁',t:'Подарок дня',s:'10₾ ваучер',q:'voucher'},
-  {emo:'🎯',t:'Мой маршрут',s:'на сегодня',q:'маршрут'},
-  {emo:'🔥',t:'Горячее сейчас',s:'трендится',q:'горячее'},
-  {emo:'💬',t:'AI-консьерж',s:'свободный чат',q:'ai'}
+  {emo:'☕',t:'Кофе',s:'3 лучших',q:'кофе рядом'},
+  {emo:'🍳',t:'Завтрак',s:'с видом',q:'куда позавтракать с видом'},
+  {emo:'🌊',t:'У моря',s:'набережная',q:'погулять у моря'},
+  {emo:'🌅',t:'Закат',s:'через 2 ч',q:'где встретить закат сегодня'},
+  {emo:'🍽',t:'Поесть',s:'локально',q:'грузинская еда рядом'},
+  {emo:'🍸',t:'Вечер',s:'бар, бранч',q:'куда вечером'},
+  {emo:'🎁',t:'Подарок',s:'10₾ ваучер',q:'voucher'},
+  {emo:'🎯',t:'Маршрут',s:'на сегодня',q:'собери маршрут на сегодня'}
 ];
 var MW_QUICK_BIZ=[
   {emo:'📈',t:'Гости сегодня',s:'показы + сканы',q:'stats'},
