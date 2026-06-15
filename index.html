@@ -1049,6 +1049,10 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .mood.vibe .vibe-lb{font-size:11.5px;font-weight:700;color:var(--txt-2);white-space:nowrap;line-height:1.1}
 .mood.vibe:hover{background:rgba(255,255,255,.06)}
 .mood.vibe.on{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%);box-shadow:0 6px 16px rgba(212,255,79,.45),inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 4px rgba(0,0,0,.14)}
+/* AI-vibe — тонкая cyan-точка справа сверху, отличает от обычных niche-фильтров */
+.mood.vibe.ai-vibe{position:relative}
+.mood.vibe.ai-vibe::after{content:'';position:absolute;top:6px;right:8px;width:5px;height:5px;border-radius:50%;background:linear-gradient(135deg,#7C3AFF,#21d4fd);box-shadow:0 0 6px rgba(33,212,253,.6);opacity:.85}
+.mood.vibe.ai-vibe.on::after{opacity:0}
 .mood.vibe.on .vibe-lb{color:#1a2d00;font-weight:800}
 .mood.vibe.on .vibe-ic{transform:scale(1.08)}
 .mood.vibe:active{transform:scale(.93)}
@@ -3030,6 +3034,17 @@ function renderToday(){
     <button class="mood vibe${curMood==='music'?' on':''}" data-mood="music"><span class="vibe-ic">🎵</span><span class="vibe-lb">Музыка</span></button>
     <button class="mood vibe${curMood==='shop'?' on':''}" data-mood="shop"><span class="vibe-ic">🛍️</span><span class="vibe-lb">Шопинг</span></button>
     <button class="mood vibe${curMood==='kids'?' on':''}" data-mood="kids"><span class="vibe-ic">🧸</span><span class="vibe-lb">С детьми</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Куда пойти позавтракать утром в Батуми? Кафе с хорошими завтраками и видом." data-vibe-t="Завтрак"><span class="vibe-ic">🍳</span><span class="vibe-lb">Завтрак</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Где встретить закат в Батуми — лучшие точки у моря или с высоты прямо сейчас." data-vibe-t="Закат"><span class="vibe-ic">🌅</span><span class="vibe-lb">Закат</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Что открыто поздно ночью в Батуми? Бары, клубы, ночные заведения." data-vibe-t="Ночь"><span class="vibe-ic">🌃</span><span class="vibe-lb">Ночь</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Кафе чтобы поработать с ноутбуком в Батуми — Wi-Fi, розетки, тихо, можно сидеть долго." data-vibe-t="Поработать"><span class="vibe-ic">💻</span><span class="vibe-lb">Поработать</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Лучшие пляжи Батуми — где чище, тише, удобнее." data-vibe-t="Пляж"><span class="vibe-ic">🏖️</span><span class="vibe-lb">Пляж</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Здоровая еда — салаты, smoothie, vegan-friendly места в Батуми." data-vibe-t="Полезно"><span class="vibe-ic">🥗</span><span class="vibe-lb">Полезно</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Самые инстаграмные места в Батуми — для фото и сторис." data-vibe-t="Для фото"><span class="vibe-ic">📸</span><span class="vibe-lb">Для фото</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Природа рядом с Батуми — горы, водопады, виды, что можно за полдня." data-vibe-t="Природа"><span class="vibe-ic">⛰️</span><span class="vibe-lb">Природа</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Места куда можно прийти с собакой в Батуми — pet-friendly кафе, парки, пляжи." data-vibe-t="С собакой"><span class="vibe-ic">🐾</span><span class="vibe-lb">С собакой</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Сладкое в Батуми — где самые вкусные десерты, выпечка, мороженое." data-vibe-t="Сладкое"><span class="vibe-ic">🍰</span><span class="vibe-lb">Сладкое</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Романтичное место для свидания — атмосфера, виды, тихий ужин." data-vibe-t="Свидание"><span class="vibe-ic">💘</span><span class="vibe-lb">Свидание</span></button>
   </div>
   <div class="answer fadein" id="answerCard">
     <div class="ph-skel"></div><img class="ph" src="${ph(nz.k,top.n.length,top.n)}" alt="" loading="eager" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.classList.add('loaded');this.style.background='linear-gradient(135deg,${nz.c}cc,${nz.c}33)';this.removeAttribute('src')"><div class="ov"></div>
@@ -5100,6 +5115,18 @@ function initAnswerSwipe(){
 setTimeout(initAnswerSwipe,500);
 // Global delegation: vibe + filter buttons + mascot intent chips
 document.addEventListener('click',function(e){
+  /* AI-vibe (data-vibe-q): открывает Hub-чат и сразу задаёт вопрос */
+  var aiVibe=e.target.closest('[data-vibe-q]');
+  if(aiVibe){
+    e.preventDefault();
+    var q=aiVibe.getAttribute('data-vibe-q');
+    var t=aiVibe.getAttribute('data-vibe-t')||q;
+    document.querySelectorAll('.mood-row .mood').forEach(function(x){x.classList.remove('on')});
+    aiVibe.classList.add('on');
+    try{haptic('select')}catch(_){}
+    try{openMascot();setTimeout(function(){mascotIntent(q,t)},280)}catch(err){if(typeof toast==='function')toast('Ошибка: '+err.message)}
+    return;
+  }
   var b=e.target.closest('[data-mood]');
   if(b && b.classList && b.classList.contains('mood')){
     e.preventDefault();
