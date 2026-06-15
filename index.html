@@ -2041,7 +2041,7 @@ input,textarea{font-size:16px!important}
 .ad-tick-label{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--txt-3);padding-right:10px;border-right:1px solid var(--stroke-soft)}
 .ad-tick-label svg{width:12px;height:12px;color:var(--gold)}
 .ad-viewport{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 93%,transparent)}
-.ad-track{display:inline-flex;align-items:center;white-space:nowrap;animation:adMarquee 90s linear infinite;will-change:transform}
+.ad-track{display:inline-flex;align-items:center;white-space:nowrap;animation:adMarquee 320s linear infinite;will-change:transform}
 .ad-ticker:active .ad-track{animation-play-state:paused}
 .ad-item{display:inline-flex;align-items:center;gap:6px;padding:0 15px;font-family:inherit;color:var(--txt-2);cursor:pointer;background:none;border:none;border-right:1px solid rgba(255,255,255,.08)}
 .ad-item:active{transform:none;opacity:.6}
@@ -3301,7 +3301,7 @@ function renderAdTicker(){
   el.style.display='';
   /* спокойная постоянная скорость ~16 px/с независимо от числа заведений */
   var tr=el.querySelector('.ad-track');
-  if(tr&&window.requestAnimationFrame){requestAnimationFrame(function(){var half=tr.scrollWidth/2;if(half>40)tr.style.animationDuration=Math.max(60,Math.round(half/16))+'s'})}
+  if(tr&&window.requestAnimationFrame){requestAnimationFrame(function(){var half=tr.scrollWidth/2;if(half>40)tr.style.animationDuration=Math.max(120,Math.round(half/8))+'s'})}
 }
 function renderForMe(){
   var row=document.getElementById('formeRow');if(!row)return;
