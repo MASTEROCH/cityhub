@@ -3299,6 +3299,9 @@ function renderAdTicker(){
   el.innerHTML='<span class="ad-tick-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14zM11 13v6"/></svg>'+T('Реклама')+'</span>'+
     '<div class="ad-viewport"><div class="ad-track">'+row+row+'</div></div>';
   el.style.display='';
+  /* спокойная постоянная скорость ~16 px/с независимо от числа заведений */
+  var tr=el.querySelector('.ad-track');
+  if(tr&&window.requestAnimationFrame){requestAnimationFrame(function(){var half=tr.scrollWidth/2;if(half>40)tr.style.animationDuration=Math.max(60,Math.round(half/16))+'s'})}
 }
 function renderForMe(){
   var row=document.getElementById('formeRow');if(!row)return;
