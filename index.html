@@ -3301,7 +3301,7 @@ function renderAdTicker(){
   el.style.display='';
   /* спокойная постоянная скорость ~16 px/с независимо от числа заведений */
   var tr=el.querySelector('.ad-track');
-  if(tr&&window.requestAnimationFrame){requestAnimationFrame(function(){var half=tr.scrollWidth/2;if(half>40)tr.style.animationDuration=Math.max(120,Math.round(half/8))+'s'})}
+  if(tr&&window.requestAnimationFrame){requestAnimationFrame(function(){var half=tr.scrollWidth/2;if(half>40)tr.style.animationDuration=Math.max(90,Math.round(half/12))+'s'})}
 }
 function renderForMe(){
   var row=document.getElementById('formeRow');if(!row)return;
