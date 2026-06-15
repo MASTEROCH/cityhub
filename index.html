@@ -130,10 +130,10 @@ button,a,[onclick],input,textarea{touch-action:manipulation}
 body.biz .b1{background:#ffb14d}body.biz .b2{background:#7C3AFF}body.biz .b3{background:#00E0C7}body.biz .b4{background:#ff5d8f}
 /* === BIZ MODE — full accent swap (lime → gold) === */
 body.biz{--accent:var(--gold);--accent-grad:var(--grad-gold);--accent-ink:#2a1500;--accent-glow:rgba(255,181,71,.4)}
-body.biz .go-btn,body.biz .cta.lime,body.biz .lbtn.primary,body.biz .bc-btn.primary,body.biz .dgo,body.biz .vba,body.biz .ms-row.ms-done,body.biz .qcov-badge,body.biz .qh-badge,body.biz .vbi,body.biz .si-btn{background:var(--accent-grad)!important;color:var(--accent-ink)!important;box-shadow:0 12px 32px var(--accent-glow)!important}
+/* biz mode: ТОЛЬКО специфичные premium-элементы перекрашиваются в gold.
+   Primary CTA (.cta.lime, .go-btn) остаются lime для consistency «действие = lime». */
+body.biz .vba,body.biz .vbi,body.biz .si-btn{background:var(--accent-grad)!important;color:var(--accent-ink)!important;box-shadow:0 12px 32px var(--accent-glow)!important}
 body.biz .vbi b{color:var(--accent-ink)!important}
-body.biz .why{background:rgba(255,181,71,.18)!important;border-color:rgba(255,181,71,.34)!important;color:var(--gold)!important}
-body.biz .why svg{color:var(--gold)!important}
 /* Aurora drift — большие кинематографичные траектории по всему экрану */
 @keyframes drift1{0%{transform:translate(0,0)}20%{transform:translate(18vw,12vh)}40%{transform:translate(38vw,28vh)}60%{transform:translate(24vw,46vh)}80%{transform:translate(6vw,30vh)}100%{transform:translate(0,0)}}
 @keyframes drift2{0%{transform:translate(0,0)}20%{transform:translate(-22vw,-14vh)}40%{transform:translate(-38vw,-30vh)}60%{transform:translate(-20vw,-46vh)}80%{transform:translate(-4vw,-22vh)}100%{transform:translate(0,0)}}
@@ -899,6 +899,33 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .bz-pd{font-size:11.5px;color:var(--txt-2);line-height:1.4}
 .bz-lock{display:flex;align-items:center;gap:10px;padding:13px 15px;border-radius:var(--r-md);background:rgba(212,255,79,.08);border:1px solid rgba(212,255,79,.22);margin-bottom:20px;font-size:12.5px;color:var(--lime);font-weight:600;line-height:1.4}
 .bz-lock svg{flex-shrink:0}
+/* ═══════════════ BIZ DASHBOARD POLISH ═══════════════ */
+.bh-verified{display:inline-grid;place-items:center;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(212,255,79,.4))}
+/* Status pill — free mode тонкий, информативный */
+.bh-status{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:var(--r-md);background:linear-gradient(135deg,rgba(212,255,79,.12),rgba(0,224,199,.06));border:1px solid rgba(212,255,79,.22);margin-bottom:14px;position:relative;overflow:hidden}
+.bh-status-dot{width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(212,255,79,.22);animation:livePulse 2.2s ease-in-out infinite;flex-shrink:0}
+.bh-status-tx{flex:1;min-width:0}
+.bh-status-tx b{display:block;font-size:13.5px;font-weight:800;color:var(--txt);line-height:1.1}
+.bh-status-tx span{display:block;font-size:11.5px;color:var(--txt-2);font-weight:600;margin-top:2px}
+.bh-status-day{flex-shrink:0;font-size:22px;font-weight:900;color:var(--lime);font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1}
+.bh-status-day small{font-size:13px;color:var(--txt-3);font-weight:700}
+/* Audience card */
+.bh-audience{margin-top:12px;padding:13px 14px;border-radius:var(--r-md);background:var(--glass-soft);border:1px solid var(--stroke-soft)}
+.bh-aud-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.bh-aud-head b{font-size:13.5px;font-weight:800;color:var(--txt)}
+.bh-aud-head span{font-size:11.5px;color:var(--txt-2);font-weight:600}
+/* Secondary action tiles — equal weight, NOT screaming */
+.bh-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.bh-act{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:var(--r-md);background:var(--glass-soft);border:1px solid var(--stroke-soft);cursor:pointer;transition:all .15s var(--ease-spring);text-align:left;font-family:inherit;color:var(--txt);min-height:56px}
+.bh-act:hover{background:var(--glass);border-color:rgba(255,255,255,.18)}
+.bh-act:active{transform:scale(.97)}
+.bh-act-emo{font-size:22px;line-height:1;flex-shrink:0}
+.bh-act-tx{flex:1;min-width:0}
+.bh-act-tx b{display:block;font-size:13px;font-weight:800;color:var(--txt);line-height:1.15}
+.bh-act-tx span{display:block;font-size:10.5px;color:var(--txt-2);font-weight:600;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Auction live mini-badge in sec-h */
+.auc-live-mini{font-size:10.5px;font-weight:900;color:var(--rose);text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:99px;background:rgba(255,93,143,.12);border:1px solid rgba(255,93,143,.28);animation:livePulse 2s ease-in-out infinite}
+
 /* auction */
 .auction-card{border-radius:var(--r-lg);padding:20px;position:relative;overflow:hidden;background:linear-gradient(150deg,rgba(124,58,255,.25),rgba(255,93,143,.12));border:1px solid rgba(124,58,255,.35);margin-bottom:8px}
 .auction-card .auc-glow{position:absolute;top:-50%;left:-10%;width:50%;height:180%;background:radial-gradient(closest-side,rgba(124,58,255,.45),transparent);filter:blur(24px);pointer-events:none;z-index:0}
@@ -2343,14 +2370,23 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
     </section>
 
     <section class="screen" id="b-home">
-      <div class="hdr"><div><div class="hdr-sub">Кабинет бизнеса</div><div class="hdr-title" style="font-size:22px">Coffee Lab</div></div>
+      <div class="hdr">
+        <div>
+          <div class="hdr-sub">Кабинет бизнеса</div>
+          <div class="hdr-title" style="font-size:21px;display:flex;align-items:center;gap:8px">Coffee Lab <span class="bh-verified" title="Заведение подтверждено"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--lime)" stroke="#06210a" stroke-width="2.4" style="display:inline-block;vertical-align:-.16em"><path d="M12 1l2.5 2.5L18 3l1 3.5L22 8l-1.5 3.3L22 14l-2.5 1L18 18l-3.5-.5L12 21l-2.5-3L6 18l-1-3-3-1.7L3.5 11 2 8l3-1.5L6 3l3.5.5z" stroke-linejoin="round"/><path d="M8 12l3 3 5-6" fill="none" stroke="#06210a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </div>
         <button class="mode-pill toclient" onclick="setMode('client')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Я клиент</button>
       </div>
       <div class="scroll">
-        <div class="card glass-soft pad-sm fadein" style="display:flex;gap:11px;align-items:center;margin-bottom:14px">
-          <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,224,199,.15);display:grid;place-items:center;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10v4M7 10h2M11 10v4M11 10h2M15 10v4M15 10h2"/></svg></div>
-          <div style="flex:1"><div style="font-weight:800;font-size:14px">Бесплатный режим · день 12</div><div style="font-size:12px;color:var(--txt-2)">Буст откроется со 2-го месяца</div></div>
+
+        <!-- 1. STATUS pill — компактный, информативный -->
+        <div class="bh-status fadein">
+          <div class="bh-status-dot"></div>
+          <div class="bh-status-tx"><b>Бесплатный режим</b><span>день 12 из 30 · базовое размещение активно</span></div>
+          <div class="bh-status-day">12<small>/30</small></div>
         </div>
+
+        <!-- 2. HERO REVENUE — главный KPI -->
         <div class="roi-card fadein"><div class="roi-glow"></div>
           <div class="roi-lbl">Выручка от CityHUB · этот месяц</div>
           <div class="roi-big" id="roiBig">₾0</div>
@@ -2360,22 +2396,35 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
             <div class="roi-i"><b id="roiCheck">₾0</b><span>средний чек</span></div>
             <div class="roi-i"><b class="roi-pos">бесплатно</b><span>затраты</span></div>
           </div>
-          <div class="roi-foot"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>CityHUB пока ничего не стоит — а гостей уже приводит</div>
         </div>
+
+        <!-- 3. PERFORMANCE GRID -->
+        <div class="sec-h" style="margin-top:18px;margin-bottom:10px"><h2 style="font-size:15px">Активность · 7 дней</h2><span class="m" style="color:var(--txt-3);font-weight:600">сравнение с прошлой неделей</span></div>
         <div class="stat-grid">
-          <div class="stat glass"><div class="v tabular">1 847</div><div class="l">Показов на карте</div><div class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 15l7-7 7 7"/></svg>+23%</div></div>
+          <div class="stat glass"><div class="v tabular">1 847</div><div class="l">Показов</div><div class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 15l7-7 7 7"/></svg>+23%</div></div>
           <div class="stat glass"><div class="v tabular">214</div><div class="l">Лидов</div><div class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 15l7-7 7 7"/></svg>+11%</div></div>
           <div class="stat glass"><div class="v tabular">96</div><div class="l">Сканов QR</div><div class="d up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 15l7-7 7 7"/></svg>+8%</div></div>
-          <div class="stat glass"><div class="v tabular">31</div><div class="l">Из партнёров</div><div class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg>-3%</div></div>
+          <div class="stat glass"><div class="v tabular">31</div><div class="l">От партнёров</div><div class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg>-3%</div></div>
         </div>
-        <div class="card glass" style="margin-top:13px"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:14px">Визиты · 7 дней</div><div style="font-size:12px;color:var(--txt-2)">25-34, кофе</div></div><div class="spark" id="spark"></div></div>
 
-        <!-- AUCTION — доступен только владельцам с подключённым заведением -->
-        <div class="sec-h" style="margin-top:22px"><h2>Аукцион за главный баннер</h2></div>
+        <!-- 4. AUDIENCE SPARK — компактно -->
+        <div class="bh-audience fadein">
+          <div class="bh-aud-head"><b>Кто к тебе ходит</b><span>25-34 · кофе, ноутбук</span></div>
+          <div class="spark" id="spark"></div>
+        </div>
+
+        <!-- 5. SECONDARY ACTIONS — 2 компактных tile вместо громких CTA -->
+        <div class="bh-actions">
+          <button class="bh-act" onclick="bgo('qr')"><span class="bh-act-emo">📱</span><span class="bh-act-tx"><b>QR для кассы</b><span>скачать плакат A4</span></span></button>
+          <button class="bh-act" onclick="bgo('boost')"><span class="bh-act-emo">📈</span><span class="bh-act-tx"><b>Тарифы буста</b><span>от ₾49/мес со 2 мес.</span></span></button>
+        </div>
+
+        <!-- 6. AUCTION — единственный gold-блок (премиум-фича) -->
+        <div class="sec-h" style="margin-top:22px;margin-bottom:10px"><h2 style="font-size:15px">⚔️ Аукцион за главный баннер</h2><span class="auc-live-mini">● LIVE</span></div>
         <div class="auction-card fadein"><div class="auc-glow"></div>
           <div class="auc-content">
-            <div class="auc-top"><div><div class="auc-lbl">Баннер №1 на «Сегодня»</div><div class="auc-sub">Видят все пользователи города при каждом входе</div></div><div class="auc-live">● LIVE</div></div>
-            <div class="auc-prize"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M5 3h14l-2 9a5 5 0 0 1-10 0zM12 17v4M8 21h8"/></svg><span>Победитель недели получает место №1 — это ~<b>3 200 показов</b> и до <b>90 переходов</b> в день</span></div>
+            <div class="auc-top"><div><div class="auc-lbl">Баннер №1 на «Сегодня»</div><div class="auc-sub">Видят все пользователи города при каждом входе</div></div></div>
+            <div class="auc-prize"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M5 3h14l-2 9a5 5 0 0 1-10 0zM12 17v4M8 21h8"/></svg><span>Победитель недели — место №1, ~<b>3 200 показов</b> и до <b>90 переходов</b> в день</span></div>
             <div class="auc-status" id="aucStatus">
               <div class="auc-rank"><span class="ar-pos" id="arPos">—</span><span class="ar-lbl">твоя позиция</span></div>
               <div class="auc-cur"><div class="ac-row"><span>Лидер сейчас</span><b id="aucTopName">Tangerine</b></div><div class="ac-row"><span>Ставка лидера</span><b class="auc-bidv" id="aucTop">₾340<small>/нед</small></b></div></div>
@@ -2387,11 +2436,10 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
               <div class="abx-hint" id="aucHint">Минимум — на ₾20 выше текущего лидера</div>
               <button class="cta gold" onclick="placeBid()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2l-2 7h5l-7 13 2-9H7z"/></svg>Сделать ставку</button>
             </div>
-            <div class="auc-foot"><svg viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zM12 8v4M12 16h.01"/></svg><div><b id="aucTime">До конца: 2д 14ч</b><span>Деньги спишутся <b>только если победишь</b> по итогам аукциона. Ставку можно поднять в любой момент.</span></div></div>
+            <div class="auc-foot"><svg viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zM12 8v4M12 16h.01"/></svg><div><b id="aucTime">До конца: 2д 14ч</b><span>Деньги спишутся <b>только если победишь</b>. Ставку можно поднять.</span></div></div>
           </div>
         </div>
 
-        <button class="cta gold" style="margin-top:16px" onclick="bgo('boost')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3zM11 13v6"/></svg>Подробнее про тарифы буста</button>
       </div>
     </section>
 
