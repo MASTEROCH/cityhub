@@ -365,8 +365,8 @@ body.biz .msc-msg.user::before{background:linear-gradient(120deg,rgba(255,181,71
 .msc-q .msc-q-t{display:contents}
 .msc-q .msc-q-t b{font-size:12.5px;font-weight:700}
 .msc-q .msc-q-t span{display:none}
-.msc-input{flex-shrink:0;display:flex;gap:6px;align-items:center;background:var(--glass-soft);border:1px solid var(--stroke);border-radius:99px;padding:5px 5px 5px 18px;transition:border-color .2s,box-shadow .25s}
-.msc-input:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.msc-input{flex-shrink:0;display:flex;gap:6px;align-items:center;background:var(--glass-soft);border:1px solid var(--stroke);border-radius:99px;padding:5px 5px 5px 18px;transition:border-color .25s,box-shadow .3s}
+.msc-input:focus-within{border-color:rgba(255,255,255,.18);box-shadow:none}
 .msc-input input{flex:1;background:none;border:none;color:var(--txt);font-size:14.5px;outline:none;padding:10px 0;font-family:inherit;min-width:0}
 .msc-input input::placeholder{color:var(--txt-3)}
 .msc-input .msc-mic{flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--glass-strong);border:1px solid var(--stroke);color:var(--txt-2);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,color .2s;padding:0}
@@ -2261,32 +2261,8 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
           <div class="bz-price"><div class="bz-pk">Со 2-го мес.</div><div class="bz-pv">от 49 ₾<small>/мес</small></div><div class="bz-pd">Базовое размещение + аналитика. Дальше дороже — кто раньше, тот дешевле.</div></div>
         </div>
         <div class="bz-lock fadein"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Зафиксируй стартовую цену сейчас — для первых партнёров она останется навсегда</span></div>
-        <div class="sec-h"><h2>Аукцион за главный баннер</h2></div>
-        <div class="auction-card fadein"><div class="auc-glow"></div>
-          <div class="auc-content">
-          <div class="auc-top"><div><div class="auc-lbl">Баннер №1 на «Сегодня»</div><div class="auc-sub">Видят все пользователи города при каждом входе</div></div><div class="auc-live">● LIVE</div></div>
-
-          <div class="auc-prize"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M5 3h14l-2 9a5 5 0 0 1-10 0zM12 17v4M8 21h8"/></svg><span>Победитель недели получает место №1 — это ~<b>3 200 показов</b> и до <b>90 переходов</b> в день</span></div>
-
-          <div class="auc-status" id="aucStatus">
-            <div class="auc-rank"><span class="ar-pos" id="arPos">—</span><span class="ar-lbl">твоя позиция</span></div>
-            <div class="auc-cur"><div class="ac-row"><span>Лидер сейчас</span><b id="aucTopName">Tangerine</b></div><div class="ac-row"><span>Ставка лидера</span><b class="auc-bidv" id="aucTop">₾340<small>/нед</small></b></div></div>
-          </div>
-
-          <div class="auc-board" id="aucBoard"></div>
-
-          <div class="auc-bidbox">
-            <div class="abx-lbl">Твоя ставка <span>(₾ в неделю)</span></div>
-            <div class="abx-row"><div class="abx-input"><span class="abx-cur">₾</span><input id="aucInput" type="number" inputmode="numeric" placeholder="360" oninput="aucPreview(this.value)"></div><button class="abx-min" onclick="aucQuick()">мин. ₾360</button></div>
-            <div class="abx-hint" id="aucHint">Минимум — на ₾20 выше текущего лидера</div>
-            <button class="cta gold" onclick="placeBid()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2l-2 7h5l-7 13 2-9H7z"/></svg>Сделать ставку</button>
-          </div>
-
-          <div class="auc-foot"><svg viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zM12 8v4M12 16h.01"/></svg><div><b id="aucTime">До конца: 2д 14ч</b><span>Деньги спишутся <b>только если победишь</b> по итогам аукциона. Ставку можно поднять в любой момент.</span></div></div>
-          </div>
-        </div>
-        <button class="cta lime" style="margin-top:8px" onclick="window.__bizSeen=true;bgo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>Начать бесплатно</button>
-        <button class="cta ghost" style="margin-top:10px" onclick="bgo('add')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Разместить заведение</button>
+        <button class="cta lime" style="margin-top:8px" onclick="bgo('add')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Разместить заведение бесплатно</button>
+        <button class="cta ghost" style="margin-top:10px" onclick="window.__bizSeen=true;bgo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7"/></svg>Посмотреть демо-дашборд</button>
       </div>
     </section>
 
@@ -2317,7 +2293,29 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
           <div class="stat glass"><div class="v tabular">31</div><div class="l">Из партнёров</div><div class="d down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg>-3%</div></div>
         </div>
         <div class="card glass" style="margin-top:13px"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:14px">Визиты · 7 дней</div><div style="font-size:12px;color:var(--txt-2)">25-34, кофе</div></div><div class="spark" id="spark"></div></div>
-        <button class="cta gold" style="margin-top:16px" onclick="bgo('boost')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3zM11 13v6"/></svg>Продвинуть бизнес</button>
+
+        <!-- AUCTION — доступен только владельцам с подключённым заведением -->
+        <div class="sec-h" style="margin-top:22px"><h2>Аукцион за главный баннер</h2></div>
+        <div class="auction-card fadein"><div class="auc-glow"></div>
+          <div class="auc-content">
+            <div class="auc-top"><div><div class="auc-lbl">Баннер №1 на «Сегодня»</div><div class="auc-sub">Видят все пользователи города при каждом входе</div></div><div class="auc-live">● LIVE</div></div>
+            <div class="auc-prize"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M5 3h14l-2 9a5 5 0 0 1-10 0zM12 17v4M8 21h8"/></svg><span>Победитель недели получает место №1 — это ~<b>3 200 показов</b> и до <b>90 переходов</b> в день</span></div>
+            <div class="auc-status" id="aucStatus">
+              <div class="auc-rank"><span class="ar-pos" id="arPos">—</span><span class="ar-lbl">твоя позиция</span></div>
+              <div class="auc-cur"><div class="ac-row"><span>Лидер сейчас</span><b id="aucTopName">Tangerine</b></div><div class="ac-row"><span>Ставка лидера</span><b class="auc-bidv" id="aucTop">₾340<small>/нед</small></b></div></div>
+            </div>
+            <div class="auc-board" id="aucBoard"></div>
+            <div class="auc-bidbox">
+              <div class="abx-lbl">Твоя ставка <span>(₾ в неделю)</span></div>
+              <div class="abx-row"><div class="abx-input"><span class="abx-cur">₾</span><input id="aucInput" type="number" inputmode="numeric" placeholder="360" oninput="aucPreview(this.value)"></div><button class="abx-min" onclick="aucQuick()">мин. ₾360</button></div>
+              <div class="abx-hint" id="aucHint">Минимум — на ₾20 выше текущего лидера</div>
+              <button class="cta gold" onclick="placeBid()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2l-2 7h5l-7 13 2-9H7z"/></svg>Сделать ставку</button>
+            </div>
+            <div class="auc-foot"><svg viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zM12 8v4M12 16h.01"/></svg><div><b id="aucTime">До конца: 2д 14ч</b><span>Деньги спишутся <b>только если победишь</b> по итогам аукциона. Ставку можно поднять в любой момент.</span></div></div>
+          </div>
+        </div>
+
+        <button class="cta gold" style="margin-top:16px" onclick="bgo('boost')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3zM11 13v6"/></svg>Подробнее про тарифы буста</button>
       </div>
     </section>
 
@@ -3694,7 +3692,7 @@ function placeBid(){
   toast(pos===1?'Ставка ₾'+n+' принята — ты лидируешь! 🏆':'Ставка ₾'+n+' принята — ты на #'+pos);
 }
 function bgo(t){
-  var ids=['b-intro','b-home','b-add','b-qr','b-boost'];ids.forEach(function(id){var el=document.getElementById(id);if(el){if(id==='b-'+t){el.classList.add('active');el.style.cssText='display:flex;flex-direction:column;position:absolute;inset:0'}else{el.classList.remove('active');el.style.display='none'}}});try{document.querySelectorAll('#bizTabs .tab').forEach(function(x){x.classList.toggle('on',x.dataset.t===t)})}catch(e){}var bt=document.getElementById('bizTabs');if(bt)bt.style.display=(t==='intro')?'none':'flex';var sc=document.getElementById('b-'+t);if(sc){var s=sc.querySelector('.scroll');if(s)s.scrollTop=0}if(t==='add'){setTimeout(function(){try{initBizMap()}catch(e){}try{populateNicheSelect()}catch(e){}},150)}if(t==='home'){try{animROI()}catch(e){}}if(t==='intro'){try{renderAuc()}catch(e){}}
+  var ids=['b-intro','b-home','b-add','b-qr','b-boost'];ids.forEach(function(id){var el=document.getElementById(id);if(el){if(id==='b-'+t){el.classList.add('active');el.style.cssText='display:flex;flex-direction:column;position:absolute;inset:0'}else{el.classList.remove('active');el.style.display='none'}}});try{document.querySelectorAll('#bizTabs .tab').forEach(function(x){x.classList.toggle('on',x.dataset.t===t)})}catch(e){}var bt=document.getElementById('bizTabs');if(bt)bt.style.display=(t==='intro')?'none':'flex';var sc=document.getElementById('b-'+t);if(sc){var s=sc.querySelector('.scroll');if(s)s.scrollTop=0}if(t==='add'){setTimeout(function(){try{initBizMap()}catch(e){}try{populateNicheSelect()}catch(e){}},150)}if(t==='home'){try{animROI()}catch(e){}}if(t==='home'){try{renderAuc()}catch(e){}}
   if(navigator.vibrate)navigator.vibrate(8);
 }
 function animNum(id,to,pre,grp){var el=document.getElementById(id);if(!el)return;var t0=Date.now(),dur=1000;(function tick(){var p=Math.min(1,(Date.now()-t0)/dur);var v=Math.floor(to*(1-Math.pow(1-p,3)));el.textContent=(pre||'')+(grp?v.toLocaleString('ru-RU'):v);if(p<1)requestAnimationFrame(tick)})()}
@@ -3721,7 +3719,7 @@ function goBiz(tab){
   try{document.querySelectorAll('#bizTabs .tab').forEach(function(x){x.classList.toggle('on',x.dataset.t===t)})}catch(e){}
   var bt=document.getElementById('bizTabs');if(bt)bt.style.display=(t==='intro')?'none':'flex';
   if(t==='home'){try{animROI()}catch(e){}}
-  if(t==='intro'){try{renderAuc()}catch(e){}}
+  if(t==='home'){try{renderAuc()}catch(e){}}
   if(t==='add'){setTimeout(function(){try{initBizMap()}catch(e){}try{populateNicheSelect()}catch(e){}},150)}
   if(navigator.vibrate)navigator.vibrate(14);
 }
@@ -4887,7 +4885,7 @@ function openMascot(){
   var sh=document.getElementById('sheet');sh.classList.add('open');sh.classList.add('sheet-mascot');
   renderMascotLog();renderMascotQuick();
   mascotPlay('happy');
-  setTimeout(function(){var i=document.getElementById('mascotInput');if(i)i.focus()},300);
+  /* no auto-focus — пусть пользователь сам решит набирать или тапнуть подсказку */
 }
 function renderMascotLog(){
   var el=document.getElementById('mscLog');if(!el)return;
