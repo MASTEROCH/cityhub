@@ -11,18 +11,66 @@
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-/* Telegram Mini App init — vibrate, theme, viewport */
+/* Telegram Mini App init — viewport + theme + native integration */
 (function tmaBoot(){
   try{
-    if(window.Telegram&&Telegram.WebApp){
-      Telegram.WebApp.ready();
-      Telegram.WebApp.expand();
-      try{Telegram.WebApp.setHeaderColor('#05060a');Telegram.WebApp.setBackgroundColor('#05060a')}catch(e){}
-      /* Disable Telegram's swipe-down close which conflicts with sheet swipes */
-      try{Telegram.WebApp.disableVerticalSwipes&&Telegram.WebApp.disableVerticalSwipes()}catch(e){}
+    if(!(window.Telegram&&Telegram.WebApp))return;
+    var TG=Telegram.WebApp;
+    TG.ready();
+    TG.expand();
+    try{TG.setHeaderColor('#05060a');TG.setBackgroundColor('#05060a')}catch(e){}
+    try{TG.disableVerticalSwipes&&TG.disableVerticalSwipes()}catch(e){}
+    /* Native haptic — заменяет navigator.vibrate когда доступен (точнее в iOS) */
+    if(TG.HapticFeedback){
+      window.__tgHaptic=TG.HapticFeedback;
+    }
+    /* BackButton — закрывает sheet'ы/модалки/chat через системную TG кнопку */
+    if(TG.BackButton){
+      window.__tgBack=TG.BackButton;
+      TG.BackButton.onClick(function(){
+        try{
+          /* Приоритет: peek > sheet > mascot chat > city picker > biz mode → client */
+          var peek=document.getElementById('peekOv');
+          if(peek){hidePeek();return}
+          var sheet=document.getElementById('sheet');
+          if(sheet&&sheet.classList.contains('open')){closeSheet();return}
+          var cityBg=document.getElementById('cityBg');
+          if(cityBg&&cityBg.classList.contains('open')){closeCity();return}
+          var iapp=document.getElementById('inApp');
+          if(iapp&&iapp.classList.contains('open')){closeInApp();return}
+          if(window.MODE==='biz'){setMode('client');return}
+          /* нечего закрывать — спрятать кнопку */
+          TG.BackButton.hide();
+        }catch(e){}
+      });
+    }
+    /* CloudStorage — синхронизация wishlist между устройствами */
+    if(TG.CloudStorage){window.__tgCloud=TG.CloudStorage}
+    /* Theme params — на будущее (если кто-то в светлой теме) */
+    if(TG.themeParams){
+      var tp=TG.themeParams;
+      if(tp.bg_color)document.documentElement.style.setProperty('--tg-bg',tp.bg_color);
     }
   }catch(e){}
 })();
+/* Управление видимостью TG BackButton — показ когда есть что закрыть */
+function tgBackShow(){try{if(window.__tgBack)__tgBack.show()}catch(e){}}
+function tgBackHide(){try{if(window.__tgBack)__tgBack.hide()}catch(e){}}
+/* TG MainButton — глобальная нижняя CTA когда место открыто в модалке */
+function tgMainShow(text,onClick){
+  try{
+    if(!window.Telegram||!Telegram.WebApp||!Telegram.WebApp.MainButton)return;
+    var mb=Telegram.WebApp.MainButton;
+    mb.setText(text);
+    mb.setParams({color:'#D4FF4F',text_color:'#1a2200',is_active:true,is_visible:true});
+    /* очистить старые обработчики */
+    if(window.__mbHandler)try{mb.offClick(window.__mbHandler)}catch(e){}
+    window.__mbHandler=onClick;
+    mb.onClick(onClick);
+    mb.show();
+  }catch(e){}
+}
+function tgMainHide(){try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.MainButton)Telegram.WebApp.MainButton.hide()}catch(e){}}
 </script>
 <script>
 /* silent error mode */
@@ -4117,7 +4165,11 @@ function openBiz(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(
     <button class="cta lime" style="margin-top:10px" onclick='arrived(${jx(b)})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3 8-8M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Я на месте — показать QR</button>
     <button class="cta ghost" style="margin-top:10px" onclick='openInMaps(${jx(b.n)},${b.o?b.o[0]:0},${b.o?b.o[1]:0})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3zM9 7v13M15 4v13"/></svg>${T('Открыть в карте')}</button>
     <div class="hint">Покажи QR на кассе — спишется ваучер и начислятся баллы Loop.</div>`;
-  document.getElementById('sheet').classList.add('open');if(navigator.vibrate)navigator.vibrate(10)}
+  document.getElementById('sheet').classList.add('open');haptic('open');
+  /* TG native: показать MainButton «Веди туда» и BackButton */
+  tgBackShow();
+  tgMainShow('Веди туда → '+b.n,function(){try{openInMaps(b.n,b.o?b.o[0]:0,b.o?b.o[1]:0)}catch(e){}});
+}
 function arrived(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(n=>n.k===b.k)||{c:'#7C3AFF',n:'Ниша'};
   document.getElementById('sheet-body').innerHTML=`<div class="grab"></div>
     <div class="arr-wrap">
@@ -4143,7 +4195,7 @@ function confirmArrived(pts,bizName){
   setTimeout(function(){closeSheet();toast(msg)},1500);
   if(bizName){questAdvance(bizName);gameOnVisit(bizName);}
 }
-function closeSheet(){var sh=document.getElementById('sheet');sh.classList.remove('open');sh.classList.remove('sheet-mascot')}
+function closeSheet(){var sh=document.getElementById('sheet');sh.classList.remove('open');sh.classList.remove('sheet-mascot');try{tgBackHide();tgMainHide()}catch(e){}}
 function closeMascot(){closeSheet();haptic('tap')}
 function openShop(){
   document.getElementById('sheet-body').innerHTML=`<div class="grab"></div>
@@ -4478,7 +4530,32 @@ var MW_CTX={mode:null}; // если режим меняется — сброси
 // === WISHLIST — heart icon с localStorage ===
 var WL_KEY='cityhub_wishlist_v1';
 function wlGet(){try{return JSON.parse(localStorage.getItem(WL_KEY)||'[]')}catch(e){return[]}}
-function wlSet(arr){try{localStorage.setItem(WL_KEY,JSON.stringify(arr))}catch(e){}}
+function wlSet(arr){
+  try{localStorage.setItem(WL_KEY,JSON.stringify(arr))}catch(e){}
+  /* TG CloudStorage sync (через бота, между устройствами) */
+  try{if(window.__tgCloud)__tgCloud.setItem('wl',JSON.stringify(arr),function(){})}catch(e){}
+}
+/* Init sync: при загрузке подтянуть wishlist из CloudStorage если он там длиннее локального */
+(function wlCloudInit(){
+  setTimeout(function(){
+    try{
+      if(!window.__tgCloud)return;
+      __tgCloud.getItem('wl',function(err,val){
+        if(err||!val)return;
+        try{
+          var remote=JSON.parse(val);if(!Array.isArray(remote))return;
+          var local=wlGet();
+          /* merge: union обеих коллекций (consistency between devices) */
+          var merged=Array.from(new Set(local.concat(remote)));
+          if(merged.length>local.length){
+            try{localStorage.setItem(WL_KEY,JSON.stringify(merged))}catch(e){}
+            if(typeof updateWlCount==='function')updateWlCount();
+          }
+        }catch(e){}
+      });
+    }catch(e){}
+  },1500);
+})();
 function wlHas(name){return wlGet().indexOf(name)>=0}
 function wlToggle(name,btn){
   var arr=wlGet();var i=arr.indexOf(name);
@@ -4800,7 +4877,19 @@ var HAPTIC={
   celebrate:[12,30,12,30,60],
   swipe:[4,8,6]
 };
-function haptic(kind){if(navigator.vibrate)navigator.vibrate(HAPTIC[kind]||HAPTIC.tap)}
+function haptic(kind){
+  /* Prefer Telegram native haptic when available (точнее в iOS Telegram) */
+  if(window.__tgHaptic){
+    try{
+      if(kind==='success'||kind==='reward'||kind==='unlock'||kind==='celebrate'){__tgHaptic.notificationOccurred('success');return}
+      if(kind==='error'){__tgHaptic.notificationOccurred('error');return}
+      if(kind==='confirm'||kind==='select'){__tgHaptic.impactOccurred('medium');return}
+      if(kind==='streak'){__tgHaptic.impactOccurred('heavy');return}
+      __tgHaptic.impactOccurred('light');return;
+    }catch(e){}
+  }
+  if(navigator.vibrate)navigator.vibrate(HAPTIC[kind]||HAPTIC.tap);
+}
 
 /* ═══════════ PREMIUM POLISH HELPERS ═══════════ */
 /* 1. NUMBER ROLLER — плавная анимация числа с tabular-nums */
