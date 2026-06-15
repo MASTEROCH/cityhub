@@ -1,0 +1,14 @@
+{
+  "name": "CityHUB",
+  "short_name": "CityHUB",
+  "description": "AI-консьерж: куда сходить и что попробовать прямо сейчас.",
+  "start_url": "/cityhub/",
+  "scope": "/cityhub/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
+  "icons": [
+    { "src": "mascot/idle/01.png", "sizes": "256x256", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
