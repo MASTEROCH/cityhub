@@ -1818,11 +1818,18 @@ body.quiet *{animation-duration:1.5s!important;transition-duration:.35s!importan
 /* 14. Reduced-motion — уважение к доступности */
 @media (prefers-reduced-motion:reduce){*,*::after,*::before{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 /* прогрессивное раскрытие первого экрана */
-.more-today{display:none}
-.more-today.open{display:block;animation:fadein var(--dur-slow) var(--ease-out) both}
-.show-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:14px;margin:14px 0 4px;border-radius:var(--r-md);background:var(--glass-soft);border:1px solid var(--stroke-soft);color:var(--txt-2);font-size:13.5px;font-weight:700;transition:all var(--dur-fast) var(--ease-spring)}
+.more-today{display:none;overflow:hidden}
+.more-today.open{display:block;animation:moreExpand .55s cubic-bezier(.16,1,.3,1) both}
+@keyframes moreExpand{0%{opacity:0;transform:translateY(-12px) scale(.99);max-height:0}100%{opacity:1;transform:translateY(0) scale(1);max-height:5000px}}
+.show-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:14px;margin:14px 0 4px;border-radius:var(--r-md);background:var(--glass-soft);border:1px solid var(--stroke-soft);color:var(--txt-2);font-size:13.5px;font-weight:700;transition:all .25s var(--ease-spring);position:relative;overflow:hidden}
 .show-more:active{transform:scale(.97)}
-.show-more svg{width:18px;height:18px;transition:transform var(--dur)}
+.show-more svg{width:18px;height:18px;transition:transform .35s var(--ease-spring)}
+/* Snap-armed state — кнопка ловится скроллом */
+.show-more.snap-armed{background:linear-gradient(135deg,rgba(212,255,79,.18),rgba(0,224,199,.1));border-color:rgba(212,255,79,.4);color:var(--lime);box-shadow:0 0 0 3px rgba(212,255,79,.18),0 8px 22px rgba(212,255,79,.22);transform:translateY(-2px) scale(1.01)}
+.show-more.snap-armed svg{transform:translateY(3px) rotate(180deg);color:var(--lime)}
+.show-more.snap-armed::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(212,255,79,.16),transparent);animation:snapSweep .45s ease-out;pointer-events:none}
+@keyframes snapSweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.show-more.hide{opacity:0;max-height:0;padding:0;margin:0;border-width:0;pointer-events:none;transition:opacity .25s,max-height .4s var(--ease-out) .05s,padding .35s,margin .35s,border-width .25s}
 .show-more.hide{display:none}
 /* ═══ инструменты шапки: язык/поиск/уведомления ═══ */
 .hdr-toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -2835,6 +2842,44 @@ function startDealTimer(){
 function showDailyReward(){setTimeout(()=>{const p=document.getElementById('dailyPop');p.classList.add('show');if(navigator.vibrate)navigator.vibrate([10,30,10]);setTimeout(()=>p.classList.remove('show'),3200)},900)}
 
 function expandToday(){var m=document.getElementById('moreToday');var b=document.getElementById('showMore');if(m)m.classList.add('open');if(b)b.classList.add('hide');window.__todayExpanded=true;if(navigator.vibrate)navigator.vibrate(8)}
+/* SCROLL-SNAP auto-expand: когда юзер скроллит мимо кнопки «Показать больше идей» —
+   она сама срабатывает (как «защёлка»), и контент разворачивается inline. */
+function bindTodaySnapExpand(){
+  var screen=document.getElementById('c-today');if(!screen)return;
+  var sc=screen.querySelector('.scroll');if(!sc)return;
+  var btn=document.getElementById('showMore');if(!btn)return;
+  if(window.__snapBound)return;window.__snapBound=true;
+
+  /* Защёлка: триггер когда юзер докрутил вниз и упёрся в bottom (или прошёл кнопку).
+     Защищено: должен скроллить вниз минимум 80px от начала. */
+  var armed=true,lastY=0,scrolledEnough=false;
+  function checkAndFire(){
+    if(window.__todayExpanded||!armed)return;
+    var b=document.getElementById('showMore');
+    if(!b||b.classList.contains('hide'))return;
+    if(sc.scrollTop>80)scrolledEnough=true;
+    var goingDown=sc.scrollTop>lastY-2;
+    lastY=sc.scrollTop;
+    if(!scrolledEnough||!goingDown)return;
+    var r=b.getBoundingClientRect();
+    var scR=sc.getBoundingClientRect();
+    /* condition A: кнопка полностью в viewport */
+    var fullyVisible=r.top>=scR.top-2&&r.bottom<=scR.bottom+4;
+    /* condition B: юзер докрутил почти до низа */
+    var nearBottom=(sc.scrollHeight-sc.clientHeight-sc.scrollTop)<28;
+    if(fullyVisible||nearBottom){
+      armed=false;
+      b.classList.add('snap-armed');
+      setTimeout(function(){
+        if(window.__todayExpanded){b.classList.remove('snap-armed');return}
+        expandToday();
+        b.classList.remove('snap-armed');
+        if(typeof haptic==='function')haptic('confirm');
+      },90);
+    }
+  }
+  sc.addEventListener('scroll',checkAndFire,{passive:true});
+}
 function renderToday(){
   renderDeal();
   renderForMe();
@@ -4481,6 +4526,7 @@ setTimeout(showFirstTimeTooltip,3500);
 
 /* Initialize premium polish on load */
 (function premiumInit(){
+  setTimeout(function(){try{bindTodaySnapExpand()}catch(e){}},600);
   try{applyTimeAura()}catch(e){}
   try{applyQuietMode()}catch(e){}
   try{bindLongPress()}catch(e){}
