@@ -4266,6 +4266,7 @@ function animROI(){
 function __dbg(name,e){}
 function __diag(msg){}
 function goBiz(tab){
+  var wc=document.getElementById('w-client');if(wc){wc.classList.remove('on');wc.style.display='none'}
   var wb=document.getElementById('w-biz');
   if(wb){wb.classList.add('on');wb.style.cssText='display:flex!important;position:fixed;inset:0;z-index:9000;flex-direction:column;background:radial-gradient(130% 90% at 50% 0%,#0d1424 0%,#05060a 60%)'}
   document.body.classList.remove('client');document.body.classList.add('biz');MODE='biz';
@@ -4282,7 +4283,7 @@ function goBiz(tab){
 function goClient(tab){
   var wb=document.getElementById('w-biz');
   if(wb){wb.classList.remove('on');wb.style.cssText='display:none';}
-  var wc=document.getElementById('w-client');if(wc){wc.classList.add('on')}
+  var wc=document.getElementById('w-client');if(wc){wc.classList.add('on');wc.style.display=''}
   document.body.classList.remove('biz');document.body.classList.add('client');MODE='client';
   try{cgo(tab||'today')}catch(e){}
   if(navigator.vibrate)navigator.vibrate(14);
@@ -4858,6 +4859,7 @@ function safe(fn){try{fn()}catch(e){}}
 // Tilt-on-scroll: карточки наклоняются по скорости прокрутки, как на ветру
 // Tilt-on-scroll: IntersectionObserver — тильтим только видимые карточки (нет jank на длинных списках)
 function initTilt(){
+  return; /* отключено: scroll-coupled transform давал джанк («криво/глюченно») и боролся со скроллом */
   var sel='.biz,.mini,.roi-card,.bz-hero,.auction-card,.shop-card,.stat,.card,.ach2,.deal,.bz-step,.bz-price,.fm-card,.qs-card';
   if(!('IntersectionObserver' in window)){return}
   var visibleCards=new WeakSet();
@@ -5564,10 +5566,11 @@ function initAnswerSwipe(){
     var t=e.target.closest('.answer');if(!t||t._sx==null)return;
     var dx=e.changedTouches[0].clientX-t._sx;var dy=e.changedTouches[0].clientY-t._sy;var dt=Date.now()-t._st;
     t._sx=null;
-    if(dt>600)return;
+    if(dt>500)return;
     var ax=Math.abs(dx),ay=Math.abs(dy);
-    if(ax>50 && ax>ay){haptic('select');nextPick()}
-    else if(dy<-60 && ay>ax){haptic('select');var c=CITIES[CITY];if(c.biz&&c.biz[0])openBiz(c.biz[0])}
+    /* ТОЛЬКО явный горизонтальный свайп → следующий вариант. Вертикальное движение
+       НЕ перехватываем — это обычный скролл (раньше свайп-вверх открывал карточку). */
+    if(ax>60 && ax>ay*1.8 && ay<40){haptic('select');nextPick()}
   },{passive:true});
 }
 setTimeout(initAnswerSwipe,500);
