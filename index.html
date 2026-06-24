@@ -5663,7 +5663,7 @@ function openMascot(){
   '</div>';
   var closeBtn='<button class="msc-close" onclick="closeMascot()" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M6 18L18 6"/></svg></button>';
   document.getElementById('sheet-body').innerHTML=closeBtn+'<div class="msc-shell">'+head+log+qc+inp+'</div>';
-  var sh=document.getElementById('sheet');sh.classList.add('open');sh.classList.add('sheet-mascot');
+  var sh=_openSheet();sh.classList.add('sheet-mascot');/* _openSheet чистит 'closing' — иначе pointer-events:none ломал закрытие */
   renderMascotLog();renderMascotQuick();
   mascotPlay('happy');
   /* no auto-focus — пусть пользователь сам решит набирать или тапнуть подсказку */
