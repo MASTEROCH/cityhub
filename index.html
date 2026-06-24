@@ -4201,7 +4201,7 @@ function renderStatic(){
 }
 
 // ---------- nav ----------
-function cgo(t){document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);sc.classList.add('active');document.getElementById('w-client').classList.toggle('hide-fade',t==='ai');const navT=t==='rewards'?'me':t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;if(t==='map'){renderMapTab();buildMap()}if(t==='niches')renderNiches('');if(t==='ai')initChat();if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame()}if(navigator.vibrate)navigator.vibrate(8)}
+function cgo(t){document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);sc.classList.add('active');document.getElementById('w-client').classList.toggle('hide-fade',t==='ai');const navT=t==='rewards'?'me':t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;if(t==='map'){renderMapTab();buildMap();[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='niches')renderNiches('');if(t==='ai')initChat();if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame()}if(navigator.vibrate)navigator.vibrate(8)}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:20,mine:0,bids:[
   {n:'Tangerine',v:340,me:false},
