@@ -457,7 +457,7 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 .sheet-mascot .sheet::before,.sheet.sheet-mascot::before{display:none}
 .sheet-bg.msc-open,.sheet-bg.sheet-mascot{align-items:stretch!important;padding:0!important}
 /* Close — fixed top-right (relative to sheet) */
-.msc-close{position:fixed!important;top:calc(var(--safe-t) + 14px)!important;right:14px!important;left:auto!important;z-index:9999;width:40px;height:40px;border-radius:50%;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.16);color:var(--txt);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,border-color .2s;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.msc-close{position:fixed!important;top:calc(var(--safe-t) + 14px)!important;right:14px!important;left:auto!important;z-index:10001;width:44px;height:44px;border-radius:50%;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.16);color:var(--txt);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,border-color .2s;box-shadow:0 6px 18px rgba(0,0,0,.5)}
 .msc-close:hover{border-color:var(--rose);color:var(--rose)}
 .msc-close:active{transform:scale(.88);background:rgba(255,93,143,.2);border-color:var(--rose)}
 .msc-close svg{width:18px;height:18px}
@@ -5700,6 +5700,9 @@ function openMascot(){
   var sh=_openSheet();sh.classList.add('sheet-mascot');/* _openSheet чистит 'closing' — иначе pointer-events:none ломал закрытие */
   renderMascotLog();renderMascotQuick();
   mascotPlay('happy');
+  /* Надёжное закрытие в Telegram: показываем нативную BackButton (её обработчик зовёт closeSheet).
+     В полноэкранном чате крестик может попадать под шапку Telegram — BackButton решает это гарантированно. */
+  try{tgBackShow()}catch(e){}
   /* no auto-focus — пусть пользователь сам решит набирать или тапнуть подсказку */
 }
 function renderMascotLog(){
