@@ -117,7 +117,7 @@ function tgMainShow(text,onClick){
     if(!window.Telegram||!Telegram.WebApp||!Telegram.WebApp.MainButton)return;
     var mb=Telegram.WebApp.MainButton;
     mb.setText(text);
-    mb.setParams({color:'#D4FF4F',text_color:'#1a2200',is_active:true,is_visible:true});
+    mb.setParams({color:'#D4FF4F',text_color:'#06210a',is_active:true,is_visible:true});
     /* очистить старые обработчики */
     if(window.__mbHandler)try{mb.offClick(window.__mbHandler)}catch(e){}
     window.__mbHandler=onClick;
@@ -142,7 +142,7 @@ window.onerror=function(){return true};
   --grad:linear-gradient(135deg,#7C3AFF,#00E0C7);--grad-lime:linear-gradient(135deg,#D4FF4F,#00E0C7);
   --grad-gold:linear-gradient(135deg,#FFB547,#ff9d4d);
   /* Mode swap accent — переключается body.biz */
-  --accent:var(--lime);--accent-grad:var(--grad-lime);--accent-ink:#1a2200;--accent-glow:rgba(212,255,79,.4);
+  --accent:var(--lime);--accent-grad:var(--grad-lime);--accent-ink:#06210a;--accent-glow:rgba(212,255,79,.4);
   /* Type-scale (6-step) — referenced for new components, legacy values остаются inline */
   --fs-xs:11px;--fs-sm:13px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:34px;--fs-hero:clamp(28px,7vw,38px);
   /* Day/night accent shift (luxe feel) */
@@ -641,10 +641,10 @@ body.biz .biz .pp .v::before{background:var(--gold);box-shadow:0 0 6px rgba(255,
 .chip.on{background:var(--grad);border-color:transparent;font-weight:700}.chip:active{transform:scale(.94)}
 .cta{width:100%;padding:16px;border-radius:var(--r-md);font-size:15.5px;font-weight:800;text-align:center;background:var(--grad);box-shadow:0 10px 30px rgba(124,58,255,.4);transition:transform .15s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px}
 .cta:active{transform:scale(.97)}.cta svg{width:18px;height:18px}
-.cta.lime{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%);color:#1a2d00;box-shadow:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18);text-shadow:0 1px 0 rgba(255,255,255,.25)}
+.cta.lime{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%);color:#06210a;box-shadow:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18);text-shadow:0 1px 0 rgba(255,255,255,.25)}
 .cta.lime:active{transform:scale(.97);box-shadow:0 6px 18px rgba(212,255,79,.4),0 2px 4px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.3)}
 /* Volumetric lime для всех ключевых CTA */
-.go-btn,.dgo,.lbtn.primary,.bc-btn.primary,.go-btn-new{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%)!important;color:#1a2d00!important;box-shadow:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18)!important;text-shadow:0 1px 0 rgba(255,255,255,.25)}
+.go-btn,.dgo,.lbtn.primary,.bc-btn.primary,.go-btn-new{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%)!important;color:#06210a!important;box-shadow:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18)!important;text-shadow:0 1px 0 rgba(255,255,255,.25)}
 .go-btn:active,.dgo:active,.lbtn.primary:active,.bc-btn.primary:active,.go-btn-new:active{box-shadow:0 6px 18px rgba(212,255,79,.4),0 2px 4px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.3)!important}
 /* Gold variant — biz mode */
 body.biz .cta.lime,body.biz .go-btn,body.biz .dgo,body.biz .lbtn.primary,body.biz .bc-btn.primary,body.biz .go-btn-new{background:linear-gradient(180deg,#FFD08A 0%,#FFB547 45%,#cc8a25 100%)!important;color:#2a1500!important;box-shadow:0 14px 36px rgba(255,181,71,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18)!important}
@@ -729,7 +729,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .sheet-hero img{transition:opacity .25s var(--ease-out)}
 .bh-refresh{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;border-radius:50%;background:rgba(10,14,28,.5);-webkit-backdrop-filter:blur(14px) saturate(180%);backdrop-filter:blur(14px) saturate(180%);border:1px solid rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .25s var(--ease-spring),background .2s,border-color .2s;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .bh-refresh:hover{background:rgba(10,14,28,.7);border-color:rgba(255,255,255,.32)}
-.bh-refresh:active{transform:scale(.88);background:var(--lime);color:#1a2200;border-color:transparent}
+.bh-refresh:active{transform:scale(.88);background:var(--lime);color:#06210a;border-color:transparent}
 .bh-refresh svg{width:17px;height:17px;transition:transform .55s cubic-bezier(.4,1.6,.5,1)}
 .bh-refresh.spin svg{transform:rotate(-360deg)}
 .bh-refresh.flash{box-shadow:0 0 0 0 rgba(212,255,79,.6),0 4px 14px rgba(0,0,0,.4);animation:bhFlash .42s ease-out}
@@ -1171,7 +1171,7 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .mood.vibe.ai-vibe{position:relative}
 .mood.vibe.ai-vibe::after{content:'';position:absolute;top:6px;right:8px;width:5px;height:5px;border-radius:50%;background:linear-gradient(135deg,#7C3AFF,#21d4fd);box-shadow:0 0 6px rgba(33,212,253,.6);opacity:.85}
 .mood.vibe.ai-vibe.on::after{opacity:0}
-.mood.vibe.on .vibe-lb{color:#1a2d00;font-weight:800}
+.mood.vibe.on .vibe-lb{color:#06210a;font-weight:800}
 .mood.vibe.on .vibe-ic{transform:scale(1.08)}
 .mood.vibe:active{transform:scale(.93)}
 .mood.vibe:active .vibe-ic{transform:scale(1.15) rotate(-6deg)}
@@ -1287,7 +1287,7 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .qs-card.quest .qs-ic svg{color:var(--lime);width:22px;height:22px}
 .qs-card.squad .qs-ic svg{color:#cbb8ff;width:22px;height:22px}
 .qs-card .qs-tag{display:inline-flex;align-items:center;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;border-radius:99px;line-height:1;white-space:nowrap}
-.qs-card.quest .qs-tag{color:#1a2200;background:linear-gradient(135deg,#e5ff7f,#a8d935);box-shadow:0 3px 9px rgba(212,255,79,.36);text-shadow:0 1px 0 rgba(255,255,255,.18)}
+.qs-card.quest .qs-tag{color:#06210a;background:linear-gradient(135deg,#e5ff7f,#a8d935);box-shadow:0 3px 9px rgba(212,255,79,.36);text-shadow:0 1px 0 rgba(255,255,255,.18)}
 .qs-card.squad .qs-tag{color:#fff;background:linear-gradient(135deg,#A78BFF,#7C3AFF);box-shadow:0 3px 9px rgba(124,58,255,.4)}
 /* Body: title + sub */
 .qs-card .qs-body{position:relative;z-index:2;display:flex;flex-direction:column;gap:5px}
@@ -1420,7 +1420,7 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
 .shop-bal .sb-v{font-size:28px;font-weight:900;color:var(--lime);letter-spacing:-.025em;line-height:1;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:6px}
 .shop-bal .sb-v small{font-size:13px;font-weight:700;color:var(--txt-2)}
 .shop-bal .sb-ic{flex-shrink:0;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--lime),#a8d935);display:grid;place-items:center;box-shadow:0 8px 22px rgba(212,255,79,.4),inset 0 2px 0 rgba(255,255,255,.3);position:relative;z-index:1}
-.shop-bal .sb-ic svg{width:28px;height:28px;color:#1a2200}
+.shop-bal .sb-ic svg{width:28px;height:28px;color:#06210a}
 .shop-item{display:flex;align-items:center;gap:13px;padding:14px;border-radius:var(--r-md);background:var(--glass-soft);border:1px solid var(--stroke-soft);margin-bottom:10px}
 .shop-item .si-ic{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}
 .shop-item .si-ic svg{width:22px;height:22px}
@@ -1634,8 +1634,8 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 /* ═══════════════ AI MASCOT EXTRAS ═══════════════ */
 /* Inline indicator в шапке чата */
 .msc-info b{display:flex;align-items:center;gap:8px}
-.msc-ai-on{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;padding:2.5px 7px;border-radius:99px;background:linear-gradient(135deg,#D4FF4F,#a8d935);color:#1a2200;letter-spacing:.05em;text-shadow:0 1px 0 rgba(255,255,255,.18);box-shadow:0 3px 8px rgba(212,255,79,.35);position:relative}
-.msc-ai-on::before{content:'';width:5px;height:5px;border-radius:50%;background:#1a2200;animation:livePulse 1.4s ease-in-out infinite}
+.msc-ai-on{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;padding:2.5px 7px;border-radius:99px;background:linear-gradient(135deg,#D4FF4F,#a8d935);color:#06210a;letter-spacing:.05em;text-shadow:0 1px 0 rgba(255,255,255,.18);box-shadow:0 3px 8px rgba(212,255,79,.35);position:relative}
+.msc-ai-on::before{content:'';width:5px;height:5px;border-radius:50%;background:#06210a;animation:livePulse 1.4s ease-in-out infinite}
 .msc-ai-off{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;padding:2.5px 7px;border-radius:99px;background:rgba(255,93,143,.18);color:#ff5d8f;letter-spacing:.05em;border:1px solid rgba(255,93,143,.32)}
 /* Top banner — приглашение подключить ключ */
 .msc-keybanner{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:13px 16px;border-radius:18px;background:linear-gradient(155deg,rgba(212,255,79,.22),rgba(0,224,199,.12));border:1px solid rgba(212,255,79,.38);box-shadow:0 8px 24px rgba(212,255,79,.22),inset 0 1px 0 rgba(255,255,255,.16);cursor:pointer;transition:all .2s var(--ease-spring);position:relative;overflow:hidden;animation:keyBanBreathe 3s ease-in-out infinite}
@@ -1651,7 +1651,7 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .msc-msg.bot:has(.msc-stream)::after{content:'';display:inline-block;width:2px;height:14px;background:var(--lime);margin-left:2px;animation:streamCaret 1s ease-in-out infinite;vertical-align:-2px}
 @keyframes streamCaret{0%,49%{opacity:1}50%,100%{opacity:0}}
 
-.msc-link{background:linear-gradient(135deg,#D4FF4F,#a8d935);color:#1a2200;border:none;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:800;cursor:pointer;margin-left:4px;box-shadow:0 4px 12px rgba(212,255,79,.35);transition:transform .15s}
+.msc-link{background:linear-gradient(135deg,#D4FF4F,#a8d935);color:#06210a;border:none;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:800;cursor:pointer;margin-left:4px;box-shadow:0 4px 12px rgba(212,255,79,.35);transition:transform .15s}
 .msc-link:active{transform:scale(.94)}
 .msc-recs{display:flex;flex-direction:column;gap:7px;margin-top:10px}
 .msc-rec{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:linear-gradient(155deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid var(--stroke-soft);cursor:pointer;transition:all .15s;text-align:left;font-family:inherit;color:var(--txt);width:100%}
@@ -1718,7 +1718,7 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .hunt-stop:active{transform:scale(.985);background:var(--glass-strong)}
 .hunt-stop.done{background:rgba(212,255,79,.1);border-color:rgba(212,255,79,.32)}
 .hunt-stop-n{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--txt)}
-.hunt-stop.done .hunt-stop-n{background:var(--lime);color:#1a2200}
+.hunt-stop.done .hunt-stop-n{background:var(--lime);color:#06210a}
 .hunt-stop-t{flex:1;font-size:13.5px;font-weight:700;color:var(--txt)}
 .hunt-stop-pts{flex-shrink:0;font-size:12px;font-weight:800;color:var(--lime)}
 
@@ -2289,7 +2289,7 @@ input,textarea{font-size:16px!important}
         <div id="answerBox"><div class="skel skel-hero"></div></div>
         <div class="ad-ticker" id="adTicker"></div>
 
-        <button class="show-more" id="showMore" onclick="expandToday()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg><span data-i18n="show_more">Показать больше идей</span></button>
+        <button class="show-more" id="showMore" onclick="expandToday()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg><span data-i18n="show_more">Показать больше идей</span></button>
 
         <div id="moreToday" class="more-today">
           <div class="streak-mini" id="streakStrip" style="margin-top:6px"></div>
@@ -2355,7 +2355,7 @@ input,textarea{font-size:16px!important}
           <div class="bc-big"><span class="tabular" id="balBig">1 240</span> <span class="bc-unit">баллов</span></div>
           <div class="bc-money">это примерно <b>124 ₾</b> на скидки и подарки</div>
           <div class="bc-progress"><div class="bcp-bar"><div class="bcp-fill" style="width:0%" data-w="77"></div></div><div class="bcp-txt">До уровня «Золото» осталось <b>360 баллов</b> — это даёт ×2 кэшбэк</div></div>
-          <div class="bc-actions"><button class="bc-btn primary" onclick="openShop()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>Потратить</button><button class="bc-btn" onclick="cgo('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Заработать</button></div>
+          <div class="bc-actions"><button class="bc-btn primary" onclick="openShop()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>Потратить</button><button class="bc-btn" onclick="cgo('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Заработать</button></div>
         </div>
 
         <!-- 2. ПОДАРОК ДНЯ -->
@@ -2375,7 +2375,7 @@ input,textarea{font-size:16px!important}
         <div id="earn"></div>
 
         <!-- ПОД КАТ: остальное -->
-        <button class="show-more" id="showMoreRew" onclick="expandRewards()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>Достижения, лига и друзья</button>
+        <button class="show-more" id="showMoreRew" onclick="expandRewards()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Достижения, лига и друзья</button>
         <div id="moreRewards" class="more-today">
           <div class="expire fadein"><div class="ei"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="et"><b>240 баллов сгорают через 3 дня</b><span>Потрать или сходи куда-нибудь, чтобы продлить</span></div></div>
           <div class="sec-h"><h2>Квесты недели</h2><span class="more">3 дня</span></div>
@@ -2408,7 +2408,7 @@ input,textarea{font-size:16px!important}
           <div class="pf-top">
             <div class="pf-ava">Р<span class="pf-status" title="Уровень Серебро">⭐</span></div>
             <div class="pf-info">
-              <div class="pf-name">Роман К.<button class="pf-edit" onclick="toast('Редактирование скоро')" aria-label="Изменить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9M16.5 3.5l4 4-12 12-5 1 1-5z"/></svg></button></div>
+              <div class="pf-name">Роман К.<button class="pf-edit" onclick="toast('Редактирование скоро')" aria-label="Изменить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5l4 4-12 12-5 1 1-5z"/></svg></button></div>
               <div class="pf-handle">@roman</div>
               <div class="pf-badge-row">
                 <span class="pf-tier">⭐ Серебро · ×1.4 кэшбэк</span>
@@ -2521,7 +2521,7 @@ input,textarea{font-size:16px!important}
         <div class="search-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="nicheSearch" placeholder="Поиск ниши или места…" oninput="renderNiches(this.value)"></div>
         <div class="niche-list" id="nicheList"></div>
         <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Это твой бизнес?</h2></div>
-        <div class="ai-cta" onclick="setMode('biz','add')"><div class="ai-ic" style="background:var(--grad-lime)"><svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg></div><div class="ai-tx"><b>Разместить бесплатно</b><span>Попади на карту Батуми за 3 поля</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+        <div class="ai-cta" onclick="setMode('biz','add')"><div class="ai-ic" style="background:var(--grad-lime)"><svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div><div class="ai-tx"><b>Разместить бесплатно</b><span>Попади на карту Батуми за 3 поля</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
         <div class="ai-cta" style="margin-top:10px" onclick="toast('Открываю apphub.studio')"><div class="ai-ic" style="background:var(--grad-gold)"><svg viewBox="0 0 24 24" fill="none" stroke="#2a1500" stroke-width="2"><path d="M7 4h10v16l-5-3-5 3z"/></svg></div><div class="ai-tx"><b>Заказать своё приложение</b><span>TMA под ключ от AppHub · от $0</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
       </div>
     </section>
@@ -2532,7 +2532,7 @@ input,textarea{font-size:16px!important}
       <div class="chat-wrap">
         <div class="chat-scroll" id="chatScroll"><div class="chat-row" id="chatRows"></div></div>
         <div class="quick-row" id="quickRow"></div>
-        <div class="chat-input"><input id="chatInput" data-i18n-ph="chat_ph" placeholder="Напиши или выбери выше…" oninput="toggleSend()" onkeydown="if(event.key==='Enter')sendChat()"><button class="chat-send" id="chatSend" onclick="sendChat()" aria-label="Отправить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></div>
+        <div class="chat-input"><input id="chatInput" data-i18n-ph="chat_ph" placeholder="Напиши или выбери выше…" oninput="toggleSend()" onkeydown="if(event.key==='Enter')sendChat()"><button class="chat-send" id="chatSend" onclick="sendChat()" aria-label="Отправить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></div>
       </div>
     </section>
 
@@ -2572,7 +2572,7 @@ input,textarea{font-size:16px!important}
         </div>
         <div class="bz-lock fadein"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Зафиксируй стартовую цену сейчас — для первых партнёров она останется навсегда</span></div>
         <button class="cta lime" style="margin-top:8px" onclick="bgo('add')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Разместить заведение бесплатно</button>
-        <button class="cta ghost" style="margin-top:10px" onclick="window.__bizSeen=true;bgo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7"/></svg>Посмотреть демо-дашборд</button>
+        <button class="cta ghost" style="margin-top:10px" onclick="window.__bizSeen=true;bgo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>Посмотреть демо-дашборд</button>
       </div>
     </section>
 
@@ -2580,7 +2580,7 @@ input,textarea{font-size:16px!important}
       <div class="hdr">
         <div>
           <div class="hdr-sub">Кабинет бизнеса</div>
-          <div class="hdr-title" style="font-size:21px;display:flex;align-items:center;gap:8px">Coffee Lab <span class="bh-verified" title="Заведение подтверждено"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--lime)" stroke="#06210a" stroke-width="2.4" style="display:inline-block;vertical-align:-.16em"><path d="M12 1l2.5 2.5L18 3l1 3.5L22 8l-1.5 3.3L22 14l-2.5 1L18 18l-3.5-.5L12 21l-2.5-3L6 18l-1-3-3-1.7L3.5 11 2 8l3-1.5L6 3l3.5.5z" stroke-linejoin="round"/><path d="M8 12l3 3 5-6" fill="none" stroke="#06210a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="hdr-title" style="font-size:21px;display:flex;align-items:center;gap:8px">Coffee Lab <span class="bh-verified" title="Заведение подтверждено"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--lime)" stroke="#06210a" stroke-width="2.5" style="display:inline-block;vertical-align:-.16em"><path d="M12 1l2.5 2.5L18 3l1 3.5L22 8l-1.5 3.3L22 14l-2.5 1L18 18l-3.5-.5L12 21l-2.5-3L6 18l-1-3-3-1.7L3.5 11 2 8l3-1.5L6 3l3.5.5z" stroke-linejoin="round"/><path d="M8 12l3 3 5-6" fill="none" stroke="#06210a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
         </div>
         <button class="mode-pill toclient" onclick="setMode('client')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Я клиент</button>
       </div>
@@ -2641,7 +2641,7 @@ input,textarea{font-size:16px!important}
               <div class="abx-lbl">Твоя ставка <span>(₾ в неделю)</span></div>
               <div class="abx-row"><div class="abx-input"><span class="abx-cur">₾</span><input id="aucInput" type="number" inputmode="numeric" placeholder="360" oninput="aucPreview(this.value)"></div><button class="abx-min" onclick="aucQuick()">мин. ₾360</button></div>
               <div class="abx-hint" id="aucHint">Минимум — на ₾20 выше текущего лидера</div>
-              <button class="cta gold" onclick="placeBid()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2l-2 7h5l-7 13 2-9H7z"/></svg>Сделать ставку</button>
+              <button class="cta gold" onclick="placeBid()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2l-2 7h5l-7 13 2-9H7z"/></svg>Сделать ставку</button>
             </div>
             <div class="auc-foot"><svg viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zM12 8v4M12 16h.01"/></svg><div><b id="aucTime">До конца: 2д 14ч</b><span>Деньги спишутся <b>только если победишь</b>. Ставку можно поднять.</span></div></div>
           </div>
@@ -2657,7 +2657,7 @@ input,textarea{font-size:16px!important}
       </div>
       <div class="scroll">
         <div class="card glass-soft pad-sm" style="display:flex;gap:11px;align-items:center;margin-bottom:16px;border:1px solid rgba(212,255,79,.25)">
-          <div style="width:40px;height:40px;border-radius:12px;background:rgba(212,255,79,.15);display:grid;place-items:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div style="width:40px;height:40px;border-radius:12px;background:rgba(212,255,79,.15);display:grid;place-items:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>
           <div><div style="font-weight:800;font-size:14px;color:var(--lime)">Размещение бесплатно</div><div style="font-size:12px;color:var(--txt-2)">3 поля — и ты на карте города</div></div>
         </div>
         <div class="field"><label>Название заведения</label><input id="bizName" placeholder="Напр. Coffee Lab" aria-label="Название заведения"></div>
@@ -3130,7 +3130,7 @@ function renderDeal(){
   var dayLbls=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
   var _td=new Date();
   var CHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>';
-  var FL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 1 0 1-1 1-2 0-3-2-4-2-7z"/></svg>';
+  var FL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 1 0 1-1 1-2 0-3-2-4-2-7z"/></svg>';
   var cells='';
   for(var n=1;n<=goal;n++){
     var offset=(cur+1)-n;var dt=new Date(_td);dt.setDate(dt.getDate()-offset);
@@ -3276,7 +3276,7 @@ function renderToday(){
     <div class="ct"><span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${T(top.why)}</span>
     <h1>${top.n}</h1>
     <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}</div>
-    <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick()" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
+    <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick()" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
   </div></div>`;
   document.getElementById('altList').innerHTML=C.biz.slice(1,4).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+'</div><div class="i"><h3>'+b.n+promo+'</h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div>'+heartBtn(b.n)+'<div class="pp">+'+b.pts+'</div></div>'}).join('')+
   `<div class="travel-card fadein" onclick="travelMode()"><div class="tv-glow"></div><div class="tv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 22l20-9L2 4v6l12 3-12 3z"/></svg></div><div class="tv-tx"><b>Ты в новом городе?</b><span>CityHUB соберёт маршрут на день под тебя — где поесть, что посмотреть, куда вечером</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>`+
@@ -3518,7 +3518,7 @@ function lfTiles(){
 }
 function lfPinIcon(b,nz){
   var promo=b.b==='promo'?' promo':'';
-  var svg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">'+(I[b.k]||I.shop)+'</svg>';
+  var svg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+(I[b.k]||I.shop)+'</svg>';
   return L.divIcon({className:'lf-pin-wrap',html:'<div class="lf-pin'+promo+'" style="background:'+nz.c+'">'+svg+'</div>',iconSize:[38,38],iconAnchor:[19,38],popupAnchor:[0,-34]});
 }
 function lfPopup(b,nz){
@@ -3641,7 +3641,7 @@ function initBizMap(){
   _LF_BIZ=L.map(host,{zoomControl:true,attributionControl:true}).setView(C.c,15);
   lfTiles().addTo(_LF_BIZ);
   // draggable marker
-  var ic=L.divIcon({className:'lf-pin-wrap',html:'<div class="lf-pin" style="background:var(--acc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/></svg></div>',iconSize:[38,38],iconAnchor:[19,38]});
+  var ic=L.divIcon({className:'lf-pin-wrap',html:'<div class="lf-pin" style="background:var(--acc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/></svg></div>',iconSize:[38,38],iconAnchor:[19,38]});
   _LF_BIZ_MARKER=L.marker(C.c,{icon:ic,draggable:true}).addTo(_LF_BIZ);
   _LF_BIZ.on('click',function(e){_LF_BIZ_MARKER.setLatLng(e.latlng);if(navigator.vibrate)navigator.vibrate(8)});
   _LF_BIZ_MARKER.on('dragend',function(){if(navigator.vibrate)navigator.vibrate(8)});
@@ -4629,7 +4629,7 @@ function openBiz(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(
   try{var src=(window.event&&(window.event.currentTarget||window.event.target));if(src&&src.closest){var card=src.closest('.answer,.mini,.biz,.fm-card');if(card){card.classList.add('tap-sink');setTimeout(function(){card.classList.remove('tap-sink')},300)}}}catch(e){}
   const srcBtn=b.u?`<button class="cta ghost" style="margin-top:18px" onclick='openInApp(${jx(b.u)},${jx(b.n+" — "+(b.src||"сайт"))})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7"/></svg>Открыть ${b.src||'сайт'}</button>`:'';
   document.getElementById('sheet-body').innerHTML=`<div class="grab"></div>
-    <div class="sheet-hero" style="background:linear-gradient(135deg,${nz.c}55,${nz.c}15)"><img src="${ph(nz.k,b.n.length,b.n)}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.style.display='none'"><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(5,6,10,.9),transparent 70%)"></div><button class="bh-refresh" onclick="refreshPlace(${jx(b.n)},${jx(b.k)},this);event.stopPropagation()" title="Другое место в этой нише" aria-label="Другое место"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button><div style="position:relative;display:flex;align-items:flex-end;gap:12px;width:100%"><div style="width:50px;height:50px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);flex-shrink:0">${ico(b.k,'#fff',2)}</div><div><h2>${b.n}</h2><div class="sub" style="margin-top:2px">${nz.n} · ${C.name} ${C.flag}</div></div></div></div>
+    <div class="sheet-hero" style="background:linear-gradient(135deg,${nz.c}55,${nz.c}15)"><img src="${ph(nz.k,b.n.length,b.n)}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.style.display='none'"><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(5,6,10,.9),transparent 70%)"></div><button class="bh-refresh" onclick="refreshPlace(${jx(b.n)},${jx(b.k)},this);event.stopPropagation()" title="Другое место в этой нише" aria-label="Другое место"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button><div style="position:relative;display:flex;align-items:flex-end;gap:12px;width:100%"><div style="width:50px;height:50px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);flex-shrink:0">${ico(b.k,'#fff',2)}</div><div><h2>${b.n}</h2><div class="sub" style="margin-top:2px">${nz.n} · ${C.name} ${C.flag}</div></div></div></div>
     <div style="display:flex;gap:10px;margin-bottom:6px"><div class="card glass-soft" style="flex:1;text-align:center;padding:13px"><div style="font-size:18px;font-weight:800;color:var(--gold)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> ${b.r}</div><div style="font-size:11px;color:var(--txt-2)">рейтинг</div></div><div class="card glass-soft" style="flex:1;text-align:center;padding:13px"><div style="font-size:18px;font-weight:800;background:var(--grad-lime);-webkit-background-clip:text;background-clip:text;color:transparent">+${b.pts}</div><div style="font-size:11px;color:var(--txt-2)">баллов</div></div><div class="card glass-soft" style="flex:1;text-align:center;padding:13px"><div style="font-size:13px;font-weight:800;color:var(--acc-2)">${b.src||'—'}</div><div style="font-size:11px;color:var(--txt-2)">источник</div></div></div>
     ${loreOf(b.n)?`<div class="place-lore"><div class="pl-emo">📖</div><div class="pl-tx"><b>История места</b>${loreOf(b.n)}</div></div>`:''}
     <div class="detail-row" style="margin-top:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="k">Часы</span><span class="vv">${hoursOf(b.n)} ${isOpenNow(b.n)?'<span style="color:var(--lime);font-weight:700;margin-left:6px">● открыто</span>':'<span style="color:var(--rose);font-weight:700;margin-left:6px">● закрыто</span>'}</span></div>
@@ -5686,7 +5686,7 @@ function openMascot(){
   var head='<div class="msc-head">'+
     '<div class="msc-ava"><span class="fmascot" id="fmChat" data-mood="happy"><img class="fm-back" src="mascot/Mascot_Back.png" alt=""><img class="fm-img" id="fmChatImg" src="mascot/adoration/01.png" alt=""></span></div>'+
     '<div class="msc-info"><b>CityHUB '+aiStatus+'</b><span class="msc-sub"><i></i>'+T('online')+' · '+role+'</span></div>'+
-    '<button class="msc-mode-flip" onclick="toggleMode();renderMascotLog();renderMascotQuick();var hd=document.querySelector(\'.msc-info .msc-sub\');if(hd)hd.innerHTML=\'<i></i>\'+T(\'online\')+\' · \'+(MODE===\'biz\'?\'бизнес-аналитик\':\'городской консьерж\');var mf=document.querySelector(\'.msc-mode-flip span\');if(mf)mf.textContent=(MODE===\'biz\'?T(\'клиент\'):T(\'бизнес\'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 4v16M4 7l3-3 3 3M17 20V4M14 17l3 3 3-3"/></svg><span>'+(MODE==='biz'?T('клиент'):T('бизнес'))+'</span></button>'+
+    '<button class="msc-mode-flip" onclick="toggleMode();renderMascotLog();renderMascotQuick();var hd=document.querySelector(\'.msc-info .msc-sub\');if(hd)hd.innerHTML=\'<i></i>\'+T(\'online\')+\' · \'+(MODE===\'biz\'?\'бизнес-аналитик\':\'городской консьерж\');var mf=document.querySelector(\'.msc-mode-flip span\');if(mf)mf.textContent=(MODE===\'biz\'?T(\'клиент\'):T(\'бизнес\'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 4v16M4 7l3-3 3 3M17 20V4M14 17l3 3 3-3"/></svg><span>'+(MODE==='biz'?T('клиент'):T('бизнес'))+'</span></button>'+
     '</div>';
   var log='<div class="msc-log" id="mscLog"></div>';
   var qc='<div id="mscMoods" class="msc-moods-fixed"></div>'+
@@ -5989,7 +5989,7 @@ function openPoster(){
       '<div class="poster-foot">cityhub · '+T('твой город в кармане')+'</div>'+
     '</div>'+
     '<div class="poster-actions no-print">'+
-      '<button class="cta lime" onclick="try{window.print()}catch(e){toast(T(\'Сделай скриншот плаката\'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>'+T('Печать / Сохранить PDF')+'</button>'+
+      '<button class="cta lime" onclick="try{window.print()}catch(e){toast(T(\'Сделай скриншот плаката\'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>'+T('Печать / Сохранить PDF')+'</button>'+
       '<button class="cta ghost" onclick="closePoster()">'+T('Закрыть')+'</button>'+
     '</div>';
   document.body.appendChild(ov);
