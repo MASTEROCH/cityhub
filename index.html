@@ -4628,8 +4628,30 @@ function submitReview(){
   else toast(T('Отзыв обновлён'));
   renderReviews(name,_revCtx.base);
 }
+/* Shared-element переход: «призрак» фото карточки вылетает и разворачивается к hero шторки.
+   Полностью аддитивно и устойчиво: при любой осечке — no-op, призрак всегда саморазрушается. */
+function morphHero(srcImg){
+  try{
+    if(!srcImg)return;
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+    var r=srcImg.getBoundingClientRect();
+    if(r.width<12||r.height<12)return;
+    var url=(srcImg.currentSrc||srcImg.getAttribute('src')||'').replace(/"/g,'');
+    if(!url)return;
+    var vw=window.innerWidth,vh=window.innerHeight;
+    var g=document.createElement('div');g.className='hero-ghost';
+    g.style.cssText='position:fixed;z-index:1500;pointer-events:none;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;background:#0a0e1a center/cover no-repeat;background-image:url("'+url+'");border-radius:16px;box-shadow:0 26px 64px rgba(0,0,0,.55);will-change:left,top,width,height,border-radius;transition:left .44s cubic-bezier(.2,.9,.25,1),top .44s cubic-bezier(.2,.9,.25,1),width .44s cubic-bezier(.2,.9,.25,1),height .44s cubic-bezier(.2,.9,.25,1),border-radius .44s';
+    document.body.appendChild(g);
+    var tl=18,tw=vw-36,th=130,tt=Math.round(vh*0.12)+28;
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      g.style.left=tl+'px';g.style.top=tt+'px';g.style.width=tw+'px';g.style.height=th+'px';g.style.borderRadius='28px';
+    })});
+    setTimeout(function(){g.style.transition='opacity .22s ease';g.style.opacity='0';setTimeout(function(){if(g.parentNode)g.remove()},240)},420);
+  }catch(e){}
+}
 function openBiz(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(n=>n.k===b.k)||{c:'#7C3AFF',n:'Ниша',q:''};const C=CITIES[CITY];
-  try{var src=(window.event&&(window.event.currentTarget||window.event.target));if(src&&src.closest){var card=src.closest('.answer,.mini,.biz,.fm-card');if(card){card.classList.add('tap-sink');setTimeout(function(){card.classList.remove('tap-sink')},300)}}}catch(e){}
+  var _srcImg=null;
+  try{var src=(window.event&&(window.event.currentTarget||window.event.target));if(src&&src.closest){var card=src.closest('.answer,.mini,.biz,.fm-card');if(card){_srcImg=card.querySelector('img');card.classList.add('tap-sink');setTimeout(function(){card.classList.remove('tap-sink')},300)}}}catch(e){}
   const srcBtn=b.u?`<button class="cta ghost" style="margin-top:18px" onclick='openInApp(${jx(b.u)},${jx(b.n+" — "+(b.src||"сайт"))})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7"/></svg>Открыть ${b.src||'сайт'}</button>`:'';
   document.getElementById('sheet-body').innerHTML=`<div class="grab"></div>
     <div class="sheet-hero" style="background:linear-gradient(135deg,${nz.c}55,${nz.c}15)"><img src="${ph(nz.k,b.n.length,b.n)}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.style.display='none'"><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(5,6,10,.9),transparent 70%)"></div><button class="bh-refresh" onclick="refreshPlace(${jx(b.n)},${jx(b.k)},this);event.stopPropagation()" title="Другое место в этой нише" aria-label="Другое место"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button><div style="position:relative;display:flex;align-items:flex-end;gap:12px;width:100%"><div style="width:50px;height:50px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);flex-shrink:0">${ico(b.k,'#fff',2)}</div><div><h2>${b.n}</h2><div class="sub" style="margin-top:2px">${nz.n} · ${C.name} ${C.flag}</div></div></div></div>
@@ -4644,6 +4666,7 @@ function openBiz(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(
     <div class="rev-sec" id="bizReviews"></div>`;
   window._bizRef=b;try{_revCtx.draft=0}catch(e){}
   _openSheet();haptic('open');
+  try{morphHero(_srcImg)}catch(e){}
   renderReviews(b.n,b.r);
   /* TG native: показать MainButton «Веди туда» и BackButton */
   tgBackShow();
