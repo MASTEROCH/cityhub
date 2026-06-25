@@ -4045,34 +4045,47 @@ async function callClaude(messages){
 /* CityHUB Worker streaming через SSE — onChunk(delta, full) */
 async function streamClaude(messages,onChunk){
   var body={model:AI_MODEL,max_tokens:600,system:aiSystemPrompt()+aiLangDirective(),messages:messages};
-  var res=await fetch(API_BASE+'/api/chat',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','X-CityHUB-User':aiUserId()},
-    body:JSON.stringify(body)
-  });
+  /* Защита от зависания: AbortController с жёстким лимитом 25с + сторож «нет данных 12с» */
+  var ctrl=new AbortController();
+  var _to=setTimeout(function(){try{ctrl.abort()}catch(e){}},25000);
+  function _bump(){clearTimeout(_to);_to=setTimeout(function(){try{ctrl.abort()}catch(e){}},12000)}
+  var res;
+  try{
+    res=await fetch(API_BASE+'/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CityHUB-User':aiUserId()},
+      body:JSON.stringify(body),
+      signal:ctrl.signal
+    });
+  }catch(e){clearTimeout(_to);throw new Error(e&&e.name==='AbortError'?'TIMEOUT':'NETWORK')}
   if(!res.ok){
+    clearTimeout(_to);
     var err='';try{var j=await res.json();err=j.error||j.reason||''}catch(e){err='HTTP_'+res.status}
     if(res.status===429)throw new Error('RATE_LIMIT');
     throw new Error('API_'+res.status+':'+err);
   }
   aiUsageInc();
   var reader=res.body.getReader();var dec=new TextDecoder();var buf='',full='';
-  while(true){
-    var r=await reader.read();if(r.done)break;
-    buf+=dec.decode(r.value,{stream:true});
-    var lines=buf.split('\n');buf=lines.pop()||'';
-    for(var i=0;i<lines.length;i++){
-      var ln=lines[i].trim();
-      if(!ln||!ln.startsWith('data: '))continue;
-      var json=ln.slice(6);if(json==='[DONE]')continue;
-      try{var ev=JSON.parse(json);
-        if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){
-          full+=ev.delta.text;
-          if(onChunk)onChunk(ev.delta.text,full);
-        }
-      }catch(e){}
+  try{
+    while(true){
+      var r=await reader.read();if(r.done)break;
+      _bump();
+      buf+=dec.decode(r.value,{stream:true});
+      var lines=buf.split('\n');buf=lines.pop()||'';
+      for(var i=0;i<lines.length;i++){
+        var ln=lines[i].trim();
+        if(!ln||!ln.startsWith('data: '))continue;
+        var json=ln.slice(6);if(json==='[DONE]')continue;
+        try{var ev=JSON.parse(json);
+          if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){
+            full+=ev.delta.text;
+            if(onChunk)onChunk(ev.delta.text,full);
+          }
+        }catch(e){}
+      }
     }
-  }
+  }catch(e){clearTimeout(_to);if(full)return full;throw new Error(e&&e.name==='AbortError'?'TIMEOUT':'STREAM')}
+  clearTimeout(_to);
   return full;
 }
 
