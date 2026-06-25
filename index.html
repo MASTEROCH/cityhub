@@ -3849,12 +3849,14 @@ function chStartParam(){try{return (window.Telegram&&Telegram.WebApp&&Telegram.W
 async function chCall(path,opts){
   opts=opts||{};
   var headers=Object.assign({'Content-Type':'application/json','X-CityHUB-InitData':chInitData()},opts.headers||{});
+  var ctrl=new AbortController();var to=setTimeout(function(){try{ctrl.abort()}catch(e){}},10000);/* бэкенд-запрос не виснет дольше 10с */
   try{
-    var res=await fetch(CH_API.base+path,{method:opts.method||'GET',headers:headers,body:opts.body?JSON.stringify(opts.body):undefined});
+    var res=await fetch(CH_API.base+path,{method:opts.method||'GET',headers:headers,body:opts.body?JSON.stringify(opts.body):undefined,signal:ctrl.signal});
     var data=await res.json().catch(function(){return null});
     if(!res.ok||!data||data.ok===false)return null;
     return data;
   }catch(e){return null}
+  finally{clearTimeout(to)}
 }
 function chSyncUser(u){
   try{
