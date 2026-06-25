@@ -2078,6 +2078,9 @@ input,textarea{font-size:16px!important}
 .rev-empty{font-size:13px;color:var(--txt-3);text-align:center;padding:14px 0}
 .pf-empty{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:var(--r-sm);background:rgba(255,255,255,.035);border:1px dashed var(--stroke-soft);font-size:12.5px;color:var(--txt-3);line-height:1.4}
 .pf-empty-ic{font-size:20px;flex-shrink:0}
+/* 10/10 press-feedback на тапабельных карточках, где его не было (тактильная консистентность) */
+.deal,.shop-item,.mpk{transition:transform .15s var(--ease-spring)}
+.deal:active,.shop-item:active,.mpk:active{transform:scale(.98)}
 /* 19. A4-плакат заведения с QR (печать/PDF) */
 .poster-ov{position:fixed;inset:0;z-index:10000;background:rgba(3,4,8,.75);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;overflow:auto}
 .poster-sheet{width:min(86vw,360px);aspect-ratio:1/1.414;background:#fff;color:#0a0d16;border-radius:18px;padding:30px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.6)}
