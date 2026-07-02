@@ -457,7 +457,7 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 .sheet-mascot .sheet::before,.sheet.sheet-mascot::before{display:none}
 .sheet-bg.msc-open,.sheet-bg.sheet-mascot{align-items:stretch!important;padding:0!important}
 /* Close — fixed top-right (relative to sheet) */
-.msc-close{position:fixed!important;top:calc(var(--safe-t) + var(--tg-content-safe-area-inset-top,0px) + 12px)!important;left:14px!important;right:auto!important;z-index:10001;width:44px;height:44px;border-radius:50%;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.14);color:var(--txt);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,border-color .2s;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.msc-close{position:fixed!important;top:calc(var(--safe-t) + var(--tg-content-safe-area-inset-top,0px) + 12px)!important;left:14px!important;right:auto!important;z-index:2147483000;width:44px;height:44px;border-radius:50%;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.14);color:var(--txt);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,border-color .2s;box-shadow:0 6px 18px rgba(0,0,0,.5)}
 .msc-close:hover{border-color:var(--rose);color:var(--rose)}
 .msc-close:active{transform:scale(.88);background:rgba(255,93,143,.2);border-color:var(--rose)}
 .msc-close svg{width:18px;height:18px}
@@ -834,6 +834,10 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 /* NET BANNER — статус сети */
 .net-banner{position:fixed;top:0;left:0;right:0;z-index:12000;transform:translateY(-110%);transition:transform .35s var(--ease-spring);background:linear-gradient(90deg,#ff5d8f,#ff8a3d);color:#1a0509;font-size:12.5px;font-weight:800;text-align:center;padding:calc(var(--safe-t) + 8px) 16px 8px;pointer-events:none}
 .net-banner.on{transform:none}
+/* UPDATE BANNER — доступна новая версия */
+.upd-banner{position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-b) + 14px);transform:translate(-50%,80px);z-index:11000;padding:11px 20px;border-radius:99px;background:linear-gradient(135deg,#7C3AFF,#00E0C7);color:#fff;font-size:13px;font-weight:700;font-family:inherit;border:1px solid rgba(255,255,255,.25);box-shadow:0 12px 32px rgba(124,58,255,.5);cursor:pointer;transition:transform .45s var(--ease-spring);white-space:nowrap}
+.upd-banner.on{transform:translate(-50%,0)}
+.upd-banner:active{transform:translate(-50%,0) scale(.95)}
 /* ONBOARDING */
 .onb{position:absolute;inset:0;z-index:3000;background:radial-gradient(130% 90% at 50% 0%,#0d1424 0%,#05060a 60%);display:none;flex-direction:column;padding:var(--safe-t) 0 var(--safe-b);overflow:hidden}
 .onb.on{display:flex;animation:fade .4s}
@@ -4442,6 +4446,10 @@ function openCity(){renderStatic();document.getElementById('cityBg').classList.a
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
 var DICT={
+'Вышло обновление':['Update available','განახლება ხელმისაწვდომია'],
+'обновить':['refresh','განახლება'],
+'Встряхни телефон — подберу другое место':['Shake your phone — I will pick another place','შეანჯღრიე ტელეფონი — სხვა ადგილს შეგირჩევ'],
+
 /* — batch: identity/plans/notifs/net (2026-07-02) — */
 'Как тебя называть?':['What should we call you?','რა დაგიძახოთ?'],
 'Имя видно в отзывах, лигах и сквадах':['Your name shows in reviews, leagues and squads','სახელი ჩანს შეფასებებში, ლიგებსა და გუნდებში'],
@@ -4841,6 +4849,7 @@ var __sheetTok=0;
 /* единая точка открытия шторки — отменяет незавершённое закрытие, чтобы не было down-анимации при reopen */
 function _openSheet(){var sh=document.getElementById('sheet');__sheetTok++;sh.classList.remove('closing');sh.classList.add('open');return sh}
 function closeSheet(){
+  try{mscCloseBtnHide()}catch(e){}
   var sh=document.getElementById('sheet');
   if(!sh.classList.contains('open')){sh.classList.remove('sheet-mascot','closing');return}
   var panel=sh.querySelector('.sheet');
@@ -4857,6 +4866,21 @@ function closeSheet(){
   try{tgBackHide();tgMainHide()}catch(e){}
 }
 function closeMascot(){closeSheet();haptic('tap')}
+/* ═══ Body-level крестик закрытия чата — гарантированно поверх всего ═══ */
+function mscCloseBtnShow(){
+  var b=document.getElementById('mscCloseBtn');
+  if(!b){
+    b=document.createElement('button');
+    b.id='mscCloseBtn';b.className='msc-close';b.setAttribute('aria-label','Закрыть');
+    b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M6 18L18 6"/></svg>';
+    var h=function(e){try{e.preventDefault();e.stopPropagation()}catch(_){}closeMascot()};
+    b.addEventListener('pointerdown',h);
+    b.addEventListener('click',h);
+    document.body.appendChild(b);
+  }
+  b.style.display='grid';
+}
+function mscCloseBtnHide(){var b=document.getElementById('mscCloseBtn');if(b)b.style.display='none'}
 function openShop(){
   document.getElementById('sheet-body').innerHTML=`<div class="grab"></div>
     <h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Магазин наград</h2>
@@ -5109,6 +5133,84 @@ safe(function(){var k='';try{k=localStorage.getItem('cityhub_lang_v1')||''}catch
 safe(applyLang);
 safe(renderIdentity);
 safe(function(){if(notifIsRead())notifSetRead()});
+/* ═══ SHAKE-TO-SURPRISE — встряхнул телефон → новое место (сигнатурный жест CityHUB) ═══ */
+safe(function initShake(){
+  var last=0;
+  function fire(){
+    var now=Date.now();if(now-last<1800)return;last=now;
+    try{
+      if(window.MODE==='biz')return; /* только клиентский мир */
+      var sc=document.getElementById('c-today');if(!sc||!sc.classList.contains('active'))return; /* только «Сегодня» */
+      var sh=document.getElementById('sheet');if(sh&&sh.classList.contains('open'))return; /* не под шторкой */
+      var onb=document.getElementById('onb');if(onb&&onb.classList.contains('on'))return;
+      haptic('reward');toast('🎲 '+T('Удиви меня'));
+      nextPick();
+    }catch(e){}
+  }
+  window.__shakeSupported=false;
+  /* 1) Нативный Telegram Accelerometer (Bot API 8.0) — работает без запроса разрешений */
+  try{
+    var TG=window.Telegram&&Telegram.WebApp;
+    if(TG&&TG.Accelerometer&&TG.Accelerometer.start){
+      var px=null,py=null,pz=null;
+      TG.onEvent('accelerometerChanged',function(){
+        var A=TG.Accelerometer;
+        if(px===null){px=A.x;py=A.y;pz=A.z;return}
+        var d=Math.abs(A.x-px)+Math.abs(A.y-py)+Math.abs(A.z-pz);
+        px=A.x;py=A.y;pz=A.z;
+        if(d>25)fire();
+      });
+      TG.Accelerometer.start({refresh_rate:100},function(ok){if(ok)window.__shakeSupported=true});
+      window.__shakeSupported=true;
+      return;
+    }
+  }catch(e){}
+  /* 2) Fallback: devicemotion — Android/десктоп (iOS вне TG требует жест-разрешение, пропускаем) */
+  try{
+    if(window.DeviceMotionEvent&&typeof DeviceMotionEvent.requestPermission!=='function'){
+      var lx=null,ly=null,lz=null;
+      window.addEventListener('devicemotion',function(e){
+        var a=e.accelerationIncludingGravity;if(!a||a.x===null)return;
+        if(lx===null){lx=a.x;ly=a.y;lz=a.z;return}
+        var d=Math.abs(a.x-lx)+Math.abs(a.y-ly)+Math.abs(a.z-lz);
+        lx=a.x;ly=a.y;lz=a.z;
+        if(d>28)fire();
+      },{passive:true});
+      window.__shakeSupported=true;
+    }
+  }catch(e){}
+});
+/* Одноразовая подсказка про жест — только там, где он реально работает */
+safe(function(){
+  setTimeout(function(){
+    try{
+      if(!window.__shakeSupported||seen('shake_v1'))return;
+      var sc=document.getElementById('c-today');if(!sc||!sc.classList.contains('active'))return;
+      var onb=document.getElementById('onb');if(onb&&onb.classList.contains('on'))return;
+      setSeen('shake_v1');toast('💡 '+T('Встряхни телефон — подберу другое место'));haptic('tap');
+    }catch(e){}
+  },7000);
+});
+/* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
+   Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
+var APP_V=23;
+safe(function(){
+  function check(){
+    try{
+      fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){
+        if(j&&j.v&&j.v>APP_V&&!document.getElementById('updBanner')){
+          var b=document.createElement('button');b.id='updBanner';b.className='upd-banner';
+          b.innerHTML='✨ '+T('Вышло обновление')+' — <b>'+T('обновить')+'</b>';
+          b.onclick=function(){try{haptic('tap')}catch(e){}location.reload()};
+          document.body.appendChild(b);
+          requestAnimationFrame(function(){b.classList.add('on')});
+        }
+      }).catch(function(){});
+    }catch(e){}
+  }
+  setTimeout(check,3000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(check,600)});
+});
 /* ═══ OFFLINE-БАННЕР — честный статус сети ═══ */
 safe(function(){
   var nb=document.createElement('div');nb.className='net-banner';nb.id='netBanner';
@@ -5881,8 +5983,10 @@ function openMascot(){
     '<button class="msc-mic" id="mscMic" onclick="toggleVoice()" aria-label="Голосовой ввод" title="Голос"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3"/></svg></button>'+
     '<button class="msc-send" onclick="mascotSend()" aria-label="Отправить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button>'+
   '</div>';
-  var closeBtn='<button class="msc-close" onclick="closeMascot()" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M6 18L18 6"/></svg></button>';
-  document.getElementById('sheet-body').innerHTML=closeBtn+'<div class="msc-shell">'+head+log+qc+inp+'</div>';
+  document.getElementById('sheet-body').innerHTML='<div class="msc-shell">'+head+log+qc+inp+'</div>';
+  /* Крестик — НА BODY, вне шторки: никакой stacking-context/overflow/transform предок его не перекроет.
+     pointerdown, не click — часть TG-webview глотает click после touch-скролла. */
+  mscCloseBtnShow();
   var sh=_openSheet();sh.classList.add('sheet-mascot');/* _openSheet чистит 'closing' — иначе pointer-events:none ломал закрытие */
   renderMascotLog();renderMascotQuick();
   mascotPlay('happy');
