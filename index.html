@@ -12,22 +12,26 @@
 <meta property="og:title" content="CityHUB — твой город в кармане">
 <meta property="og:description" content="AI-консьерж который реально знает город. Куда сходить, где вкусно, что прямо сейчас. Loop-баллы и квесты.">
 <meta property="og:url" content="https://masteroch.github.io/cityhub/">
-<meta property="og:image" content="https://masteroch.github.io/cityhub/og-cover.png">
+<meta property="og:image" content="https://masteroch.github.io/cityhub/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CityHUB — твой город в кармане">
 <meta property="og:locale" content="ru_RU">
 <!-- Twitter card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="CityHUB — городской консьерж">
 <meta name="twitter:description" content="AI знает все места города. Куда сходить — открыл и сразу понял.">
-<meta name="twitter:image" content="https://masteroch.github.io/cityhub/og-cover.png">
+<meta name="twitter:image" content="https://masteroch.github.io/cityhub/og-cover.jpg">
 <!-- PWA / Apple -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CityHUB">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://rsms.me/">
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-<link rel="preconnect" href="https://cartodb-basemaps-a.global.ssl.fastly.net/" crossorigin>
+<link rel="preconnect" href="https://tile.openstreetmap.org/" crossorigin>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -232,11 +236,14 @@ html,body{overflow-x:hidden;overscroll-behavior:none;-webkit-text-size-adjust:10
   .bc-v-big{font-size:36px}
 }
 .aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+/* Аврора замирает, когда её не видно: под открытой шторкой и когда вкладка в фоне.
+   Ни одного кадра визуальной разницы, минус 8 непрерывных анимаций. */
+body.anim-halt .blob{animation-play-state:paused}
 .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.16;mix-blend-mode:screen;will-change:transform}
-.b1{width:62vw;height:62vw;background:#5b3cff;top:-18%;left:-14%;animation:drift1 38s cubic-bezier(.6,.04,.4,.96) infinite,breath 11s ease-in-out infinite alternate}
-.b2{width:56vw;height:56vw;background:#0fb6e6;bottom:-18%;right:-18%;animation:drift2 46s cubic-bezier(.6,.04,.4,.96) infinite,breath 13s ease-in-out infinite alternate-reverse;opacity:.14}
-.b3{width:46vw;height:46vw;background:#ff3d77;top:30%;right:-10%;opacity:.09;animation:drift3 52s cubic-bezier(.6,.04,.4,.96) infinite,breath 17s ease-in-out infinite alternate}
-.b4{width:38vw;height:38vw;background:#d4ff4f;top:55%;left:-10%;opacity:.07;animation:drift4 58s cubic-bezier(.6,.04,.4,.96) infinite,breath 19s ease-in-out infinite alternate-reverse;mix-blend-mode:screen}
+.b1{width:62vw;height:62vw;background:#5b3cff;top:-18%;left:-14%;animation:drift1 38s cubic-bezier(.6,.04,.4,.96) infinite}
+.b2{width:56vw;height:56vw;background:#0fb6e6;bottom:-18%;right:-18%;animation:drift2 46s cubic-bezier(.6,.04,.4,.96) infinite;opacity:.14}
+.b3{width:46vw;height:46vw;background:#ff3d77;top:30%;right:-10%;opacity:.09;animation:drift3 52s cubic-bezier(.6,.04,.4,.96) infinite}
+.b4{width:38vw;height:38vw;background:#D4FF4F;top:55%;left:-10%;opacity:.07;animation:drift4 58s cubic-bezier(.6,.04,.4,.96) infinite;mix-blend-mode:screen}
 body.biz .b1{background:#ffb14d}body.biz .b2{background:#7C3AFF}body.biz .b3{background:#00E0C7}body.biz .b4{background:#ff5d8f}
 /* === BIZ MODE — full accent swap (lime → gold) === */
 body.biz{--accent:var(--gold);--accent-grad:var(--grad-gold);--accent-ink:#2a1500;--accent-glow:rgba(255,181,71,.4)}
@@ -356,6 +363,9 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 #bizmap{height:200px;border-radius:var(--r-md);overflow:hidden;border:1px solid var(--stroke);position:relative;z-index:2;background:#0a0e1a}
 /* === Leaflet — кастомизация под dark CityHUB === */
 .leaflet-container{background:#0a0e1a!important;font-family:var(--font)}
+/* Светлые тайлы OSM переводим в тёмную тему приложения. Фильтр только на пане
+   тайлов — маркеры, попапы и контролы Leaflet лежат отдельно и остаются как есть. */
+.leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.76) contrast(1.06) saturate(.5)}
 .leaflet-control-attribution{background:rgba(5,6,10,.65)!important;color:rgba(244,246,251,.5)!important;font-size:9px!important;backdrop-filter:blur(8px);padding:2px 7px!important;border-radius:0 0 0 8px!important}
 .leaflet-control-attribution a{color:rgba(244,246,251,.7)!important}
 .leaflet-control-zoom{border:1px solid rgba(255,255,255,.14)!important;border-radius:12px!important;overflow:hidden;box-shadow:0 6px 22px rgba(0,0,0,.45)!important;backdrop-filter:blur(12px)}
@@ -370,15 +380,15 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 .lf-popup .lp-meta{display:flex;gap:8px;font-size:11.5px;color:var(--txt-2);align-items:center;flex-wrap:wrap}
 .lf-popup .lp-meta .lp-rate{color:var(--gold);font-weight:800;display:inline-flex;align-items:center;gap:3px}
 .lf-popup .lp-meta .lp-pts{color:var(--lime);font-weight:800}
-.lf-popup .lp-go{margin-top:6px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:800;background:var(--grad-lime);color:#06210a;text-align:center;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;border:none;width:100%}
+.lf-popup .lp-go{margin-top:6px;padding:8px 12px;border-radius:12px;font-size:12px;font-weight:800;background:var(--grad-lime);color:#06210a;text-align:center;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;border:none;width:100%}
 .lf-popup .lp-go svg{width:13px;height:13px}
 /* Custom divIcon pins (CityHUB-style teardrop with category color) */
 .lf-pin-wrap{background:none!important;border:none!important}
 .lf-pin{width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.6);border:2.5px solid rgba(255,255,255,.85);position:relative;transition:transform .2s cubic-bezier(.2,1.4,.4,1)}
 .lf-pin svg{transform:rotate(45deg);width:18px;height:18px;color:#fff}
 .lf-pin.promo::after{content:'';position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:2px solid #05060a;transform:rotate(45deg);box-shadow:0 0 8px rgba(255,181,71,.6)}
-.lf-pin.promo{animation:lfPinPulse 1.8s ease-in-out infinite}
-@keyframes lfPinPulse{0%,100%{box-shadow:0 6px 18px rgba(0,0,0,.6)}50%{box-shadow:0 6px 18px rgba(0,0,0,.6),0 0 0 9px rgba(255,181,71,.18)}}
+.lf-pin.promo::before{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 9px rgba(255,181,71,.18);pointer-events:none;opacity:0;animation:lfPinPulse 1.8s ease-in-out infinite}
+@keyframes lfPinPulse{0%,100%{transform:scale(.8);opacity:0}50%{transform:scale(1);opacity:1}}
 .lf-pin-wrap.sel .lf-pin{transform:rotate(-45deg) scale(1.25);box-shadow:0 0 0 5px rgba(212,255,79,.4),0 8px 24px rgba(0,0,0,.55)}
 /* Me-dot (current user) */
 .lf-me{background:none!important;border:none!important}
@@ -665,7 +675,7 @@ body.biz .cta.lime,body.biz .go-btn,body.biz .dgo,body.biz .lbtn.primary,body.bi
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
   pointer-events:none;z-index:1;
-  animation:ctaEdgeShine 4.5s ease-in-out infinite;
+  animation:ctaEdgeShine 4.5s ease-in-out 2;
 }
 /* Диагональный блик-сметка по поверхности */
 .cta:not(.ghost)::after,.go-btn::after,.dgo::after,.lbtn.primary::after,.bc-btn.primary::after,.si-btn::after,.loot-btn::after,.big-cta::after,.cb-btn::after{
@@ -676,7 +686,7 @@ body.biz .cta.lime,body.biz .go-btn,body.biz .dgo,body.biz .lbtn.primary,body.bi
 }
 @keyframes ctaGradMove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes ctaEdgeShine{0%{background-position:200% 0}60%,100%{background-position:-100% 0}}
-@keyframes ctaSweep{0%{left:-50%}60%,100%{left:150%}}
+@keyframes ctaSweep{0%{transform:translateX(0) skewX(-22deg)}60%,100%{transform:translateX(526%) skewX(-22deg)}}
 .cta:not(.ghost):hover,.go-btn:hover,.dgo:hover,.lbtn.primary:hover,.big-cta:hover,.go-btn-new:hover{filter:brightness(1.06) saturate(1.1)}
 .cta:not(.ghost):active::after,.go-btn:active::after,.dgo:active::after{animation:ctaSweep .55s ease-out}
 @media (prefers-reduced-motion:reduce){
@@ -705,6 +715,7 @@ body.biz .cta.lime,body.biz .go-btn,body.biz .dgo,body.biz .lbtn.primary,body.bi
 .tab.on::before{content:'';position:absolute;top:6px;width:40px;height:38px;border-radius:14px;background:var(--grad-lime);opacity:.18;filter:blur(2px)}
 body.biz .tab.on{color:var(--gold)}
 body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
+.sheet-bg.over-onb{z-index:3500}
 .sheet-bg{position:absolute;inset:0;z-index:1000;background:rgba(3,4,8,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:flex-end}
 .sheet-bg.open{display:flex;animation:fade .3s}@keyframes fade{from{opacity:0}to{opacity:1}}
 .sheet{width:100%;max-height:88%;border-radius:32px 32px 0 0;padding:8px 18px calc(var(--safe-b) + 22px);overflow-y:auto;background:linear-gradient(180deg,rgba(28,32,46,.88),rgba(16,20,31,.92));-webkit-backdrop-filter:blur(50px) saturate(200%) brightness(1.06);backdrop-filter:blur(50px) saturate(200%) brightness(1.06);border:1px solid rgba(255,255,255,.14);border-bottom:none;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.24),0 -24px 70px rgba(0,0,0,.65),0 -1px 0 rgba(255,255,255,.04);animation:sheetUp .42s cubic-bezier(.2,.9,.25,1);position:relative}
@@ -714,7 +725,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .grab{width:42px;height:5px;border-radius:99px;background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,.4) 50%,rgba(255,255,255,.18));margin:8px auto 16px;cursor:grab;transition:width .25s var(--ease-spring),background .2s;position:relative}
 .grab:hover{width:54px;background:linear-gradient(90deg,rgba(255,255,255,.3),rgba(255,255,255,.55) 50%,rgba(255,255,255,.3))}
 /* premium micro-transitions */
-.tap-sink{transition:transform .26s cubic-bezier(.34,1.56,.64,1)!important;transform:scale(.96)!important;filter:brightness(.94)}
+.tap-sink{transition:transform .25s cubic-bezier(.34,1.56,.64,1)!important;transform:scale(.96)!important;filter:brightness(.94)}
 .sheet>*{animation:sheetRise .5s var(--ease-out) backwards}
 .sheet>*:nth-child(1){animation-delay:.04s}
 .sheet>*:nth-child(2){animation-delay:.09s}
@@ -925,17 +936,17 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
   animation:giftBob 3s ease-in-out infinite}
 @keyframes giftBob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-5px) rotate(4deg)}}
 .voucher-big .vk{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:10px;
-  background:linear-gradient(90deg,#d4ff4f,#fff3b0,#d4ff4f);-webkit-background-clip:text;background-clip:text;color:transparent}
+  background:linear-gradient(90deg,#D4FF4F,#fff3b0,#D4FF4F);-webkit-background-clip:text;background-clip:text;color:transparent}
 .voucher-big .vk-line{width:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(212,255,79,.6),transparent)}
 .voucher-big .vamt{display:flex;align-items:flex-start;justify-content:center;gap:4px;margin:10px 0 12px;position:relative;z-index:2;line-height:1}
-.voucher-big .vcur{font-size:32px;font-weight:800;margin-top:10px;background:linear-gradient(135deg,#fff3b0,#d4ff4f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.voucher-big .vcur{font-size:32px;font-weight:800;margin-top:10px;background:linear-gradient(135deg,#fff3b0,#D4FF4F);-webkit-background-clip:text;background-clip:text;color:transparent}
 .voucher-big .vnum{font-size:84px;font-weight:900;letter-spacing:-.05em;position:relative;
-  background:linear-gradient(160deg,#fff7c4 0%,#eaff8f 30%,#d4ff4f 55%,#a8d935 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background:linear-gradient(160deg,#fff7c4 0%,#eaff8f 30%,#D4FF4F 55%,#a8d935 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 6px 22px rgba(212,255,79,.55))}
 .voucher-big .vnum::after{content:'10';position:absolute;left:0;top:0;background:linear-gradient(100deg,transparent 38%,rgba(255,255,255,.95) 50%,transparent 62%);-webkit-background-clip:text;background-clip:text;color:transparent;animation:amtGlint 4s ease-in-out 1.8s infinite}
 @keyframes amtGlint{0%,72%,100%{opacity:0}82%{opacity:1}}
 .voucher-big .vsub{font-size:14px;color:rgba(255,255,255,.7);line-height:1.55;position:relative;z-index:2;text-align:center}
-.voucher-big .vsub b{color:#d4ff4f;font-weight:700}
+.voucher-big .vsub b{color:#D4FF4F;font-weight:700}
 /* перфорация-разрез */
 .voucher-big .vperf{position:relative;height:1px;margin:20px -28px 16px;border-top:2px dashed rgba(212,255,79,.3)}
 .voucher-big .vcut{position:absolute;top:50%;width:28px;height:28px;border-radius:50%;background:#070f0c;transform:translateY(-50%);box-shadow:inset 0 2px 5px rgba(0,0,0,.6)}
@@ -953,7 +964,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 @keyframes confFall{0%{opacity:0;transform:translateY(-20px) rotate(0)}10%{opacity:1}100%{opacity:0;transform:translateY(440px) rotate(560deg)}}
 /* voucher banner on Today */
 .vbanner{border-radius:var(--r-lg);padding:15px 16px;margin-bottom:16px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(212,255,79,.16),rgba(0,224,199,.1));border:1px solid rgba(212,255,79,.3);display:flex;align-items:center;gap:13px}
-.vbanner .vbi{width:50px;height:50px;border-radius:15px;background:var(--grad-lime);display:grid;place-items:center;flex-shrink:0;box-shadow:0 6px 18px rgba(212,255,79,.3);animation:vbiPulse 2.6s ease-in-out infinite;position:relative;overflow:hidden}
+.vbanner .vbi{width:50px;height:50px;border-radius:14px;background:var(--grad-lime);display:grid;place-items:center;flex-shrink:0;box-shadow:0 6px 18px rgba(212,255,79,.3);animation:vbiPulse 2.6s ease-in-out infinite;position:relative;overflow:hidden}
 .vbanner .vbi::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);background-size:200% 100%;animation:qprogShimmer 3s linear infinite}
 @keyframes vbiPulse{0%,100%{box-shadow:0 6px 18px rgba(212,255,79,.3)}50%{box-shadow:0 6px 28px rgba(212,255,79,.6),0 0 0 8px rgba(212,255,79,.08)}}
 .vbanner .vbi b{font-size:18px;font-weight:900;color:#06210a}
@@ -1541,7 +1552,8 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
 /* ═══════════════ PREMIUM POLISH CSS ═══════════════ */
 /* Ambient breathing — мягкая жизнь через bg-color, без filter (чтобы не создавать containing block для fixed-children) */
 @keyframes appBreathe{0%,100%{background-color:#05060a}50%{background-color:#0a0c14}}
-body:not(.quiet) #app{animation:appBreathe 4.4s ease-in-out infinite}
+/* body:not(.quiet) #app{animation:appBreathe 4.4s ease-in-out infinite}
+   снято 2026-09-10: полноэкранная перерисовка фона ради невидимой под авророй дельты */
 /* Quiet mode после 22:00 — анимации замедляются */
 body.quiet .blob{animation-duration:80s,30s!important;opacity:.09!important}
 body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transition-duration:.35s!important}
@@ -1562,7 +1574,7 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .skel-card{flex-shrink:0;width:170px;height:220px;display:inline-block;margin-right:10px}
 
 /* Long-press peek overlay */
-.peek-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);z-index:9000;display:grid;place-items:center;padding:32px;opacity:0;transition:opacity .22s var(--ease-out)}
+.peek-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);z-index:9000;display:grid;place-items:center;padding:32px;opacity:0;transition:opacity .2s var(--ease-out)}
 .peek-overlay.open{opacity:1}
 .peek-card{position:relative;width:100%;max-width:340px;aspect-ratio:3/4;border-radius:28px;overflow:hidden;background:#0a0d16;border:1px solid rgba(255,255,255,.14);box-shadow:0 32px 100px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.18);transform:scale(.85);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
 .peek-overlay.open .peek-card{transform:scale(1)}
@@ -1641,9 +1653,9 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 /* ═══════════════ AI MASCOT EXTRAS ═══════════════ */
 /* Inline indicator в шапке чата */
 .msc-info b{display:flex;align-items:center;gap:8px}
-.msc-ai-on{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;padding:2.5px 7px;border-radius:99px;background:linear-gradient(135deg,#D4FF4F,#a8d935);color:#06210a;letter-spacing:.05em;text-shadow:0 1px 0 rgba(255,255,255,.18);box-shadow:0 3px 8px rgba(212,255,79,.35);position:relative}
+.msc-ai-on{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;padding:2px 7px;border-radius:99px;background:linear-gradient(135deg,#D4FF4F,#a8d935);color:#06210a;letter-spacing:.05em;text-shadow:0 1px 0 rgba(255,255,255,.18);box-shadow:0 3px 8px rgba(212,255,79,.35);position:relative}
 .msc-ai-on::before{content:'';width:5px;height:5px;border-radius:50%;background:#06210a;animation:livePulse 1.4s ease-in-out infinite}
-.msc-ai-off{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;padding:2.5px 7px;border-radius:99px;background:rgba(255,93,143,.18);color:#ff5d8f;letter-spacing:.05em;border:1px solid rgba(255,93,143,.32)}
+.msc-ai-off{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;padding:2px 7px;border-radius:99px;background:rgba(255,93,143,.18);color:#ff5d8f;letter-spacing:.05em;border:1px solid rgba(255,93,143,.32)}
 /* Top banner — приглашение подключить ключ */
 .msc-keybanner{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:13px 16px;border-radius:20px;background:linear-gradient(155deg,rgba(212,255,79,.22),rgba(0,224,199,.12));border:1px solid rgba(212,255,79,.38);box-shadow:0 9px 28px rgba(212,255,79,.3),inset 0 1px 0 rgba(255,255,255,.18);cursor:pointer;transition:all .2s var(--ease-spring);position:relative;overflow:hidden}
 .msc-keybanner:active{transform:scale(.98)}
@@ -1817,7 +1829,7 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .agent-toggle[open] summary::before{transform:rotate(90deg)}
 .agent-toggle .agt-hint{font-size:11.5px;color:var(--txt-3);font-weight:500}
 /* === IN-APP BROWSER overlay (Telegram-style) === */
-.inapp-ov{position:fixed;inset:0;z-index:5000;background:rgba(3,4,8,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;flex-direction:column;opacity:0;transition:opacity .32s var(--ease-out)}
+.inapp-ov{position:fixed;inset:0;z-index:5000;background:rgba(3,4,8,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;flex-direction:column;opacity:0;transition:opacity .35s var(--ease-out)}
 .inapp-ov.show{opacity:1}
 .inapp-hd{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:calc(var(--safe-t) + 12px) 14px 12px;background:linear-gradient(180deg,rgba(28,32,46,.92),rgba(16,20,31,.95));-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border-bottom:1px solid rgba(255,255,255,.12);color:var(--txt)}
 .inapp-close{width:40px;height:40px;flex-shrink:0;border-radius:50%;background:var(--glass-strong);border:1px solid var(--stroke);color:var(--txt);font-size:18px;font-weight:600;cursor:pointer;display:grid;place-items:center;transition:transform .15s}
@@ -1933,14 +1945,14 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .ref-code{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 16px;border-radius:var(--r-sm);background:rgba(0,0,0,.25);border:1px dashed rgba(255,255,255,.2)}
 .ref-code b{flex:1;font-size:17px;font-weight:800;letter-spacing:.05em}
 .ref-code button{font-size:12px;font-weight:800;color:#06210a;background:var(--lime);padding:7px 13px;border-radius:99px}
-.big-cta{width:100%;padding:17px;border-radius:var(--r-md);font-size:16px;font-weight:800;text-align:center;display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .15s}
+.big-cta{width:100%;padding:16px;border-radius:var(--r-md);font-size:16px;font-weight:800;text-align:center;display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .15s}
 .big-cta:active{transform:scale(.97)}.big-cta svg{width:20px;height:20px}
 /* ===== PRO POLISH: микровзаимодействия, глубина, переходы ===== */
 /* кинематографичный вход экрана */
 .screen.active{animation:scrIn .5s cubic-bezier(.16,1,.3,1)}
 @keyframes scrIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
 /* тактильный отклик всех кликабельных поверхностей */
-.biz,.mini,.shop-card,.city-row,.niche-row,.plan,.tier-card,.arr-rw,.star-opt,.shop-item,.vbanner,.upsell,.waitlist,.ref-card,.ach2,.deal,.answer,.cta,.go-btn,.dgo,.lbtn,.chip,.onb-int,.filter-chip,.tab,.sphere-th{transition:transform .16s cubic-bezier(.2,1.3,.4,1),box-shadow .2s,border-color .2s,background .2s}
+.biz,.mini,.shop-card,.city-row,.niche-row,.plan,.tier-card,.arr-rw,.star-opt,.shop-item,.vbanner,.upsell,.waitlist,.ref-card,.ach2,.deal,.answer,.cta,.go-btn,.dgo,.lbtn,.chip,.onb-int,.filter-chip,.tab,.sphere-th{transition:transform .15s cubic-bezier(.2,1.3,.4,1),box-shadow .2s,border-color .2s,background .2s}
 .biz:active,.mini:active,.shop-card:active,.city-row:active,.niche-row:active,.plan:active,.tier-card:active,.arr-rw:active,.star-opt:active,.shop-item:active,.vbanner:active,.ref-card:active{transform:scale(.975)}
 .cta:active,.go-btn:active,.dgo:active,.lbtn:active{transform:scale(.95)}
 /* мягкое свечение primary-кнопок при наведении/нажатии */
@@ -2036,7 +2048,7 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .sheet-bg.open{animation:fadeBg var(--dur) var(--ease-out)}
 @keyframes fadeBg{0%{opacity:0}100%{opacity:1}}
 /* exit-анимация шторки — мягкое закрытие вместо хард-ката */
-.sheet-bg.closing{display:flex!important;animation:fadeBgOut .26s var(--ease-in-out) forwards;pointer-events:none}
+.sheet-bg.closing{display:flex!important;animation:fadeBgOut .25s var(--ease-in-out) forwards;pointer-events:none}
 .sheet-bg.closing .sheet{animation:sheetDown .28s cubic-bezier(.4,0,.85,.3) forwards}
 @keyframes fadeBgOut{from{opacity:1}to{opacity:0}}
 @keyframes sheetDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
@@ -2146,9 +2158,9 @@ input,textarea{font-size:16px!important}
 .htool.wl-tool.bump .wl-tool-count{animation:wlBump .55s var(--ease-spring)}
 @keyframes wlBump{0%{transform:scale(1)}40%{transform:scale(1.4)}70%{transform:scale(.9)}100%{transform:scale(1)}}
 /* === BELL SHAKE — встряхивание колокольчика при непрочитанных === */
-.htool.bell.has-unread{animation:bellTilt 4.2s ease-in-out infinite}
-.htool.bell.has-unread svg{transform-origin:50% 22%;animation:bellShake 4.2s ease-in-out infinite;color:var(--gold)}
-.htool.bell.has-unread::after{content:'';position:absolute;inset:-2px;border-radius:50%;border:2px solid var(--rose);opacity:0;pointer-events:none;animation:bellPing 4.2s ease-out infinite}
+.htool.bell.has-unread{animation:bellTilt 4.2s ease-in-out 4}
+.htool.bell.has-unread svg{transform-origin:50% 22%;animation:bellShake 4.2s ease-in-out 4;color:var(--gold)}
+.htool.bell.has-unread::after{content:'';position:absolute;inset:-2px;border-radius:50%;border:2px solid var(--rose);opacity:0;pointer-events:none;animation:bellPing 4.2s ease-out 4}
 .htool.bell.has-unread .notif-dot{animation:dotPulse 1.6s ease-in-out infinite;background:var(--rose);box-shadow:0 0 10px var(--rose),0 0 18px rgba(255,93,143,.5)}
 @keyframes bellShake{
   0%,78%,100%{transform:rotate(0)}
@@ -2225,6 +2237,9 @@ input,textarea{font-size:16px!important}
 .answer .top-strip .wl-heart{width:38px;height:38px}
 /* heart на biz/mini card — позиция справа */
 .biz .wl-heart,.mini .wl-heart{margin-left:6px;flex-shrink:0}
+/* Сердце живёт в углу фото, а не в строке с именем — строка отдана названию */
+.biz .th .wl-heart.th-heart{position:absolute;top:5px;right:5px;width:30px;height:30px;margin:0;z-index:2;border-radius:50%}
+.biz .th .wl-heart.th-heart svg{width:15px;height:15px}
 /* === First-time mascot tooltip (контекстный коучер) === */
 .fab-firsttime{position:absolute;right:84px;bottom:8px;width:max-content;max-width:220px;padding:11px 14px;border-radius:14px 14px 4px 14px;background:rgba(16,20,31,.96);border:1px solid var(--accent);color:var(--txt);font-size:13px;font-weight:600;line-height:1.4;box-shadow:0 12px 36px rgba(0,0,0,.55),0 0 0 4px var(--accent-glow);animation:ffTipIn .5s var(--ease-spring) backwards,ffTipBounce 1.4s ease-in-out 1s infinite;z-index:601;pointer-events:auto}
 .fab-firsttime b{color:var(--accent);font-weight:800}
@@ -2267,6 +2282,42 @@ input,textarea{font-size:16px!important}
 .addr-input input{flex:1;background:none;border:none;color:var(--txt);font-size:15px;padding:15px 0;outline:none}
 .addr-sug{font-size:12.5px;color:var(--lime);font-weight:600;margin-top:7px;display:none;align-items:center;gap:6px}
 .addr-sug.on{display:flex;animation:fadein .3s both}
+/* Задание, механика которого ещё не включена — видно, что оно неактивно */
+.earn-soon{opacity:.55}
+.earn-soon .m{color:var(--txt-3)}
+/* === LEGAL — правовая информация (privacy / terms / авторство) === */
+.lg-list{display:flex;flex-direction:column;gap:9px}
+.lg-opt{display:flex;align-items:center;gap:13px;padding:15px;border-radius:var(--r-md);background:rgba(255,255,255,.045);border:1px solid var(--stroke-soft);transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast),border-color var(--dur-fast);cursor:pointer;text-align:left;font-family:inherit;color:var(--txt);width:100%;min-height:56px}
+.lg-opt:active{transform:scale(.975);background:rgba(255,255,255,.075);border-color:var(--stroke)}
+.lg-opt .lg-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:rgba(124,58,255,.16);color:var(--acc-2)}
+.lg-opt .lg-ic svg{width:19px;height:19px}
+.lg-opt .lg-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lg-opt .lg-tx b{font-size:14.5px;font-weight:700;letter-spacing:-.01em}
+.lg-opt .lg-tx span{font-size:12px;color:var(--txt-3);line-height:1.35}
+.lg-opt .lg-ar{width:17px;height:17px;flex-shrink:0;color:var(--txt-3)}
+.lg-back{display:inline-flex;align-items:center;gap:6px;padding:9px 13px 9px 10px;margin-bottom:12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--stroke-soft);font-size:12.5px;font-weight:700;color:var(--txt-2);font-family:inherit;cursor:pointer;min-height:38px}
+.lg-back:active{transform:scale(.96);background:rgba(255,255,255,.1)}
+.lg-back svg{width:15px;height:15px}
+.lg-doc{font-size:13.5px;line-height:1.62;color:var(--txt-2);padding-bottom:6px}
+.lg-doc h3{font-size:14px;font-weight:800;color:var(--txt);letter-spacing:-.01em;margin:20px 0 7px}
+.lg-doc h3:first-child{margin-top:6px}
+.lg-doc p{margin:0 0 9px}
+.lg-doc ul{margin:0 0 10px;padding-left:17px}
+.lg-doc li{margin-bottom:5px}
+.lg-doc b{color:var(--txt);font-weight:700}
+.lg-doc .lg-link{color:var(--acc-2);font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.lg-upd{margin-top:18px;padding-top:13px;border-top:1px solid var(--stroke-soft);font-size:11.5px;color:var(--txt-3);line-height:1.5}
+/* Подпись авторства в профиле */
+.lg-sign{margin-top:22px;padding:16px 14px 18px;border-radius:var(--r-md);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft);text-align:center}
+.lg-sign .lgs-logo{width:34px;height:34px;margin:0 auto 9px;border-radius:12px;display:grid;place-items:center;background:var(--grad);box-shadow:0 6px 18px rgba(124,58,255,.32)}
+.lg-sign .lgs-logo svg{width:18px;height:18px}
+.lg-sign b{display:block;font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--txt)}
+.lg-sign span{display:block;font-size:11.5px;color:var(--txt-3);margin-top:3px;line-height:1.5}
+.lg-sign .lgs-links{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.lg-sign .lgs-links button{padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--stroke-soft);font-size:11.5px;font-weight:700;color:var(--txt-2);font-family:inherit;cursor:pointer;min-height:36px}
+.lg-sign .lgs-links button:active{transform:scale(.96);background:rgba(255,255,255,.1)}
+.onb-legal{margin-top:2px;padding:0 24px calc(var(--safe-b) + 14px);font-size:11px;line-height:1.5;color:var(--txt-3);text-align:center}
+.onb-legal u{text-decoration:underline;text-underline-offset:2px;cursor:pointer;color:var(--txt-2)}
 </style>
 </head>
 <body class="client">
@@ -2512,6 +2563,7 @@ input,textarea{font-size:16px!important}
           <button class="pf-row" onclick="openAISetup()"><span class="pf-r-ic">🤖</span><span class="pf-r-t">AI · Claude</span><span class="pf-r-v" id="pfAI"><span class="pf-dot" style="background:#ff5d8f;box-shadow:0 0 6px #ff5d8f"></span> не подключён</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
           <button class="pf-row" onclick="openBot()"><span class="pf-r-ic">💬</span><span class="pf-r-t">Telegram-бот</span><span class="pf-r-v">@CityHubBot</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
           <button class="pf-row" onclick="openMascot();setTimeout(function(){mascotIntent('Как пользоваться CityHUB? Объясни коротко: как копить баллы, что такое Loop и как найти место рядом.','Помощь')},300)"><span class="pf-r-ic">❓</span><span class="pf-r-t">Помощь</span><span class="pf-r-v">Спросить Hub</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
+          <button class="pf-row" onclick="openLegal()"><span class="pf-r-ic">📄</span><span class="pf-r-t">Правовая информация</span><span class="pf-r-v">Политика, соглашение, авторство</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
         </div>
 
         <!-- Мой CityHUB QR -->
@@ -2529,6 +2581,18 @@ input,textarea{font-size:16px!important}
           <div id="tasteBars"></div>
           <button class="add-taste" onclick="openAddTaste()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Добавить вкус</button>
           <div class="taste-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg>Обновляется автоматически по твоим действиям</div>
+        </div>
+
+        <!-- Авторство + правовая информация -->
+        <div class="lg-sign">
+          <div class="lgs-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg></div>
+          <b>CityHUB</b>
+          <span>Продукт AppHub Studio · дизайн и разработка ROCH</span>
+          <span id="pfVer">Версия —</span>
+          <div class="lgs-links">
+            <button onclick="openLegal()">Правовая информация</button>
+            <button onclick="openExternal(APP_LINKS.apphub)">Своё приложение</button>
+          </div>
         </div>
       </div>
     </section>
@@ -2796,7 +2860,7 @@ input,textarea{font-size:16px!important}
           <div class="vtexture"></div>
           <div class="vholo"></div>
           <div class="vshine"></div>
-          <div class="vgift"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d4ff4f" stroke-width="1.8"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9C12 6 10 4 8 4S5 6 6 8c1 1 6 1 6 1zM12 9c0-3 2-5 4-5s3 2 2 4c-1 1-6 1-6 1z"/></svg></div>
+          <div class="vgift"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4FF4F" stroke-width="1.8"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9C12 6 10 4 8 4S5 6 6 8c1 1 6 1 6 1zM12 9c0-3 2-5 4-5s3 2 2 4c-1 1-6 1-6 1z"/></svg></div>
           <div class="vk"><span class="vk-line"></span>Подарок при входе<span class="vk-line"></span></div>
           <div class="vamt"><span class="vcur">₾</span><span class="vnum">10</span></div>
           <div class="vsub">На первое посещение любого заведения.<br>Покажи QR на кассе — <b>город угощает!</b></div>
@@ -2807,6 +2871,7 @@ input,textarea{font-size:16px!important}
     </div>
     <div class="onb-dots" id="onbDots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
     <div class="onb-foot"><button class="big-cta" id="onbBtn" style="background:var(--grad);box-shadow:0 10px 30px rgba(124,58,255,.4)" onclick="nextOnb()">Дальше</button></div>
+    <div class="onb-legal" id="onbLegal" data-no-i18n></div>
   </div>
 </div>
 
@@ -3050,13 +3115,15 @@ const ACH=[
   {n:'Меломан',k:'music',p:'+70',cur:1,goal:4,unit:'концерта',got:0},
   {n:'Город в кармане',k:'shop',p:'+300',cur:9,goal:13,unit:'ниш',got:0}
 ];
-const EARN=[{i:'camera',n:'Фото из заведения',p:'+40 · UGC',act:'photo'},{i:'people',n:'Пригласи друга',p:'+200 за каждого',act:'invite'},{i:'star',n:'Оставь отзыв',p:'+25 баллов',act:'review'},{i:'globe',n:'Чек-ин в новом городе',p:'+150 баллов',act:'city'}];
+/* Задания за баллы. soon:1 — механика ещё не включена, рисуем честно и без обещания баллов. */
+const EARN=[{i:'people',n:'Пригласи друга',p:'+200 за каждого',act:'invite'},{i:'star',n:'Оставь отзыв',p:'+25 баллов',act:'review'},{i:'globe',n:'Чек-ин в новом городе',p:'+150 баллов',act:'city'},{i:'camera',n:'Фото из заведения',p:'скоро · +40 за фото',act:'photo',soon:1}];
 /* Earn-задания ведут к реальному действию, а не в тост */
 function earnGo(act){
   if(act==='invite'){shareTelegram();return}
   if(act==='city'){openCity();return}
   if(act==='review'){cgo('today');toast(T('Открой любое место — отзыв внизу карточки'));return}
-  toast(T('Скоро: загрузка фото за баллы'));
+  if(act==='photo'){toast(T('Фото включим вместе с боевым каталогом — задание уже ждёт'));return}
+  toast(T('Это задание скоро откроется'));
 }
 /* Детали тарифа — вместо тоста полноценная шторка + вопрос Hub'у */
 function openPlan(pi){
@@ -3323,7 +3390,7 @@ function renderToday(){
     <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}</div>
     <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick()" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
   </div></div>`;
-  document.getElementById('altList').innerHTML=C.biz.slice(1,4).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+'</div><div class="i"><h3>'+b.n+promo+'</h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div>'+heartBtn(b.n)+'<div class="pp">+'+b.pts+'</div></div>'}).join('')+
+  document.getElementById('altList').innerHTML=C.biz.slice(1,4).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><h3>'+b.n+promo+'</h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp">+'+b.pts+'</div></div>'}).join('')+
   `<div class="travel-card fadein" onclick="travelMode()"><div class="tv-glow"></div><div class="tv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 22l20-9L2 4v6l12 3-12 3z"/></svg></div><div class="tv-tx"><b>Ты в новом городе?</b><span>CityHUB соберёт маршрут на день под тебя — где поесть, что посмотреть, куда вечером</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>`+
   `<div class="ai-cta fadein" onclick="openMascot()"><div class="ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4M8 12h.01M12 12h.01M16 12h.01"/></svg></div><div class="ai-tx"><b>Не знаешь, чего хочешь?</b><span>Спроси AI-консьержа — подберёт по настроению</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>`;
 }
@@ -3555,10 +3622,13 @@ function cityMapSVG(){
 // === LEAFLET REAL MAPS ===
 var _LF_MAIN=null,_LF_MARKERS=[],_LF_ME=null,_LF_BIZ=null,_LF_BIZ_MARKER=null,_LF_CHAT=[];
 function lfTiles(){
-  // CartoDB Dark Matter — bbest fit for CityHUB dark theme, free, no key
-  return L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-    subdomains:'abcd',maxZoom:20,minZoom:10,
-    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · <a href="https://carto.com/attributions">CARTO</a>'
+  /* CARTO закрыла dark_all без ключа и печатает поверх карты «API KEY REQUIRED» —
+     это было видно на боевом сайте. Берём стандартные тайлы OSM (ключ не нужен),
+     а тёмную тему делаем фильтром на слое тайлов: маркеры и попапы он не трогает,
+     они лежат в других панах Leaflet. */
+  return L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19,minZoom:10,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   });
 }
 function lfPinIcon(b,nz){
@@ -3725,7 +3795,7 @@ function renderMapTab(){
 function renderList(){
   const C=CITIES[CITY];const items=C.biz.filter(b=>filter==='all'||b.k===filter);
   if(!items.length){document.getElementById('listHolder').innerHTML=`<div class="empty"><div class="ic">${ico('shop','currentColor',1.6)}</div><h3>В этой нише пока пусто</h3><p>Hub может подобрать похожее под твоё настроение.</p><button class="cta lime" style="margin-top:14px" onclick="openMascot();setTimeout(function(){mascotIntent('предложи что-нибудь похожее на ${filter}','что-то рядом')},280)">💬 Спросить Hub</button></div>`;return}
-  document.getElementById('listHolder').innerHTML=items.map(function(b,idx){var nz=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',q:''};var bb=b.b==='promo'?'<span class="badge promo">Promo</span>':b.b==='new'?'<span class="badge new">New</span>':b.b==='free'?'<span class="badge free">Free</span>':'';var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}return '<div class="biz" id="card-'+idx+'" onclick="selectPlace('+idx+',false)"><div class="th">'+thumb(b,nz)+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3>'+bb+'</div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+nz.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div>'+heartBtn(b.n)+'<div class="pp"><div class="v">+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
+  document.getElementById('listHolder').innerHTML=items.map(function(b,idx){var nz=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',q:''};var bb=b.b==='promo'?'<span class="badge promo">Promo</span>':b.b==='new'?'<span class="badge new">New</span>':b.b==='free'?'<span class="badge free">Free</span>':'';var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}return '<div class="biz" id="card-'+idx+'" onclick="selectPlace('+idx+',false)"><div class="th">'+thumb(b,nz)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3>'+bb+'</div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+nz.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp"><div class="v">+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
 }
 let selIdx=-1;
 function selectPlace(i,fromMap){
@@ -4338,7 +4408,7 @@ function renderStatic(){
     <div class="ach2-bar"><div class="ach2-fill" style="width:${pct}%;background:${done?'var(--grad-lime)':'linear-gradient(90deg,'+nz.c+'88,'+nz.c+')'}"></div></div>
     <div class="ach2-meta"><span>${a.cur} / ${a.goal} ${a.unit}</span><span>${done?'получено':'+'+(a.goal-a.cur)+' до награды'}</span></div></div>`}).join(''));
   setHTML('shopRow',REWARDS.map(r=>`<div class="shop-card" onclick="openShop()"><div class="sc-ic" style="background:${r.col}22">${ico(r.k,r.col,2)}</div><div class="sc-n">${r.n}</div><div class="sc-d">${r.d}</div><div class="sc-c">${ei('star','var(--lime)',14)} ${r.c.toLocaleString('ru-RU')}</div></div>`).join(''));
-  setHTML('earn',EARN.map(e=>`<div class="biz glass-soft" onclick="earnGo('${e.act}')"><div class="th" style="background:rgba(255,255,255,.06);display:grid;place-items:center">${ico(e.i,'var(--lime)',2)}</div><div class="i"><h3 style="font-size:14.5px">${e.n}</h3><div class="m">${e.p}</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>`).join(''));
+  setHTML('earn',EARN.map(e=>`<div class="biz glass-soft${e.soon?' earn-soon':''}" onclick="earnGo('${e.act}')"><div class="th" style="background:rgba(255,255,255,.06);display:grid;place-items:center">${ico(e.i,'var(--lime)',2)}</div><div class="i"><h3 style="font-size:14.5px">${e.n}</h3><div class="m">${e.p}</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>`).join(''));
   setHTML('myints',INTERESTS.map((t,i)=>`<button class="chip ${i<5?'on':''}" onclick="toggleChip(this)">${ei(t[0],'currentColor',15)} ${t[1]}</button>`).join(''));
   setHTML('plans',PLANS.map((p,pi)=>`<div class="plan ${p.f?'featured':'glass'}" onclick="openPlan(${pi})"><div class="ph"><h3>${p.n}</h3>${p.tag?`<span class="tag">${p.tag}</span>`:''}</div><div class="price">${p.pr}<small>₾${p.per}</small></div><ul>${p.feat.map(f=>`<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>${f}</li>`).join('')}</ul></div>`).join(''));
   setHTML('ahTiers',AHTIERS.map(t=>`<div class="tier-card ${t.hot?'hot':''}"><div class="nm">${t.nm}</div><div class="pr">${t.pr}${t.per?`<small>${t.per}</small>`:''}</div><div class="ds">${t.ds}</div></div>`).join(''));
@@ -4446,6 +4516,18 @@ function openCity(){renderStatic();document.getElementById('cityBg').classList.a
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
 var DICT={
+/* — batch: legal / авторство / честные заглушки (2026-09-10) — */
+'Доступ к микрофону запрещён':['Microphone access denied','მიკროფონზე წვდომა აკრძალულია'],
+'Не услышал — попробуй ещё':['Did not catch that — try again','ვერ გავიგე — სცადე ხელახლა'],
+'Фото включим вместе с боевым каталогом — задание уже ждёт':['Photos go live with the real catalogue — the task is already waiting','ფოტოებს ჩავრთავთ რეალურ კატალოგთან ერთად — დავალება უკვე გელოდება'],
+'Это задание скоро откроется':['This task opens soon','ეს დავალება მალე გაიხსნება'],
+'скоро':['soon','მალე'],
+'за фото':['per photo','ფოტოზე'],
+'Правовая информация':['Legal','სამართლებრივი ინფორმაცია'],
+'Политика, соглашение, авторство':['Policy, terms, authorship','პოლიტიკა, შეთანხმება, ავტორობა'],
+'Продукт AppHub Studio · дизайн и разработка ROCH':['A product by AppHub Studio · design & development by ROCH','პროდუქტი AppHub Studio · დიზაინი და დეველოპმენტი ROCH'],
+'Своё приложение':['Your own app','საკუთარი აპლიკაცია'],
+'Версия':['Version','ვერსია'],
 'Вышло обновление':['Update available','განახლება ხელმისაწვდომია'],
 'обновить':['refresh','განახლება'],
 'Встряхни телефон — подберу другое место':['Shake your phone — I will pick another place','შეანჯღრიე ტელეფონი — სხვა ადგილს შეგირჩევ'],
@@ -4574,7 +4656,11 @@ function trText(raw){
 function T(s){return curLang==='RU'||!s?s:trText(''+s)}
 /* Переводим все текстовые узлы DOM. Оригинал храним в свойстве узла __ru — не разрушает соседние узлы/детей. */
 function translateNode(root){
-  var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null,false);
+  /* Юридические тексты не проходят подстрочную замену фраз — у каждого языка свой оригинал */
+  var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    try{if(n.parentElement&&n.parentElement.closest('[data-no-i18n]'))return NodeFilter.FILTER_REJECT}catch(e){}
+    return NodeFilter.FILTER_ACCEPT;
+  }},false);
   var nodes=[],n;while(n=walker.nextNode())nodes.push(n);
   if(curLang==='RU'){
     nodes.forEach(function(nd){if(nd.__ru!=null){nd.nodeValue=nd.__ru}});
@@ -4657,6 +4743,18 @@ function pickVibe(k){
   setTimeout(function(){renderToday();var a=document.getElementById('answerCard');if(a&&a.scrollIntoView)a.scrollIntoView({behavior:'smooth',block:'center'})},120);
   if(navigator.vibrate)navigator.vibrate(12);
 }
+/* Строка согласия на онбординге + номер версии в профиле — свои оригиналы на каждый язык */
+function renderConsent(){
+  var L={
+    RU:['Продолжая, ты принимаешь ','Пользовательское соглашение',' и ','Политику конфиденциальности'],
+    EN:['By continuing you accept the ','Terms of Service',' and the ','Privacy Policy'],
+    GE:['გაგრძელებით ეთანხმები ','მომხმარებლის შეთანხმებას',' და ','კონფიდენციალურობის პოლიტიკას']
+  }[curLang]||null;
+  var el=document.getElementById('onbLegal');
+  if(el&&L)el.innerHTML=L[0]+'<u onclick="openLegalDoc(\'terms\')">'+L[1]+'</u>'+L[2]+'<u onclick="openLegalDoc(\'privacy\')">'+L[3]+'</u>';
+  var v=document.getElementById('pfVer');
+  if(v)v.textContent=({RU:'Версия',EN:'Version',GE:'ვერსია'}[curLang]||'Версия')+' '+(typeof APP_V!=='undefined'?APP_V:'—');
+}
 function openLang(){
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Язык</h2>'+
@@ -4675,6 +4773,7 @@ function setLang(k){
   try{renderToday()}catch(e){}
   applyLang();startLangObserver();
   closeSheet();
+  try{renderConsent()}catch(e){}
   var l=LANGS.find(function(x){return x.k===k});toast(l.f+' '+l.n);haptic('select')
 }
 function openSearch(){
@@ -4847,7 +4946,16 @@ function confirmArrived(pts,bizName){
 }
 var __sheetTok=0;
 /* единая точка открытия шторки — отменяет незавершённое закрытие, чтобы не было down-анимации при reopen */
-function _openSheet(){var sh=document.getElementById('sheet');__sheetTok++;sh.classList.remove('closing');sh.classList.add('open');return sh}
+/* Аврору за шторкой и в фоновой вкладке останавливаем: её всё равно не видно,
+   а восемь непрерывных анимаций продолжали греть телефон. */
+function animHalt(on){try{document.body.classList.toggle('anim-halt',!!on)}catch(e){}}
+document.addEventListener('visibilitychange',function(){
+  animHalt(document.hidden||document.getElementById('sheet').classList.contains('open'));
+});
+function _openSheet(){var sh=document.getElementById('sheet');__sheetTok++;sh.classList.remove('closing');animHalt(true);
+  /* онбординг лежит на z-index 3000 — шторку поверх него поднимаем, иначе она открывается невидимой */
+  try{sh.classList.toggle('over-onb',!!document.querySelector('.onb.on'))}catch(e){}
+  sh.classList.add('open');return sh}
 function closeSheet(){
   try{mscCloseBtnHide()}catch(e){}
   var sh=document.getElementById('sheet');
@@ -4858,8 +4966,9 @@ function closeSheet(){
   var fin=function(){
     /* финализируем только если за это время не открыли новую шторку */
     if(__sheetTok!==tok||!sh.classList.contains('closing'))return;
-    sh.classList.remove('open','closing','sheet-mascot');
+    sh.classList.remove('open','closing','sheet-mascot','over-onb');
     if(panel)panel.scrollTop=0;
+    animHalt(document.hidden);
   };
   if(panel){var onEnd=function(e){if(e.target===panel){panel.removeEventListener('animationend',onEnd);fin()}};panel.addEventListener('animationend',onEnd)}
   setTimeout(fin,360); /* fallback на случай отсутствия animationend */
@@ -5130,7 +5239,7 @@ safe(function(){var k='';try{k=localStorage.getItem('cityhub_lang_v1')||''}catch
     try{startLangObserver()}catch(e){}
     try{renderToday()}catch(e){}
   }});
-safe(applyLang);
+safe(applyLang);safe(renderConsent);
 safe(renderIdentity);
 safe(function(){if(notifIsRead())notifSetRead()});
 /* ═══ SHAKE-TO-SURPRISE — встряхнул телефон → новое место (сигнатурный жест CityHUB) ═══ */
@@ -5193,7 +5302,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=23;
+var APP_V=25;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -5705,7 +5814,7 @@ function openWishlist(){
   if(!places.length){
     body+='<div class="empty"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C.9 8.5 2.2 4 6.5 4c2.4 0 3.7 1.4 5.5 3.2C13.8 5.4 15.1 4 17.5 4c4.3 0 5.6 4.5 4 8-2.5 4.5-9.5 9-9.5 9z"/></svg></div><h3 style="font-size:17px;color:var(--txt);font-weight:800">'+T('Пока пусто')+'</h3><p>'+T('Тапни ❤ на любом месте, чтобы сохранить')+'</p></div>';
   } else {
-    body+=places.map(function(b){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''};return '<div class="biz glass-soft" onclick="closeSheet();setTimeout(function(){openBiz('+jx(b)+')},250)"><div class="th">'+thumb(b,z)+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3></div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span></div></div>'+heartBtn(b.n)+'<div class="pp"><div class="v">+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
+    body+=places.map(function(b){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''};return '<div class="biz glass-soft" onclick="closeSheet();setTimeout(function(){openBiz('+jx(b)+')},250)"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3></div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span></div></div><div class="pp"><div class="v">+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
   }
   document.getElementById('sheet-body').innerHTML=body;
   _openSheet();
@@ -5770,7 +5879,7 @@ function applyTimeAura(){
   var h=new Date().getHours();
   var palette;
   if(h>=6&&h<11){palette={b1:'#ff9a6b',b2:'#ffd66b',b3:'#ff5d8f',b4:'#ffb547'}}/* sunrise */
-  else if(h>=11&&h<17){palette={b1:'#7c5cff',b2:'#21d4fd',b3:'#5edc9a',b4:'#d4ff4f'}}/* day */
+  else if(h>=11&&h<17){palette={b1:'#7c5cff',b2:'#21d4fd',b3:'#5edc9a',b4:'#D4FF4F'}}/* day */
   else if(h>=17&&h<22){palette={b1:'#7c3aff',b2:'#ff5d8f',b3:'#ffb547',b4:'#a78bff'}}/* sunset */
   else{palette={b1:'#1e2280',b2:'#3a4fc0',b3:'#5b3cff',b4:'#21d4fd'}}/* night */
   if(MODE==='biz')return;/* biz mode имеет свою палитру */
@@ -5980,7 +6089,7 @@ function openMascot(){
   var qc='<div id="mscMoods" class="msc-moods-fixed"></div>'+
     '<div class="msc-quick-wrap'+(MW_LOG.length>1?' collapsed':'')+'" id="mscQuickWrap"><button class="msc-quick-toggle" onclick="toggleQuick()"><span id="mqToggleLbl">'+T('Идеи для вопроса')+'</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button><div class="msc-quick" id="mscQuick"></div></div>';
   var inp='<div class="msc-input"><input id="mascotInput" placeholder="'+(MODE==='biz'?'Спроси про бизнес…':'Куда сходить, что попробовать…')+'" onkeydown="if(event.key===\'Enter\')mascotSend()">'+
-    '<button class="msc-mic" id="mscMic" onclick="toggleVoice()" aria-label="Голосовой ввод" title="Голос"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3"/></svg></button>'+
+    (voiceSupported()?'<button class="msc-mic" id="mscMic" onclick="toggleVoice()" aria-label="Голосовой ввод" title="Голос"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3"/></svg></button>':'')+
     '<button class="msc-send" onclick="mascotSend()" aria-label="Отправить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button>'+
   '</div>';
   document.getElementById('sheet-body').innerHTML='<div class="msc-shell">'+head+log+qc+inp+'</div>';
@@ -6125,10 +6234,13 @@ function mascotPush(role,html){MW_LOG.push({role:role,html:html});renderMascotLo
 function toggleQuick(){var w=document.getElementById('mscQuickWrap');if(!w)return;w.classList.toggle('collapsed');haptic('tap')}
 // === VOICE INPUT (Web Speech API) ===
 var _voiceRec=null;
+/* Web Speech есть не везде (в частности, в Telegram WebView на iOS его нет).
+   Кнопку микрофона рисуем только там, где она реально работает — иначе это мёртвый тап. */
+function voiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
 function toggleVoice(){
   var btn=document.getElementById('mscMic');if(!btn)return;
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){toast('Голосовой ввод не поддерживается браузером');return}
+  if(!SR){btn.remove();return}
   if(_voiceRec){_voiceRec.stop();return}
   _voiceRec=new SR();
   _voiceRec.lang=(curLang==='RU')?'ru-RU':(curLang==='EN'?'en-US':'ka-GE');
@@ -6136,7 +6248,7 @@ function toggleVoice(){
   btn.classList.add('listening');haptic('tap');
   var inp=document.getElementById('mascotInput');
   _voiceRec.onresult=function(e){var t='';for(var i=0;i<e.results.length;i++)t+=e.results[i][0].transcript;if(inp)inp.value=t};
-  _voiceRec.onerror=function(e){toast(e.error==='not-allowed'?'Доступ к микрофону запрещён':'Не услышал — попробуй ещё');btn.classList.remove('listening');_voiceRec=null};
+  _voiceRec.onerror=function(e){toast(T(e.error==='not-allowed'?'Доступ к микрофону запрещён':'Не услышал — попробуй ещё'));btn.classList.remove('listening');_voiceRec=null};
   _voiceRec.onend=function(){btn.classList.remove('listening');_voiceRec=null;if(inp&&inp.value.trim())setTimeout(mascotSend,150)};
   try{_voiceRec.start()}catch(e){btn.classList.remove('listening');_voiceRec=null}
 }
@@ -6302,6 +6414,449 @@ function openPoster(){
 }
 function closePoster(){var o=document.getElementById('posterOv');if(o)o.remove()}
 /* ═══ Внешние ссылки — единая точка (TG openLink → window.open) ═══ */
+/* ==========================================================================
+   LEGAL — правовая информация (P0 #3).
+   Одна точка правки реквизитов: LEGAL_META. Перед приёмом платежей заменить
+   entity/contact на реальные юридические реквизиты.
+   Тексты НЕ проходят авто-переводчик (data-no-i18n) — у каждого языка свой
+   оригинал, подстрочная замена фраз ломала бы юридический смысл.
+   ========================================================================== */
+var LEGAL_META={
+  entity:'AppHub Studio',            /* TODO(go-live): юрлицо/ИП + рег.номер */
+  /* Единственный канал связи по данным — сайт студии.
+     TODO(go-live): добавить почту для запросов по персональным данным. */
+  site:'https://apphub.studio',
+  updated:{RU:'10 сентября 2026',EN:'10 September 2026',GE:'2026 წლის 10 სექტემბერი'}
+};
+var LEGAL={
+RU:{
+ privacy:{t:'Политика конфиденциальности',s:'Какие данные CityHUB собирает и зачем',md:`
+## Коротко
+CityHUB — городской консьерж внутри Telegram. Мы собираем минимум: столько, сколько нужно, чтобы начислить тебе баллы за визит, показать места рядом и ответить на вопрос AI-консьержу. Мы не продаём данные и не строим на тебе рекламные профили на стороне.
+
+## Кто обрабатывает данные
+Оператор — %ENTITY%, разработчик и владелец приложения CityHUB. Связь по любым вопросам о данных — через сайт %SITE%.
+
+## Что мы получаем от Telegram
+Когда ты открываешь приложение, Telegram передаёт нам подписанные данные твоего профиля:
+- идентификатор Telegram, имя и фамилию, username, ссылку на аватар, язык интерфейса;
+- параметр запуска (например, код заведения из QR-плаката или реферальный код).
+Эти данные нужны, чтобы узнать тебя при следующем входе и привязать баллы к аккаунту. Твой номер телефона, переписку и список контактов Telegram нам не передаёт, и мы их не запрашиваем.
+
+## Что мы храним на твоём устройстве
+Часть данных не уходит с телефона и живёт в локальном хранилище браузера Telegram: выбранный язык, имя, факт пройденного онбординга, настройки AI-консьержа, отметка «уведомления прочитаны». Всё это стирается вместе с данными приложения.
+
+## Что мы храним на сервере
+- <b>Визиты (чек-ины).</b> Код заведения и время отметки — чтобы начислить баллы и не начислить их дважды за день.
+- <b>Баланс баллов Loop</b> и уровень.
+- <b>Отзывы.</b> Оценка, текст и имя автора — они публичны внутри приложения.
+- <b>Сообщения AI-консьержу</b> — только на время обработки запроса.
+
+## Геолокация
+Приложение спрашивает доступ к местоположению, только когда ты сам нажимаешь «Определить автоматически» или открываешь карту. Координаты используются в моменте — определить город и посчитать расстояние до места. Мы не пишем историю твоих перемещений и не храним координаты на сервере. Отказ от геолокации ничего не ломает: город можно выбрать вручную.
+
+## Чего мы не собираем
+Платёжных реквизитов, паспортных данных, биометрии, содержимого твоей переписки, списка контактов, точного трека перемещений, данных о здоровье.
+
+## Кому данные передаются
+Мы работаем на чужой инфраструктуре, и часть данных проходит через партнёров — каждый со своей политикой:
+- <b>Telegram</b> — авторизация и доставка приложения;
+- <b>Anthropic (Claude)</b> — обрабатывает текст твоего вопроса к AI-консьержу, чтобы сформировать ответ;
+- <b>Supabase</b> — база данных (визиты, баллы, отзывы);
+- <b>Vercel</b> — серверная часть API;
+- <b>GitHub Pages</b> — раздача самого приложения;
+- <b>CARTO и OpenStreetMap</b> — тайлы карты;
+- <b>Unsplash и Pexels</b> — фотографии мест в демо-каталоге.
+Мы не продаём и не сдаём данные в аренду третьим лицам. Рекламных трекеров и пикселей в приложении нет.
+
+## Что видит заведение
+Владелец заведения видит <b>обезличенную статистику</b>: сколько было визитов, сколько уникальных гостей, сколько начислено баллов. Он не получает твой номер, Telegram-аккаунт или историю визитов по другим местам. Исключение — отзыв: его ты публикуешь под своим именем осознанно.
+
+## Сколько мы храним данные
+Пока ты пользуешься приложением и 12 месяцев после последнего входа. Дальше — удаляем или обезличиваем. Отзывы могут остаться в обезличенном виде.
+
+## Твои права
+Ты можешь запросить копию своих данных, исправить их, удалить аккаунт целиком или отозвать согласие. Напиши нам через %SITE% — ответим в течение 30 дней. Удаление аккаунта стирает баллы и историю визитов безвозвратно.
+
+## Дети
+Приложение рассчитано на пользователей от 16 лет. Мы сознательно не собираем данные детей младше.
+
+## Безопасность
+Данные передаются по HTTPS. Запросы к серверу подписаны Telegram и проверяются на подлинность. Полностью гарантировать безопасность передачи данных в интернете невозможно — мы делаем разумно возможное.
+
+## Изменения
+Если политика изменится, мы обновим дату ниже и покажем уведомление в приложении. Продолжая пользоваться CityHUB после изменений, ты принимаешь новую редакцию.
+`},
+ terms:{t:'Пользовательское соглашение',s:'Правила: баллы, отзывы, тарифы, ответственность',md:`
+## Что это за документ
+Открывая CityHUB, ты соглашаешься с правилами ниже. Если что-то в них не устраивает — просто не пользуйся приложением.
+
+## Что такое CityHUB
+CityHUB — справочно-рекомендательный сервис и программа лояльности внутри Telegram. Мы показываем места города, начисляем баллы за визиты и отвечаем на вопросы через AI-консьержа. Оператор сервиса — %ENTITY%.
+
+<b>Мы не оказываем услуги заведений.</b> Кофе варит кофейня, стрижёт барбершоп, столик держит ресторан. CityHUB — витрина и лояльность, а не сторона договора между тобой и заведением.
+
+## Баллы Loop
+- Баллы — <b>условные единицы программы лояльности</b>, а не деньги и не электронное средство платежа.
+- Их нельзя обменять на наличные, вывести или передать другому человеку иначе, чем предусмотрено механикой приложения.
+- Баллы начисляются за реальные визиты и действия по правилам, действующим на момент начисления.
+- Оператор вправе аннулировать баллы, полученные обманом: накрутка чек-инов, сканирование чужого QR, автоматизация, эксплуатация ошибок.
+- Правила начисления и курс обмена на награды могут меняться. О существенных изменениях предупреждаем в приложении.
+- При удалении аккаунта баллы сгорают.
+
+## Правила для гостя
+Не накручивай визиты. Пиши честные отзывы — о том, где реально был. Не публикуй оскорбления, чужие персональные данные, рекламу и незаконный контент. Мы вправе удалить отзыв и ограничить доступ за нарушение.
+
+## Правила для заведения
+- Размещая заведение, ты подтверждаешь, что вправе им управлять. Мы проверяем это по телефону владельца.
+- Информация о заведении, акциях и ценах должна быть достоверной и актуальной.
+- <b>Обещал скидку в приложении — обязан её дать.</b> Ответственность перед гостем за акцию несёт заведение.
+- Мы вправе снять с публикации заведение, которое вводит гостей в заблуждение или не выполняет обещанное.
+
+## Платные функции
+Размещение бесплатно. Платными могут быть буст, тариф заведения и рекламные слоты. Оплата проходит через Telegram Stars или подключённый эквайринг — платёжные данные обрабатывает платёжный провайдер, мы их не видим и не храним. Условия возврата, стоимость и порядок отключения указываются в момент покупки. Подписку можно отключить в любой момент; оплаченный период дорабатывает до конца.
+
+## Твой контент
+Отзывы, оценки и фотографии остаются твоими. Публикуя их, ты даёшь оператору бессрочную безвозмездную лицензию показывать этот контент внутри CityHUB и в анонсах сервиса. Ты отвечаешь за то, что имеешь право этот контент публиковать.
+
+## AI-консьерж
+AI-консьерж — вспомогательный инструмент. Он может ошибаться, путать часы работы и придумывать детали. Проверяй важное — часы, цены, наличие мест — у самого заведения. Ответы AI не являются медицинской, юридической или финансовой консультацией.
+
+## Данные каталога
+Часть карточек в демо-режиме — витринные примеры: часы, рейтинги и расстояния показаны для демонстрации и могут не совпадать с действительностью. Актуальность подтверждай у заведения.
+
+## Ответственность
+Сервис предоставляется «как есть». Мы не гарантируем бесперебойной работы и не отвечаем за упущенную выгоду, за действия заведений и за решения, принятые на основе информации из приложения. Ответственность оператора в любом случае ограничена суммой, которую ты заплатил сервису за последние 12 месяцев.
+
+## Прекращение
+Ты можешь удалить аккаунт в любой момент. Мы можем ограничить доступ при нарушении правил, а также приостановить или закрыть сервис, предупредив в приложении.
+
+## Право и споры
+К отношениям применяется право Грузии, если законом твоей страны не установлено иное для потребителей. Спорим сначала переговорами: %SITE%.
+`},
+ about:{t:'О приложении и авторстве',s:'Кто сделал CityHUB, версия и атрибуция',md:`
+## CityHUB
+Городской консьерж: открываешь — и сразу видишь, куда сходить рядом. Кофе, еда, море, спорт, красота — с баллами за каждый визит по программе лояльности Loop.
+
+## Кто сделал
+Продукт <b>AppHub Studio</b>. Дизайн и разработка — <b>ROCH</b> (Роман Чернявский). Мы собираем Telegram-приложения для бизнеса под ключ: меню, бронь, оплата, лояльность, AI-консьерж.
+
+## Технологии
+Telegram Mini Apps · AI-консьерж на Claude (Anthropic) · карты Leaflet · база Supabase · API на Vercel.
+
+## Атрибуция
+- Картографические данные — © участники <b>OpenStreetMap</b>, тайлы — <b>CARTO</b>.
+- Фотографии мест в демо-каталоге — <b>Unsplash</b> и <b>Pexels</b>, по лицензиям этих сервисов.
+- Telegram и логотип Telegram — товарные знаки Telegram FZ-LLC. CityHUB не связан с Telegram и не представляет его.
+
+## Связь
+Вопросы, партнёрство, своё приложение под бизнес: %SITE%
+`}
+},
+EN:{
+ privacy:{t:'Privacy Policy',s:'What CityHUB collects and why',md:`
+## In short
+CityHUB is a city concierge inside Telegram. We collect the minimum: just enough to credit your points for a visit, show places nearby and let the AI concierge answer your question. We do not sell your data and we do not build advertising profiles on you elsewhere.
+
+## Who processes the data
+The operator is %ENTITY%, the developer and owner of the CityHUB app. For anything data-related, get in touch through %SITE%.
+
+## What we receive from Telegram
+When you open the app, Telegram passes us a signed copy of your profile data:
+- your Telegram ID, first and last name, username, avatar link, interface language;
+- the launch parameter (for example, a venue code from a QR poster or a referral code).
+We need this to recognise you on the next visit and to tie points to your account. Telegram does not pass us your phone number, your messages or your contact list, and we do not ask for them.
+
+## What stays on your device
+Some data never leaves your phone and lives in the Telegram browser's local storage: chosen language, your display name, whether you finished onboarding, AI concierge settings, the "notifications read" flag. It is wiped together with the app's data.
+
+## What we keep on the server
+- <b>Visits (check-ins).</b> Venue code and timestamp — to credit points and avoid crediting twice in one day.
+- <b>Loop points balance</b> and tier.
+- <b>Reviews.</b> Rating, text and author name — these are public inside the app.
+- <b>AI concierge messages</b> — only for as long as it takes to answer.
+
+## Location
+The app asks for location only when you tap "Detect automatically" yourself or open the map. Coordinates are used in the moment — to detect your city and measure the distance to a place. We do not log your movement history and do not store coordinates on the server. Declining location breaks nothing: you can pick a city by hand.
+
+## What we never collect
+Payment credentials, ID documents, biometrics, the content of your conversations, your contact list, a precise movement trail, health data.
+
+## Who the data is shared with
+We run on other people's infrastructure, so some data passes through partners, each with its own policy:
+- <b>Telegram</b> — authentication and app delivery;
+- <b>Anthropic (Claude)</b> — processes the text of your question to the AI concierge in order to compose an answer;
+- <b>Supabase</b> — the database (visits, points, reviews);
+- <b>Vercel</b> — the API backend;
+- <b>GitHub Pages</b> — serves the app itself;
+- <b>CARTO and OpenStreetMap</b> — map tiles;
+- <b>Unsplash and Pexels</b> — photos of places in the demo catalogue.
+We do not sell or rent data to third parties. There are no advertising trackers or pixels in the app.
+
+## What a venue sees
+A venue owner sees <b>anonymised statistics</b>: how many visits, how many unique guests, how many points were credited. They do not get your phone number, your Telegram account or your visit history at other places. The one exception is a review — you publish that under your own name, deliberately.
+
+## How long we keep data
+For as long as you use the app, plus 12 months after your last visit. After that we delete or anonymise it. Reviews may remain in anonymised form.
+
+## Your rights
+You can request a copy of your data, correct it, delete your account entirely or withdraw consent. Get in touch through %SITE% — we answer within 30 days. Deleting the account erases points and visit history irreversibly.
+
+## Children
+The app is intended for users aged 16 and over. We do not knowingly collect data from younger children.
+
+## Security
+Data travels over HTTPS. Requests to the server are signed by Telegram and verified for authenticity. No transmission over the internet can be guaranteed completely secure — we do what is reasonably possible.
+
+## Changes
+If this policy changes, we update the date below and show a notice in the app. Continuing to use CityHUB after a change means you accept the new version.
+`},
+ terms:{t:'Terms of Service',s:'The rules: points, reviews, plans, liability',md:`
+## What this document is
+By opening CityHUB you agree to the rules below. If something here does not suit you, simply do not use the app.
+
+## What CityHUB is
+CityHUB is a discovery and recommendation service with a loyalty programme, running inside Telegram. We show city venues, credit points for visits and answer questions through an AI concierge. The operator is %ENTITY%.
+
+<b>We do not provide the venues' services.</b> The coffee shop brews the coffee, the barbershop cuts the hair, the restaurant holds the table. CityHUB is a shopfront and a loyalty layer, not a party to the deal between you and the venue.
+
+## Loop points
+- Points are <b>loyalty programme units</b>, not money and not an electronic means of payment.
+- They cannot be exchanged for cash, withdrawn or transferred to another person other than through the app's own mechanics.
+- Points are credited for genuine visits and actions under the rules in force at the time of crediting.
+- The operator may cancel points obtained by cheating: faked check-ins, scanning someone else's QR, automation, exploiting bugs.
+- Earning rules and reward exchange rates may change. We announce material changes in the app.
+- Deleting your account burns your points.
+
+## Rules for guests
+Do not fake visits. Write honest reviews — about places you actually went to. Do not post insults, other people's personal data, advertising or unlawful content. We may remove a review and restrict access for a breach.
+
+## Rules for venues
+- By listing a venue you confirm you are entitled to manage it. We verify this by calling the owner.
+- Information about the venue, its offers and its prices must be accurate and up to date.
+- <b>If you promised a discount in the app, you must honour it.</b> Liability towards the guest for an offer rests with the venue.
+- We may unlist a venue that misleads guests or fails to deliver what it promised.
+
+## Paid features
+Listing is free. Boost, venue plans and advertising slots may be paid. Payment goes through Telegram Stars or a connected acquirer — payment details are handled by the payment provider; we neither see nor store them. Refund terms, price and how to cancel are stated at the point of purchase. A subscription can be cancelled at any time; the paid period runs to its end.
+
+## Your content
+Reviews, ratings and photos remain yours. By publishing them you grant the operator a perpetual, royalty-free licence to display that content inside CityHUB and in announcements about the service. You are responsible for having the right to publish it.
+
+## The AI concierge
+The AI concierge is an assistive tool. It can be wrong, confuse opening hours and invent details. Check what matters — hours, prices, availability — with the venue itself. Its answers are not medical, legal or financial advice.
+
+## Catalogue data
+Some cards in demo mode are showcase examples: hours, ratings and distances are shown for demonstration and may not match reality. Confirm anything current with the venue.
+
+## Liability
+The service is provided "as is". We do not guarantee uninterrupted operation and are not liable for lost profit, for the actions of venues, or for decisions made on the basis of information in the app. In any case the operator's liability is limited to the amount you paid the service over the last 12 months.
+
+## Termination
+You may delete your account at any time. We may restrict access for a breach of the rules, and may suspend or close the service after giving notice in the app.
+
+## Law and disputes
+Georgian law applies, unless consumer law in your country provides otherwise. We settle disputes by talking first: %SITE%.
+`},
+ about:{t:'About the app and its authors',s:'Who built CityHUB, version and attribution',md:`
+## CityHUB
+A city concierge: open it and immediately see where to go nearby. Coffee, food, the sea, sport, beauty — with points for every visit through the Loop loyalty programme.
+
+## Who built it
+A product by <b>AppHub Studio</b>. Design and development — <b>ROCH</b> (Roman Chernyavsky). We build turnkey Telegram apps for businesses: menu, booking, payments, loyalty, AI concierge.
+
+## Technology
+Telegram Mini Apps · AI concierge powered by Claude (Anthropic) · Leaflet maps · Supabase database · API on Vercel.
+
+## Attribution
+- Map data — © <b>OpenStreetMap</b> contributors, tiles by <b>CARTO</b>.
+- Photos of places in the demo catalogue — <b>Unsplash</b> and <b>Pexels</b>, under those services' licences.
+- Telegram and the Telegram logo are trademarks of Telegram FZ-LLC. CityHUB is not affiliated with Telegram and does not represent it.
+
+## Contact
+Questions, partnerships, your own business app: %SITE%
+`}
+},
+GE:{
+ privacy:{t:'კონფიდენციალურობის პოლიტიკა',s:'რა მონაცემებს აგროვებს CityHUB და რატომ',md:`
+## მოკლედ
+CityHUB — ქალაქის კონსიერჟი Telegram-ის შიგნით. ვაგროვებთ მინიმუმს: მხოლოდ იმდენს, რამდენიც საჭიროა ვიზიტისთვის ქულების დასარიცხად, ახლომდებარე ადგილების საჩვენებლად და AI-კონსიერჟის პასუხისთვის. ჩვენ არ ვყიდით შენს მონაცემებს და არ ვქმნით სარეკლამო პროფილებს.
+
+## ვინ ამუშავებს მონაცემებს
+ოპერატორი — %ENTITY%, აპლიკაცია CityHUB-ის დეველოპერი და მფლობელი. ნებისმიერი კითხვისთვის მონაცემებზე დაგვიკავშირდი საიტით %SITE%.
+
+## რას ვიღებთ Telegram-იდან
+როცა აპლიკაციას ხსნი, Telegram გვიგზავნის შენი პროფილის ხელმოწერილ მონაცემებს:
+- Telegram-ის იდენტიფიკატორი, სახელი და გვარი, username, ავატარის ბმული, ინტერფეისის ენა;
+- გაშვების პარამეტრი (მაგალითად, დაწესებულების კოდი QR-პლაკატიდან ან სარეფერალო კოდი).
+ეს გვჭირდება იმისთვის, რომ შემდეგ შემოსვლაზე გიცნოთ და ქულები შენს ანგარიშს მივაბათ. ტელეფონის ნომერს, მიმოწერას და კონტაქტების სიას Telegram არ გვიზიარებს და ჩვენც არ ვითხოვთ.
+
+## რა რჩება შენს მოწყობილობაზე
+მონაცემების ნაწილი ტელეფონს არ ტოვებს და ინახება Telegram-ის ბრაუზერის ლოკალურ მეხსიერებაში: არჩეული ენა, სახელი, გავლილი ონბორდინგის ნიშანი, AI-კონსიერჟის პარამეტრები, „შეტყობინებები წაკითხულია“. ეს ყველაფერი იშლება აპლიკაციის მონაცემებთან ერთად.
+
+## რას ვინახავთ სერვერზე
+- <b>ვიზიტები (ჩექინები).</b> დაწესებულების კოდი და დრო — ქულების დასარიცხად და იმისთვის, რომ ერთ დღეში ორჯერ არ დაგერიცხოს.
+- <b>Loop-ქულების ბალანსი</b> და დონე.
+- <b>შეფასებები.</b> შეფასება, ტექსტი და ავტორის სახელი — ისინი საჯაროა აპლიკაციაში.
+- <b>შეტყობინებები AI-კონსიერჟთან</b> — მხოლოდ მოთხოვნის დამუშავების დროით.
+
+## გეოლოკაცია
+აპლიკაცია ადგილმდებარეობას ითხოვს მხოლოდ მაშინ, როცა თავად აჭერ „ავტომატურად განსაზღვრას“ ან ხსნი რუკას. კოორდინატები გამოიყენება მოცემულ მომენტში — ქალაქის დასადგენად და ადგილამდე მანძილის გამოსათვლელად. შენი გადაადგილების ისტორიას არ ვინახავთ და კოორდინატებს სერვერზე არ ვწერთ. გეოლოკაციაზე უარი არაფერს არღვევს: ქალაქის ხელით არჩევა შესაძლებელია.
+
+## რას არ ვაგროვებთ
+საგადახდო რეკვიზიტებს, პირადობის დოკუმენტებს, ბიომეტრიას, შენი მიმოწერის შიგთავსს, კონტაქტების სიას, ზუსტ გადაადგილების კვალს, ჯანმრთელობის მონაცემებს.
+
+## ვის გადაეცემა მონაცემები
+ჩვენ სხვისი ინფრასტრუქტურით ვმუშაობთ და მონაცემების ნაწილი პარტნიორებზე გადის — თითოეულს თავისი პოლიტიკა აქვს:
+- <b>Telegram</b> — ავტორიზაცია და აპლიკაციის მიწოდება;
+- <b>Anthropic (Claude)</b> — ამუშავებს AI-კონსიერჟისთვის დასმული კითხვის ტექსტს პასუხის შესადგენად;
+- <b>Supabase</b> — მონაცემთა ბაზა (ვიზიტები, ქულები, შეფასებები);
+- <b>Vercel</b> — სერვერული API;
+- <b>GitHub Pages</b> — თავად აპლიკაციის მიწოდება;
+- <b>CARTO და OpenStreetMap</b> — რუკის ფენები;
+- <b>Unsplash და Pexels</b> — ადგილების ფოტოები სადემონსტრაციო კატალოგში.
+ჩვენ არ ვყიდით და არ ვაქირავებთ მონაცემებს მესამე პირებზე. აპლიკაციაში სარეკლამო ტრეკერები და პიქსელები არ არის.
+
+## რას ხედავს დაწესებულება
+დაწესებულების მფლობელი ხედავს <b>ანონიმურ სტატისტიკას</b>: რამდენი ვიზიტი იყო, რამდენი უნიკალური სტუმარი, რამდენი ქულა დაირიცხა. ის ვერ იღებს შენს ნომერს, Telegram-ანგარიშს ან სხვა ადგილებში ვიზიტების ისტორიას. გამონაკლისი — შეფასება: მას შენ საკუთარი სახელით და შეგნებულად აქვეყნებ.
+
+## რამდენ ხანს ვინახავთ
+სანამ აპლიკაციით სარგებლობ და კიდევ 12 თვე ბოლო შემოსვლიდან. შემდეგ — ვშლით ან ვაანონიმებთ. შეფასებები შეიძლება ანონიმური სახით დარჩეს.
+
+## შენი უფლებები
+შეგიძლია მოითხოვო შენი მონაცემების ასლი, გაასწორო ისინი, სრულად წაშალო ანგარიში ან გამოითხოვო თანხმობა. მოგვწერე %SITE%-ით — ვპასუხობთ 30 დღეში. ანგარიშის წაშლა შეუქცევადად შლის ქულებს და ვიზიტების ისტორიას.
+
+## ბავშვები
+აპლიკაცია განკუთვნილია 16 წლიდან. ჩვენ შეგნებულად არ ვაგროვებთ უფრო მცირეწლოვნების მონაცემებს.
+
+## უსაფრთხოება
+მონაცემები გადაიცემა HTTPS-ით. სერვერისკენ მოთხოვნები ხელმოწერილია Telegram-ის მიერ და მოწმდება ავთენტურობაზე. ინტერნეტში გადაცემის სრული უსაფრთხოების გარანტია შეუძლებელია — ჩვენ ვაკეთებთ გონივრულად შესაძლებელს.
+
+## ცვლილებები
+თუ პოლიტიკა შეიცვლება, განვაახლებთ ქვემოთ მითითებულ თარიღს და გაჩვენებთ შეტყობინებას აპლიკაციაში. ცვლილების შემდეგ CityHUB-ით სარგებლობის გაგრძელება ნიშნავს ახალ რედაქციაზე თანხმობას.
+`},
+ terms:{t:'მომხმარებლის შეთანხმება',s:'წესები: ქულები, შეფასებები, ტარიფები, პასუხისმგებლობა',md:`
+## რა დოკუმენტია ეს
+CityHUB-ის გახსნით ეთანხმები ქვემოთ მოცემულ წესებს. თუ რამე არ გაწყობს — უბრალოდ ნუ ისარგებლებ აპლიკაციით.
+
+## რა არის CityHUB
+CityHUB — საინფორმაციო-სარეკომენდაციო სერვისი და ლოიალობის პროგრამა Telegram-ის შიგნით. ჩვენ ვაჩვენებთ ქალაქის ადგილებს, ვრიცხავთ ქულებს ვიზიტებისთვის და ვპასუხობთ კითხვებზე AI-კონსიერჟით. სერვისის ოპერატორი — %ENTITY%.
+
+<b>ჩვენ არ ვაწვდით დაწესებულებების მომსახურებას.</b> ყავას ამზადებს კაფე, გკრეჭავს ბარბერშოპი, მაგიდას იკავებს რესტორანი. CityHUB — ვიტრინა და ლოიალობაა, და არა მხარე შენსა და დაწესებულებას შორის დადებულ გარიგებაში.
+
+## Loop-ქულები
+- ქულები — <b>ლოიალობის პროგრამის პირობითი ერთეულებია</b>, და არა ფული ან ელექტრონული საგადახდო საშუალება.
+- მათი განაღდება, გატანა ან სხვა პირზე გადაცემა შეუძლებელია, გარდა აპლიკაციის მექანიკით გათვალისწინებული შემთხვევებისა.
+- ქულები ირიცხება რეალური ვიზიტებისა და მოქმედებებისთვის დარიცხვის მომენტში მოქმედი წესებით.
+- ოპერატორს უფლება აქვს გააუქმოს თაღლითობით მიღებული ქულები: ყალბი ჩექინები, სხვისი QR-ის სკანირება, ავტომატიზაცია, შეცდომების ექსპლუატაცია.
+- დარიცხვის წესები და ჯილდოებზე გაცვლის კურსი შეიძლება შეიცვალოს. არსებით ცვლილებებზე გაფრთხილებთ აპლიკაციაში.
+- ანგარიშის წაშლისას ქულები იწვება.
+
+## წესები სტუმრისთვის
+ნუ გაზრდი ვიზიტებს ხელოვნურად. დაწერე გულწრფელი შეფასებები — იმ ადგილებზე, სადაც ნამდვილად იყავი. ნუ გამოაქვეყნებ შეურაცხყოფას, სხვისი პერსონალურ მონაცემებს, რეკლამას და უკანონო კონტენტს. დარღვევისთვის უფლება გვაქვს წავშალოთ შეფასება და შევზღუდოთ წვდომა.
+
+## წესები დაწესებულებისთვის
+- დაწესებულების განთავსებით ადასტურებ, რომ უფლება გაქვს მართო ის. ამას ვამოწმებთ მფლობელის ტელეფონით.
+- ინფორმაცია დაწესებულების, აქციებისა და ფასების შესახებ უნდა იყოს სანდო და აქტუალური.
+- <b>თუ აპლიკაციაში ფასდაკლება დაპირდი — ვალდებული ხარ გასცე.</b> სტუმრის წინაშე აქციაზე პასუხისმგებლობა ეკისრება დაწესებულებას.
+- უფლება გვაქვს მოვხსნათ პუბლიკაციიდან დაწესებულება, რომელიც ცდუნებაში შეჰყავს სტუმრებს ან არ ასრულებს დაპირებულს.
+
+## ფასიანი ფუნქციები
+განთავსება უფასოა. ფასიანი შეიძლება იყოს ბუსტი, დაწესებულების ტარიფი და სარეკლამო სლოტები. გადახდა ხდება Telegram Stars-ით ან მიერთებული ეკვაირინგით — საგადახდო მონაცემებს ამუშავებს გადახდის პროვაიდერი, ჩვენ მათ ვერ ვხედავთ და არ ვინახავთ. დაბრუნების პირობები, ღირებულება და გამორთვის წესი მითითებულია შეძენის მომენტში. გამოწერა ნებისმიერ დროს გამოირთვება; გადახდილი პერიოდი ბოლომდე მუშაობს.
+
+## შენი კონტენტი
+შეფასებები, ქულები და ფოტოები შენი რჩება. მათი გამოქვეყნებით ოპერატორს ანიჭებ უვადო უსასყიდლო ლიცენზიას აჩვენოს ეს კონტენტი CityHUB-ში და სერვისის ანონსებში. შენ აგებ პასუხს იმაზე, რომ ამ კონტენტის გამოქვეყნების უფლება გაქვს.
+
+## AI-კონსიერჟი
+AI-კონსიერჟი დამხმარე ინსტრუმენტია. მას შეუძლია შეცდომა, სამუშაო საათების არევა და დეტალების მოგონება. მნიშვნელოვანი — საათები, ფასები, ადგილების არსებობა — გადაამოწმე თავად დაწესებულებასთან. AI-ის პასუხები არ არის სამედიცინო, იურიდიული ან ფინანსური კონსულტაცია.
+
+## კატალოგის მონაცემები
+სადემონსტრაციო რეჟიმში ბარათების ნაწილი საჩვენებელი მაგალითია: საათები, რეიტინგები და მანძილები ნაჩვენებია დემონსტრაციისთვის და შეიძლება არ ემთხვეოდეს სინამდვილეს. აქტუალობა დაადასტურე დაწესებულებასთან.
+
+## პასუხისმგებლობა
+სერვისი მოწოდებულია „როგორც არის“. ჩვენ არ ვიძლევით უწყვეტი მუშაობის გარანტიას და არ ვაგებთ პასუხს მიუღებელ სარგებელზე, დაწესებულებების ქმედებებზე და აპლიკაციის ინფორმაციის საფუძველზე მიღებულ გადაწყვეტილებებზე. ნებისმიერ შემთხვევაში ოპერატორის პასუხისმგებლობა შემოიფარგლება იმ თანხით, რომელიც ბოლო 12 თვეში სერვისს გადაუხადე.
+
+## შეწყვეტა
+ანგარიშის წაშლა ნებისმიერ დროს შეგიძლია. ჩვენ შეგვიძლია შევზღუდოთ წვდომა წესების დარღვევისას, ასევე შევაჩეროთ ან დავხუროთ სერვისი აპლიკაციაში გაფრთხილებით.
+
+## სამართალი და დავები
+ურთიერთობებზე ვრცელდება საქართველოს კანონმდებლობა, თუ შენი ქვეყნის მომხმარებელთა კანონი სხვას არ ადგენს. დავას ჯერ მოლაპარაკებით ვწყვეტთ: %SITE%.
+`},
+ about:{t:'აპლიკაციისა და ავტორობის შესახებ',s:'ვინ შექმნა CityHUB, ვერსია და ატრიბუცია',md:`
+## CityHUB
+ქალაქის კონსიერჟი: ხსნი — და მაშინვე ხედავ, სად წახვიდე ახლოს. ყავა, საჭმელი, ზღვა, სპორტი, სილამაზე — ქულებით ყოველ ვიზიტზე Loop-ის ლოიალობის პროგრამით.
+
+## ვინ შექმნა
+პროდუქტი <b>AppHub Studio</b>. დიზაინი და დეველოპმენტი — <b>ROCH</b> (რომან ჩერნიავსკი). ჩვენ ვქმნით Telegram-აპლიკაციებს ბიზნესისთვის სრული ციკლით: მენიუ, ჯავშანი, გადახდა, ლოიალობა, AI-კონსიერჟი.
+
+## ტექნოლოგიები
+Telegram Mini Apps · AI-კონსიერჟი Claude-ზე (Anthropic) · რუკები Leaflet · ბაზა Supabase · API Vercel-ზე.
+
+## ატრიბუცია
+- რუკის მონაცემები — © <b>OpenStreetMap</b>-ის მონაწილეები, ფენები — <b>CARTO</b>.
+- ადგილების ფოტოები სადემონსტრაციო კატალოგში — <b>Unsplash</b> და <b>Pexels</b>, ამ სერვისების ლიცენზიებით.
+- Telegram და Telegram-ის ლოგო — Telegram FZ-LLC-ის სავაჭრო ნიშნებია. CityHUB არ არის დაკავშირებული Telegram-თან და არ წარმოადგენს მას.
+
+## კონტაქტი
+კითხვები, პარტნიორობა, საკუთარი აპლიკაცია ბიზნესისთვის: %SITE%
+`}
+}
+};
+/* Пакет документов текущего языка (fallback → RU) */
+function legalPack(){return LEGAL[curLang]||LEGAL.RU}
+/* Подстановка реквизитов + мини-разметка (## заголовок, - список, <b> уже в тексте) */
+function legalFill(s){
+  return String(s).replace(/%ENTITY%/g,LEGAL_META.entity)
+                  .replace(/%SITE%/g,'<u class="lg-link" role="button" tabindex="0" onclick="openExternal(LEGAL_META.site)">apphub.studio</u>');
+}
+function legalRender(md){
+  var html=legalFill(md).trim().split('\n').map(function(ln){
+    ln=ln.trim();
+    if(!ln)return '';
+    if(ln.slice(0,3)==='## ')return '<h3>'+ln.slice(3)+'</h3>';
+    if(ln.slice(0,2)==='- ')return '<li>'+ln.slice(2)+'</li>';
+    return '<p>'+ln+'</p>';
+  }).join('');
+  return html.replace(/(?:<li>[\s\S]*?<\/li>)+/g,function(m){return '<ul>'+m+'</ul>'});
+}
+/* Индекс правовой информации */
+function openLegal(){
+  var P=legalPack(),ttl={RU:'Правовая информация',EN:'Legal',GE:'სამართლებრივი ინფორმაცია'},
+      sub={RU:'Документы, которые стоит прочитать до первого визита',EN:'Worth reading before your first visit',GE:'დოკუმენტები, რომლებიც პირველ ვიზიტამდე ღირს წაიკითხო'};
+  var ic={
+    privacy:'<path d="M12 3l7 3v6c0 4.4-3 8.3-7 9-4-0.7-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/>',
+    terms:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+    about:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'
+  };
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<div data-no-i18n>'+
+    '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+(ttl[curLang]||ttl.RU)+'</h2>'+
+    '<p class="sub" style="margin-bottom:16px">'+(sub[curLang]||sub.RU)+'</p>'+
+    '<div class="lg-list">'+['privacy','terms','about'].map(function(k){
+      return '<button class="lg-opt" onclick="openLegalDoc(\''+k+'\')">'+
+        '<span class="lg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+ic[k]+'</svg></span>'+
+        '<span class="lg-tx"><b>'+P[k].t+'</b><span>'+P[k].s+'</span></span>'+
+        '<svg class="lg-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>';
+    }).join('')+'</div></div>';
+  _openSheet();haptic('tap');
+}
+/* Один документ */
+function openLegalDoc(k){
+  var P=legalPack(),d=P[k];if(!d)return;
+  var back={RU:'Назад',EN:'Back',GE:'უკან'},
+      upd={RU:'Редакция от',EN:'Version of',GE:'რედაქცია'};
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<div data-no-i18n>'+
+    '<button class="lg-back" onclick="openLegal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>'+(back[curLang]||back.RU)+'</button>'+
+    '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:14px">'+d.t+'</h2>'+
+    '<div class="lg-doc">'+legalRender(d.md)+'</div>'+
+    '<div class="lg-upd">'+(upd[curLang]||upd.RU)+' '+(LEGAL_META.updated[curLang]||LEGAL_META.updated.RU)+' · CityHUB · '+LEGAL_META.entity+'</div>'+
+    '</div>';
+  _openSheet();
+  try{document.getElementById('sheet-body').scrollTop=0}catch(e){}
+  haptic('tap');
+}
+
 var APP_LINKS={apphub:'https://apphub.studio',bot:''/* @CityHubBot появится на релизе (P0) */};
 function openExternal(url){
   try{haptic('tap')}catch(e){}
