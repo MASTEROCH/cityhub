@@ -1170,8 +1170,28 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .freeze-protect p{font-size:12.5px;color:var(--txt-2);line-height:1.45}
 /* mood solver */
 /* === MOOD-ROW v3 — единый glass-pill контейнер в стиле tabbar === */
-.mood-row{display:flex;gap:4px;overflow-x:auto;overflow-y:visible;margin:0 0 14px;padding:5px;scrollbar-width:none;position:relative;z-index:5;border-radius:24px;background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(42px) saturate(200%) brightness(1.08);backdrop-filter:blur(42px) saturate(200%) brightness(1.08);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 18px 34px rgba(0,0,0,.55)}
-.mood-row::-webkit-scrollbar{display:none}
+.mood-row{padding:5px;margin:0 0 14px;position:relative;z-index:5;border-radius:24px;background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(42px) saturate(200%) brightness(1.08);backdrop-filter:blur(42px) saturate(200%) brightness(1.08);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 18px 34px rgba(0,0,0,.55)}
+.mood-scroll{display:flex;gap:4px;overflow-x:auto;overflow-y:visible;scrollbar-width:none;border-radius:20px}
+.mood-scroll::-webkit-scrollbar{display:none}
+/* Приветствие уезжает, когда человек уже начал читать ленту: шапка отдаёт
+   ~90px контенту. Город, инструменты и чипы остаются — навигация не прыгает.
+   Сигнал тот же `.hdr.shrunk`, что уже шринкует шапку: один механизм, не два. */
+#c-today #greet,#c-today #greetSub{overflow:hidden;max-height:64px;
+  transition:max-height .3s var(--ease-out),opacity .22s var(--ease-out),margin .3s var(--ease-out)}
+#c-today .hdr-quick{transition:margin-top .3s var(--ease-out)}
+.hdr.shrunk #greet{max-height:0!important;opacity:0;margin-top:0!important}
+.hdr.shrunk #greetSub{max-height:0;opacity:0;margin:0}
+.hdr.shrunk .hdr-quick{margin-top:8px}
+@media (prefers-reduced-motion:reduce){#c-today #greet,#c-today #greetSub,#c-today .hdr-quick{transition:none}}
+/* Края горизонтального скроллера растворяются — видно, что ряд продолжается.
+   Затухание включается ТОЛЬКО со стороны, где остался непрокрученный контент:
+   постоянная маска на краю съедала бы первый и последний чип на месте. */
+.edge-fade{--fadeL:0px;--fadeR:0px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fadeL),#000 calc(100% - var(--fadeR)),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 var(--fadeL),#000 calc(100% - var(--fadeR)),transparent 100%);
+  transition:--fadeL .2s linear,--fadeR .2s linear}
+.edge-fade.fade-l{--fadeL:30px}
+.edge-fade.fade-r{--fadeR:30px}
 /* mood-shade превращается в простой spacer (sheath остался для совместимости) */
 .mood-shade{height:0;margin:0;display:none}
 .mood{flex-shrink:0;padding:9px 15px;border-radius:99px;font-size:13px;font-weight:700;background:var(--glass-soft);border:1px solid var(--stroke-soft);color:var(--txt-2);white-space:nowrap;transition:all .2s}
@@ -1545,7 +1565,17 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
 .daily-pop span{font-size:12.5px;color:var(--txt-2)}
 /* TASTE PROFILE */
 .taste-card{border-radius:var(--r-lg);padding:20px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(124,58,255,.28),rgba(0,224,199,.16));border:1px solid var(--stroke)}
-.taste-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+/* «Твой вкус» свёрнут по умолчанию: шесть полос занимали пол-экрана профиля,
+   а смотрят их редко. Состояние запоминается. */
+.taste-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;width:100%;background:none;border:none;padding:0;font-family:inherit;color:inherit;cursor:pointer;text-align:left;min-height:36px}
+.taste-head .acc{margin-left:auto}
+.taste-chev{width:18px;height:18px;flex-shrink:0;color:var(--txt-3);transition:transform .3s var(--ease-out)}
+.taste-card:not(.collapsed) .taste-chev{transform:rotate(180deg)}
+/* max-height, а не grid 0fr: у тела четыре ребёнка, а 0fr схлопывает
+   только первую строку грида — остальные три оставались в полный рост. */
+.taste-body{overflow:hidden;max-height:640px;opacity:1;transition:max-height .34s var(--ease-out),opacity .24s var(--ease-out)}
+.taste-card.collapsed .taste-body{max-height:0;opacity:0}
+.taste-card.collapsed{padding-bottom:16px}
 .taste-head b{font-size:16px;font-weight:800}
 .taste-head .acc{font-size:12px;font-weight:800;color:var(--lime)}
 .taste-sub{font-size:12.5px;color:var(--txt-2);margin-bottom:16px}
@@ -2301,8 +2331,10 @@ input,textarea{font-size:16px!important}
 
 /* Сегменты вкладок */
 .luck-seg{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);margin-bottom:14px}
-.luck-seg button{flex:1;min-height:40px;border-radius:999px;background:transparent;border:none;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--txt-3);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:color var(--dur-fast),background var(--dur-fast);position:relative}
-.luck-seg button svg{width:15px;height:15px}
+.luck-seg button{flex:1;min-width:0;min-height:40px;border-radius:999px;background:transparent;border:none;font-family:inherit;font-size:11.5px;letter-spacing:-.01em;font-weight:800;color:var(--txt-3);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:color var(--dur-fast),background var(--dur-fast);position:relative}
+.luck-seg button svg{width:14px;height:14px;flex-shrink:0}
+.luck-seg{gap:2px;padding:3px}
+@media (max-width:360px){.luck-seg button{font-size:10.5px;gap:3px}}
 .luck-seg button.on{background:var(--grad-lime);color:#06210a;box-shadow:0 4px 14px rgba(212,255,79,.28)}
 .luck-seg button:active{transform:scale(.97)}
 .luck-seg button .seg-dot{position:absolute;top:5px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--rose);box-shadow:0 0 6px var(--rose)}
@@ -2346,6 +2378,17 @@ input,textarea{font-size:16px!important}
 .pool-item .pi-t{font-size:11.5px;font-weight:700;line-height:1.25;min-width:0}
 .pool-item .pi-t span{display:block;font-size:10px;font-weight:600;color:var(--txt-3);margin-top:1px}
 
+/* ── Мировой зачёт ── */
+.grow{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--r-md);margin-bottom:7px;background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft)}
+.grow.me{background:rgba(212,255,79,.09);border-color:rgba(212,255,79,.3)}
+.grow .g-r{width:26px;flex-shrink:0;text-align:center;font-size:13px;font-weight:900;color:var(--txt-3)}
+.grow.top .g-r{color:var(--gold)}
+.grow .g-a{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:14px;font-weight:900;color:#06210a}
+.grow .g-i{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.grow .g-i b{font-size:13.5px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grow .g-i span{font-size:11px;color:var(--txt-3)}
+.grow .g-v{flex-shrink:0;font-size:14px;font-weight:900;color:var(--lime);white-space:nowrap}
+.grow .g-v small{font-size:10px;font-weight:700;color:var(--txt-3);margin-left:3px}
 /* ── Куда потратить ── */
 .spend-note{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:var(--r-sm);background:rgba(0,224,199,.08);border:1px solid rgba(0,224,199,.2);font-size:11.5px;color:var(--txt-2);line-height:1.4;margin-bottom:12px}
 .spend-note svg{width:17px;height:17px;flex-shrink:0;color:var(--acc-2)}
@@ -2487,7 +2530,7 @@ input,textarea{font-size:16px!important}
       <div class="split-map">
         <div id="mapHolder"><div id="map"></div></div>
         <div class="split-list">
-          <div class="mood-row" id="mapFilters"></div>
+          <div class="mood-row"><div class="mood-scroll" id="mapFilters"></div></div>
           <div class="search-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="nicheSearch" placeholder="Ниша, кафе, место…" oninput="renderNiches(this.value)"></div>
           <div id="listHolder"></div>
           <div class="map-niches">
@@ -2523,15 +2566,22 @@ input,textarea{font-size:16px!important}
         <div class="luck-seg" id="luckSeg">
           <button class="on" data-l="tasks" onclick="luckGo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Задания<span class="seg-dot" id="tasksDot"></span></button>
           <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg>Рулетка</button>
+          <button data-l="league" onclick="luckGo('league')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>Лига</button>
           <button data-l="spend" onclick="luckGo('spend')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>Потратить</button>
         </div>
 
         <!-- 1. ЗАДАНИЯ -->
         <div class="luck-pane on" id="pane-tasks">
           <div id="taskList"></div>
-          <div class="sec-h" style="margin-top:22px"><h2 style="font-size:16px">Лига друзей</h2><span class="more">эта неделя</span></div>
+        </div>
+
+        <!-- 3. ЛИГА -->
+        <div class="luck-pane" id="pane-league">
+          <div class="sec-h" style="margin-top:2px"><h2 style="font-size:16px">Лига друзей</h2><span class="more">эта неделя</span></div>
           <div id="league"></div>
-          <div class="sec-h" style="margin-top:20px"><h2 style="font-size:16px">Друзья сейчас</h2></div>
+          <div class="sec-h" style="margin-top:22px"><h2 style="font-size:16px">Мировой зачёт</h2><span class="more">по собранным местам</span></div>
+          <div id="gboard"></div>
+          <div class="sec-h" style="margin-top:22px"><h2 style="font-size:16px">Друзья сейчас</h2></div>
           <div id="feed"></div>
         </div>
 
@@ -2675,11 +2725,13 @@ input,textarea{font-size:16px!important}
         </div>
 
         <!-- Твой вкус — компактно -->
-        <div class="taste-card fadein" style="margin-top:18px"><div class="taste-head"><b>Твой вкус</b><span class="acc" id="tasteAcc">точность 84%</span></div>
+        <div class="taste-card fadein collapsed" id="tasteCard" style="margin-top:18px"><button class="taste-head" onclick="toggleTaste()" aria-expanded="false"><b>Твой вкус</b><span class="acc" id="tasteAcc">точность 84%</span><svg class="taste-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="taste-body">
           <div class="taste-sub">CityHUB изучает тебя с каждым визитом. Чем больше ходишь — тем точнее подбор.</div>
           <div id="tasteBars"></div>
           <button class="add-taste" onclick="openAddTaste()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Добавить вкус</button>
           <div class="taste-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg>Обновляется автоматически по твоим действиям</div>
+          </div>
         </div>
 
         <!-- Авторство + правовая информация -->
@@ -3437,7 +3489,7 @@ function renderToday(){
   try{var pool=C.biz.filter(function(b){return curMood==='all'||b.k===curMood}).slice(0,3);pool.forEach(function(b){var im=new Image();im.src=ph(b.k,b.n.length,b.n)})}catch(e){}
   document.getElementById('answerBox').innerHTML=`
   <div class="vibe-head"><span class="vibe-title">Выбери вайб</span><span class="vibe-sub">или жми «Удиви меня»</span></div>
-  <div class="mood-row">
+  <div class="mood-row"><div class="mood-scroll">
     <button class="mood vibe${curMood==='all'?' on':''}" data-mood="all"><span class="vibe-ic">🎲</span><span class="vibe-lb">Удиви меня</span></button>
     <button class="mood vibe${curMood==='food'?' on':''}" data-mood="food"><span class="vibe-ic">🍽️</span><span class="vibe-lb">Поесть</span></button>
     <button class="mood vibe${curMood==='coffee'?' on':''}" data-mood="coffee"><span class="vibe-ic">☕</span><span class="vibe-lb">Кофе</span></button>
@@ -3461,7 +3513,7 @@ function renderToday(){
     <button class="mood vibe ai-vibe" data-vibe-q="Места куда можно прийти с собакой в Батуми — pet-friendly кафе, парки, пляжи." data-vibe-t="С собакой"><span class="vibe-ic">🐾</span><span class="vibe-lb">С собакой</span></button>
     <button class="mood vibe ai-vibe" data-vibe-q="Сладкое в Батуми — где самые вкусные десерты, выпечка, мороженое." data-vibe-t="Сладкое"><span class="vibe-ic">🍰</span><span class="vibe-lb">Сладкое</span></button>
     <button class="mood vibe ai-vibe" data-vibe-q="Романтичное место для свидания — атмосфера, виды, тихий ужин." data-vibe-t="Свидание"><span class="vibe-ic">💘</span><span class="vibe-lb">Свидание</span></button>
-  </div>
+  </div></div>
   <div class="answer fadein" id="answerCard">
     <div class="ph-skel"></div><img class="ph" src="${ph(nz.k,top.n.length,top.n)}" alt="" loading="eager" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.classList.add('loaded');this.style.background='linear-gradient(135deg,${nz.c}cc,${nz.c}33)';this.removeAttribute('src')"><div class="ov"></div>
     <div class="top-strip">
@@ -3905,7 +3957,7 @@ function selectPlace(i,fromMap){
   var bi=items[i];if(bi&&bi.o&&_LF_MAIN){try{_LF_MAIN.panTo(bi.o,{animate:true,duration:.45});setTimeout(function(){_LF_MAIN.invalidateSize()},80)}catch(e){}}
   if(navigator.vibrate)navigator.vibrate(8);
 }
-function setFilter(f,el){filter=f;selIdx=-1;document.querySelectorAll('#mapFilters .mood,#mapFilters .ch').forEach(function(x){x.classList.remove('on')});if(el){el.classList.add('on');if(el.scrollIntoView){try{el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}catch(e){}}}buildMap();renderList();if(navigator.vibrate)navigator.vibrate(6)}
+function setFilter(f,el){try{edgeFadeAll()}catch(e){}filter=f;selIdx=-1;document.querySelectorAll('#mapFilters .mood,#mapFilters .ch').forEach(function(x){x.classList.remove('on')});if(el){el.classList.add('on');if(el.scrollIntoView){try{el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}catch(e){}}}buildMap();renderList();if(navigator.vibrate)navigator.vibrate(6)}
 function showOnMap(name){
   filter='all';
   cgo('map');
@@ -4430,6 +4482,12 @@ function renderGame(){
   const lg=document.getElementById('league');if(lg)lg.innerHTML=LEAGUE.map(l=>`<div class="league ${l.me?'me':''}"><div class="lrank ${l.cls||''}">${l.r<=3?['<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFB547" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7M11 8h2l-1 2z"/></svg>','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/></svg>','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d9a06b" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/><circle cx="12" cy="9" r="2"/></svg>'][l.r-1]:l.r}</div><div class="lav" style="background:${l.c}">${l.a||l.n[0]}</div><div class="ln">${l.n}${l.me?' (ты)':''}<span>${l.r===3?'обгони Гио — осталось 740':'в твоей лиге'}</span></div><div class="lpts">${l.pts}</div></div>`).join('');
   const fd=document.getElementById('feed');if(fd)fd.innerHTML=FEED.map(f=>`<div class="feed"><div class="fav" style="background:${f.c}">${f.a}</div><div class="ft"><b>${f.n}</b> ${f.t}<div class="ft2">${f.ago} назад</div></div><div class="fpts">${f.pts}</div></div>`).join('');
 }
+function toggleTaste(){
+  var c=document.getElementById('tasteCard');if(!c)return;
+  var open=c.classList.toggle('collapsed')===false;
+  var b=c.querySelector('.taste-head');if(b)b.setAttribute('aria-expanded',open?'true':'false');
+  gameSet('tasteOpen',open?1:0);try{haptic('tap')}catch(e){}
+}
 function openAddTaste(){
   var have=TASTE.map(function(t){return t.k});
   var pool=TASTE_POOL.filter(function(t){return have.indexOf(t.k)<0});
@@ -4503,7 +4561,7 @@ function renderStatic(){
 // ---------- nav ----------
 function cgo(t){/* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
   if(t==='niches')t='map';if(t==='rewards')t='luck';
-  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');document.getElementById('w-client').classList.toggle('hide-fade',t==='ai');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;if(t==='map'){renderMapTab();renderNiches('');buildMap();[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderSpend();renderLuckHud();luckTickStart();luckGo(gameGet('luckTab','tasks'));}if(t==='ai')initChat();if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');document.getElementById('w-client').classList.toggle('hide-fade',t==='ai');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderSpend();renderGBoard();renderLuckHud();luckTickStart();luckGo(gameGet('luckTab','tasks'));}if(t==='ai')initChat();if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:20,mine:0,bids:[
   {n:'Tangerine',v:340,me:false},
@@ -4600,6 +4658,12 @@ var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬�
 var curLang='RU';
 var DICT={
 /* — batch: раздел «Удача» (2026-09-11) — */
+'Лига':['League','ლიგა'],
+'Лига друзей':['Friends league','მეგობრების ლიგა'],
+'Мировой зачёт':['World standings','მსოფლიო ჩათვლა'],
+'по собранным местам':['by places collected','შეგროვებული ადგილებით'],
+'Друзья сейчас':['Friends right now','მეგობრები ახლა'],
+'Твой вкус':['Your taste','შენი გემოვნება'],
 'Удача':['Luck','ფორტუნა'],
 'Задания':['Tasks','დავალებები'],
 'Рулетка':['Wheel','რულეტკა'],
@@ -5367,7 +5431,7 @@ safe(function(){var k='';try{k=localStorage.getItem('cityhub_lang_v1')||''}catch
     try{startLangObserver()}catch(e){}
     try{renderToday()}catch(e){}
   }});
-safe(applyLang);safe(renderConsent);
+safe(applyLang);safe(renderConsent);safe(edgeFadeAll);setTimeout(function(){try{edgeFadeAll()}catch(e){}},700);
 safe(renderIdentity);
 safe(function(){if(notifIsRead())notifSetRead()});
 /* ═══ SHAKE-TO-SURPRISE — встряхнул телефон → новое место (сигнатурный жест CityHUB) ═══ */
@@ -5430,7 +5494,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=26;try{renderConsent()}catch(e){}
+var APP_V=27;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6542,6 +6606,25 @@ function openPoster(){
 }
 function closePoster(){var o=document.getElementById('posterOv');if(o)o.remove()}
 /* ═══ Внешние ссылки — единая точка (TG openLink → window.open) ═══ */
+/* Горизонтальные ряды-чипы: маска по краям, пересчитывается на скролле и ресайзе.
+   Один helper на все ряды — вешать на любой новый скроллер одной строкой. */
+function edgeFadeUpdate(el){
+  if(!el)return;
+  var max=el.scrollWidth-el.clientWidth;
+  if(max<=2){el.classList.remove('fade-l','fade-r');return}
+  el.classList.toggle('fade-l',el.scrollLeft>2);
+  el.classList.toggle('fade-r',el.scrollLeft<max-2);
+}
+function edgeFadeBind(el){
+  if(!el||el.__ef)return;el.__ef=1;el.classList.add('edge-fade');
+  el.addEventListener('scroll',function(){edgeFadeUpdate(el)},{passive:true});
+  edgeFadeUpdate(el);
+  /* содержимое рядов дорисовывается из JS — пересчитать, когда оно изменилось */
+  try{if(window.ResizeObserver){var ro=new ResizeObserver(function(){edgeFadeUpdate(el)});ro.observe(el);[].forEach.call(el.children,function(c){ro.observe(c)})}}catch(e){}
+}
+function edgeFadeAll(){document.querySelectorAll('.mood-scroll,.chips-row,.qsel,.forme-row').forEach(edgeFadeBind)}
+window.addEventListener('resize',function(){document.querySelectorAll('.edge-fade').forEach(edgeFadeUpdate)});
+
 /* ═══════════════════════════════════════════════════════════════════════════
    УДАЧА — единая валюта, задания, рулетка, магазин.
    Баллы Loop — ОДНА валюта на всё приложение: чек-ины, задания, спины, обмен.
@@ -6596,6 +6679,7 @@ function luckGo(t){
   if(t==='wheel')buildWheel();
   if(t==='spend')renderSpend();
   if(t==='tasks')renderTasks();
+  if(t==='league'){try{renderGame()}catch(e){}renderGBoard();}
   var s=document.querySelector('#c-luck .scroll');if(s)s.scrollTop=0;
   try{haptic('select')}catch(e){}
 }
@@ -6758,6 +6842,35 @@ function wheelPrize(i){
     toast(p.n+' · '+T('Промокод')+' '+code);
   }
   renderLuckHud();
+}
+
+/* ═══ МИРОВОЙ ЗАЧЁТ ═══
+   Считается по собранным местам, а не по баллам: баллы можно докупить,
+   а места — только сходить. Такой зачёт нельзя купить, поэтому он честный.
+   TODO(P2 #16): сидовые игроки — заменить на данные из БД после go-live. */
+var GBOARD=[
+ {n:'Levan K.',   c:'Батуми',   v:186, col:'#FFB547'},
+ {n:'Марина',     c:'Тбилиси',  v:174, col:'#ff5d8f'},
+ {n:'Nika D.',    c:'Батуми',   v:151, col:'#00E0C7'},
+ {n:'Артём',      c:'Дубай',    v:143, col:'#7C3AFF'},
+ {n:'Sophie L.',  c:'Батуми',   v:128, col:'#D4FF4F'},
+ {n:'Гио',        c:'Кутаиси',  v:117, col:'#00E0C7'},
+ {n:'Нина',       c:'Батуми',   v:103, col:'#ff5d8f'}
+];
+function renderGBoard(){
+  var el=document.getElementById('gboard');if(!el)return;
+  var mine=0;try{mine=(gameGet('visited',[])||[]).length}catch(e){}
+  var rows=GBOARD.slice();
+  rows.push({n:T('Ты'),c:(CITIES[CITY]&&CITIES[CITY].name)||'Батуми',v:mine,col:'#D4FF4F',me:1});
+  rows.sort(function(a,b){return b.v-a.v});
+  el.innerHTML=rows.map(function(r,i){
+    var medal=i<3?['🥇','🥈','🥉'][i]:(i+1);
+    return '<div class="grow'+(r.me?' me':'')+(i<3?' top':'')+'">'+
+      '<span class="g-r">'+medal+'</span>'+
+      '<span class="g-a" style="background:linear-gradient(135deg,'+r.col+',rgba(255,255,255,.25))">'+r.n.charAt(0)+'</span>'+
+      '<span class="g-i"><b>'+r.n+'</b><span>'+r.c+'</span></span>'+
+      '<span class="g-v">'+r.v+'<small>'+T('мест')+'</small></span></div>';
+  }).join('');
 }
 
 /* ═══ КУДА ПОТРАТИТЬ ═══ */
