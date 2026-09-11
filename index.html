@@ -1001,7 +1001,10 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .deal .timer{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;padding:7px 12px;border-radius:99px;background:rgba(5,6,10,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--stroke);font-variant-numeric:tabular-nums}
 .deal .timer svg{width:14px;height:14px;color:var(--gold)}
 .deal .dct{position:relative;z-index:2}
-.deal .ddisc{display:inline-block;font-size:13px;font-weight:800;color:var(--gold);background:rgba(255,181,71,.15);padding:4px 11px;border-radius:99px;margin-bottom:8px;border:1px solid rgba(255,181,71,.3)}
+.deal .ddisc{display:inline-block;font-size:13px;font-weight:900;color:var(--gold);
+  background:rgba(5,6,10,.66);-webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);
+  padding:5px 12px;border-radius:99px;margin-bottom:8px;border:1px solid rgba(255,181,71,.45);
+  box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .deal h2{font-size:var(--fs-xl);font-weight:800;letter-spacing:-.02em;line-height:1.1}
 .deal .dsub{font-size:13px;color:var(--txt-2);margin-top:4px}
 .deal .dgo{margin-top:14px;width:100%;padding:15px;border-radius:var(--r-md);font-size:15px;font-weight:800;background:var(--grad-lime);color:#06210a;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s;box-shadow:0 10px 28px rgba(212,255,79,.3)}
@@ -1203,7 +1206,7 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
    отдаёт ~170px, но ни одна функция с экрана не пропадает. */
 .hdr.shrunk #greet,.hdr.shrunk #greetSub,.hdr.shrunk .hdr-quick{
   max-height:0!important;opacity:0!important;margin-top:0!important;margin-bottom:0!important;transform:translateY(-6px)}
-.pts-mini{width:auto!important;padding:0 11px!important;gap:5px;max-width:0;opacity:0;overflow:hidden;
+.pts-mini{width:auto!important;height:44px;display:inline-flex!important;flex-direction:row;align-items:center;justify-content:center;padding:0 12px!important;gap:6px;max-width:0;opacity:0;overflow:hidden;
   transform:translateY(-8px) scale(.86);pointer-events:none;white-space:nowrap;
   transition:max-width .34s var(--ease-out),opacity .24s var(--ease-out),transform .36s var(--ease-spring),margin .34s var(--ease-out);
   margin-right:-10px;border-color:rgba(212,255,79,.28)!important}
@@ -1219,10 +1222,16 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
    старая, и одноразовое «покачивание» для обучения жесту. */
 .answer-wrap{position:relative}
 #answerBox .answer{touch-action:pan-y;will-change:transform}
-@keyframes swInL{from{transform:translateX(-42%) rotate(-7deg);opacity:0}to{transform:none;opacity:1}}
-@keyframes swInR{from{transform:translateX(42%) rotate(7deg);opacity:0}to{transform:none;opacity:1}}
-.sw-in-l{animation:swInL .4s var(--ease-out)}
-.sw-in-r{animation:swInR .4s var(--ease-out)}
+@keyframes deckIn{
+  0%{transform:translateY(54px) scale(.88);opacity:0}
+  40%{opacity:1}
+  100%{transform:none;opacity:1}}
+.deck-in{animation:deckIn .52s cubic-bezier(.18,.9,.24,1)}
+/* Пока верхняя карта уходит, видно край следующей — колода читается колодой */
+.answer-wrap .deck-peek{position:absolute;left:10px;right:10px;height:26px;z-index:0;
+  border-radius:var(--r-lg);background:rgba(255,255,255,.06);border:1px solid var(--stroke-soft);
+  opacity:0;transition:opacity .2s var(--ease-out);pointer-events:none}
+.answer-wrap.shuffling .deck-peek{opacity:1}
 @keyframes swNudge{0%,100%{transform:none}18%{transform:translateX(20px) rotate(1.4deg)}42%{transform:translateX(-16px) rotate(-1.1deg)}64%{transform:translateX(8px) rotate(.5deg)}}
 .sw-nudge{animation:swNudge 1.8s var(--ease-in-out)}
 .sw-hint{position:absolute;left:50%;top:0;transform:translateX(-50%) translateY(8px);z-index:8;
@@ -5479,7 +5488,7 @@ safe(function(){var k='';try{k=localStorage.getItem('cityhub_lang_v1')||''}catch
     try{startLangObserver()}catch(e){}
     try{renderToday()}catch(e){}
   }});
-safe(applyLang);safe(renderConsent);safe(edgeFadeAll);safe(hubDotSync);setTimeout(function(){try{edgeFadeAll()}catch(e){}},700);
+safe(applyLang);safe(renderConsent);safe(edgeFadeAll);safe(hubDotSync);safe(ptsSync);setTimeout(function(){try{edgeFadeAll()}catch(e){}},700);
 safe(renderIdentity);
 safe(function(){if(notifIsRead())notifSetRead()});
 /* ═══ SHAKE-TO-SURPRISE — встряхнул телефон → новое место (сигнатурный жест CityHUB) ═══ */
@@ -5542,7 +5551,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=32;try{renderConsent()}catch(e){}
+var APP_V=33;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6687,15 +6696,24 @@ function swipeReset(el){
 }
 function swipeCommit(dir){
   var c=SW.el;if(!c)return;
-  c.style.transition='transform .3s cubic-bezier(.4,0,.6,1),opacity .3s';
-  c.style.transform='translateX('+(dir*130)+'%) rotate('+(dir*16)+'deg)';
+  var wrap=c.closest('.answer-wrap');
+  if(wrap){
+    /* край следующей карты показываем на время тасовки */
+    var peek=wrap.querySelector('.deck-peek');
+    if(!peek){peek=document.createElement('div');peek.className='deck-peek';wrap.insertBefore(peek,wrap.firstChild)}
+    peek.style.top=(c.offsetTop+c.offsetHeight-20)+'px';
+    wrap.classList.add('shuffling');
+  }
+  c.style.transition='transform .32s cubic-bezier(.36,0,.66,-.06),opacity .26s ease-in';
+  c.style.transform='translateX('+(dir*34)+'%) translateY(92%) rotate('+(dir*9)+'deg) scale(.86)';
   c.style.opacity='0';
   try{haptic('tap')}catch(e){}
   setTimeout(function(){
     try{nextPick()}catch(e){}
     var n=document.querySelector('#answerBox .answer');
-    if(n){n.classList.add(dir>0?'sw-in-l':'sw-in-r');setTimeout(function(){n.classList.remove('sw-in-l','sw-in-r')},420)}
-  },260);
+    if(n){n.classList.add('deck-in');setTimeout(function(){n.classList.remove('deck-in')},540)}
+    if(wrap)setTimeout(function(){wrap.classList.remove('shuffling')},260);
+  },250);
 }
 function swipeBind(){
   var box=document.getElementById('answerBox');if(!box||box.__sw)return;box.__sw=1;
