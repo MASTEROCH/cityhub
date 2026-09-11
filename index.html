@@ -1223,6 +1223,17 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 /* Подложка под фото мест: если картинка не приехала, видно фирменный
    градиент, а не битую иконку. */
 .biz .th,.mini .th,.qst-th,.si-th,.pf-recent .pr-th{background:linear-gradient(135deg,rgba(124,58,255,.38),rgba(0,224,199,.18))!important}
+/* ═══ ОТКЛИК НА НАЖАТИЕ — базовое правило ═══
+   Из 110 кликабельных элементов полсотни молчали под пальцем: одни имели
+   :active, другие нет, и продукт ощущался неровным. Это фолбэк: элемент со
+   своим :active перебивает его специфичностью, а всё остальное наконец
+   отвечает. Исключены контейнеры-подложки и карта — там масштаб ломает вёрстку. */
+button:active,[onclick]:active,[role="button"]:active{transform:scale(.97)}
+button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
+.sheet-bg:active,.city-bg:active,.screen:active,.scroll:active,.split-list:active,
+.leaflet-container:active,.leaflet-container *:active,#map:active,#mapHolder:active,
+.onb:active,.celebrate:active,.world:active,#app:active,.spin-stage:active,
+.answer:active,.answer-wrap:active,.msc-log:active,.chat-scroll:active{transform:none!important}
 /* Иконки, пришедшие на место эмодзи, размер от font-size не берут. */
 .pf-t-emo{display:grid;place-items:center;width:26px;height:26px;color:var(--lime)}
 .pf-t-emo svg{width:24px;height:24px}
@@ -5646,7 +5657,9 @@ function renderBizLocked(){
   tabs.forEach(function(t){t.style.opacity=(t.dataset.t==='add'||v)?'1':'.4'});
 }
 function initBizMapOld_REMOVED(){}
-let tt;function toast(t){const e=document.getElementById('toast');document.getElementById('toast-t').textContent=T(t);e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2100);if(navigator.vibrate)navigator.vibrate(12)}
+/* Тост не должен ронять вызывающий код: он сообщение, а не операция.
+   Нет узла — молча ничего не показываем, но поток не рвём. */
+let tt;function toast(t){const e=document.getElementById('toast');const x=document.getElementById('toast-t');if(!e||!x)return;x.textContent=T(t);e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2100);if(navigator.vibrate)navigator.vibrate(12)}
 
 // ---------- ONBOARDING ----------
 let onbStep=0;const ONB_MAX=4;
@@ -5785,7 +5798,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=41;try{renderConsent()}catch(e){}
+var APP_V=42;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
