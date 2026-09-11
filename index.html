@@ -1874,12 +1874,12 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .ai-onb-prog{display:flex;align-items:center;gap:6px;margin-top:2px}
 .ai-onb-prog i{width:24px;height:4px;border-radius:99px;background:rgba(255,255,255,.12);transition:all .35s var(--ease-spring)}
 .ai-onb-prog i.on{background:linear-gradient(90deg,var(--lime),var(--acc-2));width:36px;box-shadow:0 0 8px rgba(212,255,79,.45)}
-.ai-onb-prog .ai-onb-step{margin-left:auto;font-size:12px;font-weight:800;color:var(--txt-3);letter-spacing:.04em;text-transform:uppercase}
 .ai-onb-opts{display:flex;flex-direction:column;gap:8px}
 .ai-onb-opt{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:var(--r-md);background:linear-gradient(155deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid var(--stroke-soft);cursor:pointer;transition:all .15s var(--ease-spring);text-align:left;font-family:inherit;color:var(--txt);width:100%}
 .ai-onb-opt:hover{border-color:rgba(212,255,79,.32);background:rgba(212,255,79,.06)}
 .ai-onb-opt:active{transform:scale(.985);background:rgba(212,255,79,.12)}
-.ai-onb-emo{font-size:24px;line-height:1;flex-shrink:0;width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.06);display:grid;place-items:center}
+.ai-onb-emo{flex-shrink:0;width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.06);display:grid;place-items:center;color:var(--txt-2)}
+.ai-onb-emo svg{width:21px;height:21px}
 .ai-onb-tx{flex:1;min-width:0}
 .ai-onb-tx b{display:block;font-size:15px;font-weight:800;color:var(--txt);line-height:1.15}
 .ai-onb-tx span{display:block;font-size:12px;color:var(--txt-2);font-weight:600;margin-top:2px}
@@ -2772,6 +2772,53 @@ input,textarea{font-size:16px!important}
   color:#fff;cursor:pointer;z-index:10;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .celebrate .cb-x svg{width:16px;height:16px}
 .celebrate .cb-x:active{transform:scale(.9)}
+/* Выигрыш: срок и действия */
+.win-row{cursor:pointer}
+.win-row .wr-left{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--txt-3);flex-shrink:0}
+.win-row .wr-left.hot{color:var(--gold)}
+.win-row .wr-left svg{width:11px;height:11px}
+.win-row.dead{opacity:.45}
+.win-row.dead .wr-code,.win-row.used .wr-code{background:rgba(255,255,255,.06);color:var(--txt-3);border-color:var(--stroke-soft)}
+.win-sheet{text-align:center;padding:6px 0 2px}
+.win-sheet .ws-ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;margin:4px auto 12px}
+.win-sheet .ws-ic svg{width:27px;height:27px}
+.win-sheet h2{font-size:23px;font-weight:900;letter-spacing:-.02em;line-height:1.15}
+.win-sheet .ws-sub{font-size:12.5px;color:var(--txt-3);margin-top:5px;font-weight:600}
+.win-sheet .ws-timer{display:flex;flex-direction:column;gap:2px;margin:14px auto 0;padding:12px 18px;border-radius:var(--r-md);
+  background:rgba(212,255,79,.09);border:1px solid rgba(212,255,79,.24)}
+.win-sheet .ws-timer span{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-3)}
+.win-sheet .ws-timer b{font-size:22px;font-weight:900;letter-spacing:-.02em;color:var(--lime);font-variant-numeric:tabular-nums}
+.win-sheet .ws-timer.hot{background:rgba(255,181,71,.1);border-color:rgba(255,181,71,.3)}
+.win-sheet .ws-timer.hot b{color:var(--gold)}
+.win-sheet .ws-state{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:10px 16px;border-radius:99px;
+  font-size:13px;font-weight:800;background:rgba(255,255,255,.06);border:1px solid var(--stroke-soft);color:var(--txt-2)}
+.win-sheet .ws-state svg{width:15px;height:15px}
+.win-sheet .ws-state.done{color:var(--lime)}
+.win-sheet .ws-state.dead{color:var(--txt-3)}
+.win-sheet .ws-code{display:flex;flex-direction:column;gap:3px;margin-top:14px;padding:13px;border-radius:var(--r-md);
+  background:rgba(255,255,255,.045);border:1px dashed var(--stroke-soft)}
+.win-sheet .ws-code span{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--txt-3)}
+.win-sheet .ws-code b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:19px;font-weight:800;letter-spacing:.06em;color:var(--lime)}
+.win-sheet .ws-code.off b{color:var(--txt-3);text-decoration:line-through}
+.win-sheet .ws-bigcode{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:34px;font-weight:800;letter-spacing:.08em;
+  color:#06210a;background:var(--grad-lime);border-radius:var(--r-md);padding:22px 12px;margin:16px 0 4px;
+  box-shadow:0 14px 40px rgba(212,255,79,.3)}
+.win-sheet .cta svg{width:16px;height:16px;margin-right:7px}
+.prize-box{border-radius:var(--r-lg);padding:16px;background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft)}
+.pz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.pz-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(212,255,79,.14);color:var(--lime);flex-shrink:0}
+.pz-ic svg{width:21px;height:21px}
+.pz-tx b{display:block;font-size:15px;font-weight:800;letter-spacing:-.01em}
+.pz-tx span{font-size:12px;color:var(--txt-3);font-weight:600}
+.pz-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-3);margin-bottom:8px}
+.pz-pols{display:flex;flex-direction:column;gap:6px}
+.pz-pol{display:flex;align-items:baseline;gap:9px;padding:11px 13px;border-radius:var(--r-sm);text-align:left;font-family:inherit;
+  background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);color:var(--txt-2);cursor:pointer}
+.pz-pol b{font-size:13.5px;font-weight:800;color:var(--txt);flex-shrink:0;min-width:78px}
+.pz-pol span{font-size:11.5px;color:var(--txt-3);font-weight:600;line-height:1.3}
+.pz-pol.on{background:linear-gradient(180deg,#ffffff 0%,#f2f4f8 45%,#d8dde6 100%);border-color:transparent;
+  box-shadow:0 6px 16px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 4px rgba(0,0,0,.08)}
+.pz-pol.on b,.pz-pol.on span{color:#0a0d16}
 </style>
 </head>
 <body class="client">
@@ -3150,8 +3197,12 @@ input,textarea{font-size:16px!important}
           <button class="bh-act" onclick="bgo('boost')"><span class="bh-act-tx"><b>Тарифы буста</b><span>от $19/мес со 2 мес.</span></span></button>
         </div>
 
+        <!-- 5.5 ПРИЗ В БАРАБАНЕ — срок назначает тот, кто приз положил -->
+        <div class="sec-h" style="margin-top:22px;margin-bottom:10px"><h2 style="font-size:15px">Твой приз в барабане</h2></div>
+        <div class="prize-box" id="prizeBox"></div>
+
         <!-- 6. AUCTION — единственный gold-блок (премиум-фича) -->
-        <div class="sec-h" style="margin-top:22px;margin-bottom:10px"><h2 style="font-size:15px">⚔️ Аукцион за главный баннер</h2><span class="auc-live-mini">● LIVE</span></div>
+        <div class="sec-h" style="margin-top:22px;margin-bottom:10px"><h2 style="font-size:15px;display:flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M3 7l4.5 4L12 4l4.5 7L21 7l-1.7 11H4.7z" stroke-linejoin="round"/><path d="M4.7 18h14.6"/></svg>Аукцион за главный баннер</h2><span class="auc-live-mini">● LIVE</span></div>
         <div class="auction-card fadein"><div class="auc-glow"></div>
           <div class="auc-content">
             <div class="auc-top"><div><div class="auc-lbl">Баннер №1 на «Сегодня»</div><div class="auc-sub">Видят все пользователи города при каждом входе</div></div></div>
@@ -3322,7 +3373,7 @@ input,textarea{font-size:16px!important}
 window.addEventListener('error',function(e){if(e&&e.preventDefault)e.preventDefault();return true},true);
 window.addEventListener('unhandledrejection',function(e){if(e&&e.preventDefault)e.preventDefault()});
 })();
-const I={megaphone:'<path d="M3 11l14-6v14L3 13zM3 11H2.6A1.6 1.6 0 0 0 1 12.6v-.2A1.6 1.6 0 0 0 2.6 11zM7 13.6V19a2 2 0 0 0 4 0v-4.2M20 9.5a3 3 0 0 1 0 5"/>',crown:'<path d="M3 7l4.5 4L12 4l4.5 7L21 7l-1.7 11H4.7z" stroke-linejoin="round"/><path d="M4.7 18h14.6"/>',loop:'<path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="currentColor" stroke="none"/>',coffee:'<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h2a2 2 0 0 1 0 4h-2M6 2v2M10 2v2M14 2v2"/>',food:'<path d="M3 2v7c0 1 1 2 2 2s2-1 2-2V2M5 11v11M16 2c-1.5 0-3 2-3 5s1 4 2 4v10"/>',bar:'<path d="M5 3h14l-7 8zM12 11v8M8 21h8"/>',gym:'<path d="M6 6v12M18 6v12M6 12h12M3 9v6M21 9v6"/>',beauty:'<path d="M12 2a5 5 0 0 0-5 5c0 3 5 9 5 9s5-6 5-9a5 5 0 0 0-5-5zM12 22v-4"/>',shop:'<path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9h18M9 13h6"/>',spa:'<path d="M12 3c-3 4-3 8 0 11 3-3 3-7 0-11zM5 14c4 0 6 3 7 6-4 0-6-3-7-6zM19 14c-4 0-6 3-7 6 4 0 6-3 7-6z"/>',car:'<path d="M5 11l2-5h10l2 5M3 11h18v6H3zM6 17v2M18 17v2"/>',travel:'<path d="M2 22l20-9L2 4v6l12 3-12 3z"/>',art:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="9" r="1.3"/><circle cx="16" cy="9" r="1.3"/><circle cx="9" cy="15" r="1.3"/><path d="M14 16c2 0 4-2 4-4"/>',music:'<path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3M20 16a3 3 0 1 1-3-3"/>',med:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/>',pet:'<circle cx="8" cy="9" r="2"/><circle cx="16" cy="9" r="2"/><path d="M12 13c-3 0-5 2-5 4s2 3 5 3 5-1 5-3-2-4-5-4z"/>',sea:'<path d="M2 18c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M2 13c2 0 2-2 4-2s2 2 4 2M14 6l4-2v9"/>',kids:'<circle cx="12" cy="6" r="2.5"/><path d="M12 8.5V15M8 11l4-1 4 1M9 21l3-6 3 6"/>',
+const I={megaphone:'<path d="M3 11l14-6v14L3 13zM3 11H2.6A1.6 1.6 0 0 0 1 12.6v-.2A1.6 1.6 0 0 0 2.6 11zM7 13.6V19a2 2 0 0 0 4 0v-4.2M20 9.5a3 3 0 0 1 0 5"/>',nope:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',solo:'<circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-5.6 7-5.6s7 2 7 5.6"/>',leaf:'<path d="M20 4C9 4 4 9.5 4 16c0 2.2.6 3.3.6 3.3S8 12 20 4z" stroke-linejoin="round"/><path d="M4.6 19.3C10 19 15 16 17.6 11"/>',crown:'<path d="M3 7l4.5 4L12 4l4.5 7L21 7l-1.7 11H4.7z" stroke-linejoin="round"/><path d="M4.7 18h14.6"/>',loop:'<path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="currentColor" stroke="none"/>',coffee:'<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h2a2 2 0 0 1 0 4h-2M6 2v2M10 2v2M14 2v2"/>',food:'<path d="M3 2v7c0 1 1 2 2 2s2-1 2-2V2M5 11v11M16 2c-1.5 0-3 2-3 5s1 4 2 4v10"/>',bar:'<path d="M5 3h14l-7 8zM12 11v8M8 21h8"/>',gym:'<path d="M6 6v12M18 6v12M6 12h12M3 9v6M21 9v6"/>',beauty:'<path d="M12 2a5 5 0 0 0-5 5c0 3 5 9 5 9s5-6 5-9a5 5 0 0 0-5-5zM12 22v-4"/>',shop:'<path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9h18M9 13h6"/>',spa:'<path d="M12 3c-3 4-3 8 0 11 3-3 3-7 0-11zM5 14c4 0 6 3 7 6-4 0-6-3-7-6zM19 14c-4 0-6 3-7 6 4 0 6-3 7-6z"/>',car:'<path d="M5 11l2-5h10l2 5M3 11h18v6H3zM6 17v2M18 17v2"/>',travel:'<path d="M2 22l20-9L2 4v6l12 3-12 3z"/>',art:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="9" r="1.3"/><circle cx="16" cy="9" r="1.3"/><circle cx="9" cy="15" r="1.3"/><path d="M14 16c2 0 4-2 4-4"/>',music:'<path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3M20 16a3 3 0 1 1-3-3"/>',med:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/>',pet:'<circle cx="8" cy="9" r="2"/><circle cx="16" cy="9" r="2"/><path d="M12 13c-3 0-5 2-5 4s2 3 5 3 5-1 5-3-2-4-5-4z"/>',sea:'<path d="M2 18c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M2 13c2 0 2-2 4-2s2 2 4 2M14 6l4-2v9"/>',kids:'<circle cx="12" cy="6" r="2.5"/><path d="M12 8.5V15M8 11l4-1 4 1M9 21l3-6 3 6"/>',
 fire:'<path d="M12 2c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 1 0 1-1 1-2 0-3-2-4-2-7z"/>',
 gift:'<rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18M12 8v13M12 8C12 5 10 3 8 3S5 5 6 7c1 1 6 1 6 1zM12 8c0-3 2-5 4-5s3 2 2 4c-1 1-6 1-6 1z"/>',
 star:'<path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/>',
@@ -4136,7 +4187,7 @@ function openSquad(){
     '</div>'+
     '<div class="squad-now"><div class="sq-avas"><span style="background:#7C3AFF">Р</span><span style="background:#00E0C7">G</span><span class="sq-add">+</span></div><div class="sq-status"><b>Вас уже 2</b><span>Позови ещё 2 — откроется бесплатный десерт</span></div></div>'+
     /* Battle CTA */
-    '<button class="cta lime" style="margin-top:14px;display:flex;gap:10px;align-items:center;justify-content:center" onclick="closeSheet();setTimeout(openBattle,260)"><span style="font-size:18px">⚔️</span>Битва недели · 290 Loop в банке</button>'+
+    '<button class="cta lime" style="margin-top:14px;display:flex;gap:10px;align-items:center;justify-content:center" onclick="closeSheet();setTimeout(openBattle,260)">'+ico('bolt','#06210a',2.4)+'Битва недели · 290 Loop в банке</button>'+
     '<button class="cta ghost" style="margin-top:10px" onclick="closeSheet();shareLink(\'https://t.me/CityHubBot?start=squad_RAMAN\',T(\'Ссылка на сквад скопирована — зови друзей!\'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v14"/></svg>Позвать друзей</button>';
   _openSheet();if(navigator.vibrate)navigator.vibrate(10);
 }
@@ -4670,29 +4721,29 @@ function openAIOnboarding(){
     var body=document.getElementById('sheet-body');if(!body)return;
     var Q=[
       {k:'eating',q:'Что ешь?',sub:'Чтобы не предлагать тебе свинину если ты её не ешь',opts:[
-        {e:'🍽',t:'Всё подряд',v:'all'},
-        {e:'🥗',t:'Веган',v:'vegan'},
-        {e:'🥩',t:'Без свинины',v:'no_pork'},
-        {e:'🐟',t:'Пескетарианец',v:'pesc'},
-        {e:'🌿',t:'Веганец-флекс',v:'flex'}
+        {e:'plate',t:'Всё подряд',v:'all'},
+        {e:'salad',t:'Веган',v:'vegan'},
+        {e:'nope',t:'Без свинины',v:'no_pork'},
+        {e:'sea',t:'Пескетарианец',v:'pesc'},
+        {e:'leaf',t:'Веганец-флекс',v:'flex'}
       ]},
-      {k:'budget',q:'Бюджет на средний выход?',sub:'Не предлагать ужины по 200₾ если ты на 30₾',opts:[
-        {e:'💵',t:'До 30 ₾',v:'low',s:'кофе, бранч, фастфуд'},
-        {e:'💶',t:'30 — 80 ₾',v:'mid',s:'кафе, обеды'},
-        {e:'💷',t:'80 — 200 ₾',v:'high',s:'рестораны'},
-        {e:'👑',t:'Без потолка',v:'lux',s:'премиум, спа, события'}
+      {k:'budget',q:'Бюджет на средний выход?',sub:'Не предлагать ужины по 200'+lcur()+' если ты на 30'+lcur(),opts:[
+        {e:'coffee',t:'До 30 '+lcur(),v:'low',s:'кофе, бранч, фастфуд'},
+        {e:'food',t:'30 — 80 '+lcur(),v:'mid',s:'кафе, обеды'},
+        {e:'wine',t:'80 — 200 '+lcur(),v:'high',s:'рестораны'},
+        {e:'crown',t:'Без потолка',v:'lux',s:'премиум, спа, события'}
       ]},
       {k:'company',q:'Чаще с кем выходишь?',sub:'Атмосфера разная для каждого формата',opts:[
-        {e:'🧘',t:'Соло',v:'solo'},
-        {e:'💕',t:'Пара',v:'couple'},
-        {e:'👯',t:'Друзья',v:'friends'},
-        {e:'👨‍👩‍👧',t:'Семья',v:'family'}
+        {e:'solo',t:'Соло',v:'solo'},
+        {e:'heart',t:'Пара',v:'couple'},
+        {e:'people',t:'Друзья',v:'friends'},
+        {e:'kids',t:'Семья',v:'family'}
       ]}
     ];
     var cur=Q[step-1];
-    var opts=cur.opts.map(function(o){return '<button class="ai-onb-opt" onclick=\'__aiOnbPick('+JSON.stringify(cur.k)+','+JSON.stringify(o.v)+')\'><span class="ai-onb-emo">'+o.e+'</span><span class="ai-onb-tx"><b>'+o.t+'</b>'+(o.s?'<span>'+o.s+'</span>':'')+'</span></button>'}).join('');
+    var opts=cur.opts.map(function(o){return '<button class="ai-onb-opt" onclick=\'__aiOnbPick('+JSON.stringify(cur.k)+','+JSON.stringify(o.v)+')\'><span class="ai-onb-emo">'+ico(o.e,'currentColor',2)+'</span><span class="ai-onb-tx"><b>'+o.t+'</b>'+(o.s?'<span>'+o.s+'</span>':'')+'</span></button>'}).join('');
     body.innerHTML='<div class="grab"></div>'+
-      '<div class="ai-onb-prog">'+[1,2,3].map(function(i){return '<i class="'+(i<=step?'on':'')+'"></i>'}).join('')+'<span class="ai-onb-step">'+step+' из 3</span></div>'+
+      '<div class="ai-onb-prog">'+[1,2,3].map(function(i){return '<i class="'+(i<=step?'on':'')+'"></i>'}).join('')+'</div>'+
       '<h2 style="font-size:24px;font-weight:900;letter-spacing:-.02em;margin:14px 0 4px">'+cur.q+'</h2>'+
       '<p style="font-size:13px;color:var(--txt-2);margin-bottom:16px;line-height:1.4">'+cur.sub+'</p>'+
       '<div class="ai-onb-opts">'+opts+'</div>'+
@@ -5070,7 +5121,7 @@ function goBiz(tab){
   try{document.querySelectorAll('#bizTabs .tab').forEach(function(x){x.classList.toggle('on',x.dataset.t===t)})}catch(e){}
   var bt=document.getElementById('bizTabs');if(bt)bt.style.display=(t==='intro')?'none':'flex';
   if(t==='home'){try{animROI()}catch(e){}}
-  if(t==='home'){try{renderAuc()}catch(e){}}
+  if(t==='home'){try{renderAuc()}catch(e){}try{renderPrizeBox()}catch(e){}}
   if(t==='add'){setTimeout(function(){try{initBizMap()}catch(e){}try{populateNicheSelect()}catch(e){}},150)}
   if(navigator.vibrate)navigator.vibrate(14);
 }
@@ -5087,7 +5138,8 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open');try{ovlOpened()}catch(e){}}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={"Закрыть":["Close", "დახურვა"],
+var DICT={"выигран":["won", "მოგებული"],"Действует ещё":["Valid for", "მოქმედებს კიდევ"],"Использован":["Used", "გამოყენებული"],"Срок вышел":["Expired", "ვადა გავიდა"],"истёк":["expired", "ვადაგასული"],"отдан":["given away", "გადაცემული"],"без срока":["no expiry", "უვადო"],"ч":["h", "სთ"],"мин":["min", "წთ"],"Промокод":["Promo code", "პრომოკოდი"],"Использовать":["Use it", "გამოყენება"],"Подарить другу":["Give to a friend", "მეგობრისთვის ჩუქება"],"Промокод один: если отдашь его — воспользуется друг, а не ты.":["One code only: give it away and your friend uses it, not you.", "კოდი ერთია: თუ გადასცემ, მეგობარი ისარგებლებს, შენ — არა."],"Покажи это на кассе":["Show this at the counter", "აჩვენე ეს სალაროსთან"],"Готово, приз получен":["Done, prize collected", "მზადაა, პრიზი მიღებულია"],"Приз отмечен как использованный":["Prize marked as used", "პრიზი მონიშნულია გამოყენებულად"],"Держи подарок от CityHUB":["A gift from CityHUB", "საჩუქარი CityHUB-სგან"],"действует ещё":["valid for", "მოქმედებს კიდევ"],"Подарок отдан — код теперь у друга":["Gift sent — your friend has the code now", "საჩუქარი გადაეცა — კოდი მეგობართანაა"],"Скопировано — отправь другу":["Copied — send it to your friend", "დაკოპირდა — გაუგზავნე მეგობარს"],"Не получилось скопировать":["Could not copy", "ვერ დაკოპირდა"],"Твой приз в барабане":["Your prize in the drum", "შენი პრიზი დოლურაში"],"выпадает в спиннере · 10% шанс":["drops in the spinner · 10% chance", "ვარდება სპინერში · 10% შანსი"],"Сколько гость может им воспользоваться":["How long the guest can use it", "რამდენ ხანს შეუძლია სტუმარს გამოყენება"],"Срок считается с момента выигрыша. Короткое окно приводит гостя быстрее, длинное — не давит.":["Counted from the moment it is won. A short window brings the guest sooner; a long one does not push.", "ითვლება მოგების მომენტიდან. მოკლე ფანჯარა სტუმარს უფრო სწრაფად მოიყვანს, გრძელი — არ აჩქარებს."],"Срок приза обновлён":["Prize expiry updated", "პრიზის ვადა განახლდა"],"3 дня":["3 days", "3 დღე"],"7 дней":["7 days", "7 დღე"],"30 дней":["30 days", "30 დღე"],"90 дней":["90 days", "90 დღე"],"Бессрочно":["No expiry", "უვადოდ"],"горячая акция, приводит сразу":["hot deal, brings them in now", "ცხელი აქცია, მაშინვე მოჰყავს"],"неделя на визит":["a week to visit", "კვირა ვიზიტისთვის"],"по умолчанию — не давит на гостя":["default — no pressure on the guest", "ნაგულისხმევი — არ აჭერს სტუმარს"],"длинные подписки и крупные призы":["long subscriptions and big prizes", "გრძელი გამოწერები და დიდი პრიზები"],"без срока — гость придёт когда захочет":["no expiry — the guest comes whenever", "უვადო — სტუმარი მოვა როცა მოისურვებს"],
+"Закрыть":["Close", "დახურვა"],
 "Реклама в CityHUB":["Advertising on CityHUB", "რეკლამა CityHUB-ზე"],"Люди открывают приложение, когда решают, куда пойти. Место в этот момент — и есть реклама.":["People open the app at the moment they decide where to go. Being there at that moment is the ad.", "ხალხი აპს მაშინ ხსნის, როცა წყვეტს სად წავიდეს. სწორედ ეს მომენტია რეკლამა."],"Строка":["Ticker", "სტრიქონი"],"Баннер":["Banner", "ბანერი"],"Репортаж":["Feature", "რეპორტაჟი"],"Аукцион":["Auction", "აუქციონი"],"Название и иконка в бегущей строке «Сегодня». Тап ведёт на карточку заведения.":["Your name and icon in the Today ticker. A tap opens your place.", "თქვენი სახელი და იკონა «დღეს»-ის სტრიქონში. შეხება ხსნის თქვენს ბარათს."],"Главный баннер на «Сегодня» — место одно, его разыгрывает живой аукцион.":["The main Today banner — one slot, decided by a live auction.", "მთავარი ბანერი «დღეს»-ზე — ერთი ადგილი, რომელსაც ცოცხალი აუქციონი ანაწილებს."],"Съёмка и материал о заведении в наших соцсетях плюс закреп в приложении на месяц.":["A shoot and a story about you on our social media, plus a month pinned in the app.", "გადაღება და მასალა ჩვენს სოცქსელებში, პლუს თვიანი დამაგრება აპში."],"Показ всем в городе":["Shown to the whole city", "ჩვენება მთელ ქალაქს"],"Срок от 1 недели":["From 1 week", "1 კვირიდან"],"Тап → карточка и маршрут":["Tap → card and route", "შეხება → ბარათი და მარშრუტი"],"Первый экран «Сегодня»":["First screen of Today", "«დღეს»-ის პირველი ეკრანი"],"Ставка бьёт текущую":["Outbid the current leader", "ფსონი ჯობნის მიმდინარეს"],"Аналитика показов и переходов":["Impression and click analytics", "ჩვენებებისა და გადასვლების ანალიტიკა"],"Съёмка и текст — на нас":["Shoot and copy on us", "გადაღება და ტექსტი ჩვენზეა"],"Публикация в соцсетях CityHUB":["Published on CityHUB social", "პუბლიკაცია CityHUB-ის სოცქსელებში"],"Закреп в приложении на месяц":["Pinned in the app for a month", "დამაგრება აპში ერთი თვით"],"Промокод для читателей":["Promo code for readers", "პრომოკოდი მკითხველებისთვის"],"Сколько держим":["How long it runs", "რამდენ ხანს გასტანს"],"Итого":["Total", "ჯამი"],"за выпуск":["per feature", "გამოშვებაზე"],"Оставить заявку":["Send a request", "განაცხადის გაგზავნა"],"Заявка ни к чему не обязывает — сначала обсудим, что вам подходит.":["A request commits you to nothing — we will talk through what fits first.", "განაცხადი არაფერს გავალდებულებთ — ჯერ განვიხილავთ, რა გერგებათ."],"Баннер разыгрывает аукцион — ставка на главной бизнес-экрана":["The banner goes by auction — bid on the business home screen", "ბანერი აუქციონზეა — ფსონი ბიზნეს-ეკრანზე"],"Хочу рекламу в CityHUB":["I want to advertise on CityHUB", "მინდა რეკლამა CityHUB-ზე"],"Расскажи, что входит и как начать.":["Tell me what is included and how to start.", "მომიყევი, რა შედის და როგორ დავიწყო."],
 "баллов Loop":["Loop points", "Loop ქულა"],"копятся за визиты и задания, тратятся на награды и спины":["earned on visits and tasks, spent on rewards and spins", "გროვდება ვიზიტებსა და დავალებებზე, იხარჯება ჯილდოებსა და სპინებზე"],"Заработать":["Earn", "გამომუშავება"],"задания и визиты":["tasks and visits", "დავალებები და ვიზიტები"],"Потратить":["Spend", "დახარჯვა"],"награды партнёров":["partner rewards", "პარტნიორების ჯილდოები"],"Докупить":["Top up", "შევსება"],"пакеты баллов":["point packs", "ქულების პაკეტები"],"История":["History", "ისტორია"],"операция":["transaction", "ოპერაცია"],"Здесь появится история начислений и трат":["Your earnings and spending will show up here", "აქ გამოჩნდება დარიცხვებისა და ხარჯვის ისტორია"],"Квест":["Quest", "ქვესტი"],"Отзыв о месте":["Place review", "ადგილის შეფასება"],"Визит":["Visit", "ვიზიტი"],"Награда":["Reward", "ჯილდო"],"Приглашённый друг":["Invited friend", "მოწვეული მეგობარი"],"Серия дней":["Day streak", "დღეების სერია"],"Задание":["Task", "დავალება"],"Спин рулетки":["Roulette spin", "რულეტის სპინი"],
 
@@ -6043,7 +6095,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=45;try{renderConsent()}catch(e){}
+var APP_V=46;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7304,27 +7356,175 @@ function spinPrize(i){
   else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({k:'refresh',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
   else{
     var code='CH-'+Math.random().toString(36).slice(2,7).toUpperCase();
-    winAdd({n:p.n,d:p.d,c:p.c,k:p.k,code:code,ts:Date.now()});
+    winAdd({n:p.n,d:p.d,c:p.c,k:p.k,code:code,ts:Date.now(),pol:p.pol||'d30',exp:winExpiry(p)});
     try{celebrate({k:'gift',title:p.n,sub:T('Промокод')+' '+code})}catch(e){toast(p.n+' · '+code)}
   }
   renderLuckHud();renderWins();
 }
 /* Инвентарь: всё выигранное лежит здесь, а не теряется в тосте */
+/* ═══════════════ ВЫИГРЫШИ: срок годности и что с ними делать ═══════════════
+   Карточка выигрыша была витриной: промокод на ней просто лежал. Два вопроса,
+   на которые она не отвечала, — «до когда это действует» и «а можно отдать
+   другу». Оба решаются здесь.
+
+   КТО СТАВИТ СРОК. Срок назначает тот, кто положил приз в барабан, — партнёр,
+   в своём кабинете. Но НЕ произвольной датой: свободное поле даёт призы,
+   истекающие в случайный вторник, и гостя, который узнаёт об этом у кассы.
+   Партнёр выбирает ПОЛИТИКУ из короткого списка (`WIN_POLICIES`), а дата
+   считается от момента выигрыша. Смысл приза для заведения — привести гостя
+   в понятное окно, и политика описывает ровно это.
+
+   ПОДЕЛИТЬСЯ = ОТДАТЬ. Промокод один. Если им поделились, воспользуется тот,
+   у кого он на руках, — «поделиться» здесь не копия, а передача, и называть
+   это надо честно, иначе человек уверен, что кофе достанется обоим. */
+var WIN_POLICIES=[
+  {k:'d3',  d:3,    n:'3 дня',       s:'горячая акция, приводит сразу'},
+  {k:'d7',  d:7,    n:'7 дней',      s:'неделя на визит'},
+  {k:'d30', d:30,   n:'30 дней',     s:'по умолчанию — не давит на гостя'},
+  {k:'d90', d:90,   n:'90 дней',     s:'длинные подписки и крупные призы'},
+  {k:'inf', d:0,    n:'Бессрочно',   s:'без срока — гость придёт когда захочет'}
+];
+function winPolicy(k){return WIN_POLICIES.find(function(p){return p.k===k})||WIN_POLICIES[2]}
+/* Политика лежит у приза (её задал партнёр). Нет — берём 30 дней. */
+function winExpiry(prize){
+  var pol=winPolicy(prize&&prize.pol);
+  return pol.d?Date.now()+pol.d*86400000:0;     /* 0 = бессрочно */
+}
+function winLeftMs(w){return (!w.exp)?Infinity:(w.exp-Date.now())}
+function winExpired(w){return winLeftMs(w)<=0}
+/* Осталось — словами, с той точностью, которая в этот момент важна:
+   за неделю человеку нужны дни, в последний час — минуты. */
+function winLeftText(w){
+  var ms=winLeftMs(w);
+  if(ms===Infinity)return T('без срока');
+  if(ms<=0)return T('истёк');
+  var d=Math.floor(ms/86400000), h=Math.floor(ms/3600000)%24, m=Math.floor(ms/60000)%60;
+  if(d>=1)return d+' '+winDayWord(d);
+  if(h>=1)return h+' '+T('ч')+' '+m+' '+T('мин');
+  return m+' '+T('мин');
+}
+function winDayWord(n){
+  if(curLang!=='RU')return n===1?'day':'days';
+  var t=n%10,h=n%100;
+  if(t===1&&h!==11)return 'день';
+  if(t>=2&&t<=4&&(h<12||h>14))return 'дня';
+  return 'дней';
+}
+/* Порядок списка: сначала то, что горит, потом спокойное, внизу отработанное.
+   Использованный и истёкший приз не должен занимать первый экран. */
+function winsSorted(){
+  return winsAll().map(function(w,i){return {w:w,i:i}}).sort(function(a,b){
+    var da=(a.w.used?2:0)+(winExpired(a.w)?1:0), db=(b.w.used?2:0)+(winExpired(b.w)?1:0);
+    if(da!==db)return da-db;
+    var la=winLeftMs(a.w), lb=winLeftMs(b.w);
+    if(la!==lb)return la-lb;                      /* ближе срок — выше */
+    return (b.w.ts||0)-(a.w.ts||0);
+  });
+}
+function openWin(i){
+  var w=winsAll()[i];if(!w)return;
+  var dead=winExpired(w), done=!!w.used, left=winLeftText(w);
+  var d=new Date(w.ts);
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<div class="win-sheet">'+
+      '<span class="ws-ic" style="background:'+w.c+'2e;color:'+w.c+'">'+ico(spinIcon(w),'currentColor',2)+'</span>'+
+      '<h2>'+w.n+'</h2>'+
+      '<p class="ws-sub">'+w.d+' · '+T('выигран')+' '+d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0')+'</p>'+
+      (done?'<div class="ws-state done">'+ico('check','currentColor',2.6)+T('Использован')+'</div>'
+       :dead?'<div class="ws-state dead">'+ico('nope','currentColor',2.4)+T('Срок вышел')+'</div>'
+       :'<div class="ws-timer'+(winLeftMs(w)<86400000?' hot':'')+'"><span>'+T('Действует ещё')+'</span><b id="wsLeft">'+left+'</b></div>')+
+      '<div class="ws-code'+(done||dead?' off':'')+'"><span>'+T('Промокод')+'</span><b>'+w.code+'</b></div>'+
+      (done||dead?'<button class="cta ghost" style="margin-top:14px" onclick="closeSheet()">'+T('Понятно')+'</button>'
+       :'<button class="cta lime" style="margin-top:14px" onclick="winUseFrom('+i+')">'+ico('check','#06210a',2.6)+T('Использовать')+'</button>'+
+        '<button class="cta ghost" style="margin-top:9px" onclick="winGift('+i+')">'+ico('gift','currentColor',2.2)+T('Подарить другу')+'</button>'+
+        '<div class="hint" style="margin-top:10px">'+T('Промокод один: если отдашь его — воспользуется друг, а не ты.')+'</div>')+
+    '</div>';
+  _openSheet();try{haptic('tap')}catch(e){}
+  if(!done&&!dead)winTick(i);
+}
+/* Тикаем только пока шторка открыта — таймер в фоне не нужен никому. */
+function winTick(i){
+  clearInterval(window.__winT);
+  window.__winT=setInterval(function(){
+    var el=document.getElementById('wsLeft');
+    if(!el){clearInterval(window.__winT);return}
+    var w=winsAll()[i];if(!w){clearInterval(window.__winT);return}
+    el.textContent=winLeftText(w);
+    if(winExpired(w)){clearInterval(window.__winT);openWin(i);renderWins()}
+  },1000);
+}
+function winUseFrom(i){
+  var w=winsAll()[i];if(!w||w.used||winExpired(w))return;
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<div class="win-sheet show-code">'+
+      '<h2>'+T('Покажи это на кассе')+'</h2>'+
+      '<div class="ws-bigcode">'+w.code+'</div>'+
+      '<p class="ws-sub">'+w.n+' · '+w.d+'</p>'+
+      '<button class="cta lime" style="margin-top:18px" onclick="winUseConfirm('+i+')">'+T('Готово, приз получен')+'</button>'+
+      '<button class="cta ghost" style="margin-top:9px" onclick="openWin('+i+')">'+T('Назад')+'</button>'+
+    '</div>';
+  _openSheet();try{haptic('confirm')}catch(e){}
+}
+function winUseConfirm(i){
+  var a=winsAll();if(!a[i])return;
+  a[i].used=1;a[i].usedTs=Date.now();gameSet('wins',a);
+  closeSheet();renderWins();
+  try{haptic('success')}catch(e){}
+  toast(T('Приз отмечен как использованный'));
+}
+function winGift(i){
+  var w=winsAll()[i];if(!w||w.used||winExpired(w))return;
+  var txt=T('Держи подарок от CityHUB')+': '+w.n+' ('+w.d+'). '+T('Промокод')+': '+w.code+
+          (w.exp?' · '+T('действует ещё')+' '+winLeftText(w):'');
+  var sent=function(){
+    var a=winsAll();if(a[i]){a[i].used=1;a[i].gifted=1;a[i].usedTs=Date.now();gameSet('wins',a)}
+    closeSheet();renderWins();toast(T('Подарок отдан — код теперь у друга'));
+    try{haptic('success')}catch(e){}
+  };
+  /* Отдаём кодом, а не ссылкой: бэкенда для передачи приза нет, и выдумывать
+     «перевод», которого не происходит, нельзя. У кого код — тот и воспользуется. */
+  try{
+    if(navigator.share){navigator.share({text:txt}).then(sent).catch(function(){});return}
+  }catch(e){}
+  try{
+    navigator.clipboard.writeText(txt).then(function(){
+      toast(T('Скопировано — отправь другу'));setTimeout(sent,400);
+    }).catch(function(){toast(T('Не получилось скопировать'))});
+  }catch(e){toast(T('Не получилось скопировать'))}
+}
+/* Кабинет партнёра: срок жизни приза. Свободной даты здесь нет намеренно —
+   она даёт призы, истекающие в случайный вторник, и гостя, который узнаёт об
+   этом у кассы. Партнёр выбирает окно, дата считается от момента выигрыша. */
+function prizePolGet(){try{return gameGet('prizePol','d30')}catch(e){return 'd30'}}
+function prizePolSet(k){gameSet('prizePol',k);renderPrizeBox();try{haptic('select')}catch(e){}
+  toast(T('Срок приза обновлён')+': '+T(winPolicy(k).n))}
+function renderPrizeBox(){
+  var el=document.getElementById('prizeBox');if(!el)return;
+  var cur=prizePolGet();
+  el.innerHTML='<div class="pz-head"><span class="pz-ic">'+ico('gift','currentColor',2)+'</span>'+
+      '<div class="pz-tx"><b>'+T('Бесплатный кофе')+'</b><span>'+T('выпадает в спиннере · 10% шанс')+'</span></div></div>'+
+    '<div class="pz-lbl">'+T('Сколько гость может им воспользоваться')+'</div>'+
+    '<div class="pz-pols">'+WIN_POLICIES.map(function(p){
+      return '<button class="pz-pol'+(p.k===cur?' on':'')+'" onclick="prizePolSet(\''+p.k+'\')">'+
+        '<b>'+T(p.n)+'</b><span>'+T(p.s)+'</span></button>'}).join('')+'</div>'+
+    '<div class="hint" style="margin-top:10px">'+T('Срок считается с момента выигрыша. Короткое окно приводит гостя быстрее, длинное — не давит.')+'</div>';
+}
 function renderWins(){
   var el=document.getElementById('winsList');if(!el)return;
   var a=winsAll();
   var badge=document.getElementById('winsCount');
-  if(badge){var live=a.filter(function(w){return !w.used}).length;badge.textContent=live?live:'';badge.style.display=live?'':'none'}
+  if(badge){var live=a.filter(function(w){return !w.used&&!winExpired(w)}).length;badge.textContent=live?live:'';badge.style.display=live?'':'none'}
   if(!a.length){
     el.innerHTML='<div class="wins-empty"><b>'+T('Пока пусто')+'</b><span>'+T('Крути спиннер — промокоды, подарки и подписки партнёров лягут сюда')+'</span></div>';
     return;
   }
-  el.innerHTML=a.map(function(w,i){
-    var d=new Date(w.ts);
-    return '<div class="win-row'+(w.used?' used':'')+'">'+
+  el.innerHTML=winsSorted().map(function(x){
+    var w=x.w, i=x.i, dead=winExpired(w), hot=!w.used&&!dead&&winLeftMs(w)<86400000;
+    return '<div class="win-row'+(w.used?' used':'')+(dead&&!w.used?' dead':'')+'" onclick="openWin('+i+')">'+
       '<span class="wr-ic" style="background:'+w.c+'2e;color:'+w.c+'">'+ico(spinIcon(w),'currentColor',2)+'</span>'+
-      '<span class="wr-t"><b>'+w.n+'</b><span>'+w.d+' · '+d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0')+'</span></span>'+
-      '<span class="wr-code"'+(w.used?'':' onclick="winUse('+i+')"')+'>'+(w.used?T('использован'):w.code)+'</span></div>';
+      '<span class="wr-t"><b>'+w.n+'</b><span>'+w.d+'</span></span>'+
+      (w.used||dead?'' : '<span class="wr-left'+(hot?' hot':'')+'">'+ico('bolt','currentColor',2.2)+winLeftText(w)+'</span>')+
+      '<span class="wr-code">'+(w.gifted?T('отдан'):w.used?T('использован'):dead?T('истёк'):w.code)+'</span></div>';
   }).join('');
 }
 /* ═══════════════ РЕКЛАМА ДЛЯ ЗАВЕДЕНИЙ — витрина и заявка ═══════════════
@@ -7901,12 +8101,12 @@ function shareStory(onDone){
    проектов AppHub ничего не стоят нам в баллах, поэтому их вес выше. */
 var WHEEL=[
  {s:'+50',      n:'+50 баллов',          d:'Loop',                  k:'pts',  v:50,  w:22, c:'#D4FF4F', ink:'#06210a'},
- {s:'−20%',     n:'−20% в кофейне',      d:'Партнёры CityHUB',      k:'promo',       w:16, c:'#2b1f4d', ink:'#e6dcff'},
+ {s:'−20%',     n:'−20% в кофейне',      d:'Партнёры CityHUB',      k:'promo', pol:'d30',      w:16, c:'#2b1f4d', ink:'#e6dcff'},
  {s:'+150',     n:'+150 баллов',         d:'Loop',                  k:'pts',  v:150, w:12, c:'#00E0C7', ink:'#04231f'},
- {s:'Кофе',     n:'Бесплатный кофе',     d:'Партнёрская кофейня',   k:'gift',        w:10, c:'#1d2b46', ink:'#cfe0ff'},
+ {s:'Кофе',     n:'Бесплатный кофе',     d:'Партнёрская кофейня',   k:'gift',  get pol(){try{return prizePolGet()}catch(e){return 'd7'}},       w:10, c:'#1d2b46', ink:'#cfe0ff'},
  {s:'Ещё спин', n:'Ещё один спин',       d:'Крути снова',           k:'spin',        w:14, c:'#FFB547', ink:'#2a1500'},
- {s:'PRO',      n:'AppHub PRO на месяц', d:'Проекты AppHub Studio', k:'sub',         w:6,  c:'#7C3AFF', ink:'#f4f0ff'},
- {s:'−30% СПА', n:'−30% в Victoria Spa', d:'Партнёры CityHUB',      k:'promo',       w:8,  c:'#ff5d8f', ink:'#2d0512'},
+ {s:'PRO',      n:'AppHub PRO на месяц', d:'Проекты AppHub Studio', k:'sub',   pol:'d90',      w:6,  c:'#7C3AFF', ink:'#f4f0ff'},
+ {s:'−30% СПА', n:'−30% в Victoria Spa', d:'Партнёры CityHUB',      k:'promo', pol:'d3',       w:8,  c:'#ff5d8f', ink:'#2d0512'},
  {s:'+500',     n:'+500 баллов',         d:'Джекпот Loop',          k:'pts',  v:500, w:3,  c:'#f2ffb0', ink:'#06210a'},
  {s:'+20',      n:'+20 баллов',          d:'Утешительный',          k:'pts',  v:20,  w:9,  c:'#243040', ink:'#c9d6e8'}
 ];
