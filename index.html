@@ -468,7 +468,7 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
   border-right:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14)}
 .mw-hint b{display:block;font-size:14px;font-weight:800;color:var(--txt);margin-bottom:2px;letter-spacing:-.01em}
 .mw-hint i{display:block;font-style:normal;font-size:12px;color:var(--txt-2);line-height:1.4}
-.mw-hint .mw-go{display:inline-flex;align-items:center;gap:5px;margin-top:9px;font-size:12px;font-weight:800;color:var(--lime)}
+.mw-hint .mw-go{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;font-weight:800;color:var(--lime)}
 .mw-hint .mw-go svg{width:13px;height:13px}
 /* === CENTRAL MASCOT TAB — Batumi Neon-style orb в центре tabbar === */
 .tab-mascot{position:relative;flex:0 0 auto;width:72px;height:100%;padding:0!important;display:flex;align-items:flex-start;justify-content:center;background:none!important;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:10}
@@ -1341,7 +1341,7 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 .spin-cta{width:100%;margin-top:16px}
 .spin-cta.short::before,.spin-cta.short::after{display:none}
 .spin-cta.short{cursor:default}
-.spin-alt{display:flex;flex-direction:column;gap:8px;margin-top:9px}
+.spin-alt{display:flex;flex-direction:column;gap:8px;margin-top:10px}
 .spin-alt .sa-btn{display:flex;align-items:center;gap:11px;padding:13px 15px;border-radius:var(--r-md);
   font-family:inherit;text-align:left;cursor:pointer;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);color:var(--txt)}
 .spin-alt .sa-btn.hot{background:linear-gradient(135deg,rgba(212,255,79,.16),rgba(0,224,199,.08));border-color:rgba(212,255,79,.34)}
@@ -2917,6 +2917,9 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
   color:rgba(255,255,255,.82);letter-spacing:-.01em;flex-shrink:0}
 .answer .meta-min .m-more svg{width:13px;height:13px}
 .answer{cursor:pointer}
+/* Ритм колонки «Профиля» — одно правило вместо трёх инлайновых чисел */
+#c-me .scroll > .qr-card,#c-me .scroll > .ref-card,#c-me .scroll > .taste-card,
+#c-me .scroll > .coll-meter,#c-me .scroll > .hub-mood{margin-top:18px}
 </style>
 </head>
 <body class="client">
@@ -3057,7 +3060,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
           <div class="pool-grid" id="poolGrid"></div>
           <button class="cta ghost" style="margin-top:10px" onclick="openPool()">Весь призовой фонд</button>
           <button class="cta gold" style="margin-top:16px" onclick="partnerJoin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>Стать партнёром</button>
-          <div class="hint" style="margin-top:9px">Добавьте свой приз в барабан — его увидят все гости города. Фонд пополняется с каждым партнёром.</div>
+          <div class="hint" style="margin-top:10px">Добавьте свой приз в барабан — его увидят все гости города. Фонд пополняется с каждым партнёром.</div>
 
 
         </div>
@@ -3166,7 +3169,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
         </div>
 
         <!-- Мой CityHUB QR -->
-        <div class="qr-card glass" style="margin-top:18px">
+        <div class="qr-card glass">
           <div style="font-size:13px;color:var(--txt-2);font-weight:600;margin-bottom:4px">Мой QR · покажи на кассе</div>
           <div class="qr-box" id="userqr"><div class="qr-scan"></div></div>
           <div style="font-size:18px;font-weight:800" id="chId">CityHUB ID</div>
@@ -3174,7 +3177,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
           <button class="cta ghost" style="margin-top:14px" onclick="shareMyQR()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Поделиться</button>
         </div>
 
-          <div class="ref-card fadein" style="margin-top:2px"><div class="rg"></div>
+        <div class="ref-card fadein"><div class="rg"></div>
           <h3 style="margin:0 0 6px;font-size:16px;font-weight:800">+200 баллов за каждого</h3>
           <p style="margin:0 0 12px;font-size:12.5px;color:var(--txt-2);line-height:1.45">Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.</p>
           <div class="ref-code"><b id="refCode">RAMAN-2026</b><button onclick="shareLink(document.getElementById('refCode').textContent,T('Код скопирован'))">Копировать</button></div>
@@ -3182,7 +3185,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
         </div>
 
         <!-- Твой вкус — компактно -->
-        <div class="taste-card fadein collapsed" id="tasteCard" style="margin-top:18px"><button class="taste-head" onclick="toggleTaste()" aria-expanded="false"><b>Твой вкус</b><span class="acc" id="tasteAcc">точность 84%</span><svg class="taste-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="taste-card fadein collapsed" id="tasteCard"><button class="taste-head" onclick="toggleTaste()" aria-expanded="false"><b>Твой вкус</b><span class="acc" id="tasteAcc">точность 84%</span><svg class="taste-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
           <div class="taste-body">
           <div class="taste-sub">CityHUB изучает тебя с каждым визитом. Чем больше ходишь — тем точнее подбор.</div>
           <div id="tasteBars"></div>
@@ -3363,7 +3366,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
           <div style="font-size:18px;font-weight:800">Coffee Lab</div><div style="font-size:12.5px;color:var(--txt-2);margin-top:4px">Ниша «Кофе» · 50 баллов/визит</div>
           <button class="cta ghost" style="margin-top:16px" onclick="openPoster()">Скачать плакат A4</button>
         </div>
-        <div class="card glass pad-sm" style="margin-top:13px;display:flex;gap:11px;align-items:center"><div style="font-size:24px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2M18 4v5h-5M6 20v-5h5"/></svg></div><div><div style="font-weight:700;font-size:14px">Обмен клиентами включён</div><div style="font-size:12px;color:var(--txt-2)">Loop: партнёры рекомендуют вас, вы — их</div></div></div>
+        <div class="card glass pad-sm" style="margin-top:14px;display:flex;gap:11px;align-items:center"><div style="font-size:24px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2M18 4v5h-5M6 20v-5h5"/></svg></div><div><div style="font-weight:700;font-size:14px">Обмен клиентами включён</div><div style="font-size:12px;color:var(--txt-2)">Loop: партнёры рекомендуют вас, вы — их</div></div></div>
       </div>
     </section>
 
@@ -6294,7 +6297,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=49;try{renderConsent()}catch(e){}
+var APP_V=50;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7640,7 +7643,7 @@ function openWin(i){
       '<div class="ws-code'+(done||dead?' off':'')+'"><span>'+T('Промокод')+'</span><b>'+w.code+'</b></div>'+
       (done||dead?'<button class="cta ghost" style="margin-top:14px" onclick="closeSheet()">'+T('Понятно')+'</button>'
        :'<button class="cta lime" style="margin-top:14px" onclick="winUseFrom('+i+')">'+ico('check','#06210a',2.6)+T('Использовать')+'</button>'+
-        '<button class="cta ghost" style="margin-top:9px" onclick="winGift('+i+')">'+ico('gift','currentColor',2.2)+T('Подарить другу')+'</button>'+
+        '<button class="cta ghost" style="margin-top:10px" onclick="winGift('+i+')">'+ico('gift','currentColor',2.2)+T('Подарить другу')+'</button>'+
         '<div class="hint" style="margin-top:10px">'+T('Промокод один: если отдашь его — воспользуется друг, а не ты.')+'</div>')+
     '</div>';
   _openSheet();try{haptic('tap')}catch(e){}
@@ -7665,7 +7668,7 @@ function winUseFrom(i){
       '<div class="ws-bigcode">'+w.code+'</div>'+
       '<p class="ws-sub">'+w.n+' · '+w.d+'</p>'+
       '<button class="cta lime" style="margin-top:18px" onclick="winUseConfirm('+i+')">'+T('Готово, приз получен')+'</button>'+
-      '<button class="cta ghost" style="margin-top:9px" onclick="openWin('+i+')">'+T('Назад')+'</button>'+
+      '<button class="cta ghost" style="margin-top:10px" onclick="openWin('+i+')">'+T('Назад')+'</button>'+
     '</div>';
   _openSheet();try{haptic('confirm')}catch(e){}
 }
@@ -7864,7 +7867,7 @@ function dailySheet(streak,mode){
       ' — '+T('серия из')+' <b>'+lost+' '+pl3(lost,T('дня'),T('дней'),T('дней'))+'</b> '+T('сгорела')+'.</p>';
     body='<div class="dl-lost"><div class="dl-lost-n">'+lost+'</div><div class="dl-lost-t">'+T('дней было')+'</div></div>';
     cta='<button class="cta lime" onclick="streakRestore('+lost+')">'+ico('fire','currentColor',2.2)+T('Вернуть серию')+'<span class="gb-pts" style="margin-left:6px">'+Math.max(50,lost*10)+' ⭐</span></button>'+
-        '<button class="cta ghost" style="margin-top:9px" onclick="closeSheet()">'+T('Начать заново')+'</button>';
+        '<button class="cta ghost" style="margin-top:10px" onclick="closeSheet()">'+T('Начать заново')+'</button>';
   } else {
     ptsAdd(rew,T('Серия дней'));
     head='<div class="dl-ic">'+ico('fire','currentColor',2)+'</div>'+
