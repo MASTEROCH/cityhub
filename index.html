@@ -3099,6 +3099,14 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 .dw-c.now i{color:#2a1500;opacity:.8}
 .dl-mile-p{display:flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:800;color:var(--lime)}
 .dl-mile-h b{color:var(--gold);font-weight:900;white-space:nowrap}
+/* Режим обучения жесту: карточка уходит в блюр и тень, подсказка остаётся
+   единственным читаемым элементом. Снимается вместе с подсказкой. */
+.answer.sw-teach>*:not(.sw-stamp){filter:blur(3px) brightness(.42);transition:filter .45s var(--ease-out)}
+.answer>*:not(.sw-stamp){transition:filter .45s var(--ease-out)}
+.answer.sw-teach::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:6;
+  background:radial-gradient(120% 80% at 50% 42%,rgba(5,6,10,.55),rgba(5,6,10,.78));
+  animation:fadein .45s var(--ease-out)}
+.sw-hint{box-shadow:0 14px 40px rgba(0,0,0,.6)}
 </style>
 </head>
 <body class="client">
@@ -6608,7 +6616,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=62;try{renderConsent()}catch(e){}
+var APP_V=63;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8474,6 +8482,8 @@ function swipeBind(){
    чтобы жест был виден, а не угадывался. Дальше молчим навсегда. */
 function swipeHintKill(){
   var h=document.getElementById('swHint');if(h)h.classList.remove('show');
+  /* Затемнение живёт ровно столько же, сколько подсказка */
+  document.querySelectorAll('.answer.sw-teach').forEach(function(c){c.classList.remove('sw-teach')});
   try{setSeen('swipe_v1')}catch(e){}
 }
 function swipeHintMaybe(){
@@ -8484,6 +8494,7 @@ function swipeHintMaybe(){
      это главное действие экрана. Заодно центр фото — ровно там, где палец
      и начнёт жест. */
   h.style.top=Math.round(card.offsetTop+card.offsetHeight*0.40)+'px';
+  card.classList.add('sw-teach');          /* блюр + затемнение самой карточки */
   h.classList.add('show');
   card.classList.add('sw-nudge');
   setTimeout(function(){card.classList.remove('sw-nudge')},1900);
