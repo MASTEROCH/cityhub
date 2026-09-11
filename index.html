@@ -367,7 +367,10 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .chip-glass.status.closed{color:var(--rose)}
 .answer .chip-glass.status.closed .dot{background:var(--rose);box-shadow:0 0 8px var(--rose)}
 /* Live signals — floating below top chips */
-.answer .live-strip{position:absolute;left:14px;right:14px;top:56px;z-index:3;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}
+.answer .live-strip{display:inline-flex;gap:7px;align-items:center;min-width:0;pointer-events:none;flex:1;overflow:hidden}
+/* В одну строку с рейтингом места мало: подпись обязана ужиматься
+   многоточием, а не разваливаться на два ряда и растить карточку. */
+.answer .live-strip > span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex-shrink:1}
 .answer .live-strip span{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:99px;background:rgba(5,6,10,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);color:rgba(244,246,251,.95)}
 .answer .live-strip span i{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:livePulse 1.8s ease-in-out infinite;display:inline-block}
 .answer .live-strip .trend{color:#4ade80}
@@ -375,7 +378,7 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .live-strip .friend{color:#FFB547}
 /* Content block — bottom anchored */
 .answer .ct{position:relative;z-index:2}
-.answer .why{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:6px 11px;border-radius:99px;background:rgba(212,255,79,.16);border:1px solid rgba(212,255,79,.3);color:var(--lime);margin-bottom:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.answer .why{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:6px 11px;border-radius:99px;background:rgba(8,12,6,.82);-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);border:1px solid rgba(212,255,79,.42);color:var(--lime);margin-bottom:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .answer .why svg{width:12px;height:12px;color:var(--lime);flex-shrink:0}
 .answer h1{font-size:clamp(28px,7vw,36px);font-weight:900;letter-spacing:-.025em;line-height:1.04;margin-bottom:6px;text-shadow:0 2px 22px rgba(0,0,0,.75)}
 /* Compact meta — 2-3 items max, dot separators */
@@ -3003,8 +3006,19 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
 .field.invalid input,.field.invalid select,.field.invalid .addr-input{border-color:var(--rose)!important;
   box-shadow:0 0 0 3px rgba(255,93,143,.14)}
 .field.invalid label{color:var(--rose)}
-.upd-banner{display:flex;align-items:center;gap:8px}
+.upd-banner{display:flex;align-items:center;gap:8px;isolation:isolate}
 .upd-banner svg{width:16px;height:16px;flex-shrink:0}
+/* Сама плашка непрозрачна, но висит над плотным блоком — и интерфейс лезет в
+   глаза ВОКРУГ неё. Тот же приём, что под навбаром (канон nav-scrim): мягкий
+   ореол с блюром и маской-градиентом, чтобы край растворялся, а не рисовал
+   вторую плашку. */
+.upd-banner::before{content:'';position:absolute;left:50%;top:50%;z-index:-1;pointer-events:none;
+  transform:translate(-50%,-50%);
+  width:calc(100% + 132px);height:calc(100% + 46px);border-radius:99px;
+  -webkit-backdrop-filter:blur(16px) saturate(130%);backdrop-filter:blur(16px) saturate(130%);
+  background:radial-gradient(closest-side,rgba(5,6,10,.62),rgba(5,6,10,0) 82%);
+  -webkit-mask-image:radial-gradient(closest-side,#000 52%,transparent 100%);
+  mask-image:radial-gradient(closest-side,#000 52%,transparent 100%)}
 </style>
 </head>
 <body class="client">
@@ -4113,9 +4127,9 @@ function renderToday(){
   var sd=0;for(var ci=0;ci<top.n.length;ci++)sd+=top.n.charCodeAt(ci);
   var liveNow=4+sd%18; var friendWas=sd%3===0;
   // живые сигналы — плавающая полоса над фото (новая композиция)
-  var liveSignalsTop='<div class="live-strip">'+
-    '<span><i></i>'+T('сейчас здесь')+' '+liveNow+'</span>'+
-    (friendWas?'<span class="friend">'+T('друг был вчера')+'</span>':'')+'</div>';
+  var liveSignalsTop='<span class="live-strip">'+
+    '<span><i></i>'+liveNow+' '+T('сейчас')+'</span>'+
+    (friendWas?'<span class="friend">'+T('друг был вчера')+'</span>':'')+'</span>';
   var promoChip=top.b==='promo'?'<span class="m-dot"></span><span class="m-promo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>×2 '+T('баллы')+'</span>':'';
   // контекст времени
   var ctxLine=hh<12?'Лучшее начало утра рядом с тобой':hh<18?'Идеально для дневной паузы':hh<23?'Вечер обещает быть хорошим':'Открыто прямо сейчас';
@@ -4130,12 +4144,12 @@ function renderToday(){
     <div class="ph-skel"></div><img class="ph" src="${ph(nz.k,top.n.length,top.n)}" alt="" loading="eager" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.classList.add('loaded');this.style.background='linear-gradient(135deg,${nz.c}cc,${nz.c}33)';this.removeAttribute('src')"><div class="ov"></div>
     <div class="top-strip">
       <span class="chip-glass rate"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${top.r}</span>
+      ${liveSignalsTop}
       <span style="display:flex;gap:8px;align-items:center;pointer-events:auto">
         <span class="chip-glass status ${openNow?'':'closed'}"><span class="dot"></span>${openNow?T('Открыто'):T('Закрыто')}</span>
         ${heartBtn(top.n)}
       </span>
     </div>
-    ${liveSignalsTop}
     <div class="ct"><span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${T(top.why)}</span>
     <h1>${top.n}</h1>
     <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}<span class="m-more">${T('Подробнее')}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 18l6-6-6-6"/></svg></span></div>
@@ -5486,7 +5500,8 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open');try{ovlOpened()}catch(e){}}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={"Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
+var DICT={"сейчас":["now", "ახლა"],
+"Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
 "Как это работает":["How it works", "როგორ მუშაობს"],"Повесь плакат у кассы":["Put the poster at the counter", "დაკიდე პლაკატი სალაროსთან"],"Там, где гость стоит и ждёт — на стойке, у терминала, на столике":["Where the guest stands and waits — on the counter, by the terminal, on the table", "სადაც სტუმარი დგას და ელოდება — დახლზე, ტერმინალთან, მაგიდაზე"],"Гость наводит камеру":["The guest points their camera", "სტუმარი მიმართავს კამერას"],"Откроется твоя карточка в CityHUB — без установки, прямо в Telegram":["Your card opens in CityHUB — no install, right inside Telegram", "შენი ბარათი გაიხსნება CityHUB-ში — ინსტალაციის გარეშე, პირდაპირ Telegram-ში"],"Визит засчитан":["Visit counted", "ვიზიტი ჩაითვალა"],"Баллы падают гостю сразу, тебе — скан в статистике кабинета":["Points land for the guest instantly; you get the scan in your dashboard", "ქულები მაშინვე ჩაერიცხება სტუმარს, შენ — სკანი კაბინეტის სტატისტიკაში"],"Он возвращается":["They come back", "ის ბრუნდება"],"Баллы тратятся у партнёров — и у тебя. Это и есть повод прийти снова":["Points are spent at partners — and at your place. That is the reason to come back", "ქულები იხარჯება პარტნიორებთან — და შენთანაც. ეს არის დაბრუნების მიზეზი"],"Одна фраза удваивает сканы":["One sentence doubles the scans", "ერთი ფრაზა აორმაგებს სკანებს"],"«Отсканируй — получишь баллы на кофе». Просто скажите её на кассе.":["\"Scan this and get points toward a coffee.\" Just say it at the counter.", "«დაასკანერე — ქულებს მიიღებ ყავაზე». უბრალოდ თქვით სალაროსთან."],"Оплата включится вместе с релизом — тариф пока можно забронировать через Hub":["Payments go live with the release — for now you can reserve a plan through Hub", "გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ტარიფი შეგიძლია დაჯავშნო Hub-ით"],"Хочу подключить буст для заведения: что входит и когда можно оплатить?":["I want to enable a boost for my place: what is included and when can I pay?","მინდა ბუსტის ჩართვა: რა შედის და როდის შემიძლია გადახდა?"],
 "Подробнее":["Details", "დეტალები"],
 "Следующий шаг":["Next step", "შემდეგი ნაბიჯი"],"Поставь QR на кассу":["Put the QR at the counter", "დადე QR სალაროსთან"],"Гость сканирует — получает баллы и возвращается":["Guests scan, earn points and come back", "სტუმარი სკანირებს, იღებს ქულებს და ბრუნდება"],"Скачать плакат":["Download poster", "პლაკატის ჩამოტვირთვა"],"Положи приз в барабан":["Put a prize in the drum", "ჩადე პრიზი დოლურაში"],"Твой приз крутят все гости города — это показы бесплатно":["Every guest in the city spins your prize — free impressions", "ქალაქის ყველა სტუმარი ატრიალებს შენს პრიზს — უფასო ჩვენებები"],"Настроить приз":["Set up the prize", "პრიზის კონფიგურაცია"],"Обнови фото и описание":["Refresh photo and description", "განაახლე ფოტო და აღწერა"],"Карточка с живым фото собирает вдвое больше переходов":["A card with a real photo gets twice the clicks", "ცოცხალი ფოტოთი ბარათი ორჯერ მეტ გადასვლას აგროვებს"],"Открыть карточку":["Open the card", "ბარათის გახსნა"],"Подними позицию в нише":["Raise your rank in the niche", "აწიე პოზიცია ნიშაში"],"Буст выводит наверх в момент, когда человек выбирает":["Boost puts you on top exactly when people choose", "ბუსტი ზემოთ გაყავს ზუსტად არჩევის მომენტში"],"Смотреть тарифы":["See plans", "ტარიფების ნახვა"],"Забери главный баннер":["Take the main banner", "აიღე მთავარი ბანერი"],"Одно место на весь город — разыгрывает аукцион":["One slot for the whole city — decided by auction", "ერთი ადგილი მთელ ქალაქზე — აუქციონი წყვეტს"],"Сделать ставку":["Place a bid", "ფსონის დადება"],"Всё настроено":["All set", "ყველაფერი მზადაა"],"Заведение работает на полную — дальше только цифры":["Your place is fully set up — now it is just numbers", "დაწესებულება სრულად მუშაობს — შემდეგ მხოლოდ ციფრები"],
@@ -6467,7 +6482,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=55;try{renderConsent()}catch(e){}
+var APP_V=56;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
