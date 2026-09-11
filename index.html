@@ -1677,20 +1677,22 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .msc-moods-fixed{flex-shrink:0;padding:10px 0 6px;border-top:1px solid rgba(255,255,255,.06)}
 .msc-moods-fixed:empty{display:none}
 .msc-moods-lbl{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-3);margin-bottom:8px;padding:0 2px}
-.msc-moods-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.msc-mood{display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 6px 9px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);cursor:pointer;transition:all .2s var(--ease-spring);position:relative;overflow:hidden;text-align:center;color:var(--txt);font-family:inherit}
+.msc-moods-row{display:flex;gap:6px;overflow-x:auto;overflow-y:visible;scrollbar-width:none;padding:1px}
+.msc-moods-row::-webkit-scrollbar{display:none}
+.msc-mood{display:flex;flex-direction:row;align-items:center;gap:6px;padding:9px 13px;border-radius:999px;flex-shrink:0;white-space:nowrap;background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);cursor:pointer;transition:all .2s var(--ease-spring);position:relative;overflow:hidden;text-align:center;color:var(--txt);font-family:inherit}
 .msc-mood::before{content:'';position:absolute;inset:0;background:radial-gradient(80% 80% at 50% 100%,color-mix(in srgb,var(--mc,#7C3AFF) 35%,transparent),transparent 60%);opacity:0;transition:opacity .25s;pointer-events:none}
 .msc-mood:hover::before{opacity:.5}
 .msc-mood:hover{border-color:color-mix(in srgb,var(--mc,#7C3AFF) 45%,transparent);transform:translateY(-1px)}
 .msc-mood:active{transform:scale(.94)}
-.msc-mood .msc-mood-emo{font-size:22px;line-height:1;filter:drop-shadow(0 2px 6px color-mix(in srgb,var(--mc,#7C3AFF) 50%,transparent));position:relative;z-index:1}
-.msc-mood .msc-mood-t{font-size:11.5px;font-weight:700;color:var(--txt);position:relative;z-index:1}
-.msc-quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.msc-quick-grid .msc-q{flex-shrink:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px;border-radius:14px;white-space:normal;text-align:center;min-height:64px}
-.msc-quick-grid .msc-q .msc-q-emo{font-size:18px;line-height:1}
-.msc-quick-grid .msc-q .msc-q-t{display:flex;flex-direction:column;align-items:center;gap:1px;width:100%}
-.msc-quick-grid .msc-q .msc-q-t b{font-size:11px;font-weight:700;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-.msc-quick-grid .msc-q .msc-q-t span{display:block;font-size:10px;color:var(--txt-3);font-weight:600;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;margin-top:1px}
+.msc-mood .msc-mood-emo{font-size:15px;line-height:1;filter:drop-shadow(0 2px 6px color-mix(in srgb,var(--mc,#7C3AFF) 50%,transparent));position:relative;z-index:1}
+.msc-mood .msc-mood-t{font-size:12.5px;font-weight:700;color:var(--txt);position:relative;z-index:1}
+.msc-quick-grid{display:flex;gap:6px;overflow-x:auto;overflow-y:visible;scrollbar-width:none;padding:1px}
+.msc-quick-grid::-webkit-scrollbar{display:none}
+.msc-quick-grid .msc-q{flex-shrink:0;display:flex;flex-direction:row;align-items:center;gap:7px;padding:9px 13px;border-radius:999px;white-space:nowrap;text-align:left;min-height:0}
+.msc-quick-grid .msc-q .msc-q-emo{font-size:15px;line-height:1;flex-shrink:0}
+.msc-quick-grid .msc-q .msc-q-t{display:flex;flex-direction:row;align-items:baseline;gap:5px;width:auto}
+.msc-quick-grid .msc-q .msc-q-t b{font-size:12.5px;font-weight:700;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.msc-quick-grid .msc-q .msc-q-t span{display:block;font-size:11px;color:var(--txt-3);font-weight:600;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;margin-top:1px}
 /* AI-suggested follow-up chips after each reply */
 .msc-followups{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:2px}
 .msc-followup{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:99px;background:rgba(212,255,79,.08);border:1px solid rgba(212,255,79,.22);color:var(--lime);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
@@ -2589,7 +2591,6 @@ input,textarea{font-size:16px!important}
           <button class="on" data-l="tasks" onclick="luckGo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Задания<span class="seg-dot" id="tasksDot"></span></button>
           <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg>Рулетка</button>
           <button data-l="league" onclick="luckGo('league')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>Лига</button>
-          <button data-l="spend" onclick="luckGo('spend')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>Потратить</button>
         </div>
 
         <!-- 1. ЗАДАНИЯ -->
@@ -2625,17 +2626,6 @@ input,textarea{font-size:16px!important}
         </div>
 
         <!-- 3. КУДА ПОТРАТИТЬ -->
-        <div class="luck-pane" id="pane-spend">
-          <div class="spend-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg><span id="spendNote">Баллы Loop меняются на реальное у партнёров города.</span></div>
-          <div id="spendList"></div>
-          <div class="sec-h" style="margin-top:22px"><h2 style="font-size:16px">Приведи друга</h2></div>
-          <div class="ref-card fadein" style="margin-top:2px"><div class="rg"></div>
-            <h3 style="margin:0 0 6px;font-size:16px;font-weight:800">+200 баллов за каждого</h3>
-            <p style="margin:0 0 12px;font-size:12.5px;color:var(--txt-2);line-height:1.45">Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.</p>
-            <div class="ref-code"><b id="refCode">RAMAN-2026</b><button onclick="shareLink(document.getElementById('refCode').textContent,T('Код скопирован'))">Копировать</button></div>
-            <button class="cta lime" style="margin-top:12px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Пригласить друга</button>
-          </div>
-        </div>
 
       </div>
     </section>
@@ -2702,7 +2692,7 @@ input,textarea{font-size:16px!important}
             <span class="pf-t-t">Квесты</span>
             <span class="pf-t-sub">Маршруты по городу</span>
           </button>
-          <button class="pf-tile" onclick="cgo('rewards')">
+          <button class="pf-tile" onclick="openShop()">
             <span class="pf-t-emo">🎁</span>
             <span class="pf-t-t">Награды</span>
             <span class="pf-t-sub">Магазин на баллы</span>
@@ -2744,6 +2734,13 @@ input,textarea{font-size:16px!important}
           <div style="font-size:18px;font-weight:800" id="chId">CityHUB ID</div>
           <div style="font-size:12.5px;color:var(--txt-2);margin-top:4px">Единый ключ к партнёрам в любой стране</div>
           <button class="cta ghost" style="margin-top:14px" onclick="shareMyQR()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Поделиться</button>
+        </div>
+
+          <div class="ref-card fadein" style="margin-top:2px"><div class="rg"></div>
+          <h3 style="margin:0 0 6px;font-size:16px;font-weight:800">+200 баллов за каждого</h3>
+          <p style="margin:0 0 12px;font-size:12.5px;color:var(--txt-2);line-height:1.45">Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.</p>
+          <div class="ref-code"><b id="refCode">RAMAN-2026</b><button onclick="shareLink(document.getElementById('refCode').textContent,T('Код скопирован'))">Копировать</button></div>
+          <button class="cta lime" style="margin-top:12px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Пригласить друга</button>
         </div>
 
         <!-- Твой вкус — компактно -->
@@ -3486,11 +3483,10 @@ function renderToday(){
   const top=C.biz[0];const nz=NICHES.find(n=>n.k===top.k)||{c:'#7C3AFF',n:'',q:''};
   // живые сигналы города (псевдо-реалтайм по названию)
   var sd=0;for(var ci=0;ci<top.n.length;ci++)sd+=top.n.charCodeAt(ci);
-  var liveNow=4+sd%18; var trend=12+sd%48; var friendWas=sd%3===0;
+  var liveNow=4+sd%18; var friendWas=sd%3===0;
   // живые сигналы — плавающая полоса над фото (новая композиция)
   var liveSignalsTop='<div class="live-strip">'+
     '<span><i></i>'+T('сейчас здесь')+' '+liveNow+'</span>'+
-    '<span class="trend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 17l6-6 4 4 8-8M21 7v5h-5"/></svg>+'+trend+'% '+T('за неделю')+'</span>'+
     (friendWas?'<span class="friend">'+T('друг был вчера')+'</span>':'')+'</div>';
   var promoChip=top.b==='promo'?'<span class="m-dot"></span><span class="m-promo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>×2 '+T('баллы')+'</span>':'';
   // контекст времени
@@ -4576,7 +4572,7 @@ function renderStatic(){
 function cgo(t){if(t==='ai'){try{openMascot()}catch(e){}return}
   /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
   if(t==='niches')t='map';if(t==='rewards')t='luck';
-  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderSpend();renderGBoard();renderLuckHud();luckTickStart();luckGo(gameGet('luckTab','tasks'));}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderGBoard();renderLuckHud();luckTickStart();luckGo((function(x){return x==='spend'?'tasks':x})(gameGet('luckTab','tasks')));}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:20,mine:0,bids:[
   {n:'Tangerine',v:340,me:false},
@@ -5509,7 +5505,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=28;try{renderConsent()}catch(e){}
+var APP_V=29;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6303,7 +6299,7 @@ function openMascot(){
      pointerdown, не click — часть TG-webview глотает click после touch-скролла. */
   mscCloseBtnShow();
   var sh=_openSheet();sh.classList.add('sheet-mascot');/* _openSheet чистит 'closing' — иначе pointer-events:none ломал закрытие */
-  renderMascotLog();renderMascotQuick();
+  renderMascotLog();renderMascotQuick();setTimeout(function(){try{edgeFadeAll()}catch(e){}},60);
   mascotPlay('happy');
   /* Надёжное закрытие в Telegram: показываем нативную BackButton (её обработчик зовёт closeSheet).
      Крестик перенесён ВЛЕВО — правый верхний угол в TG-fullscreen занят нативной панелью (⌄/⋯),
@@ -6636,7 +6632,7 @@ function edgeFadeBind(el){
   /* содержимое рядов дорисовывается из JS — пересчитать, когда оно изменилось */
   try{if(window.ResizeObserver){var ro=new ResizeObserver(function(){edgeFadeUpdate(el)});ro.observe(el);[].forEach.call(el.children,function(c){ro.observe(c)})}}catch(e){}
 }
-function edgeFadeAll(){document.querySelectorAll('.mood-scroll,.chips-row,.qsel,.forme-row').forEach(edgeFadeBind)}
+function edgeFadeAll(){document.querySelectorAll('.mood-scroll,.chips-row,.qsel,.forme-row,.msc-moods-row,.msc-quick-grid').forEach(edgeFadeBind)}
 window.addEventListener('resize',function(){document.querySelectorAll('.edge-fade').forEach(edgeFadeUpdate)});
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -6656,9 +6652,8 @@ function ptsSpend(n){var c=ptsGet();if(c<n)return false;ptsSave(c-n);return true
 /* Все витрины баланса обновляются из одного места */
 function ptsSync(){
   var v=ptsGet(),s=v.toLocaleString('ru-RU');
-  ['luckBal','ptsTop','balBig','shopBal','pfPts'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=s});
+  ['luckBal','ptsTop','shopBal','pfPts'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=s});
   try{renderLuckHud()}catch(e){}
-  try{renderSpend()}catch(e){}
 }
 
 /* ── Бесплатный спин по таймеру ── */
@@ -6691,7 +6686,6 @@ function luckGo(t){
   document.querySelectorAll('.luck-pane').forEach(function(p){p.classList.toggle('on',p.id==='pane-'+t)});
   gameSet('luckTab',t);
   if(t==='wheel')buildWheel();
-  if(t==='spend')renderSpend();
   if(t==='tasks')renderTasks();
   if(t==='league'){try{renderGame()}catch(e){}renderGBoard();}
   var s=document.querySelector('#c-luck .scroll');if(s)s.scrollTop=0;
@@ -6887,19 +6881,6 @@ function renderGBoard(){
   }).join('');
 }
 
-/* ═══ КУДА ПОТРАТИТЬ ═══ */
-function renderSpend(){
-  var el=document.getElementById('spendList');if(!el)return;
-  var bal=ptsGet();
-  el.innerHTML=REWARDS.map(function(r,i){
-    var can=bal>=r.c;
-    return '<div class="shop-item"><div class="si-ic" style="background:'+r.col+'22">'+ico(r.k,r.col,2)+'</div>'+
-      '<div class="si-t"><b>'+r.n+'</b><span>'+r.d+'</span></div>'+
-      '<button class="si-btn'+(can?'':' off')+'" onclick="redeem('+i+')">'+(can?r.c:T('нужно')+' '+(r.c-bal))+'</button></div>';
-  }).join('');
-  var nt=document.getElementById('spendNote');
-  if(nt)nt.textContent=T('У тебя')+' '+bal.toLocaleString('ru-RU')+' '+T('баллов')+'. '+T('Баллы Loop меняются на реальное у партнёров города.');
-}
 
 /* ═══ ДОКУПКА БАЛЛОВ ═══
    Пакеты и цены свёрстаны; оплата включается одной функцией buyPack, когда
