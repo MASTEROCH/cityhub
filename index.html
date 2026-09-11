@@ -3506,7 +3506,7 @@ function renderToday(){
   // Hub Hunt banner (suббота)
   try{var hs=document.getElementById('huntSlot');if(hs)hs.innerHTML=huntBannerHTML()}catch(e){}
   if(window.__todayExpanded){var m=document.getElementById('moreToday');var b=document.getElementById('showMore');if(m)m.classList.add('open');if(b)b.classList.add('hide')}
-  if(!window.__ptsAnimated){window.__ptsAnimated=true;setTimeout(function(){animNum('ptsTop',1240,'',true)},300)}
+  if(!window.__ptsAnimated){window.__ptsAnimated=true;setTimeout(function(){try{animNum('ptsTop',ptsGet(),'',true)}catch(e){}},300)}
   var hh=new Date().getHours();var g=hh<6?'Доброй ночи':hh<12?'Доброе утро':hh<18?'Добрый день':'Добрый вечер';
   var gel=document.getElementById('greet');if(gel){var __nm='';try{__nm=profileName()}catch(e){}gel.textContent=T(g)+(__nm?', '+__nm:'')}
   var gs=document.getElementById('greetSub');if(gs)gs.textContent=T('Не ищи — открыл и сразу знаешь, куда пойти');
@@ -3581,7 +3581,7 @@ function renderToday(){
     <button class="mood vibe ai-vibe" data-vibe-q="Романтичное место для свидания — атмосфера, виды, тихий ужин." data-vibe-t="Свидание"><span class="vibe-ic">💘</span><span class="vibe-lb">Свидание</span></button>
   </div></div>
 `;
-  try{swipeBind();swipeHintMaybe()}catch(e){}
+  try{swipeBind();swipeHintMaybe();edgeFadeAll()}catch(e){}
   document.getElementById('altList').innerHTML=C.biz.slice(1,4).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><h3>'+b.n+promo+'</h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp">+'+b.pts+'</div></div>'}).join('')+
   `<div class="travel-card fadein" onclick="travelMode()"><div class="tv-glow"></div><div class="tv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 22l20-9L2 4v6l12 3-12 3z"/></svg></div><div class="tv-tx"><b>Ты в новом городе?</b><span>CityHUB соберёт маршрут на день под тебя — где поесть, что посмотреть, куда вечером</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>`+
   `<div class="ai-cta fadein" onclick="openMascot()"><div class="ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4M8 12h.01M12 12h.01M16 12h.01"/></svg></div><div class="ai-tx"><b>Не знаешь, чего хочешь?</b><span>Спроси AI-консьержа — подберёт по настроению</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>`;
@@ -3742,7 +3742,7 @@ function claimQuest(qid){
   var tpl=QUEST_TPL.find(function(t){return t.id===qid});if(!tpl)return;
   closeSheet();
   setTimeout(function(){celebrate({icon:tpl.emo,title:'Квест завершён!',sub:'+'+tpl.rew+' '+T('баллов')+' · '+T('бейдж')+' «'+tpl.badge+'»'})},260);
-  PTS+=tpl.rew;QUEST_STATE.progress[qid]=0;// сброс прогресса после клейма
+  ptsAdd(tpl.rew);QUEST_STATE.progress[qid]=0;// сброс прогресса после клейма
   var bb=document.getElementById('balBig');if(bb)bb.textContent=PTS.toLocaleString('ru-RU');
   var pt=document.getElementById('ptsTop');if(pt)pt.textContent=PTS.toLocaleString('ru-RU');
 }
@@ -4167,7 +4167,7 @@ async function chCall(path,opts){
 }
 function chSyncUser(u){
   try{
-    if(typeof u.points==='number'){PTS=u.points;try{bumpNumber('balBig',PTS);bumpNumber('ptsTop',PTS)}catch(e){}}
+    if(typeof u.points==='number'){try{ptsSave(u.points)}catch(e){PTS=u.points}}
     if(u.plan){try{gameSet('plan',u.plan)}catch(e){}}
   }catch(e){}
 }
@@ -5120,7 +5120,7 @@ function submitReview(){
   revSave(name,revs);_revCtx.draft=0;
   try{if(CH_API.on&&window._bizRef&&(_bizRef.id||_bizRef.qr_token))chCall('/api/reviews',{method:'POST',body:{venue:_bizRef.id||_bizRef.qr_token,rating:rating,text:text}})}catch(e){}
   haptic('success');
-  if(first){PTS+=20;try{bumpNumber('balBig',PTS);bumpNumber('ptsTop',PTS)}catch(e){}try{celebrate({icon:'⭐',title:'+20 '+T('баллов'),sub:T('Спасибо за отзыв!')})}catch(e){}}
+  if(first){ptsAdd(20);try{celebrate({icon:'⭐',title:'+20 '+T('баллов'),sub:T('Спасибо за отзыв!')})}catch(e){}}
   else toast(T('Отзыв обновлён'));
   renderReviews(name,_revCtx.base);
 }
@@ -5188,9 +5188,13 @@ function confirmArrived(pts,bizName){
   var btn=document.getElementById('arrBtn');if(btn){btn.textContent='Готово! Баллы зачислены';btn.style.opacity='.7'}
   // Применить streak multiplier
   var mult=streakMultiplier(streakCurrent());var basePts=pts;pts=Math.round(pts*mult);
-  PTS+=pts;bumpNumber('balBig',PTS);bumpNumber('ptsTop',PTS);haptic('reward');
-  var msg='+'+pts+' '+T('баллов')+(mult>1?' · ×'+mult+' streak':'');
-  setTimeout(function(){closeSheet();toast(msg)},1500);
+  ptsAdd(pts);haptic('reward');
+  setTimeout(function(){
+    closeSheet();
+    var sub=mult>1?(T('Стрик')+' ×'+mult+' · '+(bizName||'')):(bizName||T('Визит засчитан'));
+    try{celebrate({icon:'🎉',title:'+'+pts+' '+T('баллов'),sub:sub})}
+    catch(e){toast('+'+pts+' '+T('баллов'))}
+  },1300);
   if(bizName){questAdvance(bizName);gameOnVisit(bizName);}
 }
 var __sheetTok=0;
@@ -5551,7 +5555,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=33;try{renderConsent()}catch(e){}
+var APP_V=34;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6645,7 +6649,7 @@ function claimVoucher(){
   vb.classList.add('claimed');vb.style.transition='opacity .4s,max-height .5s,margin-bottom .4s,padding .4s';vb.style.overflow='hidden';vb.style.maxHeight=vb.offsetHeight+'px';
   requestAnimationFrame(function(){vb.style.opacity='0';vb.style.maxHeight='0';vb.style.marginBottom='0';vb.style.paddingTop='0';vb.style.paddingBottom='0'});
   setTimeout(function(){vb.style.display='none'},500);
-  PTS+=100;var bb=document.getElementById('balBig');if(bb)bb.textContent=PTS.toLocaleString('ru-RU');var pt=document.getElementById('ptsTop');if(pt)pt.textContent=PTS.toLocaleString('ru-RU');
+  ptsAdd(100);
   toast(T('Ваучер активирован')+' · +100 '+T('баллов'));if(navigator.vibrate)navigator.vibrate([10,40,10]);
 }
 // === Real clipboard for share ===
@@ -6756,7 +6760,10 @@ function swipeHintMaybe(){
   try{if(seen('swipe_v1'))return}catch(e){return}
   var card=document.querySelector('#answerBox .answer'),h=document.getElementById('swHint');
   if(!card||!h)return;
-  h.style.top=Math.max(0,card.offsetTop+card.offsetHeight-54)+'px';
+  /* Над фото, а не над кнопками: подсказка не должна перекрывать «Идём» —
+     это главное действие экрана. Заодно центр фото — ровно там, где палец
+     и начнёт жест. */
+  h.style.top=Math.round(card.offsetTop+card.offsetHeight*0.40)+'px';
   h.classList.add('show');
   card.classList.add('sw-nudge');
   setTimeout(function(){card.classList.remove('sw-nudge')},1900);
