@@ -151,6 +151,13 @@ window.onerror=function(){return true};
   --fs-xs:11px;--fs-sm:13px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:34px;--fs-hero:clamp(28px,7vw,38px);
   /* Day/night accent shift (luxe feel) */
   --time-tint:rgba(0,0,0,0);
+  /* Рецепт заливки primary-кнопки. Один на все размеры: язык кнопки не зависит
+     от того, полноширинная она или компактная пилюля внутри карточки. */
+  --btn-ink:#06210a;
+  --btn-fill:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%);
+  --btn-sh:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18);
+  --btn-sh-a:0 6px 18px rgba(212,255,79,.4),0 2px 4px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.3);
+  --btn-sh-sm:0 6px 16px rgba(212,255,79,.35),0 2px 5px rgba(0,0,0,.22),inset 0 1.5px 0 rgba(255,255,255,.45),inset 0 -2px 5px rgba(0,0,0,.16);
 }
 body.is-night #app{background:radial-gradient(140% 90% at 50% -10%,#090b17,#04050a 60%)}
 body.is-day #app{background:radial-gradient(140% 90% at 50% -10%,#100e24,#060712 70%)}
@@ -246,7 +253,12 @@ body.anim-halt .blob{animation-play-state:paused}
 .b4{width:38vw;height:38vw;background:#D4FF4F;top:55%;left:-10%;opacity:.07;animation:drift4 58s cubic-bezier(.6,.04,.4,.96) infinite;mix-blend-mode:screen}
 body.biz .b1{background:#ffb14d}body.biz .b2{background:#7C3AFF}body.biz .b3{background:#00E0C7}body.biz .b4{background:#ff5d8f}
 /* === BIZ MODE — full accent swap (lime → gold) === */
-body.biz{--accent:var(--gold);--accent-grad:var(--grad-gold);--accent-ink:#2a1500;--accent-glow:rgba(255,181,71,.4)}
+body.biz{--accent:var(--gold);--accent-grad:var(--grad-gold);--accent-ink:#2a1500;--accent-glow:rgba(255,181,71,.4);
+  --btn-ink:#2a1500;
+  --btn-fill:linear-gradient(180deg,#FFD08A 0%,#FFB547 45%,#cc8a25 100%);
+  --btn-sh:0 14px 36px rgba(255,181,71,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18);
+  --btn-sh-a:0 6px 18px rgba(255,181,71,.4),0 2px 4px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.3);
+  --btn-sh-sm:0 6px 16px rgba(255,181,71,.35),0 2px 5px rgba(0,0,0,.22),inset 0 1.5px 0 rgba(255,255,255,.45),inset 0 -2px 5px rgba(0,0,0,.16)}
 /* biz mode: ТОЛЬКО специфичные premium-элементы перекрашиваются в gold.
    Primary CTA (.cta.lime, .go-btn) остаются lime для consistency «действие = lime». */
 body.biz .vba,body.biz .vbi,body.biz .si-btn{background:var(--accent-grad)!important;color:var(--accent-ink)!important;box-shadow:0 12px 32px var(--accent-glow)!important}
@@ -653,8 +665,16 @@ body.biz .biz .pp .v::before{background:var(--gold);box-shadow:0 0 6px rgba(255,
 .cta:active{transform:scale(.97)}.cta svg{width:18px;height:18px}
 .cta.lime{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%);color:#06210a;box-shadow:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18);text-shadow:0 1px 0 rgba(255,255,255,.25)}
 .cta.lime:active{transform:scale(.97);box-shadow:0 6px 18px rgba(212,255,79,.4),0 2px 4px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.3)}
-/* Volumetric lime для всех ключевых CTA */
-.go-btn,.dgo,.lbtn.primary,.bc-btn.primary,.go-btn-new{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%)!important;color:#06210a!important;box-shadow:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18)!important;text-shadow:0 1px 0 rgba(255,255,255,.25)}
+/* Один рецепт на ВСЕ кнопки-действия. Крупные и компактные различаются только
+   размером тени: 36px-тень под 30px-пилюлей читается как ошибка.
+   Состояния выбора (чипы, сегменты) сюда НЕ входят — это переключатели, не действия. */
+.cta.lime,.go-btn,.dgo,.lbtn.primary,.bc-btn.primary,.go-btn-new,.celebrate .cb-btn,
+.vbanner .vba,.lf-popup .lp-go,.ref-code button,.shop-item .si-btn:not(.locked):not(.off){
+  background:var(--btn-fill)!important;color:var(--btn-ink)!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.25);border-color:transparent!important}
+.vbanner .vba,.lf-popup .lp-go,.ref-code button,.shop-item .si-btn:not(.locked):not(.off){box-shadow:var(--btn-sh-sm)!important}
+.vbanner .vba:active,.lf-popup .lp-go:active,.ref-code button:active,.shop-item .si-btn:active{transform:scale(.95)}
+.go-btn,.dgo,.lbtn.primary,.bc-btn.primary,.go-btn-new{background:var(--btn-fill)!important;color:var(--btn-ink)!important;box-shadow:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18)!important;text-shadow:0 1px 0 rgba(255,255,255,.25)}
 .go-btn:active,.dgo:active,.lbtn.primary:active,.bc-btn.primary:active,.go-btn-new:active{box-shadow:0 6px 18px rgba(212,255,79,.4),0 2px 4px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.3)!important}
 /* Gold variant — biz mode */
 body.biz .cta.lime,body.biz .go-btn,body.biz .dgo,body.biz .lbtn.primary,body.biz .bc-btn.primary,body.biz .go-btn-new{background:linear-gradient(180deg,#FFD08A 0%,#FFB547 45%,#cc8a25 100%)!important;color:#2a1500!important;box-shadow:0 14px 36px rgba(255,181,71,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18)!important}
@@ -1720,7 +1740,9 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 .ach-info{flex:1;min-width:0}
 .ach-info b{font-size:13px;font-weight:800;display:block;line-height:1.15;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ach-info span{font-size:11px;color:var(--txt-2);display:block;margin-top:2px;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.ach-rare{position:absolute;top:6px;right:8px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ac,#D4FF4F);opacity:.85}
+/* Редкость стояла absolute поверх карточки и налезала на название.
+   Теперь это надзаголовок в потоке — столкнуться не с чем при любой длине слова. */
+.ach-rare{display:block;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--ac,#D4FF4F);opacity:.9;line-height:1;margin-bottom:4px}
 
 /* DISTRICTS */
 .distr-list{display:flex;flex-direction:column;gap:9px}
@@ -2749,14 +2771,6 @@ input,textarea{font-size:16px!important}
     </section>
 
     <!-- TAB: NICHES (list + search) -->
-    <section class="screen" id="c-ai">
-      <div class="hdr"><div><div class="hdr-sub" data-i18n="ai_sub">AI-консьерж CityHUB</div><div class="hdr-title" style="font-size:21px" data-i18n="ai_title">Спроси что угодно</div></div><div class="avatar ai-ava"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg></div></div>
-      <div class="chat-wrap">
-        <div class="chat-scroll" id="chatScroll"><div class="chat-row" id="chatRows"></div></div>
-        <div class="quick-row" id="quickRow"></div>
-        <div class="chat-input"><input id="chatInput" data-i18n-ph="chat_ph" placeholder="Напиши или выбери выше…" oninput="toggleSend()" onkeydown="if(event.key==='Enter')sendChat()"><button class="chat-send" id="chatSend" onclick="sendChat()" aria-label="Отправить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></div>
-      </div>
-    </section>
 
     <div class="nav-fade"></div>
     <nav class="tabbar" id="clientTabs">
@@ -4559,9 +4573,10 @@ function renderStatic(){
 }
 
 // ---------- nav ----------
-function cgo(t){/* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
+function cgo(t){if(t==='ai'){try{openMascot()}catch(e){}return}
+  /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
   if(t==='niches')t='map';if(t==='rewards')t='luck';
-  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');document.getElementById('w-client').classList.toggle('hide-fade',t==='ai');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderSpend();renderGBoard();renderLuckHud();luckTickStart();luckGo(gameGet('luckTab','tasks'));}if(t==='ai')initChat();if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderSpend();renderGBoard();renderLuckHud();luckTickStart();luckGo(gameGet('luckTab','tasks'));}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:20,mine:0,bids:[
   {n:'Tangerine',v:340,me:false},
@@ -5494,7 +5509,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=27;try{renderConsent()}catch(e){}
+var APP_V=28;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -5897,8 +5912,7 @@ function achBadge(a,earned){
   var rareLbl={common:'Обычное',rare:'Редкое',epic:'Эпическое',legendary:'Легенда'}[a.rare]||'';
   return '<div class="ach-card'+(earned?' earned':' locked')+' rare-'+a.rare+'" style="--ac:'+a.col+'">'+
     '<div class="ach-emo">'+(earned?a.emo:'🔒')+'</div>'+
-    '<div class="ach-info"><b>'+a.n+'</b><span>'+a.d+'</span></div>'+
-    (earned?'<span class="ach-rare">'+rareLbl+'</span>':'')+
+    '<div class="ach-info">'+(earned&&rareLbl?'<span class="ach-rare">'+rareLbl+'</span>':'')+'<b>'+a.n+'</b><span>'+a.d+'</span></div>'+
   '</div>';
 }
 
