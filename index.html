@@ -374,7 +374,8 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 /* Пинг-понг: текст доезжает до конца, стоит и возвращается. Паузы на краях
    обязательны — без них это мельтешение, а не чтение. */
 .pp{overflow:hidden}
-.pp .pp-in{display:inline-block;white-space:nowrap;will-change:transform}
+.pp .pp-in{display:inline-block;white-space:nowrap;will-change:transform;min-width:0;flex:0 0 auto;
+  background:none!important;border:0!important;padding:0!important;border-radius:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 .pp.pp-on .pp-in{animation:ppSwing var(--pp-dur,3.4s) var(--ease-in-out) infinite}
 @keyframes ppSwing{
   0%,22%{transform:translateX(0)}
@@ -384,8 +385,8 @@ body.anim-halt .pp.pp-on .pp-in{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){
   .pp.pp-on .pp-in{animation:none}
   .pp.pp-on{text-overflow:ellipsis}}
-.answer .live-strip span{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:99px;background:rgba(5,6,10,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);color:rgba(244,246,251,.95)}
-.answer .live-strip span i{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:livePulse 1.8s ease-in-out infinite;display:inline-block}
+.answer .live-strip > span{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:99px;background:rgba(5,6,10,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);color:rgba(244,246,251,.95)}
+.answer .live-strip > span i{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:livePulse 1.8s ease-in-out infinite;display:inline-block}
 .answer .live-strip .trend{color:#4ade80}
 .answer .live-strip .trend svg{width:12px;height:12px}
 .answer .live-strip .friend{color:#FFB547}
@@ -3141,6 +3142,8 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 .bat-pos .lm{display:grid;place-items:center}
 .bat-pos .lm svg{width:26px;height:26px}
 .bat-pos{display:grid;place-items:center;min-width:30px}
+.answer .live-strip > span.shut i{background:var(--rose);box-shadow:0 0 8px var(--rose);animation:none}
+.answer .live-strip > span.shut{color:rgba(244,246,251,.82)}
 </style>
 </head>
 <body class="client">
@@ -4245,7 +4248,7 @@ function renderToday(){
   var liveSignalsTop='<span class="live-strip">'+
     (openNow&&hrsLeft<=3?'<span class="closing pp"><i></i>'+T('закрывается через')+' '+hrsLeft+' '+pl3(hrsLeft,T('час'),T('часа'),T('часов'))+'</span>':
       openNow?'<span class="pp"><i></i>'+T('открыто до')+' '+closesAt+':00</span>'
-             :'<span class="pp"><i></i>'+T('откроется в')+' '+(closesAt===2?'18:00':'8:00')+'</span>')+'</span>';
+             :'<span class="pp shut"><i></i>'+T('откроется в')+' '+(closesAt===2?'18:00':'8:00')+'</span>')+'</span>';
   var promoChip=top.b==='promo'?'<span class="m-dot"></span><span class="m-promo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>×2 '+T('баллы')+'</span>':'';
   // контекст времени
   var ctxLine=hh<12?'Лучшее начало утра рядом с тобой':hh<18?'Идеально для дневной паузы':hh<23?'Вечер обещает быть хорошим':'Открыто прямо сейчас';
@@ -6661,7 +6664,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=68;try{renderConsent()}catch(e){}
+var APP_V=69;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8506,11 +8509,20 @@ function ppBind(root){
     var inner=el.querySelector('.pp-in');
     if(!inner){
       inner=document.createElement('span');inner.className='pp-in';
-      while(el.firstChild)inner.appendChild(el.firstChild);
+      /* иконки и точки остаются на месте — заворачиваем только текст */
+      var move=[];
+      for(var i=0;i<el.childNodes.length;i++){
+        var c=el.childNodes[i];
+        if(c.nodeType===1&&/^(I|SVG|IMG)$/i.test(c.tagName))continue;
+        move.push(c);
+      }
+      move.forEach(function(c){inner.appendChild(c)});
       el.appendChild(inner);
     }
     el.classList.remove('pp-on');inner.style.removeProperty('--pp');
-    var over=inner.scrollWidth-el.clientWidth;
+    var cs=getComputedStyle(el);
+    var avail=el.clientWidth-parseFloat(cs.paddingLeft||0)-parseFloat(cs.paddingRight||0);
+    var over=inner.scrollWidth-avail;
     if(over>2){
       inner.style.setProperty('--pp',over+2);
       /* Длительность от длины: короткий хвост не должен ползти так же долго,
