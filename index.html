@@ -3076,6 +3076,29 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 .pool-item.epic{border-color:rgba(124,58,255,.34)}
 .pool-item.legend{border-color:rgba(255,213,74,.42);background:rgba(255,213,74,.05)}
 .pool-grid .pool-item{display:flex;gap:11px;align-items:center;padding:10px 12px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft)}
+.ref-status{margin-top:9px;font-size:11.5px;color:var(--txt-2);line-height:1.45}
+.ref-status b{color:var(--lime);font-weight:900}
+.ref-welcome{text-align:center;padding:6px 0 2px}
+.ref-welcome .rw-ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;margin:4px auto 12px;
+  background:var(--grad-lime);color:#06210a;box-shadow:0 10px 28px rgba(212,255,79,.32)}
+.ref-welcome .rw-ic svg{width:27px;height:27px}
+.ref-welcome h2{font-size:23px;font-weight:900;letter-spacing:-.02em;line-height:1.15}
+.ref-welcome p{font-size:13px;color:var(--txt-2);margin-top:6px}
+.ref-welcome p b{color:var(--txt);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}
+.ref-welcome .rw-bonus{display:inline-flex;align-items:center;gap:6px;margin:14px 0 4px;
+  font-size:40px;font-weight:900;letter-spacing:-.03em;color:var(--lime)}
+.ref-welcome .rw-bonus svg{width:26px;height:26px}
+.ref-welcome .rw-sub{font-size:12.5px;color:var(--txt-3);line-height:1.5;margin:6px auto 16px;max-width:290px}
+.dl-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:14px 0 2px}
+.dw-c{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:52px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft);color:var(--txt-3)}
+.dw-c i{font-style:normal;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.dw-c svg{width:15px;height:15px}
+.dw-c.on{background:rgba(212,255,79,.12);border-color:rgba(212,255,79,.28);color:var(--lime)}
+.dw-c.now{background:var(--grad-gold);border-color:transparent;color:#2a1500}
+.dw-c.now i{color:#2a1500;opacity:.8}
+.dl-mile-p{display:flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:800;color:var(--lime)}
+.dl-mile-h b{color:var(--gold);font-weight:900;white-space:nowrap}
 </style>
 </head>
 <body class="client">
@@ -3180,7 +3203,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
         <!-- Вкладки -->
         <div class="luck-seg" id="luckSeg">
           <button class="on" data-l="tasks" onclick="luckGo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Задания<span class="seg-dot" id="tasksDot"></span></button>
-          <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg>Рулетка</button>
+          <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16.17 7.83 2 22"/><path d="M4.02 12a2.827 2.827 0 1 1 3.81-4.17A2.827 2.827 0 1 1 12 4.02a2.827 2.827 0 1 1 4.17 3.81A2.827 2.827 0 1 1 19.98 12a2.827 2.827 0 1 1-3.81 4.17A2.827 2.827 0 1 1 12 19.98a2.827 2.827 0 1 1-4.17-3.81A2.827 2.827 0 1 1 4.02 12z" stroke-linejoin="round"/><path d="m7.83 7.83 8.34 8.34"/></svg>Рулетка</button>
           <button data-l="league" onclick="luckGo('league')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>Лига</button>
         </div>
 
@@ -3349,7 +3372,8 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
         <div class="ref-card fadein"><div class="rg"></div>
           <h3 style="margin:0 0 6px;font-size:16px;font-weight:800">+200 баллов за каждого</h3>
           <p style="margin:0 0 12px;font-size:12.5px;color:var(--txt-2);line-height:1.45">Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.</p>
-          <div class="ref-code"><b id="refCode">RAMAN-2026</b><button onclick="shareLink(document.getElementById('refCode').textContent,T('Код скопирован'))">Копировать</button></div>
+          <div class="ref-code"><b id="refCode">…</b><button onclick="shareLink(refLinkSelf(),T('Ссылка скопирована'));refMarkSent()">Копировать</button></div>
+          <div class="ref-status" id="refStatus"></div>
           <button class="cta lime" style="margin-top:12px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Пригласить друга</button>
         </div>
 
@@ -4943,6 +4967,7 @@ async function chBoot(){
   /* QR deep-link: гость отсканировал постер заведения → startapp=v_<token> → чек-ин */
   var sp=chStartParam();
   if(sp&&sp.indexOf('v_')===0){setTimeout(function(){chCheckin(sp)},CH_API.on?600:300)}
+  try{refCheckIncoming()}catch(e){}
 }
 setTimeout(function(){try{chBoot()}catch(e){}},120);
 
@@ -5285,6 +5310,7 @@ function renderGameStats(){
   var hms=document.getElementById('hmSub');if(hms){var d=streakDaysSinceLast();hms.textContent=d===0?'Сегодня уже встретились':d===1?'Был вчера — приходи ещё':d+' дней назад · давай не теряйся'}
 }
 function renderGame(){
+  try{renderRefBox()}catch(e){}
   try{renderGameStats()}catch(e){}
   try{renderIdentity()}catch(e){}
   try{renderRecentVisits()}catch(e){}
@@ -5574,7 +5600,9 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open');try{ovlOpened()}catch(e){}}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={"Hub — есть что сказать":["Hub has something for you","Hub-ს რაღაც აქვს სათქმელი"],
+var DICT={"До награды за":["To the reward at","ჯილდომდე"],"ещё":["left","დარჩა"],"и множитель":["and multiplier","და მამრავლი"],"Отлично":["Got it","შესანიშნავია"],
+"Пришёл по приглашению":["Joined via invite","მოწვევით შემოვიდა"],"Тебя пригласили в CityHUB":["You were invited to CityHUB","შენ მოგიწვიეს CityHUB-ში"],"Код друга":["Friend's code","მეგობრის კოდი"],"Баллы уже на счету. Друг получит свои, когда ты сходишь в первое место.":["Points are already yours. Your friend gets theirs once you visit your first place.","ქულები უკვე შენია. მეგობარი თავისას მიიღებს, როცა პირველ ადგილს ეწვევი."],"Показать, куда сходить":["Show me where to go","მაჩვენე სად წავიდე"],"друзей пришло":["friends joined","მეგობარი შემოვიდა"],"Приглашений отправлено":["Invites sent","გაგზავნილი მოწვევები"],"баллы придут, когда друг откроет приложение":["points arrive when your friend opens the app","ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Отправь ссылку — баллы придут, когда друг откроет приложение":["Send the link — points arrive when your friend opens the app","გააგზავნე ბმული — ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Ваучер города":["City voucher","ქალაქის ვაუჩერი"],
+"Hub — есть что сказать":["Hub has something for you","Hub-ს რაღაც აქვს სათქმელი"],
 "Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
 "сейчас":["now", "ახლა"],
 "Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
@@ -6425,7 +6453,28 @@ function renderBizLocked(){
 function initBizMapOld_REMOVED(){}
 /* Тост не должен ронять вызывающий код: он сообщение, а не операция.
    Нет узла — молча ничего не показываем, но поток не рвём. */
-let tt;function toast(t){const e=document.getElementById('toast');const x=document.getElementById('toast-t');if(!e||!x)return;x.textContent=T(t);e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2100);if(navigator.vibrate)navigator.vibrate(12)}
+let tt;
+function popsClear(){
+  try{hideMwHint()}catch(e){}
+  try{var h=document.getElementById('swHint');if(h)h.classList.remove('show')}catch(e){}
+}
+function popBusy(){
+  try{
+    var t=document.getElementById('toast');
+    if(t&&t.classList.contains('show'))return true;
+    var h=document.getElementById('mwHint');
+    if(h&&h.classList.contains('show'))return true;
+    var u=document.querySelector('.upd-banner.on');
+    if(u)return true;
+  }catch(e){}
+  return false;
+}
+function toast(t){
+  const e=document.getElementById('toast');const x=document.getElementById('toast-t');if(!e||!x)return;
+  popsClear();                        /* тост — самый срочный слой, остальные уходят */
+  x.textContent=T(t);e.classList.add('show');
+  clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2600);
+}
 
 // ---------- ONBOARDING ----------
 let onbStep=0;const ONB_MAX=4;
@@ -6559,7 +6608,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=61;try{renderConsent()}catch(e){}
+var APP_V=62;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6723,6 +6772,7 @@ function hideMwHint(){var h=document.getElementById('mwHint');if(h)h.classList.r
 var MW_BOTTOM={t:null};
 function mascotOffer(){
   var h=document.getElementById('mwHint'),t=document.getElementById('mwHintText');if(!h||!t)return;
+  if(popBusy())return;                /* полоса занята — не спорим за неё */
   t.innerHTML='<b>'+T('Не знаешь, с чего начать?')+'</b>'+
     '<i>'+T('Скажи настроение — подберу место под тебя')+'</i>'+
     '<span class="mw-go">'+T('Спросить консьержа')+
@@ -6914,8 +6964,23 @@ setTimeout(showFirstTimeTooltip,3500);
 /* ═══════════════ GAMIFICATION CORE ═══════════════ */
 /* Состояние игрока в localStorage */
 var GAME_KEY='cityhub_game_v1';
-function gameLoad(){try{return JSON.parse(localStorage.getItem(GAME_KEY))||{}}catch(e){return{}}}
-function gameSave(s){try{localStorage.setItem(GAME_KEY,JSON.stringify(s))}catch(e){}}
+/* 🚨 Ключ БОЛЬШЕ не берётся из переменной: var поднимается, а присваивание —
+   нет, и ранние вызовы писали в localStorage['undefined']. Разбор занял время
+   именно потому, что данные не пропадали совсем — они раздваивались. */
+function gameKey(){return 'cityhub_game_v1'}
+function gameLoad(){try{return JSON.parse(localStorage.getItem(gameKey()))||{}}catch(e){return{}}}
+function gameSave(s){try{localStorage.setItem(gameKey(),JSON.stringify(s))}catch(e){}}
+/* Разовая склейка: у тех, кто уже пользовался приложением, часть состояния
+   лежит в битом ключе. Переносим и убираем за собой. */
+(function gameHeal(){
+  try{
+    var bad=localStorage.getItem('undefined');if(!bad)return;
+    var o=JSON.parse(bad)||{},cur=gameLoad(),ch=false;
+    Object.keys(o).forEach(function(k){if(cur[k]===undefined){cur[k]=o[k];ch=true}});
+    if(ch)gameSave(cur);
+    localStorage.removeItem('undefined');
+  }catch(e){}
+})();
 function gameGet(k,def){var s=gameLoad();return s[k]!==undefined?s[k]:def}
 function gameSet(k,v){var s=gameLoad();s[k]=v;gameSave(s)}
 
@@ -7780,7 +7845,7 @@ function claimVoucher(){
   vb.classList.add('claimed');vb.style.transition='opacity .4s,max-height .5s,margin-bottom .4s,padding .4s';vb.style.overflow='hidden';vb.style.maxHeight=vb.offsetHeight+'px';
   requestAnimationFrame(function(){vb.style.opacity='0';vb.style.maxHeight='0';vb.style.marginBottom='0';vb.style.paddingTop='0';vb.style.paddingBottom='0'});
   setTimeout(function(){vb.style.display='none'},500);
-  ptsAdd(100,T('Приглашённый друг'));
+  ptsAdd(100,T('Ваучер города'));
   toast(T('Ваучер активирован')+' · +100 '+T('баллов'));if(navigator.vibrate)navigator.vibrate([10,40,10]);
 }
 // === Real clipboard for share ===
@@ -8208,6 +8273,18 @@ function dailyCheck(){
   setTimeout(function(){dailySheet(streak,'lost')},900);
 }
 
+/* Неделя полосой: «день 12» — абстракция, а семь клеток видно сразу.
+   Показываем последние 7 дней относительно сегодняшнего. */
+function streakWeek(streak){
+  var lbl=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'], today=new Date().getDay(), out='';
+  for(var i=6;i>=0;i--){
+    var d=(today-i+7)%7;
+    var done=i<Math.min(streak,7);
+    out+='<span class="dw-c'+(i===0?' now':(done?' on':''))+'">'+
+      '<i>'+T(lbl[d])+'</i>'+(i===0?ico('fire','currentColor',2.4):(done?ico('check','currentColor',2.6):''))+'</span>';
+  }
+  return '<div class="dl-week">'+out+'</div>';
+}
 function dailySheet(streak,mode){
   var mile=streakNextMile(mode==='lost'?0:streak);
   var rew=streakReward(streak);
@@ -8227,9 +8304,14 @@ function dailySheet(streak,mode){
       '<h2>'+(mode==='start'?T('Первый день'):T('День')+' '+streak)+'</h2>'+
       '<p class="sub">'+(mode==='start'?T('Заходи каждый день — серия растёт, награда тоже'):T('Серия продолжается. Награда за вход уже на счету'))+'</p>';
     body='<div class="dl-rew"><span class="dl-rew-v">+'+rew+'</span><span class="dl-rew-t">'+T('баллов за вход')+'</span></div>'+
-      (mile?'<div class="dl-mile"><div class="dl-mile-h"><span>'+T('До')+' '+mile+' '+pl3(mile,T('дня'),T('дней'),T('дней'))+'</span><b>'+Math.max(0,mile-streak)+'</b></div>'+
-        '<div class="dl-mile-bar"><i style="width:'+Math.round(streak/mile*100)+'%"></i></div></div>':'');
-    cta='<button class="cta lime" onclick="closeSheet();cgo(\'luck\')">'+ico('target','currentColor',2.2)+T('Крутить рулетку')+'</button>';
+      streakWeek(streak)+
+      (mile?'<div class="dl-mile"><div class="dl-mile-h"><span>'+T('До награды за')+' '+mile+' '+pl3(mile,T('день'),T('дня'),T('дней'))+'</span>'+
+          '<b>'+T('ещё')+' '+Math.max(0,mile-streak)+'</b></div>'+
+        '<div class="dl-mile-bar"><i style="width:'+Math.round(Math.min(1,streak/mile)*100)+'%"></i></div>'+
+        '<div class="dl-mile-p">'+ei('loop','currentColor',12)+'+'+streakReward(mile)+' '+T('и множитель')+' ×'+(1+Math.min(1,mile/30)).toFixed(1)+'</div></div>':'');
+    /* Кнопка вела в рулетку — к серии это отношения не имеет. Экран ежедневного
+       входа должен закрываться и возвращать туда, зачем человек открыл приложение. */
+    cta='<button class="cta lime" onclick="closeSheet()">'+ico('check','#06210a',2.4)+T('Отлично')+'</button>';
   }
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div><div class="daily-login">'+head+body+cta+'</div>';
   _openSheet();try{haptic(mode==='lost'?'error':'reward')}catch(e){}
@@ -8689,12 +8771,77 @@ function taskGo(id){
    не кликабельна, сторис выходят, а переходов ноль. Поддержка проверяется
    feature detection: parseFloat('7.10')===7.1, сравнение версий молча уводит
    рабочий клиент в фолбэк. */
-function chShareUrl(){
-  var code='';try{var rc=document.getElementById('refCode');if(rc)code=(rc.textContent||'').trim()}catch(e){}
-  var base='https://masteroch.github.io/cityhub/';
-  if(APP_LINKS.bot&&code)return APP_LINKS.bot+'?startapp=ref_'+encodeURIComponent(code);
-  return base;
+/* ═══════════════ РЕФЕРАЛЬНАЯ МЕХАНИКА ═══════════════
+   «+200 за каждого» рекламировалось в трёх местах, а прихода друга продукт
+   не замечал вообще: код был зашит в разметку строкой RAMAN-2026, одинаковой
+   у всех, а `startapp=ref_<code>` никто не разбирал.
+
+   Что здесь сделано и, главное, чего НЕ сделано:
+   · код персональный и стабильный — из Telegram-id, иначе из локального seed;
+   · пришедший по ссылке получает свой бонус сразу — это его устройство,
+     начисление настоящее;
+   · пригласившему баллы НЕ рисуются на честном слове. Подтвердить приход
+     друга может только сервер; пока его нет, приглашение показывается как
+     «отправлено», а не как «зачислено». Нарисовать +200 в кошельке было бы
+     ровно тем враньём, которое мы весь день вычищали. */
+function refCodeSelf(){
+  try{
+    var c=gameGet('refCode','');
+    if(c)return c;
+    var uid='';
+    try{uid=String(((window.Telegram||{}).WebApp||{}).initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user&&Telegram.WebApp.initDataUnsafe.user.id||'')}catch(e){}
+    var base=uid||String(Math.floor(Math.random()*1e9));
+    var h=0;for(var i=0;i<base.length;i++)h=(h*31+base.charCodeAt(i))>>>0;
+    c='CH'+h.toString(36).toUpperCase().slice(0,6);
+    gameSet('refCode',c);return c;
+  }catch(e){return 'CH000000'}
 }
+function refLinkSelf(){
+  var c=refCodeSelf();
+  if(APP_LINKS.bot)return APP_LINKS.bot+'?startapp=ref_'+encodeURIComponent(c);
+  /* Бота ещё нет — даём прямую ссылку с кодом, она сработает и на вебе. */
+  return 'https://masteroch.github.io/cityhub/?ref='+encodeURIComponent(c);
+}
+function refInvitesSent(){try{return gameGet('refSent',0)||0}catch(e){return 0}}
+function refMarkSent(){try{gameSet('refSent',refInvitesSent()+1);renderRefBox()}catch(e){}}
+
+/* Кто нас пригласил: из Telegram start_param или из ?ref= в обычной ссылке */
+function refIncoming(){
+  var sp='';try{sp=chStartParam()||''}catch(e){}
+  if(sp.indexOf('ref_')===0)return sp.slice(4);
+  try{var u=new URLSearchParams(location.search).get('ref');if(u)return u}catch(e){}
+  return '';
+}
+var REF_BONUS=100;
+function refCheckIncoming(){
+  var code=refIncoming();if(!code)return;
+  if(code===refCodeSelf())return;                       /* свою же ссылку не засчитываем */
+  if(gameGet('invitedBy',''))return;                    /* пригласить можно один раз */
+  gameSet('invitedBy',code);
+  ptsAdd(REF_BONUS,T('Пришёл по приглашению'));
+  setTimeout(function(){
+    document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+      '<div class="ref-welcome">'+
+        '<span class="rw-ic">'+ico('people','currentColor',2)+'</span>'+
+        '<h2>'+T('Тебя пригласили в CityHUB')+'</h2>'+
+        '<p>'+T('Код друга')+': <b>'+code+'</b></p>'+
+        '<div class="rw-bonus">'+ei('loop','currentColor',15)+'+'+REF_BONUS+'</div>'+
+        '<p class="rw-sub">'+T('Баллы уже на счету. Друг получит свои, когда ты сходишь в первое место.')+'</p>'+
+        '<button class="cta lime" onclick="closeSheet();cgo(\'today\')">'+T('Показать, куда сходить')+'</button>'+
+      '</div>';
+    _openSheet();try{haptic('reward');mascotFeel('adoration',2400)}catch(e){}
+  },900);
+}
+/* Блок приглашения в профиле: живой код, ссылка и честный статус */
+function renderRefBox(){
+  var el=document.getElementById('refCode');if(el)el.textContent=refCodeSelf();
+  var st=document.getElementById('refStatus');if(!st)return;
+  var sent=refInvitesSent(), ok=gameGet('refSuccess',0)||0;
+  st.innerHTML=ok?('<b>'+ok+'</b> '+T('друзей пришло'))
+    :sent?(T('Приглашений отправлено')+': <b>'+sent+'</b> · '+T('баллы придут, когда друг откроет приложение'))
+    :T('Отправь ссылку — баллы придут, когда друг откроет приложение');
+}
+function chShareUrl(){return refLinkSelf()}
 /* Наблюдение 2026-09-11: одного feature detection МАЛО. Настоящий telegram-web-app.js
    объявляет shareToStory функцией даже там, где метод не поддержан (platform
    «unknown», version 6.0) — вызов молча уходит в консоль как unsupported, а мы бы
@@ -9410,8 +9557,9 @@ function shareMyQR(){
 /* Реальный шеринг приложения через нативный Telegram share-диалог (виральность).
    Берёт реф-код из #refCode если есть. Fallback: navigator.share → копирование ссылки. */
 function shareTelegram(){
-  var url='https://masteroch.github.io/cityhub/';
-  var code='';try{var rc=document.getElementById('refCode');if(rc)code=(rc.textContent||'').trim()}catch(e){}
+  var url=refLinkSelf();
+  var code=refCodeSelf();
+  try{refMarkSent()}catch(e){}
   var msg=T('CityHUB — куда сходить прямо сейчас, всё в одном приложении.')+(code?(' '+T('Мой код')+': '+code):'');
   var share='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(msg);
   try{haptic('tap')}catch(e){}
