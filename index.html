@@ -1261,7 +1261,8 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .vibe-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
 .vibe-sub{font-size:12px;color:var(--txt-3);font-weight:600}
 .mood.vibe{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 10px 7px;min-width:62px;border-radius:20px;background:transparent;border:none;box-shadow:none;color:var(--txt-2);flex-shrink:0;transition:background .2s,transform .15s var(--ease-spring);-webkit-backdrop-filter:none;backdrop-filter:none}
-.mood.vibe .vibe-ic{font-size:22px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));transition:transform .25s var(--ease-spring)}
+.mood.vibe .vibe-ic{display:grid;place-items:center;width:22px;height:22px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));transition:transform .25s var(--ease-spring)}
+.mood.vibe .vibe-ic svg{width:21px;height:21px;stroke-width:1.9}
 .mood.vibe .vibe-lb{font-size:11.5px;font-weight:700;color:var(--txt-2);white-space:nowrap;line-height:1.1}
 .mood.vibe:hover{background:rgba(255,255,255,.06)}
 .mood.vibe.on{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%);box-shadow:0 6px 16px rgba(212,255,79,.45),inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 4px rgba(0,0,0,.14)}
@@ -2642,10 +2643,10 @@ input,textarea{font-size:16px!important}
         <div class="luck-pane" id="pane-league">
           <div class="sec-h" style="margin-top:2px"><h2 style="font-size:16px">Лига друзей</h2><span class="more">эта неделя</span></div>
           <div id="league"></div>
-          <div class="sec-h" style="margin-top:22px"><h2 style="font-size:16px">Мировой зачёт</h2><span class="more">по собранным местам</span></div>
-          <div id="gboard"></div>
-          <button class="cta lime" style="margin-top:18px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>Пригласить друга<span class="gb-pts" style="margin-left:6px">+200</span></button>
+          <button class="cta lime" style="margin-top:14px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>Пригласить друга<span class="gb-pts" style="margin-left:6px">+200</span></button>
           <div class="hint" style="margin-top:8px">Друг заходит по твоей ссылке — баллы получаете оба, и он появляется в твоей лиге.</div>
+          <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Мировой зачёт</h2><span class="more">по собранным местам</span></div>
+          <div id="gboard"></div>
         </div>
 
         <!-- 2. РУЛЕТКА -->
@@ -3114,7 +3115,10 @@ ticket:'<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 0 0 4 2 2 0 0 1 0 4
 bolt:'<path d="M13 2L3 14h7l-1 8 10-12h-7z"/>',
 gem:'<path d="M6 3h12l3 6-9 12L3 9zM3 9h18M9 3l-3 6 6 12M15 3l3 6-6 12"/>',
 snow:'<path d="M12 2v20M5 5l14 14M19 5L5 19M2 12h20M12 4l-2 2M12 4l2 2M12 20l-2-2M12 20l2-2M4 12l2-2M4 12l2 2M20 12l-2-2M20 12l-2 2"/>',
-finger:'<path d="M9 11V5a2 2 0 0 1 4 0v6M13 7a2 2 0 0 1 4 0v4M9 11v-1a2 2 0 0 0-4 0v5a7 7 0 0 0 7 7h1a6 6 0 0 0 6-6v-3"/>'};
+finger:'<path d="M9 11V5a2 2 0 0 1 4 0v6M13 7a2 2 0 0 1 4 0v4M9 11v-1a2 2 0 0 0-4 0v5a7 7 0 0 0 7 7h1a6 6 0 0 0 6-6v-3"/>',
+sunset:'<path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 2v3M4.2 10.2l2.1 2.1M19.8 10.2l-2.1 2.1M2 18h3M19 18h3M2 22h20"/>',
+laptop:'<rect x="3" y="5" width="18" height="11" rx="2"/><path d="M2 20h20"/>',
+paw:'<circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><circle cx="7" cy="9" r="2"/><path d="M9 22c-3 0-4-2-4-4 0-2 2-4 5-4s7 2 7 5c0 2-2 3-4 3z"/>'};
 function ico(k,c='currentColor',w=1.8){return `<svg viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="${w}">${I[k]||I.shop}</svg>`}
 function ei(k,c='currentColor',sz=16){return `<svg class="ei" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" style="display:inline-block;vertical-align:-.16em;flex-shrink:0">${I[k]||I.star}</svg>`}
 const NICHES=[{k:'coffee',n:'Кофе',c:'#c79a5e',q:'coffee shop cafe'},{k:'food',n:'Еда',c:'#ff7d4d',q:'restaurant georgian food'},{k:'bar',n:'Бары',c:'#ff5d8f',q:'cocktail bar nightclub'},{k:'gym',n:'Фитнес',c:'#D4FF4F',q:'gym fitness'},{k:'beauty',n:'Красота',c:'#ff8fd6',q:'beauty salon'},{k:'spa',n:'СПА',c:'#7C3AFF',q:'spa wellness'},{k:'shop',n:'Шопинг',c:'#00E0C7',q:'shopping mall'},{k:'sea',n:'Море',c:'#00E0C7',q:'beach sea black sea'},{k:'art',n:'Искусство',c:'#a78bff',q:'art gallery'},{k:'music',n:'Музыка',c:'#ff5d8f',q:'live music concert'},{k:'travel',n:'Туры',c:'#5edc9a',q:'travel tour mountains'},{k:'med',n:'Здоровье',c:'#5edc9a',q:'clinic health'},{k:'kids',n:'Дети',c:'#ffb14d',q:'kids playground family'}];
@@ -3556,29 +3560,29 @@ function renderToday(){
   </div></div>
   <div class="vibe-head" style="margin-top:16px"><span class="vibe-title">Не то? Выбери вайб</span><span class="vibe-sub">или жми «Удиви меня»</span></div>
   <div class="mood-row"><div class="mood-scroll">
-    <button class="mood vibe${curMood==='all'?' on':''}" data-mood="all"><span class="vibe-ic">🎲</span><span class="vibe-lb">Удиви меня</span></button>
-    <button class="mood vibe${curMood==='food'?' on':''}" data-mood="food"><span class="vibe-ic">🍽️</span><span class="vibe-lb">Поесть</span></button>
-    <button class="mood vibe${curMood==='coffee'?' on':''}" data-mood="coffee"><span class="vibe-ic">☕</span><span class="vibe-lb">Кофе</span></button>
-    <button class="mood vibe${curMood==='bar'?' on':''}" data-mood="bar"><span class="vibe-ic">🍸</span><span class="vibe-lb">Выпить</span></button>
-    <button class="mood vibe${curMood==='sea'?' on':''}" data-mood="sea"><span class="vibe-ic">🌊</span><span class="vibe-lb">Погулять</span></button>
-    <button class="mood vibe${curMood==='gym'?' on':''}" data-mood="gym"><span class="vibe-ic">🏋️</span><span class="vibe-lb">Спорт</span></button>
-    <button class="mood vibe${curMood==='spa'?' on':''}" data-mood="spa"><span class="vibe-ic">🧖</span><span class="vibe-lb">Спа</span></button>
-    <button class="mood vibe${curMood==='beauty'?' on':''}" data-mood="beauty"><span class="vibe-ic">💅</span><span class="vibe-lb">Красота</span></button>
-    <button class="mood vibe${curMood==='art'?' on':''}" data-mood="art"><span class="vibe-ic">🎨</span><span class="vibe-lb">Искусство</span></button>
-    <button class="mood vibe${curMood==='music'?' on':''}" data-mood="music"><span class="vibe-ic">🎵</span><span class="vibe-lb">Музыка</span></button>
-    <button class="mood vibe${curMood==='shop'?' on':''}" data-mood="shop"><span class="vibe-ic">🛍️</span><span class="vibe-lb">Шопинг</span></button>
-    <button class="mood vibe${curMood==='kids'?' on':''}" data-mood="kids"><span class="vibe-ic">🧸</span><span class="vibe-lb">С детьми</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Куда пойти позавтракать утром в Батуми? Кафе с хорошими завтраками и видом." data-vibe-t="Завтрак"><span class="vibe-ic">🍳</span><span class="vibe-lb">Завтрак</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Где встретить закат в Батуми — лучшие точки у моря или с высоты прямо сейчас." data-vibe-t="Закат"><span class="vibe-ic">🌅</span><span class="vibe-lb">Закат</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Что открыто поздно ночью в Батуми? Бары, клубы, ночные заведения." data-vibe-t="Ночь"><span class="vibe-ic">🌃</span><span class="vibe-lb">Ночь</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Кафе чтобы поработать с ноутбуком в Батуми — Wi-Fi, розетки, тихо, можно сидеть долго." data-vibe-t="Поработать"><span class="vibe-ic">💻</span><span class="vibe-lb">Поработать</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Лучшие пляжи Батуми — где чище, тише, удобнее." data-vibe-t="Пляж"><span class="vibe-ic">🏖️</span><span class="vibe-lb">Пляж</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Здоровая еда — салаты, smoothie, vegan-friendly места в Батуми." data-vibe-t="Полезно"><span class="vibe-ic">🥗</span><span class="vibe-lb">Полезно</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Самые инстаграмные места в Батуми — для фото и сторис." data-vibe-t="Для фото"><span class="vibe-ic">📸</span><span class="vibe-lb">Для фото</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Природа рядом с Батуми — горы, водопады, виды, что можно за полдня." data-vibe-t="Природа"><span class="vibe-ic">⛰️</span><span class="vibe-lb">Природа</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Места куда можно прийти с собакой в Батуми — pet-friendly кафе, парки, пляжи." data-vibe-t="С собакой"><span class="vibe-ic">🐾</span><span class="vibe-lb">С собакой</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Сладкое в Батуми — где самые вкусные десерты, выпечка, мороженое." data-vibe-t="Сладкое"><span class="vibe-ic">🍰</span><span class="vibe-lb">Сладкое</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Романтичное место для свидания — атмосфера, виды, тихий ужин." data-vibe-t="Свидание"><span class="vibe-ic">💘</span><span class="vibe-lb">Свидание</span></button>
+    <button class="mood vibe${curMood==='all'?' on':''}" data-mood="all"><span class="vibe-ic">${ico('sparkle','currentColor',2)}</span><span class="vibe-lb">Удиви меня</span></button>
+    <button class="mood vibe${curMood==='food'?' on':''}" data-mood="food"><span class="vibe-ic">${ico('food','currentColor',2)}</span><span class="vibe-lb">Поесть</span></button>
+    <button class="mood vibe${curMood==='coffee'?' on':''}" data-mood="coffee"><span class="vibe-ic">${ico('coffee','currentColor',2)}</span><span class="vibe-lb">Кофе</span></button>
+    <button class="mood vibe${curMood==='bar'?' on':''}" data-mood="bar"><span class="vibe-ic">${ico('bar','currentColor',2)}</span><span class="vibe-lb">Выпить</span></button>
+    <button class="mood vibe${curMood==='sea'?' on':''}" data-mood="sea"><span class="vibe-ic">${ico('sea','currentColor',2)}</span><span class="vibe-lb">Погулять</span></button>
+    <button class="mood vibe${curMood==='gym'?' on':''}" data-mood="gym"><span class="vibe-ic">${ico('gym','currentColor',2)}</span><span class="vibe-lb">Спорт</span></button>
+    <button class="mood vibe${curMood==='spa'?' on':''}" data-mood="spa"><span class="vibe-ic">${ico('spa','currentColor',2)}</span><span class="vibe-lb">Спа</span></button>
+    <button class="mood vibe${curMood==='beauty'?' on':''}" data-mood="beauty"><span class="vibe-ic">${ico('beauty','currentColor',2)}</span><span class="vibe-lb">Красота</span></button>
+    <button class="mood vibe${curMood==='art'?' on':''}" data-mood="art"><span class="vibe-ic">${ico('art','currentColor',2)}</span><span class="vibe-lb">Искусство</span></button>
+    <button class="mood vibe${curMood==='music'?' on':''}" data-mood="music"><span class="vibe-ic">${ico('music','currentColor',2)}</span><span class="vibe-lb">Музыка</span></button>
+    <button class="mood vibe${curMood==='shop'?' on':''}" data-mood="shop"><span class="vibe-ic">${ico('shop','currentColor',2)}</span><span class="vibe-lb">Шопинг</span></button>
+    <button class="mood vibe${curMood==='kids'?' on':''}" data-mood="kids"><span class="vibe-ic">${ico('kids','currentColor',2)}</span><span class="vibe-lb">С детьми</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Куда пойти позавтракать утром в Батуми? Кафе с хорошими завтраками и видом." data-vibe-t="Завтрак"><span class="vibe-ic">${ico('breakfast','currentColor',2)}</span><span class="vibe-lb">Завтрак</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Где встретить закат в Батуми — лучшие точки у моря или с высоты прямо сейчас." data-vibe-t="Закат"><span class="vibe-ic">${ico('sunset','currentColor',2)}</span><span class="vibe-lb">Закат</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Что открыто поздно ночью в Батуми? Бары, клубы, ночные заведения." data-vibe-t="Ночь"><span class="vibe-ic">${ico('night','currentColor',2)}</span><span class="vibe-lb">Ночь</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Кафе чтобы поработать с ноутбуком в Батуми — Wi-Fi, розетки, тихо, можно сидеть долго." data-vibe-t="Поработать"><span class="vibe-ic">${ico('laptop','currentColor',2)}</span><span class="vibe-lb">Поработать</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Лучшие пляжи Батуми — где чище, тише, удобнее." data-vibe-t="Пляж"><span class="vibe-ic">${ico('beach','currentColor',2)}</span><span class="vibe-lb">Пляж</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Здоровая еда — салаты, smoothie, vegan-friendly места в Батуми." data-vibe-t="Полезно"><span class="vibe-ic">${ico('salad','currentColor',2)}</span><span class="vibe-lb">Полезно</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Самые инстаграмные места в Батуми — для фото и сторис." data-vibe-t="Для фото"><span class="vibe-ic">${ico('camera','currentColor',2)}</span><span class="vibe-lb">Для фото</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Природа рядом с Батуми — горы, водопады, виды, что можно за полдня." data-vibe-t="Природа"><span class="vibe-ic">${ico('mountain','currentColor',2)}</span><span class="vibe-lb">Природа</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Места куда можно прийти с собакой в Батуми — pet-friendly кафе, парки, пляжи." data-vibe-t="С собакой"><span class="vibe-ic">${ico('paw','currentColor',2)}</span><span class="vibe-lb">С собакой</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Сладкое в Батуми — где самые вкусные десерты, выпечка, мороженое." data-vibe-t="Сладкое"><span class="vibe-ic">${ico('cake','currentColor',2)}</span><span class="vibe-lb">Сладкое</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Романтичное место для свидания — атмосфера, виды, тихий ужин." data-vibe-t="Свидание"><span class="vibe-ic">${ico('heart','currentColor',2)}</span><span class="vibe-lb">Свидание</span></button>
   </div></div>
 `;
   try{swipeBind();swipeHintMaybe();edgeFadeAll()}catch(e){}
@@ -3980,7 +3984,7 @@ function renderMapTab(){
   const C=CITIES[CITY];document.getElementById('cityName2').textContent=C.name;
   // Filter chips в стиле vibe-chips Today экрана (унифицировано)
   var emoMap={coffee:'☕',food:'🍽️',bar:'🍸',gym:'🏋️',beauty:'💅',spa:'🧖',shop:'🛍️',sea:'🌊',art:'🎨',music:'🎵',travel:'🗺️',med:'🩺',kids:'🧸'};
-  document.getElementById('mapFilters').innerHTML='<button class="mood vibe on" data-filter="all"><span class="vibe-ic">🎲</span><span class="vibe-lb">Под тебя</span></button>'+
+  document.getElementById('mapFilters').innerHTML='<button class="mood vibe on" data-filter="all"><span class="vibe-ic">'+ico('sparkle','currentColor',2)+'</span><span class="vibe-lb">Под тебя</span></button>'+
     [...new Set(C.biz.map(function(b){return b.k}))].map(function(k){var n=NICHES.find(function(x){return x.k===k});return '<button class="mood vibe" data-filter="'+k+'"><span class="vibe-ic">'+(emoMap[k]||'•')+'</span><span class="vibe-lb">'+n.n+'</span></button>'}).join('');
   renderList();
 }
@@ -4615,7 +4619,7 @@ function renderStatic(){
 function cgo(t){if(t==='ai'){try{openMascot()}catch(e){}return}
   /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
   if(t==='niches')t='map';if(t==='rewards')t='luck';
-  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderGBoard();renderLuckHud();luckTickStart();luckGo((function(x){return x==='spend'?'tasks':x})(gameGet('luckTab','tasks')));}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderGBoard();renderLuckHud();luckTickStart();luckGo((function(x){return (x==='spend'||!x)?'wheel':x})(gameGet('luckTab','wheel')));}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:20,mine:0,bids:[
   {n:'Tangerine',v:340,me:false},
@@ -5555,7 +5559,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=34;try{renderConsent()}catch(e){}
+var APP_V=35;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
