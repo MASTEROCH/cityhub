@@ -4871,7 +4871,19 @@ function aiBuildContext(){
   var dow=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'][new Date().getDay()];
   var streak=0,mult=1,pts=0;
   try{streak=streakCurrent();mult=streakMultiplier(streak);pts=PTS||0}catch(e){}
-  var topTaste=(TASTE||[]).slice(0,3).map(function(t){return t.n+' '+t.v+'%'}).join(', ');
+  /* Вкус для модели берём из РЕАЛЬНЫХ весов, набранных свайпами, а не из
+     случайных процентов, проставленных при добавлении вкуса. Иначе система,
+     которая учится, докладывает о человеке вымысел — и по нему же советует. */
+  var topTaste='';
+  try{
+    var likes=NICHES.map(function(nz){return {n:nz.n,w:tasteOf(nz.k)}})
+      .filter(function(x){return x.w>1.15}).sort(function(a,b){return b.w-a.w}).slice(0,4);
+    var dis=NICHES.map(function(nz){return {n:nz.n,w:tasteOf(nz.k)}})
+      .filter(function(x){return x.w<0.7}).sort(function(a,b){return a.w-b.w}).slice(0,3);
+    topTaste=(likes.length?('любит: '+likes.map(function(x){return x.n}).join(', ')):'')
+      +(dis.length?((likes.length?'; ':'')+'не заходит: '+dis.map(function(x){return x.n}).join(', ')):'');
+    if(!topTaste)topTaste=(TASTE||[]).slice(0,3).map(function(t){return t.n}).join(', ');   /* ещё не свайпал — берём заявленные интересы, без выдуманных процентов */
+  }catch(e){topTaste=(TASTE||[]).slice(0,3).map(function(t){return t.n}).join(', ')}
   /* user name from Telegram or default */
   var userName='Гость';
   try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.user){userName=Telegram.WebApp.initDataUnsafe.user.first_name||'Гость'}}catch(e){}
@@ -4921,7 +4933,7 @@ function aiSystemPrompt(){
     '═══ КОНТЕКСТ ═══',
     'Юзер: '+c.userName+' · '+c.pts+' Loop баллов · streak '+c.streak+' дн.'+(c.mult>1?' (×'+c.mult+' к баллам)':''),
     'Сейчас: '+c.dayPart+', '+c.dow,
-    'Вкусы (топ-3): '+c.topTaste,
+    'Вкус (из свайпов): '+c.topTaste,
     'Недавние визиты: '+visitStr,
     'В избранном: '+lovedStr,
     (prefStr?'Предпочтения сессии: '+prefStr:''),
@@ -5193,12 +5205,12 @@ function renderGame(){
   try{renderGameStats()}catch(e){}
   try{renderIdentity()}catch(e){}
   try{renderRecentVisits()}catch(e){}
-  const tb=document.getElementById('tasteBars');if(tb){
-    /* tone-on-tone helper — lighter shade of same hue (HSL +14% lightness) */
-    var lighten=function(hex){var c=hex.replace('#','');if(c.length===3)c=c[0]+c[0]+c[1]+c[1]+c[2]+c[2];var r=parseInt(c.substr(0,2),16)/255,g=parseInt(c.substr(2,2),16)/255,bl=parseInt(c.substr(4,2),16)/255;var max=Math.max(r,g,bl),min=Math.min(r,g,bl);var h=0,s=0,l=(max+min)/2;if(max!==min){var d=max-min;s=l>.5?d/(2-max-min):d/(max+min);if(max===r)h=((g-bl)/d+(g<bl?6:0));else if(max===g)h=(bl-r)/d+2;else h=(r-g)/d+4;h*=60}l=Math.min(.78,l+.14);s=Math.min(1,s*1.05);return 'hsl('+Math.round(h)+','+Math.round(s*100)+'%,'+Math.round(l*100)+'%)'};
-    tb.innerHTML=TASTE.map(t=>{const nz=NICHES.find(n=>n.k===t.k)||{c:'#7C3AFF'};var light=lighten(nz.c);return `<div class="taste-row" style="--tc:${nz.c}"><div class="tl"><span class="tn"><span class="ti" style="background:linear-gradient(155deg,${nz.c}44,${nz.c}18);color:${nz.c}">${ico(t.k,nz.c,2)}</span>${t.n}</span><span class="pct" style="color:${nz.c}">${t.v}%</span></div><div class="taste-bar"><div class="taste-fill" style="width:0%;background:linear-gradient(90deg,${nz.c} 0%,${light} 100%);color:${nz.c}" data-w="${t.v}"></div></div></div>`}).join('');
-    setTimeout(function(){tb.querySelectorAll('.taste-fill').forEach(function(el){el.style.width=el.dataset.w+'%'})},120)
-  }
+  /* 🚨 Полосы вкуса рисовали ДВА рендерера: этот — сидовые проценты из TASTE,
+     и renderTasteBars() — реальные веса, выученные свайпами. Кто отрисовался
+     последним, тот и оставался, поэтому профиль регулярно показывал выдуманные
+     числа вместо того, что продукт действительно про тебя знает.
+     Писатель остался один, и это тот, который говорит правду. */
+  try{renderTasteBars()}catch(e){}
   const q=document.getElementById('quests');if(q)q.innerHTML=QUESTS.map(x=>{const done=x.cur>=x.goal;const pct=Math.round(x.cur/x.goal*100);return `<div class="quest ${done?'done':''}"><div class="qic" style="background:${x.c}25">${x.i}</div><div class="qi"><b>${x.n}</b><div class="qbar"><div class="qfill" style="width:${pct}%"></div></div><span class="qp">${x.cur} / ${x.goal}${done?' · готово!':''}</span></div><div class="qrew">${x.rew}</div></div>`}).join('');
   const lg=document.getElementById('league');if(lg)lg.innerHTML=LEAGUE.map(l=>`<div class="league ${l.me?'me':''}"><div class="lrank ${l.cls||''}">${l.r<=3?['<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFB547" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7M11 8h2l-1 2z"/></svg>','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/></svg>','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d9a06b" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/><circle cx="12" cy="9" r="2"/></svg>'][l.r-1]:l.r}</div><div class="lav" style="background:${l.c}">${l.a||l.n[0]}</div><div class="ln">${l.n}${l.me?' (ты)':''}<span>${l.r===3?'обгони Гио — осталось 740':'в твоей лиге'}</span></div><div class="lpts">${l.pts}</div></div>`).join('');
   const fd=document.getElementById('feed');if(fd)fd.innerHTML=FEED.map(f=>`<div class="feed"><div class="fav" style="background:${f.c}">${f.a}</div><div class="ft"><b>${f.n}</b> ${f.t}<div class="ft2">${f.ago} назад</div></div><div class="fpts">${f.pts}</div></div>`).join('');
@@ -6453,7 +6465,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=52;try{renderConsent()}catch(e){}
+var APP_V=53;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
