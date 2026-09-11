@@ -679,7 +679,7 @@ body.biz .msc-resp{background:rgba(255,181,71,.1);border-color:rgba(255,181,71,.
 .biz .i h3{font-size:15px;font-weight:800;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15;margin:0;flex:1;min-width:0}
 .badge{font-size:10px;font-weight:900;padding:3px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;line-height:1}
 .badge.promo{background:rgba(255,181,71,.18);color:var(--gold);border:1px solid rgba(255,181,71,.3)}
-.badge.new{background:rgba(212,255,79,.16);color:var(--lime);border:1px solid rgba(212,255,79,.28)}
+.badge.new{background:rgba(255,93,143,.18);color:var(--rose);border:1px solid rgba(255,93,143,.32)}
 .badge.free{background:rgba(0,224,199,.14);color:var(--acc-2);border:1px solid rgba(0,224,199,.28)}
 .biz .m{font-size:12px;color:var(--txt-2);margin:0;display:flex;align-items:center;gap:9px;font-weight:500;flex-wrap:wrap;line-height:1.3}
 .biz .m .s{color:var(--gold);display:inline-flex;align-items:center;gap:3px;font-weight:700}
@@ -1621,7 +1621,7 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
   transition:height .38s var(--ease-out)}
 .split-map.map-full #mapHolder{height:auto;flex:1 1 auto;padding-bottom:calc(var(--tab-h) + var(--safe-b) + 10px)}
 .split-map.map-full .split-list{display:none}
-.map-expand{position:absolute;top:10px;left:14px;z-index:420;display:grid;place-items:center;
+.map-expand{position:absolute;top:14px;left:22px;z-index:420;display:grid;place-items:center;
   width:36px;height:36px;padding:0;border-radius:12px;color:var(--txt);cursor:pointer;font-family:inherit;
   background:rgba(16,20,31,.85);-webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);
   border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 22px rgba(0,0,0,.45)}
@@ -1630,8 +1630,8 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 .map-expand:active{transform:scale(.95)}
 /* Кнопка встала на зум Leaflet — сдвигаем зум ниже, а не двигаем кнопку:
    левый верх карты человек читает первым, и разворот важнее зума. */
-#mapHolder .leaflet-top.leaflet-left{margin-top:42px}
-#mapHolder .leaflet-left .leaflet-control{margin-left:0}
+#mapHolder .leaflet-top.leaflet-left{margin-top:46px}
+#mapHolder .leaflet-left .leaflet-control{margin-left:8px}
 .map-expand svg{width:15px;height:15px}
 .split-map #map{width:100%;height:100%;border-radius:var(--r-md);overflow:hidden;position:relative}
 .split-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 22px)}
@@ -6215,6 +6215,7 @@ function buyFreeze(n){closeSheet();var msg=n>=99?'Авто-защита на 30 
 // === WOW: празднование награды (конфетти + вспышка + карточка приза) ===
 function celebrate(opts){
   opts=opts||{};
+  try{mascotFeel('adoration',2600)}catch(e){}
   var icon=opts.icon||'🎉';var title=opts.title||'Награда твоя!';var sub=opts.sub||'';
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   var ov=document.createElement('div');ov.className='celebrate';
@@ -6524,7 +6525,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=58;try{renderConsent()}catch(e){}
+var APP_V=59;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6583,6 +6584,75 @@ function showMwHint(force){
    статикой и не гасла никогда — бейдж, который нельзя закрыть, учит людей
    не смотреть на бейджи. Теперь она горит, пока свежее приветствие дня
    не прочитано, и гаснет, когда чат открыли. */
+/* ═══════════════ МИМИКА МАСКОТА ═══════════════
+   В навбаре висел ОДИН кадр из шестидесяти четырёх — маскот выглядел
+   наклейкой. Здесь он получает лицо: короткие проигрывания по поводу
+   («выиграл», «крутим», «слушаю») и редкие живые моменты в простое, чтобы
+   между событиями он не застывал.
+
+   Три правила, чтобы это не превратилось в мельтешение:
+   · реакция короткая и всегда возвращается в покой — эмоция это событие,
+     а не состояние;
+   · в простое пауза между «моментами» ДЛИННАЯ и случайная, иначе цикл
+     считывается как анимация загрузки;
+   · кадры не крутятся, когда вкладка скрыта или человек просил меньше
+     движения — и то и другое просто жжёт батарею. */
+var FACE={idle:8,fun:11,adoration:8,listen:9,pause:8,think:9,wink:6,wonder:5};
+var FACE_ST={mood:'idle',timer:null,back:null,idle:null,loaded:{}};
+function facePreload(m){
+  if(FACE_ST.loaded[m])return;FACE_ST.loaded[m]=1;
+  for(var i=1;i<=FACE[m];i++){var im=new Image();im.src='mascot/'+m+'/'+String(i).padStart(2,'0')+'.png'}
+}
+function faceEls(){
+  return [document.getElementById('fmTabImg'),document.getElementById('fmFabImg')].filter(Boolean);
+}
+function faceSet(m,i){
+  var src='mascot/'+m+'/'+String(i).padStart(2,'0')+'.png';
+  faceEls().forEach(function(el){el.src=src});
+  var w=document.getElementById('fmTab');if(w)w.dataset.mood=m;
+}
+function faceStill(){
+  return (window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)
+      || document.hidden || document.body.classList.contains('anim-halt');
+}
+/* Проиграть настроение один раз и вернуться в покой */
+function mascotFeel(m,hold){
+  if(!FACE[m])return;
+  if(faceStill()){faceSet(m,1);clearTimeout(FACE_ST.back);
+    FACE_ST.back=setTimeout(function(){faceSet('idle',1)},hold||1600);return}
+  facePreload(m);
+  clearInterval(FACE_ST.timer);clearTimeout(FACE_ST.back);
+  FACE_ST.mood=m;
+  var n=FACE[m],i=1,dir=1;
+  faceSet(m,1);
+  FACE_ST.timer=setInterval(function(){
+    if(faceStill())return;
+    i+=dir;
+    if(i>=n){i=n;dir=-1}          /* туда-обратно: конец ленты не должен щёлкать в начало */
+    else if(i<=1&&dir<0){i=1;dir=1}
+    faceSet(m,i);
+  },110);
+  FACE_ST.back=setTimeout(function(){
+    clearInterval(FACE_ST.timer);FACE_ST.mood='idle';faceSet('idle',1);
+  },hold||1800);
+}
+/* Живые моменты в простое: редко, вразнобой и только когда экран виден */
+var FACE_IDLE=['wink','wonder','think','pause'];
+function faceIdleLoop(){
+  clearTimeout(FACE_ST.idle);
+  var wait=9000+Math.random()*11000;
+  FACE_ST.idle=setTimeout(function(){
+    var sheetOpen=(document.getElementById('sheet')||{classList:{contains:function(){return false}}}).classList.contains('open');
+    if(!faceStill()&&FACE_ST.mood==='idle'&&!sheetOpen){
+      mascotFeel(FACE_IDLE[Math.floor(Math.random()*FACE_IDLE.length)],1400);
+    }
+    faceIdleLoop();
+  },wait);
+}
+try{facePreload('idle');facePreload('fun');faceIdleLoop()}catch(e){}
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden){clearInterval(FACE_ST.timer)}else{faceSet(FACE_ST.mood||'idle',1)}
+});
 function hubDotSync(){
   var d=document.querySelector('.tab-mascot .tm-dot');if(!d)return;
   var today=new Date().toDateString();
@@ -7336,6 +7406,7 @@ function notifClick(idx){
   haptic('tap');
 }
 function openMascot(){
+  try{mascotFeel('listen',2200)}catch(e){}
   hideMwHint();hubDotSeen();haptic('open');
   // первый запуск или смена режима — приветствие
   if(MW_CTX.mode!==MODE){MW_LOG=[{role:'bot',html:getMascotGreeting()}];MW_CTX.mode=MODE}
@@ -7731,6 +7802,7 @@ function spinOffset(index){
 }
 function spinRun(){
   if(__spinBusy)return;
+  try{mascotFeel('wonder',5200)}catch(e){}
   var free=freeSpinReady();
   if(!free&&!ptsSpend(SPIN_COST,T('Спин рулетки'))){
     toast(T('Не хватает баллов — выполни задание или докупи'));
@@ -8156,6 +8228,7 @@ function tastePick(pool,exceptName){
 }
 /* Реакция на карточку: dir +1 = нравится, -1 = не то */
 function tasteReact(dir,biz){
+  try{mascotFeel(dir>0?'fun':'think',1300)}catch(e){}
   if(!biz)return;
   if(dir>0){tasteBump(biz.k,1.45);tasteSkip(biz.n,false)}
   else{tasteBump(biz.k,0.6);tasteSkip(biz.n,true)}
@@ -8373,7 +8446,7 @@ var FREE_SPIN_MS=6*3600*1000; /* бесплатный спин раз в 6 ча�
 
 function ptsGet(){var v=gameGet('pts',null);return v===null?PTS:v}
 function ptsSave(v){PTS=Math.max(0,Math.round(v));gameSet('pts',PTS);ptsSync();return PTS}
-function ptsAdd(n,why){try{walletAdd(n,why)}catch(e){}return ptsSave(ptsGet()+n)}
+function ptsAdd(n,why){try{walletAdd(n,why)}catch(e){}try{if(n>=100)mascotFeel('adoration',2000);else if(n>0)mascotFeel('fun',1500)}catch(e){}return ptsSave(ptsGet()+n)}
 function ptsSpend(n,why){var c=ptsGet();if(c<n)return false;try{walletAdd(-n,why)}catch(e){}ptsSave(c-n);return true}
 /* Все витрины баланса обновляются из одного места */
 /* ═══════════════ КОШЕЛЁК — единый дом баллов Loop ═══════════════
