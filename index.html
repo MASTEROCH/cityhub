@@ -1218,6 +1218,40 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 /* Подложка под фото мест: если картинка не приехала, видно фирменный
    градиент, а не битую иконку. */
 .biz .th,.mini .th,.qst-th,.si-th,.pf-recent .pr-th{background:linear-gradient(135deg,rgba(124,58,255,.38),rgba(0,224,199,.18))!important}
+/* Ежедневный вход */
+.daily-login{text-align:center;padding:4px 2px 6px}
+.daily-login .dl-ic{width:64px;height:64px;margin:2px auto 14px;border-radius:20px;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(255,138,61,.3),rgba(255,181,71,.12));border:1px solid rgba(255,138,61,.35);color:var(--gold)}
+.daily-login .dl-ic.lost{background:linear-gradient(135deg,rgba(120,140,170,.22),rgba(255,255,255,.04));border-color:var(--stroke);color:var(--txt-3)}
+.daily-login .dl-ic svg{width:30px;height:30px}
+.daily-login h2{font-size:26px;font-weight:900;letter-spacing:-.02em;margin:0 0 6px}
+.daily-login .sub{font-size:13.5px;color:var(--txt-2);line-height:1.5;margin:0 0 18px}
+.daily-login .dl-rew{display:flex;flex-direction:column;align-items:center;gap:2px;padding:18px;margin-bottom:12px;border-radius:var(--r-md);
+  background:linear-gradient(135deg,rgba(212,255,79,.16),rgba(0,224,199,.07));border:1px solid rgba(212,255,79,.3)}
+.daily-login .dl-rew-v{font-size:34px;font-weight:900;letter-spacing:-.03em;color:var(--lime);line-height:1}
+.daily-login .dl-rew-t{font-size:12px;color:var(--txt-2);font-weight:600}
+.daily-login .dl-mile{padding:13px 14px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);margin-bottom:16px}
+.daily-login .dl-mile-h{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--txt-3);font-weight:600;margin-bottom:8px}
+.daily-login .dl-mile-h b{font-size:15px;font-weight:900;color:var(--gold)}
+.daily-login .dl-mile-bar{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.daily-login .dl-mile-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ff8a3d,var(--gold));box-shadow:0 0 10px rgba(255,181,71,.5)}
+.daily-login .dl-lost{padding:20px;margin-bottom:16px;border-radius:var(--r-md);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft)}
+.daily-login .dl-lost-n{font-size:40px;font-weight:900;letter-spacing:-.03em;color:var(--txt-3);line-height:1;text-decoration:line-through;text-decoration-thickness:3px}
+.daily-login .dl-lost-t{font-size:12px;color:var(--txt-3);margin-top:4px;font-weight:600}
+/* Полосы вкуса */
+.tbar{margin-bottom:11px}
+.tbar .tb-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.tbar .tb-ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex-shrink:0}
+.tbar .tb-ic svg{width:14px;height:14px}
+.tbar .tb-h b{flex:1;min-width:0;font-size:13px;font-weight:700}
+.tbar .tb-v{font-size:13px;font-weight:900}
+.tbar .tb-track{height:7px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.tbar .tb-track i{display:block;height:100%;border-radius:99px;transition:width .7s var(--ease-out)}
+/* Штампы свайпа — что означает жест */
+.sw-stamp{position:absolute;top:18%;z-index:9;padding:9px 18px;border-radius:14px;font-size:17px;font-weight:900;
+  letter-spacing:.04em;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .12s linear}
+.sw-stamp.like{left:18px;transform:rotate(-11deg);color:#06210a;background:var(--lime);border:2px solid rgba(255,255,255,.5)}
+.sw-stamp.nope{right:18px;transform:rotate(11deg);color:#fff;background:var(--rose);border:2px solid rgba(255,255,255,.35)}
 /* Свайп по карточке-герою: въезд новой карточки с той стороны, куда ушла
    старая, и одноразовое «покачивание» для обучения жесту. */
 .answer-wrap{position:relative}
@@ -1271,7 +1305,10 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .mood.vibe.ai-vibe::after{content:'';position:absolute;top:6px;right:8px;width:5px;height:5px;border-radius:50%;background:linear-gradient(135deg,#7C3AFF,#21d4fd);box-shadow:0 0 6px rgba(33,212,253,.6);opacity:.85}
 .mood.vibe.ai-vibe.on::after{opacity:0}
 .mood.vibe.on .vibe-lb{color:#06210a;font-weight:800}
-.mood.vibe.on .vibe-ic{transform:scale(1.08)}
+/* Активный чип красит тёмным только подпись — с эмодзи это было неважно,
+   а SVG на currentColor остался светлым и пропал на лаймовой заливке.
+   Через --accent-ink правильный цвет приезжает и в биз-режиме. */
+.mood.vibe.on .vibe-ic{transform:scale(1.08);color:var(--accent-ink,#06210a)}
 .mood.vibe:active{transform:scale(.93)}
 .mood.vibe:active .vibe-ic{transform:scale(1.15) rotate(-6deg)}
 .vibe-chip .vibe-ic{font-size:15px}
@@ -2549,40 +2586,11 @@ input,textarea{font-size:16px!important}
         <button class="show-more" id="showMore" onclick="expandToday()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg><span data-i18n="show_more">Показать больше идей</span></button>
 
         <div id="moreToday" class="more-today">
-          <div class="streak-mini" id="streakStrip" style="margin-top:6px"></div>
           <div class="vbanner fadein" id="voucherBanner" onclick="claimVoucher()"><div class="vbi"><b>10₾</b></div><div class="vbt"><b data-i18n="gift_t">Подарок города ждёт</b><span><span data-i18n="gift_s">Скидка 10₾</span> · <span class="vbt-timer" id="vbTimer">14:00:00</span></span></div><span class="vba" data-i18n="gift_a">Забрать</span></div>
           <div id="huntSlot"></div>
           <div class="sec-h" style="margin-top:8px"><h2 style="font-size:16px;display:flex;align-items:center;gap:7px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span data-i18n="foryou">Для тебя сейчас</span></h2><span class="m" onclick="cgo('map')" data-i18n="all_map">всё на карте →</span></div>
           <div class="forme-row" id="formeRow"><span class="skel skel-chip" style="width:158px;height:120px;border-radius:20px"></span><span class="skel skel-chip" style="width:158px;height:120px;border-radius:20px"></span></div>
-          <div class="quest-squad-row">
-            <div class="qs-card quest" onclick="openQuest()">
-              <div class="qs-glow"></div>
-              <div class="qs-top">
-                <div class="qs-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3zM11 13v6"/></svg></div>
-                <span class="qs-tag">+300 Loop</span>
-              </div>
-              <div class="qs-body">
-                <b data-i18n="quest_t">Квест по городу</b>
-                <span data-i18n="quest_s">3 места · маршрут</span>
-              </div>
-            </div>
-            <div class="qs-card squad" onclick="openSquad()">
-              <div class="qs-glow"></div>
-              <div class="qs-top">
-                <div class="qs-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 14c2 .4 4 2 4 5"/></svg></div>
-                <span class="qs-tag">×2 баллы</span>
-              </div>
-              <div class="qs-body">
-                <b data-i18n="squad_t">Собрать сквад</b>
-                <span data-i18n="squad_s">Зови друзей · бонус всем</span>
-              </div>
-            </div>
-          </div>
-          <div class="alt-h"><h2 data-i18n="more_you">Ещё под тебя</h2><span class="m" onclick="cgo('map')" data-i18n="on_map">На карте →</span></div>
           <div id="altList"></div>
-          <div class="sec-h" style="margin-top:8px"><h2 style="font-size:16px;display:flex;align-items:center;gap:7px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ff8a3d" stroke-width="2"><path d="M12 2c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 1 0 1-1 1-2 0-3-2-4-2-7z"/></svg><span data-i18n="hot">Горячее сегодня</span></h2></div>
-        <div class="deal fadein" id="dealBox"></div>
-        <div class="hint">CityHUB узнаёт тебя в любом городе мира</div>
         </div>
       </div>
     </section>
@@ -3556,7 +3564,7 @@ function renderToday(){
     <div class="ct"><span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${T(top.why)}</span>
     <h1>${top.n}</h1>
     <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}</div>
-    <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick()" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
+    <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick(1)" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
   </div></div>
   <div class="vibe-head" style="margin-top:16px"><span class="vibe-title">Не то? Выбери вайб</span><span class="vibe-sub">или жми «Удиви меня»</span></div>
   <div class="mood-row"><div class="mood-scroll">
@@ -3610,7 +3618,23 @@ function setMood(btn,m){
     if(navigator.vibrate)navigator.vibrate(8);
   }catch(e){try{toast('Ошибка: '+e.message)}catch(_){}}
 }
-function nextPick(){const C=CITIES[CITY];pickIdx=(pickIdx+1)%C.biz.length;C.biz.push(C.biz.shift());var card=document.getElementById('answerCard');if(card){card.style.transition='transform .32s cubic-bezier(.5,0,.75,0),opacity .32s';card.style.transform='translateX(-110%) rotate(-8deg) scale(.9)';card.style.opacity='0';}setTimeout(function(){renderToday()},300);if(navigator.vibrate)navigator.vibrate(12)}
+/* Следующее место выбирается ПО ВКУСУ, а не по кругу: чем выше вес ниши,
+   тем чаще она выпадает. Вес меняют свайпы и реальные визиты. */
+function nextPick(anim){
+  const C=CITIES[CITY];
+  var pool=C.biz.filter(function(b){return curMood==='all'||b.k===curMood});
+  if(!pool.length)pool=C.biz;
+  var next=tastePick(pool,C.biz[0]&&C.biz[0].n);
+  if(next){var i=C.biz.indexOf(next);if(i>0){C.biz.splice(i,1);C.biz.unshift(next)}}
+  if(anim){
+    var card=document.getElementById('answerCard');
+    if(card){card.style.transition='transform .3s cubic-bezier(.5,0,.75,0),opacity .3s';
+      card.style.transform='translateY(70%) scale(.9)';card.style.opacity='0'}
+    setTimeout(function(){renderToday();var n=document.querySelector('#answerBox .answer');
+      if(n){n.classList.add('deck-in');setTimeout(function(){n.classList.remove('deck-in')},540)}},280);
+  } else renderToday();
+  if(navigator.vibrate)navigator.vibrate(10);
+}
 function travelMode(){var C=CITIES[CITY];openMascot();setTimeout(function(){mascotIntent('маршрут','Я турист в '+C.name+', собери маршрут на день')},300);if(navigator.vibrate)navigator.vibrate(10)}
 function jx(o){return JSON.stringify(o).replace(/"/g,'&quot;')}
 /* Бегущая строка рекламы — заведения без полного баннера (free-tier листинг).
@@ -4619,7 +4643,7 @@ function renderStatic(){
 function cgo(t){if(t==='ai'){try{openMascot()}catch(e){}return}
   /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
   if(t==='niches')t='map';if(t==='rewards')t='luck';
-  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderGBoard();renderLuckHud();luckTickStart();luckGo((function(x){return (x==='spend'||!x)?'wheel':x})(gameGet('luckTab','wheel')));}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderGBoard();renderLuckHud();luckTickStart();luckGo((function(x){return (x==='spend'||!x)?'wheel':x})(gameGet('luckTab','wheel')));}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:20,mine:0,bids:[
   {n:'Tangerine',v:340,me:false},
@@ -4716,7 +4740,12 @@ var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬�
 var curLang='RU';
 var DICT={
 /* — batch: раздел «Удача» (2026-09-11) — */
-'Свайпни карточку — покажу другое':['Swipe the card — I will show another','გადაფურცლე ბარათი — სხვას გაჩვენებ'],
+'Свайпни карточку — покажу другое':['Swipe: right if you like it, left if not','გადაფურცლე: მარჯვნივ თუ მოგწონს, მარცხნივ თუ არა'],
+'Нравится':['Like','მომწონს'],'Не то':['Not it','არა ეს'],
+'Серия прервалась':['Streak broken','სერია შეწყდა'],'Вернуть серию':['Restore streak','სერიის დაბრუნება'],
+'Начать заново':['Start over','თავიდან დაწყება'],'День':['Day','დღე'],'Первый день':['First day','პირველი დღე'],
+'баллов за вход':['points for logging in','ქულა შესვლისთვის'],'Крутить рулетку':['Spin the wheel','დაატრიალე რულეტკა'],
+'учусь…':['learning…','ვსწავლობ…'],
 'Лига':['League','ლიგა'],
 'Лига друзей':['Friends league','მეგობრების ლიგა'],
 'Мировой зачёт':['World standings','მსოფლიო ჩათვლა'],
@@ -5199,7 +5228,7 @@ function confirmArrived(pts,bizName){
     try{celebrate({icon:'🎉',title:'+'+pts+' '+T('баллов'),sub:sub})}
     catch(e){toast('+'+pts+' '+T('баллов'))}
   },1300);
-  if(bizName){questAdvance(bizName);gameOnVisit(bizName);}
+  if(bizName){questAdvance(bizName);gameOnVisit(bizName);try{var __b=CITIES[CITY].biz.find(function(x){return x.n===bizName});if(__b)tasteBump(__b.k,1.8)}catch(e){}}
 }
 var __sheetTok=0;
 /* единая точка открытия шторки — отменяет незавершённое закрытие, чтобы не было down-анимации при reopen */
@@ -5496,7 +5525,7 @@ safe(function(){var k='';try{k=localStorage.getItem('cityhub_lang_v1')||''}catch
     try{startLangObserver()}catch(e){}
     try{renderToday()}catch(e){}
   }});
-safe(applyLang);safe(renderConsent);safe(edgeFadeAll);safe(hubDotSync);safe(ptsSync);setTimeout(function(){try{edgeFadeAll()}catch(e){}},700);
+safe(applyLang);safe(renderConsent);safe(edgeFadeAll);safe(hubDotSync);safe(ptsSync);safe(dailyCheck);setTimeout(function(){try{edgeFadeAll()}catch(e){}},700);
 safe(renderIdentity);
 safe(function(){if(notifIsRead())notifSetRead()});
 /* ═══ SHAKE-TO-SURPRISE — встряхнул телефон → новое место (сигнатурный жест CityHUB) ═══ */
@@ -5559,7 +5588,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=35;try{renderConsent()}catch(e){}
+var APP_V=36;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6689,6 +6718,139 @@ function closePoster(){var o=document.getElementById('posterOv');if(o)o.remove()
       вертикальным скроллом ленты.
    Ось фиксируется на первых 6px движения и дальше не меняется: горизонталь —
    наша, вертикаль — отдаём скроллу целиком. */
+/* ═══════════════ ЕЖЕДНЕВНЫЙ ВХОД — серия и награда ═══════════════
+   Стрик перестал быть постоянным блоком на «Сегодня»: он показывается ОДИН
+   РАЗ в сутки, при первом открытии. Остальное время он живёт цифрой в профиле.
+   Серия считается в днях без потолка — человек может ходить годами, и неделя
+   тут ни при чём. */
+var DAY_MS=86400000;
+function dayKey(t){var d=new Date(t||Date.now());return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function daysBetween(a,b){
+  var x=new Date(a),y=new Date(b);
+  x.setHours(0,0,0,0);y.setHours(0,0,0,0);
+  return Math.round((y-x)/DAY_MS);
+}
+/* Вехи серии — до какой осталось сколько */
+var STREAK_MILES=[3,7,14,30,60,100,180,365,730];
+function streakNextMile(n){for(var i=0;i<STREAK_MILES.length;i++){if(STREAK_MILES[i]>n)return STREAK_MILES[i]}return null}
+function streakReward(n){return 20+Math.min(80,n*4)}   /* растёт с серией, потолок 100 */
+
+function dailyCheck(){
+  var today=dayKey(), last=gameGet('lastLoginDay','');
+  if(last===today)return;                       /* уже здоровались сегодня */
+  var streak=gameGet('streak',0)||0;
+  var gap=last?daysBetween(gameGet('lastLoginTs',Date.now()),Date.now()):null;
+  gameSet('lastLoginDay',today);gameSet('lastLoginTs',Date.now());
+  if(last===''){                                /* самый первый вход */
+    gameSet('streak',1);setTimeout(function(){dailySheet(1,'start')},900);return;
+  }
+  if(gap===1){                                  /* пришёл на следующий день */
+    streak+=1;gameSet('streak',streak);
+    setTimeout(function(){dailySheet(streak,'go')},900);return;
+  }
+  /* серия прервалась */
+  gameSet('lostStreak',streak);gameSet('lostGap',gap);
+  gameSet('streak',1);
+  setTimeout(function(){dailySheet(streak,'lost')},900);
+}
+
+function dailySheet(streak,mode){
+  var mile=streakNextMile(mode==='lost'?0:streak);
+  var rew=streakReward(streak);
+  var head,body,cta;
+  if(mode==='lost'){
+    var lost=gameGet('lostStreak',0)||0, gap=gameGet('lostGap',0)||0;
+    head='<div class="dl-ic lost">'+ico('snow','currentColor',2)+'</div>'+
+      '<h2>'+T('Серия прервалась')+'</h2>'+
+      '<p class="sub">'+T('Ты не заходил')+' '+gap+' '+pl3(gap,T('день'),T('дня'),T('дней'))+
+      ' — '+T('серия из')+' <b>'+lost+' '+pl3(lost,T('дня'),T('дней'),T('дней'))+'</b> '+T('сгорела')+'.</p>';
+    body='<div class="dl-lost"><div class="dl-lost-n">'+lost+'</div><div class="dl-lost-t">'+T('дней было')+'</div></div>';
+    cta='<button class="cta lime" onclick="streakRestore('+lost+')">'+ico('fire','currentColor',2.2)+T('Вернуть серию')+'<span class="gb-pts" style="margin-left:6px">'+Math.max(50,lost*10)+' ⭐</span></button>'+
+        '<button class="cta ghost" style="margin-top:9px" onclick="closeSheet()">'+T('Начать заново')+'</button>';
+  } else {
+    ptsAdd(rew);
+    head='<div class="dl-ic">'+ico('fire','currentColor',2)+'</div>'+
+      '<h2>'+(mode==='start'?T('Первый день'):T('День')+' '+streak)+'</h2>'+
+      '<p class="sub">'+(mode==='start'?T('Заходи каждый день — серия растёт, награда тоже'):T('Серия продолжается. Награда за вход уже на счету'))+'</p>';
+    body='<div class="dl-rew"><span class="dl-rew-v">+'+rew+'</span><span class="dl-rew-t">'+T('баллов за вход')+'</span></div>'+
+      (mile?'<div class="dl-mile"><div class="dl-mile-h"><span>'+T('До')+' '+mile+' '+pl3(mile,T('дня'),T('дней'),T('дней'))+'</span><b>'+Math.max(0,mile-streak)+'</b></div>'+
+        '<div class="dl-mile-bar"><i style="width:'+Math.round(streak/mile*100)+'%"></i></div></div>':'');
+    cta='<button class="cta lime" onclick="closeSheet();cgo(\'luck\')">'+ico('target','currentColor',2.2)+T('Крутить рулетку')+'</button>';
+  }
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div><div class="daily-login">'+head+body+cta+'</div>';
+  _openSheet();try{haptic(mode==='lost'?'error':'reward')}catch(e){}
+}
+function streakRestore(lost){
+  /* TODO(P1 #5): Telegram Stars — вернуть серию за оплату. Пока честно. */
+  closeSheet();
+  toast(T('Оплата включится вместе с релизом — серия начнётся заново'));
+  try{haptic('error')}catch(e){}
+}
+
+/* ═══════════════════ ВКУС — продукт учится на свайпах ═══════════════════
+   Свайп вправо = «нравится, показывай такое», влево = «не то». Это не просто
+   листание: каждый жест меняет веса ниш, и следующая карточка выбирается по
+   ним. Отсюда обещание экрана «открыл и сразу знаешь, куда пойти» становится
+   правдой — система знает ЧТО именно знать.
+   Вес ниши живёт в [0.15 … 4], стартует с 1. Лайк ×1.45, дизлайк ×0.6,
+   реальный визит ×1.8 — поступок весит больше жеста.
+   Дизлайкнутое место придерживаем 20 показов, но не баним навсегда:
+   вкус меняется, и продукт обязан давать второй шанс. */
+function tasteW(){try{return gameGet('tasteW',{})||{}}catch(e){return {}}}
+function tasteSet(w){try{gameSet('tasteW',w)}catch(e){}}
+function tasteBump(k,mul){
+  if(!k)return;
+  var w=tasteW(); var v=(typeof w[k]==='number'?w[k]:1)*mul;
+  w[k]=Math.max(.15,Math.min(4,v)); tasteSet(w);
+  try{renderTasteBars()}catch(e){}
+}
+function tasteOf(k){var w=tasteW();return typeof w[k]==='number'?w[k]:1}
+function tasteSkip(name,add){
+  var s=gameGet('tasteSkip',{})||{};
+  if(add){s[name]=20}else if(s[name]){s[name]--;if(s[name]<=0)delete s[name]}
+  gameSet('tasteSkip',s);return s;
+}
+/* Взвешенный выбор следующего места: чем выше вес ниши, тем чаще она выпадает.
+   Придержанные места участвуют с сильным штрафом, а не выбрасываются. */
+function tastePick(pool,exceptName){
+  if(!pool||!pool.length)return null;
+  var skip=gameGet('tasteSkip',{})||{};
+  var cand=pool.filter(function(b){return b.n!==exceptName});
+  if(!cand.length)cand=pool.slice();
+  var total=0,acc=[];
+  cand.forEach(function(b){
+    var w=tasteOf(b.k)*(skip[b.n]?0.12:1);
+    total+=w;acc.push(total);
+  });
+  var r=Math.random()*total;
+  for(var i=0;i<acc.length;i++){if(r<acc[i])return cand[i]}
+  return cand[cand.length-1];
+}
+/* Реакция на карточку: dir +1 = нравится, -1 = не то */
+function tasteReact(dir,biz){
+  if(!biz)return;
+  if(dir>0){tasteBump(biz.k,1.45);tasteSkip(biz.n,false)}
+  else{tasteBump(biz.k,0.6);tasteSkip(biz.n,true)}
+  try{gameSet('tasteSeen',(gameGet('tasteSeen',0)||0)+1)}catch(e){}
+}
+/* Полосы вкуса в профиле показывают РЕАЛЬНЫЕ веса, а не сидовые проценты:
+   «CityHUB изучает тебя» перестаёт быть надписью. */
+function renderTasteBars(){
+  var tb=document.getElementById('tasteBars');if(!tb)return;
+  var w=tasteW();
+  var rows=NICHES.map(function(n){return {n:n.n,k:n.k,c:n.c,w:tasteOf(n.k)}})
+    .sort(function(a,b){return b.w-a.w}).slice(0,6);
+  var max=Math.max.apply(null,rows.map(function(r){return r.w}).concat([1.2]));
+  tb.innerHTML=rows.map(function(r){
+    var pct=Math.round(r.w/max*100);
+    return '<div class="tbar"><div class="tb-h"><span class="tb-ic" style="background:'+r.c+'22;color:'+r.c+'">'+ico(r.k,'currentColor',2)+'</span><b>'+r.n+'</b><span class="tb-v" style="color:'+r.c+'">'+pct+'%</span></div>'+
+      '<div class="tb-track"><i style="width:'+pct+'%;background:linear-gradient(90deg,'+r.c+'88,'+r.c+')"></i></div></div>';
+  }).join('');
+  var acc=document.getElementById('tasteAcc');
+  var seen=gameGet('tasteSeen',0)||0;
+  if(acc)acc.textContent=seen<3?T('учусь…'):(T('точность')+' '+Math.min(96,52+seen*4)+'%');
+}
+
 /* Битые фото мест: скрываем сам <img>, под ним остаётся фирменный градиент.
    Слушаем на ФАЗЕ ЗАХВАТА: error у <img> не всплывает. */
 document.addEventListener('error',function(e){
@@ -6704,6 +6866,9 @@ function swipeReset(el){
 }
 function swipeCommit(dir){
   var c=SW.el;if(!c)return;
+  /* Жест — это мнение, а не листание: вправо «нравится», влево «не то».
+     Веса ниш меняются сразу, и следующая карточка уже подбирается по ним. */
+  try{tasteReact(dir,CITIES[CITY].biz[0])}catch(e){}
   var wrap=c.closest('.answer-wrap');
   if(wrap){
     /* край следующей карты показываем на время тасовки */
@@ -6744,12 +6909,18 @@ function swipeBind(){
     if(e.cancelable)e.preventDefault();
     SW.el.style.transform='translateX('+dx+'px) rotate('+(dx/24)+'deg)';
     SW.el.style.opacity=String(Math.max(.5,1-Math.abs(dx)/440));
+    /* Штампы: человек должен видеть, что означает его жест, ДО того как отпустит */
+    var lk=SW.el.querySelector('.sw-stamp.like'),np=SW.el.querySelector('.sw-stamp.nope');
+    if(!lk){lk=document.createElement('span');lk.className='sw-stamp like';lk.textContent=T('Нравится');SW.el.appendChild(lk)}
+    if(!np){np=document.createElement('span');np.className='sw-stamp nope';np.textContent=T('Не то');SW.el.appendChild(np)}
+    lk.style.opacity=dx>12?String(Math.min(1,(dx-12)/70)):'0';
+    np.style.opacity=dx<-12?String(Math.min(1,(-dx-12)/70)):'0';
   },{passive:false});
   var end=function(e){
     if(!SW.on||!SW.el)return;SW.on=false;
     var dx=(e.clientX||SW.x)-SW.x,dt=Math.max(1,performance.now()-SW.t),v=Math.abs(dx)/dt;
     if(SW.lock==='x'&&(Math.abs(dx)>90||v>0.45))swipeCommit(dx>0?1:-1);
-    else swipeReset();
+    else{var s=SW.el.querySelectorAll('.sw-stamp');[].forEach.call(s,function(x){x.style.opacity='0'});swipeReset()}
   };
   box.addEventListener('pointerup',end);
   box.addEventListener('pointercancel',function(){if(SW.on){SW.on=false;swipeReset()}});
