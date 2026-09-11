@@ -332,7 +332,7 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .screen{position:absolute;inset:0;display:none;flex-direction:column;padding-top:var(--safe-t)}
 .screen.active{display:flex;animation:scrIn .4s cubic-bezier(.2,.8,.2,1)}
 @keyframes scrIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
-.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 24px);scroll-behavior:smooth}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 52px);scroll-behavior:smooth}
 .tilt-card{transition:transform .4s cubic-bezier(.2,.9,.3,1)}
 .scroll::-webkit-scrollbar{display:none}
 .hdr{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -378,7 +378,7 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .live-strip .friend{color:#FFB547}
 /* Content block — bottom anchored */
 .answer .ct{position:relative;z-index:2}
-.answer .why{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:6px 11px;border-radius:99px;background:rgba(8,12,6,.52);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(212,255,79,.42);color:var(--lime);margin-bottom:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.answer .why{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:6px 11px;border-radius:99px;margin-top:10px;background:rgba(8,12,6,.52);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(212,255,79,.42);color:var(--lime);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .answer .why svg{width:12px;height:12px;color:var(--lime);flex-shrink:0}
 .answer h1{font-size:clamp(28px,7vw,36px);font-weight:900;letter-spacing:-.025em;line-height:1.04;margin-bottom:6px;text-shadow:0 2px 22px rgba(0,0,0,.75)}
 /* Compact meta — 2-3 items max, dot separators */
@@ -2329,7 +2329,9 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 /* league */
 .league{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:var(--r-md);margin-bottom:8px;background:var(--glass-soft);border:1px solid var(--stroke-soft)}
 .league.me{background:rgba(124,58,255,.15);border-color:var(--acc)}
-.league .lrank{width:26px;font-size:15px;font-weight:900;text-align:center;flex-shrink:0}
+.league .lrank{width:40px;font-size:15px;font-weight:900;text-align:center;flex-shrink:0;display:grid;place-items:center}
+.league .lrank .lm{display:grid;place-items:center;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5))}
+.league .lrank .lm svg{width:32px;height:32px}
 .league .lrank.gold{color:var(--gold)}.league .lrank.silver{color:#cdd5e0}.league .lrank.bronze{color:#cd9b6a}
 .league .lav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex-shrink:0}
 .league .ln{flex:1;font-size:14px;font-weight:700}.league .ln span{font-size:12px;color:var(--txt-2);font-weight:500;display:block}
@@ -3035,6 +3037,24 @@ body.anim-halt .upd-banner{animation-play-state:paused}
 body.anim-halt .upd-banner::after{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){.upd-banner::after{animation:none;opacity:0}}
 .map-expand.on{color:var(--lime);border-color:rgba(212,255,79,.35)}
+/* Подвкладки лиги — тот же чип-рецепт, что у фильтров и вкладок «Удачи»:
+   выбранное состояние белое, лайм остаётся цветом действия. */
+.lg-seg{display:flex;gap:3px;padding:3px;border-radius:99px;margin:2px 0 12px;
+  background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft)}
+.lg-seg button{flex:1;min-width:0;min-height:36px;border-radius:99px;background:transparent;border:none;
+  font-family:inherit;font-size:12px;font-weight:800;letter-spacing:-.01em;color:var(--txt-3);cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px;
+  transition:color var(--dur-fast),background var(--dur-fast)}
+.lg-seg button.on{background:linear-gradient(180deg,#ffffff 0%,#f2f4f8 45%,#d8dde6 100%);color:#0a0d16;
+  box-shadow:0 6px 16px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 4px rgba(0,0,0,.08)}
+.lg-seg button:active{transform:scale(.97)}
+.lg-pane{display:none}
+.lg-pane.on{display:block;animation:fadein var(--dur-mid) var(--ease-out)}
+.lg-note{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-3);margin:0 2px 9px}
+@media (max-width:360px){.lg-seg button{font-size:11px;padding:0 6px}}
+.grow .g-r .lm{display:grid;place-items:center;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5))}
+.grow .g-r .lm svg{width:30px;height:30px}
+.grow .g-r{display:grid;place-items:center;min-width:38px}
 </style>
 </head>
 <body class="client">
@@ -3150,12 +3170,25 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 
         <!-- 3. ЛИГА -->
         <div class="luck-pane" id="pane-league">
-          <div class="sec-h" style="margin-top:2px"><h2 style="font-size:16px">Лига друзей</h2><span class="more">эта неделя</span></div>
-          <div id="league"></div>
-          <button class="cta lime" style="margin-top:14px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>Пригласить друга<span class="gb-pts" style="margin-left:6px">+200</span></button>
-          <div class="hint" style="margin-top:8px">Друг заходит по твоей ссылке — баллы получаете оба, и он появляется в твоей лиге.</div>
-          <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Мировой зачёт</h2><span class="more">по собранным местам</span></div>
-          <div id="gboard"></div>
+          <!-- Два рейтинга лежали стопкой, и до мирового надо было листать мимо
+               всей лиги друзей. Это два разных вопроса — «как я среди своих» и
+               «как я в городе», — значит две вкладки, а не одна длинная лента. -->
+          <div class="lg-seg" id="lgSeg">
+            <button class="on" data-g="friends" onclick="lgGo('friends')">Лига друзей</button>
+            <button data-g="global" onclick="lgGo('global')">Глобальная лига</button>
+          </div>
+
+          <div class="lg-pane on" id="lgpane-friends">
+            <div class="lg-note">эта неделя</div>
+            <div id="league"></div>
+            <button class="cta lime" style="margin-top:14px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>Пригласить друга<b style="margin-left:8px">+200</b></button>
+            <div class="hint" style="margin-top:8px">Друг заходит по твоей ссылке — баллы получаете оба, и он появляется в твоей лиге.</div>
+          </div>
+
+          <div class="lg-pane" id="lgpane-global">
+            <div class="lg-note">по собранным местам</div>
+            <div id="gboard"></div>
+          </div>
         </div>
 
         <!-- 2. РУЛЕТКА -->
@@ -3647,9 +3680,9 @@ cake:'<path d="M4 21V11h16v10zM4 11c0-2 2-3 4-3M20 11c0-2-2-3-4-3M12 8c0-2-2-3 0
 pizza:'<path d="m12 14-1 1"/><path d="m13.75 18.25-1.25 1.42"/><path d="M17.775 5.654a15.68 15.68 0 0 0-12.121 12.12"/><path d="M18.8 9.3a1 1 0 0 0 2.1 7.7"/><path d="M21.964 20.732a1 1 0 0 1-1.232 1.232l-18-5a1 1 0 0 1-.695-1.232A19.68 19.68 0 0 1 15.732 2.037a1 1 0 0 1 1.232.695z" stroke-linejoin="round"/>',
 salad:'<path d="M7 21h10"/><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z" stroke-linejoin="round"/><path d="M11.38 12a2.4 2.4 0 0 1-.4-4.77 2.4 2.4 0 0 1 3.2-2.77 2.4 2.4 0 0 1 3.47-.63 2.4 2.4 0 0 1 3.37 3.37 2.4 2.4 0 0 1-1.1 3.7 2.51 2.51 0 0 1 .03 1.1"/><path d="m13 12 4-4"/><path d="M10.9 7.25A3.99 3.99 0 0 0 4 10c0 .73.2 1.41.54 2"/>',
 games:'<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 14h.01"/>',
-gold1:'<circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7M12 6v3M10.5 7.5h3"/>',
-gold2:'<circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/><path d="M10 8h4l-2 3z"/>',
-gold3:'<circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/><circle cx="12" cy="9" r="2"/>',
+gold1:'<path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15" stroke-linejoin="round"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="M11.1 15.7l1.1-.8v4.2"/>',
+gold2:'<path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15" stroke-linejoin="round"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="M10.7 15.9a1.35 1.35 0 1 1 2.6.5c0 1.1-2.6 1.7-2.6 2.7h2.7"/>',
+gold3:'<path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15" stroke-linejoin="round"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="M10.8 15.6a1.3 1.3 0 1 1 1.15 1.95h-.35m.35 0a1.3 1.3 0 1 1-1.15 1.95"/>',
 money:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 9v6M18 9v6"/>',
 ticket:'<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" stroke-linejoin="round"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>',
 bolt:'<path d="M13 2L3 14h7l-1 8 10-12h-7z"/>',
@@ -4146,9 +4179,10 @@ function renderToday(){
         ${heartBtn(top.n)}
       </span>
     </div>
-    <div class="ct"><span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${T(top.why)}</span>
+    <div class="ct">
     <h1>${top.n}</h1>
     <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}</div>
+    <span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${T(top.why)}</span>
     <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick(1)" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
   </div></div>
 `;
@@ -5229,7 +5263,18 @@ function renderGame(){
      Писатель остался один, и это тот, который говорит правду. */
   try{renderTasteBars()}catch(e){}
   const q=document.getElementById('quests');if(q)q.innerHTML=QUESTS.map(x=>{const done=x.cur>=x.goal;const pct=Math.round(x.cur/x.goal*100);return `<div class="quest ${done?'done':''}"><div class="qic" style="background:${x.c}25">${x.i}</div><div class="qi"><b>${x.n}</b><div class="qbar"><div class="qfill" style="width:${pct}%"></div></div><span class="qp">${x.cur} / ${x.goal}${done?' · готово!':''}</span></div><div class="qrew">${x.rew}</div></div>`}).join('');
-  const lg=document.getElementById('league');if(lg)lg.innerHTML=LEAGUE.map(l=>`<div class="league ${l.me?'me':''}"><div class="lrank ${l.cls||''}">${l.r<=3?['<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFB547" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7M11 8h2l-1 2z"/></svg>','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/></svg>','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d9a06b" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><circle cx="12" cy="9" r="6"/><path d="M9 14l-1 7 4-2 4 2-1-7"/><circle cx="12" cy="9" r="2"/></svg>'][l.r-1]:l.r}</div><div class="lav" style="background:${l.c}">${l.a||l.n[0]}</div><div class="ln">${l.n}${l.me?' (ты)':''}<span>${l.r===3?'обгони Гио — осталось 740':'в твоей лиге'}</span></div><div class="lpts">${l.pts}</div></div>`).join('');
+  /* Медали были 18px — на строке высотой 60px их приходилось разглядывать.
+     Берём знаки из общего набора и даём им настоящий размер. */
+  const MEDAL=['gold1','gold2','gold3'], MCOL=['#FFB547','#cbd5e1','#d9a06b'];
+  const lg=document.getElementById('league');
+  if(lg)lg.innerHTML=LEAGUE.map(function(l){
+    var rank=l.r<=3?('<span class="lm">'+ico(MEDAL[l.r-1],MCOL[l.r-1],1.9)+'</span>'):l.r;
+    return '<div class="league'+(l.me?' me':'')+'">'+
+      '<div class="lrank '+(l.cls||'')+'">'+rank+'</div>'+
+      '<div class="lav" style="background:'+l.c+'">'+(l.a||l.n[0])+'</div>'+
+      '<div class="ln">'+l.n+(l.me?' (ты)':'')+'<span>'+(l.r===3?'обгони Гио — осталось 740':'в твоей лиге')+'</span></div>'+
+      '<div class="lpts">'+l.pts+'</div></div>';
+  }).join('');
   const fd=document.getElementById('feed');if(fd)fd.innerHTML=FEED.map(f=>`<div class="feed"><div class="fav" style="background:${f.c}">${f.a}</div><div class="ft"><b>${f.n}</b> ${f.t}<div class="ft2">${f.ago} назад</div></div><div class="fpts">${f.pts}</div></div>`).join('');
 }
 function toggleTaste(){
@@ -5520,7 +5565,7 @@ var DICT={"сейчас":["now", "ახლა"],
 'учусь…':['learning…','ვსწავლობ…'],
 'Лига':['League','ლიგა'],
 'Лига друзей':['Friends league','მეგობრების ლიგა'],
-'Мировой зачёт':['World standings','მსოფლიო ჩათვლა'],
+'Глобальная лига':['Global league','გლობალური ლიგა'],
 'по собранным местам':['by places collected','შეგროვებული ადგილებით'],
 'Друзья сейчас':['Friends right now','მეგობრები ახლა'],
 'Твой вкус':['Your taste','შენი გემოვნება'],
@@ -6479,7 +6524,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=57;try{renderConsent()}catch(e){}
+var APP_V=58;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8441,7 +8486,8 @@ function luckGo(t){
   gameSet('luckTab',t);
   if(t==='wheel'){buildSpin();renderWins();renderPool();}
   if(t==='tasks')renderTasks();
-  if(t==='league'){try{renderGame()}catch(e){}renderGBoard();}
+  if(t==='league'){var g='friends';try{g=gameGet('lgTab','friends')||'friends'}catch(e){}
+    try{lgGo(g)}catch(e){try{renderGame()}catch(_){}}}
   var s=document.querySelector('#c-luck .scroll');if(s)s.scrollTop=0;
   try{haptic('select')}catch(e){}
 }
@@ -8659,6 +8705,16 @@ var GBOARD=[
  {n:'Гио',        c:'Кутаиси',  v:117, col:'#00E0C7'},
  {n:'Нина',       c:'Батуми',   v:103, col:'#ff5d8f'}
 ];
+/* Вкладки внутри «Лиги»: свои и город. Рисуем только то, что открыто —
+   глобальный зачёт не должен считаться, пока на него не смотрят. */
+function lgGo(g){
+  document.querySelectorAll('#lgSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.g===g)});
+  document.querySelectorAll('.lg-pane').forEach(function(p){p.classList.toggle('on',p.id==='lgpane-'+g)});
+  try{gameSet('lgTab',g)}catch(e){}
+  if(g==='global'){try{renderGBoard()}catch(e){}}
+  else{try{renderGame()}catch(e){}}
+  try{haptic('select')}catch(e){}
+}
 function renderGBoard(){
   var el=document.getElementById('gboard');if(!el)return;
   var mine=0;try{mine=(gameGet('visited',[])||[]).length}catch(e){}
@@ -8666,7 +8722,7 @@ function renderGBoard(){
   rows.push({n:T('Ты'),c:(CITIES[CITY]&&CITIES[CITY].name)||'Батуми',v:mine,col:'#D4FF4F',me:1});
   rows.sort(function(a,b){return b.v-a.v});
   el.innerHTML=rows.map(function(r,i){
-    var medal=i<3?['🥇','🥈','🥉'][i]:(i+1);
+    var medal=i<3?('<span class="lm">'+ico(['gold1','gold2','gold3'][i],['#FFB547','#cbd5e1','#d9a06b'][i],1.9)+'</span>'):(i+1);
     return '<div class="grow'+(r.me?' me':'')+(i<3?' top':'')+'">'+
       '<span class="g-r">'+medal+'</span>'+
       '<span class="g-a" style="background:linear-gradient(135deg,'+r.col+',rgba(255,255,255,.25))">'+r.n.charAt(0)+'</span>'+
