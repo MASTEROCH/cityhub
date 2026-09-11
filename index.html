@@ -370,7 +370,20 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .live-strip{display:inline-flex;gap:7px;align-items:center;min-width:0;pointer-events:none;flex:1;overflow:hidden}
 /* В одну строку с рейтингом места мало: подпись обязана ужиматься
    многоточием, а не разваливаться на два ряда и растить карточку. */
-.answer .live-strip > span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex-shrink:1}
+.answer .live-strip > span{white-space:nowrap;overflow:hidden;min-width:0;flex-shrink:1}
+/* Пинг-понг: текст доезжает до конца, стоит и возвращается. Паузы на краях
+   обязательны — без них это мельтешение, а не чтение. */
+.pp{overflow:hidden}
+.pp .pp-in{display:inline-block;white-space:nowrap;will-change:transform}
+.pp.pp-on .pp-in{animation:ppSwing var(--pp-dur,3.4s) var(--ease-in-out) infinite}
+@keyframes ppSwing{
+  0%,22%{transform:translateX(0)}
+  50%,72%{transform:translateX(calc(var(--pp,0) * -1px))}
+  100%{transform:translateX(0)}}
+body.anim-halt .pp.pp-on .pp-in{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){
+  .pp.pp-on .pp-in{animation:none}
+  .pp.pp-on{text-overflow:ellipsis}}
 .answer .live-strip span{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:99px;background:rgba(5,6,10,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);color:rgba(244,246,251,.95)}
 .answer .live-strip span i{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:livePulse 1.8s ease-in-out infinite;display:inline-block}
 .answer .live-strip .trend{color:#4ade80}
@@ -4230,9 +4243,9 @@ function renderToday(){
   var openNow=(closesAt===2)?(hhNow>=18||hhNow<2):(hhNow>=8&&hhNow<closesAt);
   // живые сигналы — плавающая полоса над фото (новая композиция)
   var liveSignalsTop='<span class="live-strip">'+
-    (openNow&&hrsLeft<=3?'<span class="closing"><i></i>'+T('закрывается через')+' '+hrsLeft+' '+pl3(hrsLeft,T('час'),T('часа'),T('часов'))+'</span>':
-      openNow?'<span><i></i>'+T('открыто до')+' '+closesAt+':00</span>'
-             :'<span><i></i>'+T('откроется в')+' '+(closesAt===2?'18:00':'8:00')+'</span>')+'</span>';
+    (openNow&&hrsLeft<=3?'<span class="closing pp"><i></i>'+T('закрывается через')+' '+hrsLeft+' '+pl3(hrsLeft,T('час'),T('часа'),T('часов'))+'</span>':
+      openNow?'<span class="pp"><i></i>'+T('открыто до')+' '+closesAt+':00</span>'
+             :'<span class="pp"><i></i>'+T('откроется в')+' '+(closesAt===2?'18:00':'8:00')+'</span>')+'</span>';
   var promoChip=top.b==='promo'?'<span class="m-dot"></span><span class="m-promo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>×2 '+T('баллы')+'</span>':'';
   // контекст времени
   var ctxLine=hh<12?'Лучшее начало утра рядом с тобой':hh<18?'Идеально для дневной паузы':hh<23?'Вечер обещает быть хорошим':'Открыто прямо сейчас';
@@ -4260,6 +4273,7 @@ function renderToday(){
   </div></div>
 `;
   try{renderDeck()}catch(e){}
+  try{ppBind(document.getElementById('answerBox'))}catch(e){}
   try{swipeBind();swipeHintMaybe();edgeFadeAll()}catch(e){}
   document.getElementById('altList').innerHTML=C.biz.slice(1,1+ALT_SHOWN).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><h3><span class="nm">'+b.n+'</span>'+promo+'</h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp">'+ei('loop','currentColor',11)+'+'+b.pts+'</div></div>'}).join('')+
   '';
@@ -5975,6 +5989,7 @@ function setLang(k,silent){
   try{renderToday()}catch(e){}
   applyLang();startLangObserver();
   try{renderConsent()}catch(e){}
+  try{setTimeout(function(){ppBind()},60)}catch(e){}
   if(silent)return;                        /* старт приложения — не повод праздновать */
   closeSheet();
   var l=LANGS.find(function(x){return x.k===k});if(l){toast(l.f+' '+l.n)}haptic('select')
@@ -6646,7 +6661,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=67;try{renderConsent()}catch(e){}
+var APP_V=68;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8474,6 +8489,37 @@ function swipeCommit(dir){
 /* Стопка рисуется по ФАКТИЧЕСКОЙ высоте героя: карточка тянется фотографией
    и текстом, фиксированная высота развалила бы стопку на первом же длинном
    названии. */
+/* ═══════════ ТЕКСТ, КОТОРЫЙ НЕ ПОМЕСТИЛСЯ ═══════════
+   Многоточие честно говорит «тут что-то обрезано», но не показывает ЧТО —
+   а в чипе «откроется в 8:00» обрезается ровно время, ради которого чип и
+   существует. Бегущая строка здесь не годится (вечное движение в статичном
+   элементе), зато годится пинг-понг: текст доезжает до конца, стоит, и
+   возвращается. Читается целиком, и глаз не дёргается постоянно.
+
+   Работает по факту переполнения, а не по длине строки: одно и то же слово
+   в RU/EN/GE занимает разную ширину, и угадывать её нельзя. */
+var __ppT;
+window.addEventListener('resize',function(){clearTimeout(__ppT);__ppT=setTimeout(function(){try{ppBind()}catch(e){}},200)});
+function ppBind(root){
+  var host=root||document;
+  host.querySelectorAll('.pp').forEach(function(el){
+    var inner=el.querySelector('.pp-in');
+    if(!inner){
+      inner=document.createElement('span');inner.className='pp-in';
+      while(el.firstChild)inner.appendChild(el.firstChild);
+      el.appendChild(inner);
+    }
+    el.classList.remove('pp-on');inner.style.removeProperty('--pp');
+    var over=inner.scrollWidth-el.clientWidth;
+    if(over>2){
+      inner.style.setProperty('--pp',over+2);
+      /* Длительность от длины: короткий хвост не должен ползти так же долго,
+         как длинный — иначе движение выглядит случайным. */
+      el.style.setProperty('--pp-dur',(2.4+over/26).toFixed(1)+'s');
+      el.classList.add('pp-on');
+    }
+  });
+}
 function renderDeck(){
   var st=document.getElementById('deckStack'),card=document.querySelector('#answerBox .answer');
   try{swipeDeckOff()}catch(e){}          /* новая раздача — колода в исходном положении */
