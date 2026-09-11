@@ -3125,6 +3125,9 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 .sw-hint{box-shadow:0 14px 40px rgba(0,0,0,.6)}
 .answer .live-strip .closing i{background:var(--gold);box-shadow:0 0 8px var(--gold)}
 .answer .live-strip .closing{color:var(--gold)}
+.bat-pos .lm{display:grid;place-items:center}
+.bat-pos .lm svg{width:26px;height:26px}
+.bat-pos{display:grid;place-items:center;min-width:30px}
 </style>
 </head>
 <body class="client">
@@ -4439,7 +4442,17 @@ const QUEST_TPL=[
   {id:'wellness',emo:'🧖',n:'Перезагрузка',sub:'Спа → йога → клиника красоты',niches:['spa','gym','beauty'],tasks:['Хаммам + массаж','Йога-сессия','Уход за лицом'],rew:380,badge:'Дзен',timer:'48ч',cover:['spa','gym','beauty']}
 ];
 // активный квест (состояние per session) — какие стопы пройдены
-var QUEST_STATE={current:'morning',progress:{morning:0,sea:0,gourmet:0,night:0,wellness:0}};
+var QUEST_STATE=(function(){
+  var d={current:'morning',progress:{morning:0,sea:0,gourmet:0,night:0,wellness:0}};
+  try{
+    var sv=gameGet('quest',null);
+    if(sv&&sv.progress){d.current=sv.current||d.current;
+      Object.keys(d.progress).forEach(function(k){if(typeof sv.progress[k]==='number')d.progress[k]=sv.progress[k]})}
+  }catch(e){}
+  return d;
+})();
+/* Любая правка прогресса обязана доезжать до диска — иначе это снова память. */
+function questSave(){try{gameSet('quest',{current:QUEST_STATE.current,progress:QUEST_STATE.progress})}catch(e){}}
 function questPickStops(tpl,C){
   // подобрать реальные заведения из CITY под каждую ниши тlemплате (deterministic by name length)
   var used=[];var stops=[];
@@ -4462,7 +4475,7 @@ function questCover(tpl,stops){
 function openQuest(qid){
   var C=CITIES[CITY];
   var tplId=qid||QUEST_STATE.current||'morning';
-  QUEST_STATE.current=tplId;
+  QUEST_STATE.current=tplId;questSave();
   var tpl=QUEST_TPL.find(function(t){return t.id===tplId})||QUEST_TPL[0];
   var stops=questPickStops(tpl,C);
   var done=QUEST_STATE.progress[tpl.id]||0;
@@ -4511,11 +4524,12 @@ function claimQuest(qid){
   var tpl=QUEST_TPL.find(function(t){return t.id===qid});if(!tpl)return;
   closeSheet();
   setTimeout(function(){celebrate({icon:tpl.emo,title:'Квест завершён!',sub:'+'+tpl.rew+' '+T('баллов')+' · '+T('бейдж')+' «'+tpl.badge+'»'})},260);
-  ptsAdd(tpl.rew,T('Квест')+': '+tpl.n);QUEST_STATE.progress[qid]=0;// сброс прогресса после клейма
+  ptsAdd(tpl.rew,T('Квест')+': '+tpl.n);QUEST_STATE.progress[qid]=0;questSave();/* сброс прогресса после клейма */
+  try{gameSet('questsDone',(gameGet('questsDone',0)||0)+1)}catch(e){}
   var bb=document.getElementById('balBig');if(bb)bb.textContent=PTS.toLocaleString('ru-RU');
   var pt=document.getElementById('ptsTop');if(pt)pt.textContent=PTS.toLocaleString('ru-RU');
 }
-function resetQuest(qid){QUEST_STATE.progress[qid]=0;openQuest(qid);toast(T('Прогресс сброшен'));if(navigator.vibrate)navigator.vibrate([10,30,10])}
+function resetQuest(qid){QUEST_STATE.progress[qid]=0;questSave();openQuest(qid);toast(T('Прогресс сброшен'));if(navigator.vibrate)navigator.vibrate([10,30,10])}
 function shareQuest(qid){var tpl=QUEST_TPL.find(function(t){return t.id===qid});if(!tpl)return;var url='https://t.me/CityHubBot?start=quest_'+qid;shareLink(url,tpl.emo+' '+tpl.n+' · '+T('ссылка скопирована'))}
 // DEMO: hooking ARRIVED check-in to also advance quest progress
 function questAdvance(bizName){
@@ -4524,7 +4538,7 @@ function questAdvance(bizName){
   var stops=questPickStops(tpl,CITIES[CITY]);
   var cur=QUEST_STATE.progress[t]||0;
   if(cur<stops.length && stops[cur].n===bizName){
-    QUEST_STATE.progress[t]=cur+1;
+    QUEST_STATE.progress[t]=cur+1;questSave();
     setTimeout(function(){toast(T('Точка квеста засчитана')+' '+(cur+1)+'/'+stops.length);if(navigator.vibrate)navigator.vibrate([10,40,15])},900);
   }
 }
@@ -4536,10 +4550,8 @@ function openSquad(){
     '<div class="sq-tier"><div class="sq-cnt">4</div><div class="sq-i"><b>Компания</b><span>Бесплатный десерт + лучший стол</span></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></div>'+
     '<div class="sq-tier"><div class="sq-cnt">6+</div><div class="sq-i"><b>Сквад</b><span>Закрытая зона + welcome-сет + ×2 баллы</span></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--txt-3)" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></div>'+
     '</div>'+
-    '<div class="squad-now"><div class="sq-avas"><span style="background:#7C3AFF">Р</span><span style="background:#00E0C7">G</span><span class="sq-add">+</span></div><div class="sq-status"><b>Вас уже 2</b><span>Позови ещё 2 — откроется бесплатный десерт</span></div></div>'+
-    /* Battle CTA */
-    '<button class="cta lime" style="margin-top:14px;display:flex;gap:10px;align-items:center;justify-content:center" onclick="closeSheet();setTimeout(openBattle,260)">'+ico('bolt','#06210a',2.4)+'Битва недели · 290 Loop в банке</button>'+
-    '<button class="cta ghost" style="margin-top:10px" onclick="closeSheet();shareLink(\'https://t.me/CityHubBot?start=squad_RAMAN\',T(\'Ссылка на сквад скопирована — зови друзей!\'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v14"/></svg>Позвать друзей</button>';
+    '<div class="hint" style="margin-top:14px">'+T('Скидка действует на всю компанию: покажи QR на кассе — считает всех, кто пришёл с тобой.')+'</div>'+
+    '<button class="cta lime" style="margin-top:14px" onclick="closeSheet();shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v14"/></svg>'+T('Позвать друзей')+'</button>';
   _openSheet();if(navigator.vibrate)navigator.vibrate(10);
 }
 
@@ -5623,7 +5635,8 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open');try{ovlOpened()}catch(e){}}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={"откроется в":["opens at","გაიხსნება"],
+var DICT={"Скидка действует на всю компанию: покажи QR на кассе — считает всех, кто пришёл с тобой.":["The discount covers the whole group: show the QR at the counter and everyone with you is counted.","ფასდაკლება მთელ კომპანიაზე ვრცელდება: აჩვენე QR სალაროსთან და ყველა ჩაითვლება."],"Позвать друзей":["Invite friends","მეგობრების მოწვევა"],
+"откроется в":["opens at","გაიხსნება"],
 "закрывается через":["closes in","იხურება"],"открыто до":["open until","ღიაა"],"час":["hour","საათი"],"часа":["hours","საათი"],"часов":["hours","საათი"],
 "До награды за":["To the reward at","ჯილდომდე"],"ещё":["left","დარჩა"],"и множитель":["and multiplier","და მამრავლი"],"Отлично":["Got it","შესანიშნავია"],
 "Пришёл по приглашению":["Joined via invite","მოწვევით შემოვიდა"],"Тебя пригласили в CityHUB":["You were invited to CityHUB","შენ მოგიწვიეს CityHUB-ში"],"Код друга":["Friend's code","მეგობრის კოდი"],"Баллы уже на счету. Друг получит свои, когда ты сходишь в первое место.":["Points are already yours. Your friend gets theirs once you visit your first place.","ქულები უკვე შენია. მეგობარი თავისას მიიღებს, როცა პირველ ადგილს ეწვევი."],"Показать, куда сходить":["Show me where to go","მაჩვენე სად წავიდე"],"друзей пришло":["friends joined","მეგობარი შემოვიდა"],"Приглашений отправлено":["Invites sent","გაგზავნილი მოწვევები"],"баллы придут, когда друг откроет приложение":["points arrive when your friend opens the app","ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Отправь ссылку — баллы придут, когда друг откроет приложение":["Send the link — points arrive when your friend opens the app","გააგზავნე ბმული — ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Ваучер города":["City voucher","ქალაქის ვაუჩერი"],
@@ -6633,7 +6646,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=66;try{renderConsent()}catch(e){}
+var APP_V=67;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7080,7 +7093,6 @@ var ACHIEVEMENTS=[
   {k:'level_silver',n:'Серебро',d:'Уровень Silver',emo:'🥈',col:'#cbd5e0',rare:'common',cond:function(){return PTS>=1000}},
   {k:'level_gold',n:'Золото',d:'Уровень Gold',emo:'🥇',col:'#FFB547',rare:'epic',cond:function(){return PTS>=5000}},
   {k:'level_diamond',n:'Diamond',d:'Уровень Diamond',emo:'💎',col:'#00E0C7',rare:'legendary',cond:function(){return PTS>=15000}},
-  {k:'battle_winner',n:'Чемпион',d:'Выиграть battle в сквад',emo:'🏅',col:'#FFB547',rare:'rare',cond:function(){return gameGet('battleWins',0)>=1}},
   {k:'sunday_hunt',n:'Охотник Hub',d:'Завершить Hub Hunt',emo:'🎪',col:'#ff5d8f',rare:'epic',cond:function(){return gameGet('huntsDone',0)>=1}},
   {k:'voucher_1',n:'Город угощает',d:'Использовать ваучер',emo:'🎁',col:'#D4FF4F',rare:'common',cond:function(){return gameGet('vouchersUsed',0)>=1}},
   {k:'referral',n:'Амбассадор',d:'Привлёк по рефералке',emo:'🌟',col:'#FFB547',rare:'rare',cond:function(){return gameGet('refSuccess',0)>=1}}
@@ -7157,12 +7169,6 @@ function isOpenNow(name){var h=hoursOf(name);if(h.indexOf('круглосуто�
 function loreUnlock(name){var u=gameGet('loreUnlocked',[]);if(u.indexOf(name)<0){u.push(name);gameSet('loreUnlocked',u)}}
 
 /* 7. BATTLES (squad PvP) */
-var BATTLES_DEMO=[
-  {n:'Гио',a:'Г',c:'#7C3AFF',score:12},
-  {n:'Тамара',a:'Т',c:'#ff5d8f',score:9},
-  {n:'Лука',a:'Л',c:'#00E0C7',score:7},
-  {n:'Ты',a:'Р',c:'#D4FF4F',score:5,me:true}
-];
 
 /* 8. HUB HUNT — суббота */
 function isHubHuntDay(){return new Date().getDay()===6}
@@ -7227,25 +7233,8 @@ function openDistricts(){
 }
 
 /* === BATTLE sheet (squad) === */
-function openBattle(){
-  var sorted=BATTLES_DEMO.slice().sort(function(a,b){return b.score-a.score});
-  var pot=BATTLES_DEMO.reduce(function(s,p){return s+p.score*10},0);
-  var rows=sorted.map(function(p,i){
-    return '<div class="bat-row'+(p.me?' me':'')+(i===0?' first':'')+'">'+
-      '<span class="bat-pos">'+(i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1))+'</span>'+
-      '<span class="bat-ava" style="background:'+p.c+'">'+p.a+'</span>'+
-      '<span class="bat-name">'+p.n+'</span>'+
-      '<span class="bat-pts">'+p.score+' мест</span>'+
-    '</div>';
-  }).join('');
-  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
-    '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Битва сквада</h2>'+
-    '<p class="sub" style="color:var(--txt-2);font-size:13.5px;margin-bottom:14px">Кто за неделю посетит больше мест — забирает банк <b style="color:var(--gold)">'+pot+' Loop</b></p>'+
-    '<div class="bat-board">'+rows+'</div>'+
-    '<div class="bat-timer">До конца недели: <b id="batTimer">3д 14ч 22м</b></div>'+
-    '<button class="cta lime" style="margin-top:14px" onclick="closeSheet();cgo(\'map\')">Идти посещать места</button>';
-  _openSheet();haptic('open');
-}
+/* openBattle убран вместе со сквад-битвой: четыре демо-игрока и банк из
+   воздуха. Вернётся, когда будет кого показывать по-настоящему. */
 
 /* === HUB HUNT banner === */
 function huntBannerHTML(){
