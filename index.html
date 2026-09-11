@@ -463,7 +463,20 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 .fab-mascot:active{transform:scale(.9)}
 .fab-mascot:hover{border-color:var(--accent);box-shadow:0 12px 36px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,.2)}
 .fab-mascot *{pointer-events:none}
-.mascot-widget,.fab-mascot{display:none!important}
+/* Дубль маскота в правом нижнем углу убран — башка живёт в навбаре.
+   Но реплику ей оставили: пузырь теперь висит НАД орбом по центру,
+   с хвостиком вниз, и говорит только по поводу (см. mascotOffer). */
+.fab-mascot{display:none!important}
+.mascot-widget{right:auto;left:50%;transform:translateX(-50%);align-items:center;
+  bottom:calc(var(--safe-b) + var(--tab-h) + 34px);max-width:min(300px,calc(100vw - 40px))}
+.mw-hint{border-radius:18px;text-align:left;max-width:100%}
+.mw-hint::after{content:'';position:absolute;left:50%;bottom:-7px;width:14px;height:14px;
+  transform:translateX(-50%) rotate(45deg);background:rgba(16,20,31,.92);
+  border-right:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14)}
+.mw-hint b{display:block;font-size:14px;font-weight:800;color:var(--txt);margin-bottom:2px;letter-spacing:-.01em}
+.mw-hint i{display:block;font-style:normal;font-size:12px;color:var(--txt-2);line-height:1.4}
+.mw-hint .mw-go{display:inline-flex;align-items:center;gap:5px;margin-top:9px;font-size:12px;font-weight:800;color:var(--lime)}
+.mw-hint .mw-go svg{width:13px;height:13px}
 /* === CENTRAL MASCOT TAB — Batumi Neon-style orb в центре tabbar === */
 .tab-mascot{position:relative;flex:0 0 auto;width:72px;height:100%;padding:0!important;display:flex;align-items:flex-start;justify-content:center;background:none!important;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:10}
 .tab-mascot::before{display:none!important}
@@ -618,10 +631,12 @@ body.biz .msc-resp{background:rgba(255,181,71,.1);border-color:rgba(255,181,71,.
 .biz .m > span:not(.s){display:inline-flex;align-items:center;gap:3px}
 .biz .pp{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
 .biz .pp .v{font-size:14px;font-weight:900;padding:5px 11px;border-radius:99px;background:rgba(212,255,79,.13);color:var(--accent);border:1px solid rgba(212,255,79,.22);letter-spacing:-.01em;line-height:1;display:inline-flex;align-items:center;gap:3px}
-.biz .pp .v::before{content:'';width:7px;height:7px;background:var(--accent);border-radius:50%;box-shadow:0 0 6px var(--accent-glow);flex-shrink:0}
+/* Точка перед «+50» была просто точкой: знак, который ничего не называет.
+   Заменена настоящим знаком балла Loop — тем же, что в HUD и в кошельке. */
+.biz .pp .v .ei{opacity:.95}
 .biz .pp .l{font-size:10px;color:var(--txt-3);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
 body.biz .biz .pp .v{background:rgba(255,181,71,.13);color:var(--gold);border-color:rgba(255,181,71,.22)}
-body.biz .biz .pp .v::before{background:var(--gold);box-shadow:0 0 6px rgba(255,181,71,.5)}
+
 .sec-h{display:flex;align-items:center;justify-content:space-between;margin:20px 2px 12px}
 .sec-h h2{font-size:var(--fs-lg);font-weight:800;letter-spacing:-.02em}.sec-h .more{font-size:13px;color:var(--acc-2);font-weight:700}
 .card{border-radius:var(--r-lg);padding:18px}.card.pad-sm{padding:15px}
@@ -1361,7 +1376,9 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 .sw-stamp{position:absolute;top:18%;z-index:9;padding:9px 18px;border-radius:var(--r-sm);font-size:17px;font-weight:900;
   letter-spacing:.04em;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .12s linear}
 .sw-stamp.like{left:18px;transform:rotate(-11deg);color:#06210a;background:var(--lime);border:2px solid rgba(255,255,255,.5)}
-.sw-stamp.nope{right:18px;transform:rotate(11deg);color:#fff;background:var(--rose);border:2px solid rgba(255,255,255,.35)}
+/* Белое на #ff5d8f давало 2.91:1 — штамп читался хуже, чем должен.
+   Глубже розовый: тот же смысл, контраст выше порога. */
+.sw-stamp.nope{right:18px;transform:rotate(11deg);color:#fff;background:#c2185b;border:2px solid rgba(255,255,255,.42)}
 /* Свайп по карточке-герою: въезд новой карточки с той стороны, куда ушла
    старая, и одноразовое «покачивание» для обучения жесту. */
 .answer-wrap{position:relative}
@@ -1399,7 +1416,9 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 /* mood-shade превращается в простой spacer (sheath остался для совместимости) */
 .mood-shade{height:0;margin:0;display:none}
 .mood{flex-shrink:0;padding:9px 15px;border-radius:99px;font-size:13px;font-weight:700;background:var(--glass-soft);border:1px solid var(--stroke-soft);color:var(--txt-2);white-space:nowrap;transition:all .2s}
-.mood.on{background:var(--grad-lime);color:#06210a;border-color:transparent;box-shadow:0 4px 14px rgba(212,255,79,.3)}
+.mood.on{background:rgba(255,255,255,.93);color:#0a0d16;border-color:transparent;font-weight:800;
+  box-shadow:0 4px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.9)}
+.mood.on .vibe-ic{color:#0a0d16}
 /* vibe selector */
 .vibe-head{display:flex;align-items:baseline;gap:8px;margin:2px 0 10px}
 .vibe-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
@@ -1409,16 +1428,17 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 .mood.vibe .vibe-ic svg{width:21px;height:21px;stroke-width:1.9}
 .mood.vibe .vibe-lb{font-size:12px;font-weight:700;color:var(--txt-2);white-space:nowrap;line-height:1.1}
 .mood.vibe:hover{background:rgba(255,255,255,.06)}
-.mood.vibe.on{background:linear-gradient(180deg,#e5ff7f 0%,#D4FF4F 45%,#a8d935 100%);box-shadow:0 6px 16px rgba(212,255,79,.45),inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 4px rgba(0,0,0,.14)}
+.mood.vibe.on{background:linear-gradient(180deg,#ffffff 0%,#f2f4f8 45%,#d8dde6 100%);
+  box-shadow:0 6px 16px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 4px rgba(0,0,0,.08)}
 /* AI-vibe — тонкая cyan-точка справа сверху, отличает от обычных niche-фильтров */
 .mood.vibe.ai-vibe{position:relative}
 .mood.vibe.ai-vibe::after{content:'';position:absolute;top:6px;right:8px;width:5px;height:5px;border-radius:50%;background:linear-gradient(135deg,#7C3AFF,#21d4fd);box-shadow:0 0 6px rgba(33,212,253,.6);opacity:.85}
 .mood.vibe.ai-vibe.on::after{opacity:0}
-.mood.vibe.on .vibe-lb{color:#06210a;font-weight:800}
+.mood.vibe.on .vibe-lb{color:#0a0d16;font-weight:800}
 /* Активный чип красит тёмным только подпись — с эмодзи это было неважно,
    а SVG на currentColor остался светлым и пропал на лаймовой заливке.
    Через --accent-ink правильный цвет приезжает и в биз-режиме. */
-.mood.vibe.on .vibe-ic{transform:scale(1.08);color:var(--accent-ink,#06210a)}
+.mood.vibe.on .vibe-ic{transform:scale(1.08);color:#0a0d16}
 .mood.vibe:active{transform:scale(.93)}
 .mood.vibe:active .vibe-ic{transform:scale(1.15) rotate(-6deg)}
 .vibe-chip .vibe-ic{font-size:15px}
@@ -1566,7 +1586,9 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 .qsel-c{scroll-snap-align:center}
 .qsel::-webkit-scrollbar{display:none}
 .qsel-c{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:99px;font-size:13px;font-weight:700;background:var(--glass-soft);border:1px solid var(--stroke-soft);color:var(--txt-2);white-space:nowrap;transition:all .2s}
-.qsel-c.on{background:var(--grad-lime);color:#06210a;border-color:transparent;font-weight:800;box-shadow:0 4px 14px rgba(212,255,79,.28)}
+.qsel-c.on{background:rgba(255,255,255,.93);color:#0a0d16;border-color:transparent;font-weight:800;
+  box-shadow:0 4px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.9)}
+.qsel-c.on .qsel-emo{color:#0a0d16}
 .qsel-c .qsel-emo{font-size:14px;line-height:1}
 /* Quest cover — 3-photo collage + meta strip */
 .qcov{border-radius:var(--r-lg);overflow:hidden;position:relative;margin-bottom:14px;box-shadow:var(--shadow-lg);background:#0a0d16}
@@ -2011,7 +2033,10 @@ body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transit
 
 /* HUB MOOD card */
 .hub-mood{margin-top:12px;display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft)}
-.hub-mood .hm-emo{font-size:28px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+.hub-mood .hm-emo{width:44px;height:44px;flex-shrink:0;position:relative;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+.hub-mood .hm-emo .fmascot{width:44px;height:44px;position:relative;display:block}
+.hub-mood .hm-emo .fm-back{position:absolute;inset:0;width:100%;height:100%;opacity:1}
+.hub-mood .hm-emo .fm-img{position:absolute;top:14%;left:14%;width:72%;height:72%}
 .hub-mood .hm-tx{flex:1}
 .hub-mood .hm-tx b{font-size:13px;font-weight:800;color:var(--txt);display:block}
 .hub-mood .hm-tx span{font-size:12px;color:var(--txt-2)}
@@ -2665,6 +2690,69 @@ input,textarea{font-size:16px!important}
 .lg-sign .lgs-links button:active{transform:scale(.96);background:rgba(255,255,255,.1)}
 .onb-legal{margin-top:2px;padding:0 24px calc(var(--safe-b) + 14px);font-size:11px;line-height:1.5;color:var(--txt-3);text-align:center}
 .onb-legal u{text-decoration:underline;text-underline-offset:2px;cursor:pointer;color:var(--txt-2)}
+/* Кошелёк */
+.wallet .wal-bal{display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 18px 20px;border-radius:var(--r-lg);
+  background:linear-gradient(150deg,rgba(212,255,79,.17),rgba(0,224,199,.08));border:1px solid rgba(212,255,79,.3);text-align:center}
+.wallet .wal-ic{width:46px;height:46px;border-radius:var(--r-sm);display:grid;place-items:center;margin-bottom:8px;
+  background:var(--grad-lime);color:#06210a;box-shadow:0 8px 22px rgba(212,255,79,.32)}
+.wallet .wal-ic svg{width:24px;height:24px}
+.wallet .wal-v{font-size:42px;font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--txt)}
+.wallet .wal-t{font-size:13px;font-weight:700;color:var(--lime)}
+.wallet .wal-s{font-size:12px;color:var(--txt-3);line-height:1.45;margin-top:6px;max-width:270px}
+.wallet .wal-acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.wallet .wal-act{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 8px 12px;border-radius:var(--r-md);
+  background:rgba(255,255,255,.045);border:1px solid var(--stroke-soft);font-family:inherit;color:var(--txt);cursor:pointer;text-align:center}
+.wallet .wal-act b{font-size:13px;font-weight:800;letter-spacing:-.01em}
+.wallet .wal-act span:last-child{font-size:10px;color:var(--txt-3);line-height:1.2}
+.wallet .wa-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;margin-bottom:5px}
+.wallet .wa-ic svg{width:19px;height:19px}
+.wallet .wa-ic.earn{background:rgba(212,255,79,.16);color:var(--lime)}
+.wallet .wa-ic.spend{background:rgba(255,181,71,.16);color:var(--gold)}
+.wallet .wa-ic.buy{background:rgba(124,58,255,.18);color:#A78BFF}
+.wal-log{display:flex;flex-direction:column;gap:1px}
+.wl-log{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--r-sm);background:rgba(255,255,255,.03)}
+.wl-log-d{font-size:11px;color:var(--txt-3);font-weight:700;width:38px;flex-shrink:0}
+.wl-log-r{flex:1;min-width:0;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wl-log-v{font-size:14px;font-weight:900;color:var(--lime);flex-shrink:0}
+.wl-log.minus .wl-log-v{color:var(--txt-3)}
+.wl-log-empty{padding:20px;text-align:center;font-size:12px;color:var(--txt-3);border-radius:var(--r-sm);
+  background:rgba(255,255,255,.03);border:1px dashed var(--stroke-soft)}
+
+.hub-mood .hm-emo.ok{display:grid;place-items:center}
+.hub-mood .hm-emo.ok svg{width:26px;height:26px}
+/* Реклама для заведений */
+.ad-tick-label{cursor:pointer;transition:color .18s var(--ease-out)}
+.ad-tick-label:active{color:var(--gold)}
+.ad-tick-label .atl-go{width:11px;height:11px;color:var(--txt-3);margin-left:1px}
+.ad-plans{display:flex;flex-direction:column;gap:9px}
+.ad-plan{position:relative;display:grid;grid-template-columns:38px 1fr;grid-template-areas:"ic h" "d d" "f f";gap:4px 11px;
+  padding:14px;border-radius:var(--r-md);text-align:left;font-family:inherit;color:var(--txt);cursor:pointer;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--stroke-soft);transition:border-color .18s var(--ease-out),background .18s var(--ease-out)}
+.ad-plan.on{border-color:var(--gold);background:rgba(255,181,71,.08)}
+.ad-plan .ap-tag{position:absolute;top:-8px;right:12px;padding:3px 9px;border-radius:99px;font-size:9px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.06em;background:var(--grad-gold);color:#2a1500}
+.ad-plan .ap-ic{grid-area:ic;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:rgba(255,181,71,.14);color:var(--gold)}
+.ad-plan .ap-ic svg{width:19px;height:19px}
+.ad-plan .ap-h{grid-area:h;display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0}
+.ad-plan .ap-h b{font-size:16px;font-weight:800;letter-spacing:-.02em}
+.ad-plan .ap-h i{font-style:normal;font-size:16px;font-weight:900;color:var(--gold);white-space:nowrap}
+.ad-plan .ap-h i small{font-size:11px;font-weight:700;color:var(--txt-3);margin-left:1px}
+.ad-plan .ap-d{grid-area:d;font-size:12px;color:var(--txt-2);line-height:1.45;margin-top:2px}
+.ad-plan .ap-f{grid-area:f;display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.ad-plan .ap-f span{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--txt-2);font-weight:600}
+.ad-plan .ap-f svg{width:12px;height:12px;color:var(--lime);flex-shrink:0}
+.ad-weeks-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--txt-3);margin:16px 2px 8px}
+.ad-weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.ad-wk{padding:10px 4px;border-radius:var(--r-sm);font-family:inherit;font-size:12px;font-weight:800;color:var(--txt-2);
+  background:rgba(255,255,255,.045);border:1px solid var(--stroke-soft);cursor:pointer}
+.ad-wk.on{background:rgba(255,255,255,.93);color:#0a0d16;border-color:transparent}
+.ad-total{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:14px 16px;
+  border-radius:var(--r-md);background:rgba(255,181,71,.09);border:1px solid rgba(255,181,71,.24)}
+.ad-total .at-l{display:flex;flex-direction:column;gap:1px;font-size:13px;font-weight:700;color:var(--txt-2)}
+.ad-total .at-l small{font-size:11px;color:var(--txt-3);font-weight:600}
+.ad-total b{font-size:24px;font-weight:900;letter-spacing:-.02em;color:var(--gold)}
+
 </style>
 </head>
 <body class="client">
@@ -2686,7 +2774,7 @@ input,textarea{font-size:16px!important}
               <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div class="hdr-tools">
-              <button class="htool pts-mini" id="ptsMini" onclick="cgo('luck')" aria-label="Баллы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9l7.2-.1z"/></svg><b class="tabular" id="ptsMiniV">0</b></button>
+              <button class="htool pts-mini" id="ptsMini" onclick="openWallet()" aria-label="Баллы Loop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="currentColor" stroke="none"/></svg><b class="tabular" id="ptsMiniV">0</b></button>
               <button class="htool lang-btn" onclick="openLang()" title="Язык" aria-label="Сменить язык"><span id="langCur">RU</span></button>
               <button class="htool" onclick="openSearch()" title="Поиск" aria-label="Поиск"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
               <button class="htool bell has-unread" id="bellBtn" onclick="openNotif()" title="Уведомления" aria-label="Уведомления"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="notif-dot"></span></button>
@@ -2695,7 +2783,7 @@ input,textarea{font-size:16px!important}
           <div class="hdr-title" id="greet" style="margin-top:8px">Куда сегодня?</div>
           <div class="greet-sub" id="greetSub">Не ищи — открыл и сразу знаешь, куда пойти</div>
           <div class="hdr-quick">
-            <button class="hq-chip pts" onclick="cgo('rewards')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9l7.2-.1z"/></svg><b class="tabular" id="ptsTop">1 240</b> <span data-i18n="pts_label">баллов</span></button>
+            <button class="hq-chip pts" onclick="openWallet()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="currentColor" stroke="none"/></svg><b class="tabular" id="ptsTop">1 240</b> <span data-i18n="pts_label">баллов</span></button>
           </div>
         </div>
       </div>
@@ -2718,6 +2806,7 @@ input,textarea{font-size:16px!important}
           <div class="sec-h" style="margin-top:18px"><h2 style="font-size:16px">Деал дня</h2><span class="more">до полуночи</span></div>
           <div class="deal fadein" id="dealBox"></div>
           <div id="altList"></div>
+          <div id="travelSlot"></div>
         </div>
       </div>
     </section>
@@ -2755,13 +2844,13 @@ input,textarea{font-size:16px!important}
       <div class="scroll">
 
         <!-- HUD единой валюты -->
-        <div class="luck-hud">
-          <div class="lh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2.2"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9l7.2-.1z"/></svg></div>
+        <div class="luck-hud" onclick="openWallet()" role="button" tabindex="0">
+          <div class="lh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2.2"><path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="#06210a" stroke="none"/></svg></div>
           <div class="lh-tx">
             <div class="lh-v"><span class="tabular" id="luckBal">0</span><small>баллов</small></div>
             <div class="lh-s" id="luckSub">—</div>
           </div>
-          <button class="lh-add" onclick="openBuyPts()" aria-label="Докупить баллы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button class="lh-add" onclick="event.stopPropagation();openBuyPts()" aria-label="Докупить баллы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg></button>
         </div>
 
         <!-- Вкладки -->
@@ -2829,7 +2918,7 @@ input,textarea{font-size:16px!important}
             </div>
           </div>
           <div class="pf-stats">
-            <button class="pf-stat" onclick="cgo('rewards')">
+            <button class="pf-stat" onclick="openWallet()">
               <div class="pf-s-v"><b class="tabular" id="pfPts">1 240</b></div>
               <div class="pf-s-l">Баллов Loop</div>
               <div class="pf-s-trend">↗ +180 за неделю</div>
@@ -2874,10 +2963,10 @@ input,textarea{font-size:16px!important}
             <span class="pf-t-t">Квесты</span>
             <span class="pf-t-sub">Маршруты по городу</span>
           </button>
-          <button class="pf-tile" onclick="openShop()">
-            <span class="pf-t-emo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18M12 8v13M12 8C12 5 10 3 8 3S5 5 6 7c1 1 6 1 6 1zM12 8c0-3 2-5 4-5s3 2 2 4c-1 1-6 1-6 1z"/></svg></span>
-            <span class="pf-t-t">Награды</span>
-            <span class="pf-t-sub">Магазин на баллы</span>
+          <button class="pf-tile" onclick="openWallet()">
+            <span class="pf-t-emo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="currentColor" stroke="none"/></svg></span>
+            <span class="pf-t-t">Кошелёк</span>
+            <span class="pf-t-sub"><b class="tabular" id="pfWalletV">0</b> баллов Loop</span>
           </button>
         </div>
 
@@ -2890,7 +2979,7 @@ input,textarea{font-size:16px!important}
 
         <!-- Hub mood card -->
         <div class="hub-mood" id="hubMood">
-          <span class="hm-emo" id="hmEmo">🙂</span>
+          <span class="hm-emo" id="hmEmo"><span class="fmascot"><img class="fm-back" src="mascot/Mascot_Back.png" alt=""><img class="fm-img" id="hmFace" src="mascot/idle/01.png" alt=""></span></span>
           <div class="hm-tx"><b>Hub <span id="hmLabel">ждёт</span></b><span id="hmSub">Заходи каждый день — Hub запоминает</span></div>
         </div>
 
@@ -3214,7 +3303,7 @@ input,textarea{font-size:16px!important}
 window.addEventListener('error',function(e){if(e&&e.preventDefault)e.preventDefault();return true},true);
 window.addEventListener('unhandledrejection',function(e){if(e&&e.preventDefault)e.preventDefault()});
 })();
-const I={coffee:'<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h2a2 2 0 0 1 0 4h-2M6 2v2M10 2v2M14 2v2"/>',food:'<path d="M3 2v7c0 1 1 2 2 2s2-1 2-2V2M5 11v11M16 2c-1.5 0-3 2-3 5s1 4 2 4v10"/>',bar:'<path d="M5 3h14l-7 8zM12 11v8M8 21h8"/>',gym:'<path d="M6 6v12M18 6v12M6 12h12M3 9v6M21 9v6"/>',beauty:'<path d="M12 2a5 5 0 0 0-5 5c0 3 5 9 5 9s5-6 5-9a5 5 0 0 0-5-5zM12 22v-4"/>',shop:'<path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9h18M9 13h6"/>',spa:'<path d="M12 3c-3 4-3 8 0 11 3-3 3-7 0-11zM5 14c4 0 6 3 7 6-4 0-6-3-7-6zM19 14c-4 0-6 3-7 6 4 0 6-3 7-6z"/>',car:'<path d="M5 11l2-5h10l2 5M3 11h18v6H3zM6 17v2M18 17v2"/>',travel:'<path d="M2 22l20-9L2 4v6l12 3-12 3z"/>',art:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="9" r="1.3"/><circle cx="16" cy="9" r="1.3"/><circle cx="9" cy="15" r="1.3"/><path d="M14 16c2 0 4-2 4-4"/>',music:'<path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3M20 16a3 3 0 1 1-3-3"/>',med:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/>',pet:'<circle cx="8" cy="9" r="2"/><circle cx="16" cy="9" r="2"/><path d="M12 13c-3 0-5 2-5 4s2 3 5 3 5-1 5-3-2-4-5-4z"/>',sea:'<path d="M2 18c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M2 13c2 0 2-2 4-2s2 2 4 2M14 6l4-2v9"/>',kids:'<circle cx="12" cy="6" r="2.5"/><path d="M12 8.5V15M8 11l4-1 4 1M9 21l3-6 3 6"/>',
+const I={megaphone:'<path d="M3 11l14-6v14L3 13zM3 11H2.6A1.6 1.6 0 0 0 1 12.6v-.2A1.6 1.6 0 0 0 2.6 11zM7 13.6V19a2 2 0 0 0 4 0v-4.2M20 9.5a3 3 0 0 1 0 5"/>',crown:'<path d="M3 7l4.5 4L12 4l4.5 7L21 7l-1.7 11H4.7z" stroke-linejoin="round"/><path d="M4.7 18h14.6"/>',loop:'<path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="currentColor" stroke="none"/>',coffee:'<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8zM17 9h2a2 2 0 0 1 0 4h-2M6 2v2M10 2v2M14 2v2"/>',food:'<path d="M3 2v7c0 1 1 2 2 2s2-1 2-2V2M5 11v11M16 2c-1.5 0-3 2-3 5s1 4 2 4v10"/>',bar:'<path d="M5 3h14l-7 8zM12 11v8M8 21h8"/>',gym:'<path d="M6 6v12M18 6v12M6 12h12M3 9v6M21 9v6"/>',beauty:'<path d="M12 2a5 5 0 0 0-5 5c0 3 5 9 5 9s5-6 5-9a5 5 0 0 0-5-5zM12 22v-4"/>',shop:'<path d="M3 9l1-5h16l1 5M3 9v11h18V9M3 9h18M9 13h6"/>',spa:'<path d="M12 3c-3 4-3 8 0 11 3-3 3-7 0-11zM5 14c4 0 6 3 7 6-4 0-6-3-7-6zM19 14c-4 0-6 3-7 6 4 0 6-3 7-6z"/>',car:'<path d="M5 11l2-5h10l2 5M3 11h18v6H3zM6 17v2M18 17v2"/>',travel:'<path d="M2 22l20-9L2 4v6l12 3-12 3z"/>',art:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="9" r="1.3"/><circle cx="16" cy="9" r="1.3"/><circle cx="9" cy="15" r="1.3"/><path d="M14 16c2 0 4-2 4-4"/>',music:'<path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3M20 16a3 3 0 1 1-3-3"/>',med:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/>',pet:'<circle cx="8" cy="9" r="2"/><circle cx="16" cy="9" r="2"/><path d="M12 13c-3 0-5 2-5 4s2 3 5 3 5-1 5-3-2-4-5-4z"/>',sea:'<path d="M2 18c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M2 13c2 0 2-2 4-2s2 2 4 2M14 6l4-2v9"/>',kids:'<circle cx="12" cy="6" r="2.5"/><path d="M12 8.5V15M8 11l4-1 4 1M9 21l3-6 3 6"/>',
 fire:'<path d="M12 2c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 1 0 1-1 1-2 0-3-2-4-2-7z"/>',
 gift:'<rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18M12 8v13M12 8C12 5 10 3 8 3S5 5 6 7c1 1 6 1 6 1zM12 8c0-3 2-5 4-5s3 2 2 4c-1 1-6 1-6 1z"/>',
 star:'<path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/>',
@@ -3764,13 +3853,18 @@ function renderToday(){
     <div class="ct"><span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${T(top.why)}</span>
     <h1>${top.n}</h1>
     <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}</div>
-    <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick(1)" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
+    <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick(1)" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
   </div></div>
 `;
   try{swipeBind();swipeHintMaybe();edgeFadeAll()}catch(e){}
-  document.getElementById('altList').innerHTML=C.biz.slice(1,4).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><h3>'+b.n+promo+'</h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp">+'+b.pts+'</div></div>'}).join('')+
-  `<div class="travel-card fadein" onclick="travelMode()"><div class="tv-glow"></div><div class="tv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 22l20-9L2 4v6l12 3-12 3z"/></svg></div><div class="tv-tx"><b>Ты в новом городе?</b><span>CityHUB соберёт маршрут на день под тебя — где поесть, что посмотреть, куда вечером</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>`+
-  `<div class="ai-cta fadein" onclick="openMascot()"><div class="ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4M8 12h.01M12 12h.01M16 12h.01"/></svg></div><div class="ai-tx"><b>Не знаешь, чего хочешь?</b><span>Спроси AI-консьержа — подберёт по настроению</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>`;
+  document.getElementById('altList').innerHTML=C.biz.slice(1,4).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><h3>'+b.n+promo+'</h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp">'+ei('loop','currentColor',11)+'+'+b.pts+'</div></div>'}).join('')+
+  '';
+  /* «Ты в новом городе?» и «Не знаешь, чего хочешь?» жили здесь постоянно и
+     занимали экран у всех — включая тех, кто дома в Батуми и уже знает, чего
+     хочет. Оба переехали в момент, когда они уместны: карточка города — только
+     если геолокация говорит, что человек реально далеко; вопрос консьержа —
+     когда пролистали всё до конца и ничего не выбрали (см. todayBottomWatch). */
+  try{travelMaybe()}catch(e){}
 }
 let pickIdx=0;
 function setMood(btn,m){
@@ -3809,6 +3903,58 @@ function nextPick(anim){
   } else renderToday();
   if(navigator.vibrate)navigator.vibrate(10);
 }
+/* «Ты в новом городе?» показывалось всем и всегда — включая человека, который
+   живёт в Батуми и никуда не ехал. Теперь карточка появляется только когда ей
+   есть что сказать: устройство рядом с ДРУГИМ нашим живым городом, а выбран не он.
+   Два принципа:
+   · разрешение на геолокацию НЕ запрашиваем — читаем только уже выданное,
+     иначе экран «Сегодня» встречает человека системным диалогом;
+   · города со статусом «скоро» не предлагаем: предложить там нечего,
+     а обещание без контента дороже молчания. */
+var TRAVEL_R_KM=60;
+function geoKm(a,b){
+  var R=6371,dLat=(b[0]-a[0])*Math.PI/180,dLon=(b[1]-a[1])*Math.PI/180;
+  var x=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return 2*R*Math.asin(Math.min(1,Math.sqrt(x)));
+}
+function travelCard(key){
+  var slot=document.getElementById('travelSlot');if(!slot)return;
+  var c=CITIES[key];if(!c)return;
+  slot.innerHTML='<div class="travel-card fadein" onclick="travelSwitch(\''+key+'\')">'+
+    '<div class="tv-glow"></div>'+
+    '<div class="tv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>'+
+    '<div class="tv-tx"><b>'+T('Похоже, ты в городе')+' '+c.name+'</b>'+
+    '<span>'+T('Переключиться и посмотреть, что рядом')+'</span></div>'+
+    '<svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>';
+}
+function travelSwitch(key){
+  try{gameSet('geoCityAsked',key)}catch(e){}
+  var slot=document.getElementById('travelSlot');if(slot)slot.innerHTML='';
+  try{pickCity(key)}catch(e){}
+  try{haptic('tap')}catch(e){}
+}
+function travelMaybe(){
+  var slot=document.getElementById('travelSlot');if(!slot)return;
+  slot.innerHTML='';
+  if(!navigator.geolocation)return;
+  var run=function(){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      var me=[pos.coords.latitude,pos.coords.longitude],best=null,bestD=1e9;
+      Object.keys(CITIES).forEach(function(k){
+        var c=CITIES[k];if(!c||!c.c||c.soon)return;          // «скоро» — не предлагаем
+        var d=geoKm(me,c.c);if(d<bestD){bestD=d;best=k}
+      });
+      if(!best||bestD>TRAVEL_R_KM)return;                     // мы этот город не покрываем
+      if(best===CITY)return;                                  // он уже выбран — сказать нечего
+      if(gameGet('geoCityAsked','')===best)return;            // один раз на город
+      travelCard(best);
+    },function(){},{maximumAge:600000,timeout:6000,enableHighAccuracy:false});
+  };
+  // читаем только уже выданное разрешение — сами не спрашиваем
+  if(navigator.permissions&&navigator.permissions.query){
+    navigator.permissions.query({name:'geolocation'}).then(function(p){if(p.state==='granted')run()}).catch(function(){});
+  }
+}
 function travelMode(){var C=CITIES[CITY];openMascot();setTimeout(function(){mascotIntent('маршрут','Я турист в '+C.name+', собери маршрут на день')},300);if(navigator.vibrate)navigator.vibrate(10)}
 function jx(o){return JSON.stringify(o).replace(/"/g,'&quot;')}
 /* Бегущая строка рекламы — заведения без полного баннера (free-tier листинг).
@@ -3824,7 +3970,7 @@ function renderAdTicker(){
     return '<button class="ad-item" onclick=\'openBiz('+jx(b)+')\'><span class="ad-ic" style="color:'+n.c+'">'+ico(b.k,n.c,2)+'</span><b>'+b.n+'</b></button>';
   };
   var row=ads.map(item).join('');
-  el.innerHTML='<span class="ad-tick-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14zM11 13v6"/></svg>'+T('Реклама')+'</span>'+
+  el.innerHTML='<button class="ad-tick-label" onclick="openAdPlans()" aria-label="'+T('Реклама в CityHUB')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14zM11 13v6"/></svg>'+T('Реклама')+'<svg class="atl-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 18l6-6-6-6"/></svg></button>'+
     '<div class="ad-viewport"><div class="ad-track">'+row+row+'</div></div>';
   el.style.display='';
   /* спокойная постоянная скорость ~16 px/с независимо от числа заведений */
@@ -3944,7 +4090,7 @@ function claimQuest(qid){
   var tpl=QUEST_TPL.find(function(t){return t.id===qid});if(!tpl)return;
   closeSheet();
   setTimeout(function(){celebrate({icon:tpl.emo,title:'Квест завершён!',sub:'+'+tpl.rew+' '+T('баллов')+' · '+T('бейдж')+' «'+tpl.badge+'»'})},260);
-  ptsAdd(tpl.rew);QUEST_STATE.progress[qid]=0;// сброс прогресса после клейма
+  ptsAdd(tpl.rew,T('Квест')+': '+tpl.n);QUEST_STATE.progress[qid]=0;// сброс прогресса после клейма
   var bb=document.getElementById('balBig');if(bb)bb.textContent=PTS.toLocaleString('ru-RU');
   var pt=document.getElementById('ptsTop');if(pt)pt.textContent=PTS.toLocaleString('ru-RU');
 }
@@ -4193,13 +4339,13 @@ function renderMapTab(){
   // Filter chips в стиле vibe-chips Today экрана (унифицировано)
   var emoMap={coffee:'☕',food:'🍽️',bar:'🍸',gym:'🏋️',beauty:'💅',spa:'🧖',shop:'🛍️',sea:'🌊',art:'🎨',music:'🎵',travel:'🗺️',med:'🩺',kids:'🧸'};
   document.getElementById('mapFilters').innerHTML='<button class="mood vibe on" data-filter="all"><span class="vibe-ic">'+ico('sparkle','currentColor',2)+'</span><span class="vibe-lb">Под тебя</span></button>'+
-    [...new Set(C.biz.map(function(b){return b.k}))].map(function(k){var n=NICHES.find(function(x){return x.k===k});return '<button class="mood vibe" data-filter="'+k+'"><span class="vibe-ic">'+(emoMap[k]||'•')+'</span><span class="vibe-lb">'+n.n+'</span></button>'}).join('');
+    [...new Set(C.biz.map(function(b){return b.k}))].map(function(k){var n=NICHES.find(function(x){return x.k===k});return '<button class="mood vibe" data-filter="'+k+'"><span class="vibe-ic">'+ico(k,'currentColor',2)+'</span><span class="vibe-lb">'+n.n+'</span></button>'}).join('');
   renderList();
 }
 function renderList(){
   const C=CITIES[CITY];const items=C.biz.filter(b=>filter==='all'||b.k===filter);
   if(!items.length){document.getElementById('listHolder').innerHTML=`<div class="empty"><div class="ic">${ico('shop','currentColor',1.6)}</div><h3>В этой нише пока пусто</h3><p>Hub может подобрать похожее под твоё настроение.</p><button class="cta lime" style="margin-top:14px" onclick="openMascot();setTimeout(function(){mascotIntent('предложи что-нибудь похожее на ${filter}','что-то рядом')},280)">💬 Спросить Hub</button></div>`;return}
-  document.getElementById('listHolder').innerHTML=items.map(function(b,idx){var nz=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',q:''};var bb=b.b==='promo'?'<span class="badge promo">Promo</span>':b.b==='new'?'<span class="badge new">New</span>':b.b==='free'?'<span class="badge free">Free</span>':'';var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}return '<div class="biz" id="card-'+idx+'" onclick="selectPlace('+idx+',false)"><div class="th">'+thumb(b,nz)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3>'+bb+'</div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+nz.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp"><div class="v">+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
+  document.getElementById('listHolder').innerHTML=items.map(function(b,idx){var nz=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',q:''};var bb=b.b==='promo'?'<span class="badge promo">Promo</span>':b.b==='new'?'<span class="badge new">New</span>':b.b==='free'?'<span class="badge free">Free</span>':'';var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}return '<div class="biz" id="card-'+idx+'" onclick="selectPlace('+idx+',false)"><div class="th">'+thumb(b,nz)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3>'+bb+'</div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+nz.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp"><div class="v">'+ei('loop','currentColor',12)+'+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
 }
 let selIdx=-1;
 function selectPlace(i,fromMap){
@@ -4389,7 +4535,7 @@ async function chCheckin(venueToken){
   if(!r)return false;
   if(r.duplicate){toast(T('Уже отмечено сегодня'));return true}
   try{ptsSave(r.balance)}catch(e){PTS=r.balance}try{bumpNumber('ptsTop',PTS)}catch(e){}
-  try{celebrate({icon:'🎉',title:'+'+r.awarded+' '+T('баллов'),sub:T('Визит засчитан')})}catch(e){haptic('reward')}
+  try{celebrate({k:'loop',title:'+'+r.awarded+' '+T('баллов'),sub:T('Визит засчитан')})}catch(e){haptic('reward')}
   return true;
 }
 async function chAddVenue(payload){return chCall('/api/venues',{method:'POST',body:payload})}
@@ -4631,7 +4777,7 @@ function openAISetup(){
     '<h2 style="font-size:21px;font-weight:800;margin-bottom:6px">🤖 CityHUB AI</h2>'+
     '<p class="sub" style="color:var(--txt-2);font-size:13.5px;margin-bottom:16px;line-height:1.5">Умный консьерж на базе Claude. Знает все места города, помогает выбрать под настроение, отвечает по делу.</p>'+
     '<div class="hub-mood" style="margin-top:0">'+
-      '<span class="hm-emo">✅</span>'+
+      '<span class="hm-emo ok">'+ico('check','var(--lime)',2.6)+'</span>'+
       '<div class="hm-tx"><b>Подключён · <span style="color:var(--lime)">'+AI_MODEL+'</span></b><span>Использовано сегодня: '+used+' / '+AI_MAX_CALLS_DAY+'</span></div>'+
     '</div>'+
     '<button class="cta lime" style="margin-top:14px" onclick="closeSheet();setTimeout(openMascot,260)">Поговорить с AI</button>'+
@@ -4729,7 +4875,7 @@ function renderGameStats(){
   var ct=document.getElementById('collTotal');if(ct)ct.textContent=total2;
   var cp=document.getElementById('collPct');if(cp)cp.textContent=pct+'%';
   // Hub mood
-  var m=hubMood();var hme=document.getElementById('hmEmo');if(hme)hme.textContent=m.emo;
+  var m=hubMood();var hmf=document.getElementById('hmFace');if(hmf)hmf.src='mascot/'+m.m+'/01.png';
   var hml=document.getElementById('hmLabel');if(hml)hml.textContent=m.label;
   var hms=document.getElementById('hmSub');if(hms){var d=streakDaysSinceLast();hms.textContent=d===0?'Сегодня уже встретились':d===1?'Был вчера — приходи ещё':d+' дней назад · давай не теряйся'}
 }
@@ -4922,7 +5068,11 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open')}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={
+var DICT={"Реклама в CityHUB":["Advertising on CityHUB", "რეკლამა CityHUB-ზე"],"Люди открывают приложение, когда решают, куда пойти. Место в этот момент — и есть реклама.":["People open the app at the moment they decide where to go. Being there at that moment is the ad.", "ხალხი აპს მაშინ ხსნის, როცა წყვეტს სად წავიდეს. სწორედ ეს მომენტია რეკლამა."],"Строка":["Ticker", "სტრიქონი"],"Баннер":["Banner", "ბანერი"],"Репортаж":["Feature", "რეპორტაჟი"],"Аукцион":["Auction", "აუქციონი"],"Название и иконка в бегущей строке «Сегодня». Тап ведёт на карточку заведения.":["Your name and icon in the Today ticker. A tap opens your place.", "თქვენი სახელი და იკონა «დღეს»-ის სტრიქონში. შეხება ხსნის თქვენს ბარათს."],"Главный баннер на «Сегодня» — место одно, его разыгрывает живой аукцион.":["The main Today banner — one slot, decided by a live auction.", "მთავარი ბანერი «დღეს»-ზე — ერთი ადგილი, რომელსაც ცოცხალი აუქციონი ანაწილებს."],"Съёмка и материал о заведении в наших соцсетях плюс закреп в приложении на месяц.":["A shoot and a story about you on our social media, plus a month pinned in the app.", "გადაღება და მასალა ჩვენს სოცქსელებში, პლუს თვიანი დამაგრება აპში."],"Показ всем в городе":["Shown to the whole city", "ჩვენება მთელ ქალაქს"],"Срок от 1 недели":["From 1 week", "1 კვირიდან"],"Тап → карточка и маршрут":["Tap → card and route", "შეხება → ბარათი და მარშრუტი"],"Первый экран «Сегодня»":["First screen of Today", "«დღეს»-ის პირველი ეკრანი"],"Ставка бьёт текущую":["Outbid the current leader", "ფსონი ჯობნის მიმდინარეს"],"Аналитика показов и переходов":["Impression and click analytics", "ჩვენებებისა და გადასვლების ანალიტიკა"],"Съёмка и текст — на нас":["Shoot and copy on us", "გადაღება და ტექსტი ჩვენზეა"],"Публикация в соцсетях CityHUB":["Published on CityHUB social", "პუბლიკაცია CityHUB-ის სოცქსელებში"],"Закреп в приложении на месяц":["Pinned in the app for a month", "დამაგრება აპში ერთი თვით"],"Промокод для читателей":["Promo code for readers", "პრომოკოდი მკითხველებისთვის"],"Сколько держим":["How long it runs", "რამდენ ხანს გასტანს"],"Итого":["Total", "ჯამი"],"за выпуск":["per feature", "გამოშვებაზე"],"Оставить заявку":["Send a request", "განაცხადის გაგზავნა"],"Заявка ни к чему не обязывает — сначала обсудим, что вам подходит.":["A request commits you to nothing — we will talk through what fits first.", "განაცხადი არაფერს გავალდებულებთ — ჯერ განვიხილავთ, რა გერგებათ."],"Баннер разыгрывает аукцион — ставка на главной бизнес-экрана":["The banner goes by auction — bid on the business home screen", "ბანერი აუქციონზეა — ფსონი ბიზნეს-ეკრანზე"],"Хочу рекламу в CityHUB":["I want to advertise on CityHUB", "მინდა რეკლამა CityHUB-ზე"],"Расскажи, что входит и как начать.":["Tell me what is included and how to start.", "მომიყევი, რა შედის და როგორ დავიწყო."],
+"баллов Loop":["Loop points", "Loop ქულა"],"копятся за визиты и задания, тратятся на награды и спины":["earned on visits and tasks, spent on rewards and spins", "გროვდება ვიზიტებსა და დავალებებზე, იხარჯება ჯილდოებსა და სპინებზე"],"Заработать":["Earn", "გამომუშავება"],"задания и визиты":["tasks and visits", "დავალებები და ვიზიტები"],"Потратить":["Spend", "დახარჯვა"],"награды партнёров":["partner rewards", "პარტნიორების ჯილდოები"],"Докупить":["Top up", "შევსება"],"пакеты баллов":["point packs", "ქულების პაკეტები"],"История":["History", "ისტორია"],"операция":["transaction", "ოპერაცია"],"Здесь появится история начислений и трат":["Your earnings and spending will show up here", "აქ გამოჩნდება დარიცხვებისა და ხარჯვის ისტორია"],"Квест":["Quest", "ქვესტი"],"Отзыв о месте":["Place review", "ადგილის შეფასება"],"Визит":["Visit", "ვიზიტი"],"Награда":["Reward", "ჯილდო"],"Приглашённый друг":["Invited friend", "მოწვეული მეგობარი"],"Серия дней":["Day streak", "დღეების სერია"],"Задание":["Task", "დავალება"],"Спин рулетки":["Roulette spin", "რულეტის სპინი"],
+
+"Похоже, ты в городе":["Looks like you're in", "როგორც ჩანს, შენ ხარ ქალაქში"],"Переключиться и посмотреть, что рядом":["Switch and see what's nearby", "გადართე და ნახე, რა არის ახლოს"],"Не знаешь, с чего начать?":["Not sure where to start?", "არ იცი, საიდან დაიწყო?"],"Скажи настроение — подберу место под тебя":["Tell me your mood — I'll find the place", "მითხარი განწყობა — ადგილს შეგირჩევ"],"Спросить консьержа":["Ask the concierge", "ჰკითხე კონსიერჟს"],
+
 /* — batch: раздел «Удача» (2026-09-11) — */
 'Свайпни карточку — покажу другое':['Swipe: right if you like it, left if not','გადაფურცლე: მარჯვნივ თუ მოგწონს, მარცხნივ თუ არა'],
 'Нравится':['Like','მომწონს'],'Не то':['Not it','არა ეს'],
@@ -5269,7 +5419,7 @@ function openNotif(){
   var read=notifIsRead();
   var notifs=[
     {ic:'bolt',col:'#ff8a3d',t:'Деал заканчивается',s:'−40% в Lovita Cafe сгорит через 2 часа',time:'сейчас',unread:!read},
-    {ic:'star',col:'var(--lime)',t:'+50 баллов зачислено',s:'За визит в Dona Bakeshop',time:'2 ч',unread:!read},
+    {ic:'loop',col:'var(--lime)',t:'+50 баллов зачислено',s:'За визит в Dona Bakeshop',time:'2 ч',unread:!read},
     {ic:'sea',col:'#00E0C7',t:'Новое место в твоём вкусе',s:'Tangerine Cafe открылся рядом',time:'сегодня',unread:false},
     {ic:'coffee',col:'#c79a5e',t:'Подарок дня готов',s:'Открой ежедневный бонус',time:'утром',unread:false}
   ];
@@ -5340,7 +5490,7 @@ function submitReview(){
   revSave(name,revs);_revCtx.draft=0;
   try{if(CH_API.on&&window._bizRef&&(_bizRef.id||_bizRef.qr_token))chCall('/api/reviews',{method:'POST',body:{venue:_bizRef.id||_bizRef.qr_token,rating:rating,text:text}})}catch(e){}
   haptic('success');
-  if(first){ptsAdd(20);try{celebrate({icon:'⭐',title:'+20 '+T('баллов'),sub:T('Спасибо за отзыв!')})}catch(e){}}
+  if(first){ptsAdd(20,T('Отзыв о месте'));try{celebrate({k:'loop',title:'+20 '+T('баллов'),sub:T('Спасибо за отзыв!')})}catch(e){}}
   else toast(T('Отзыв обновлён'));
   renderReviews(name,_revCtx.base);
 }
@@ -5408,11 +5558,11 @@ function confirmArrived(pts,bizName){
   var btn=document.getElementById('arrBtn');if(btn){btn.textContent='Готово! Баллы зачислены';btn.style.opacity='.7'}
   // Применить streak multiplier
   var mult=streakMultiplier(streakCurrent());var basePts=pts;pts=Math.round(pts*mult);
-  ptsAdd(pts);haptic('reward');
+  ptsAdd(pts,T('Визит')+(typeof bn!=='undefined'&&bn?': '+bn:''));haptic('reward');
   setTimeout(function(){
     closeSheet();
     var sub=mult>1?(T('Стрик')+' ×'+mult+' · '+(bizName||'')):(bizName||T('Визит засчитан'));
-    try{celebrate({icon:'🎉',title:'+'+pts+' '+T('баллов'),sub:sub})}
+    try{celebrate({k:'loop',title:'+'+pts+' '+T('баллов'),sub:sub})}
     catch(e){toast('+'+pts+' '+T('баллов'))}
   },1300);
   if(bizName){questAdvance(bizName);gameOnVisit(bizName);try{var __b=CITIES[CITY].biz.find(function(x){return x.n===bizName});if(__b)tasteBump(__b.k,1.8)}catch(e){}}
@@ -5467,13 +5617,13 @@ function openShop(){
   document.getElementById('sheet-body').innerHTML=`<div class="grab"></div>
     <h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Магазин наград</h2>
     <p class="sub" style="margin-bottom:14px">Меняй баллы Loop на реальное — кофе, скидки, впечатления</p>
-    <div class="shop-bal"><div class="sb-info"><div class="sb-l">Твои баллы</div><div class="sb-v"><span id="shopBal">${PTS.toLocaleString('ru-RU')}</span> <small>Loop</small></div></div><div class="sb-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg></div></div>
-    ${REWARDS.map((r,i)=>{var can=PTS>=r.c;return `<div class="shop-item"><div class="si-ic" style="background:${r.col}22">${ico(r.k,r.col,2)}</div><div class="si-t"><b>${r.n}</b><span>${r.d}</span></div><button class="si-btn ${can?'':'locked'}" onclick="redeem(${i})">${ei('star',can?'#06210a':'currentColor',13)} ${r.c.toLocaleString('ru-RU')}</button></div>`}).join('')}
+    <div class="shop-bal"><div class="sb-info"><div class="sb-l">Твои баллы</div><div class="sb-v"><span id="shopBal">${PTS.toLocaleString('ru-RU')}</span> <small>Loop</small></div></div><div class="sb-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7"/></svg></div></div>
+    ${REWARDS.map((r,i)=>{var can=PTS>=r.c;return `<div class="shop-item"><div class="si-ic" style="background:${r.col}22">${ico(r.k,r.col,2)}</div><div class="si-t"><b>${r.n}</b><span>${r.d}</span></div><button class="si-btn ${can?'':'locked'}" onclick="redeem(${i})">${ei('loop',can?'#06210a':'currentColor',13)} ${r.c.toLocaleString('ru-RU')}</button></div>`}).join('')}
     <div class="hint">Баллы копятся за каждый визит. Чем активнее ходишь — тем больше наград.</div>`;
   _openSheet();if(navigator.vibrate)navigator.vibrate(10);
 }
 function redeem(i){var r=REWARDS[i];if(PTS<r.c){toast('Не хватает '+(r.c-PTS).toLocaleString('ru-RU')+' баллов');if(navigator.vibrate)navigator.vibrate([10,30,10]);return}
-  ptsSpend(r.c);
+  ptsSpend(r.c,T('Награда')+': '+r.n);
   closeSheet();toast('Награда «'+r.n+'» твоя! Покажи на кассе');if(navigator.vibrate)navigator.vibrate([10,40,10,40,15]);
 }
 function joinWait(){var inp=document.querySelector('.sheet.open .wl-form input')||document.querySelector('.waitlist .wl-form input');var v=(inp&&inp.value||'').trim();if(!v){if(inp)inp.focus();return}var f=inp.closest('.waitlist');if(f)f.innerHTML='<div class="wl-glow"></div><div style="text-align:center;padding:14px 0;position:relative;z-index:2"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="1.8"><path d="M3 21l5-13 8 8zM14 8c1-1 1-3 0-4M17 5c2-2 4-2 5 0"/></svg><h3 style="margin-top:8px">Ты в списке!</h3><p style="margin-top:6px">Позовём тебя первым, как только CityHUB запустится здесь. Спасибо!</p></div>';if(navigator.vibrate)navigator.vibrate([10,40,10]);toast('Заявка принята')}
@@ -5622,7 +5772,7 @@ function confirmOTP(){
     var d=window._pendingBiz;if(!d)return;
     d.verified=true;d.verifiedAt=new Date().toISOString();saveMyBiz(d);
     closeSheet();haptic('success');
-    celebrate({icon:'🎉',title:'Готово! Ты на карте',sub:d.name+' · '+(d.niche||'') });
+    celebrate({k:'check',title:'Готово! Ты на карте',sub:d.name+' · '+(d.niche||'') });
     setTimeout(function(){bgo('home');renderBizLocked()},800);
   }else{
     toast('Неверный код. Попробуй 1234 для демо');haptic('error');
@@ -5798,7 +5948,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=42;try{renderConsent()}catch(e){}
+var APP_V=44;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -5833,16 +5983,16 @@ window.addEventListener('load',function(){safe(renderToday);waitMap(0)});
 // === MASCOT WIDGET — Hub, городской помощник ===
 // Контекстный hint (показывается при первом заходе и иногда) + полноценный chat sheet
 var MW_HINTS_CLIENT=[
-  'Привет! Я <b>CityHUB</b>. Тапни — подскажу куда сходить 👋',
-  'Скучаешь? Соберу маршрут на вечер за пару секунд ✨',
-  'Хочешь кофе у моря? Спроси меня ☕',
-  'Знаю все горячие места Батуми — тапни сюда 🔥'
+  'Привет! Я <b>CityHUB</b>. Тапни — подскажу, куда сходить',
+  'Скучаешь? Соберу маршрут на вечер за пару секунд',
+  'Хочешь кофе у моря? Спроси меня',
+  'Знаю все горячие места Батуми — тапни сюда'
 ];
 var MW_HINTS_BIZ=[
-  'Привет, владелец! Покажу твою <b>аналитику</b> 📊',
-  'Хочешь знать, кто конкурент? Спроси меня 🎯',
-  'Идею акции на эти выходные? Тапни сюда 💡',
-  'ROI слотов — у меня готов отчёт за неделю 📈'
+  'Привет, владелец! Покажу твою <b>аналитику</b>',
+  'Хочешь знать, кто конкурент? Спроси меня',
+  'Идею акции на эти выходные? Тапни сюда',
+  'ROI слотов — у меня готов отчёт за неделю'
 ];
 var MW_STATE={hintShown:false,hintIdx:0,lastShownAt:0};
 function showMwHint(force){
@@ -5864,9 +6014,46 @@ function hubDotSync(){
 }
 function hubDotSeen(){try{gameSet('hubSeenDay',new Date().toDateString());hubDotSync()}catch(e){}}
 function hideMwHint(){var h=document.getElementById('mwHint');if(h)h.classList.remove('show');clearTimeout(MW_STATE.t)}
-// показать первый hint через 2.5с после загрузки + потом каждые 90с idle
-setTimeout(function(){if(!MW_STATE.hintShown)showMwHint(true)},2500);
-setInterval(function(){var ago=Date.now()-MW_STATE.lastShownAt;if(ago>90000 && !document.getElementById('sheet').classList.contains('open'))showMwHint()},90000);
+/* Было: первая подсказка через 2.5 с после загрузки и дальше КАЖДЫЕ 90 секунд,
+   со случайной фразой из четырёх. Такой пузырь перебивает человека ровно тогда,
+   когда он занят, и за день превращается в шум, который перестают видеть.
+   Стало: у реплики есть повод. Человек пролистал «Сегодня» до самого конца и
+   ничего не выбрал — это и есть «не знаю, чего хочу», сказанное поведением.
+   Один раз в сутки, молча закрывается, тап ведёт в чат с консьержем. */
+var MW_BOTTOM={t:null};
+function mascotOffer(){
+  var h=document.getElementById('mwHint'),t=document.getElementById('mwHintText');if(!h||!t)return;
+  t.innerHTML='<b>'+T('Не знаешь, с чего начать?')+'</b>'+
+    '<i>'+T('Скажи настроение — подберу место под тебя')+'</i>'+
+    '<span class="mw-go">'+T('Спросить консьержа')+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></span>';
+  h.classList.add('show');
+  h.onclick=function(){hideMwHint();openMascot()};
+  MW_STATE.hintShown=true;MW_STATE.lastShownAt=Date.now();
+  clearTimeout(MW_STATE.t);MW_STATE.t=setTimeout(hideMwHint,14000);
+  try{gameSet('mwOfferDay',new Date().toDateString())}catch(e){}
+  try{haptic('tap')}catch(e){}
+}
+function todayBottomWatch(){
+  var sc=document.querySelector('#c-today .scroll');if(!sc)return;
+  sc.addEventListener('scroll',function(){
+    var atEnd=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-28;
+    if(!atEnd){clearTimeout(MW_BOTTOM.t);MW_BOTTOM.t=null;return}
+    if(MW_BOTTOM.t)return;
+    MW_BOTTOM.t=setTimeout(function(){
+      MW_BOTTOM.t=null;
+      try{
+        if(gameGet('mwOfferDay','')===new Date().toDateString())return;   // раз в сутки
+        var sh=document.getElementById('sheet');
+        if(sh&&sh.classList.contains('open'))return;                      // не поверх шторки
+        var td=document.getElementById('c-today');
+        if(!td||!td.classList.contains('active'))return;                  // ушли с вкладки
+        mascotOffer();
+      }catch(e){}
+    },2500);   // дочитал до конца и задержался — не случайный долистал-и-обратно
+  },{passive:true});
+}
+try{todayBottomWatch()}catch(e){}
 function fabMascotClick(){openMascot()}
 function toggleMode(){
   setMode(MODE==='client'?'biz':'client');
@@ -6319,7 +6506,7 @@ function openWishlist(){
   if(!places.length){
     body+='<div class="empty"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C.9 8.5 2.2 4 6.5 4c2.4 0 3.7 1.4 5.5 3.2C13.8 5.4 15.1 4 17.5 4c4.3 0 5.6 4.5 4 8-2.5 4.5-9.5 9-9.5 9z"/></svg></div><h3 style="font-size:17px;color:var(--txt);font-weight:800">'+T('Пока пусто')+'</h3><p>'+T('Тапни ❤ на любом месте, чтобы сохранить')+'</p></div>';
   } else {
-    body+=places.map(function(b){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''};return '<div class="biz glass-soft" onclick="closeSheet();setTimeout(function(){openBiz('+jx(b)+')},250)"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3></div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span></div></div><div class="pp"><div class="v">+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
+    body+=places.map(function(b){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''};return '<div class="biz glass-soft" onclick="closeSheet();setTimeout(function(){openBiz('+jx(b)+')},250)"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3></div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span></div></div><div class="pp"><div class="v">'+ei('loop','currentColor',12)+'+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
   }
   document.getElementById('sheet-body').innerHTML=body;
   _openSheet();
@@ -6892,7 +7079,7 @@ function claimVoucher(){
   vb.classList.add('claimed');vb.style.transition='opacity .4s,max-height .5s,margin-bottom .4s,padding .4s';vb.style.overflow='hidden';vb.style.maxHeight=vb.offsetHeight+'px';
   requestAnimationFrame(function(){vb.style.opacity='0';vb.style.maxHeight='0';vb.style.marginBottom='0';vb.style.paddingTop='0';vb.style.paddingBottom='0'});
   setTimeout(function(){vb.style.display='none'},500);
-  ptsAdd(100);
+  ptsAdd(100,T('Приглашённый друг'));
   toast(T('Ваучер активирован')+' · +100 '+T('баллов'));if(navigator.vibrate)navigator.vibrate([10,40,10]);
 }
 // === Real clipboard for share ===
@@ -6957,7 +7144,7 @@ function buildSpin(){
   track.style.transform='translateX('+spinOffset(Math.floor(SPIN_LOOPS/2)*WHEEL.length)+'px)';
 }
 function spinIcon(p){
-  return p.k==='pts'?'star':p.k==='spin'?'refresh':p.k==='sub'?'gem':p.k==='gift'?'gift':'ticket';
+  return p.k==='pts'?'loop':p.k==='spin'?'refresh':p.k==='sub'?'gem':p.k==='gift'?'gift':'ticket';
 }
 /* Смещение ленты так, чтобы карточка index оказалась ровно под меткой центра */
 function spinOffset(index){
@@ -6968,7 +7155,7 @@ function spinOffset(index){
 function spinRun(){
   if(__spinBusy)return;
   var free=freeSpinReady();
-  if(!free&&!ptsSpend(SPIN_COST)){
+  if(!free&&!ptsSpend(SPIN_COST,T('Спин рулетки'))){
     toast(T('Не хватает баллов — выполни задание или докупи'));
     try{haptic('error')}catch(e){}
     openBuyPts();return;
@@ -7018,12 +7205,12 @@ function spinRun(){
 }
 function spinPrize(i){
   var p=WHEEL[i];
-  if(p.k==='pts'){ptsAdd(p.v);try{celebrate({icon:'🎉',title:'+'+p.v+' '+T('баллов'),sub:T('Рулетка')+' · '+p.d})}catch(e){toast('+'+p.v)}}
-  else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({icon:'🎡',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
+  if(p.k==='pts'){ptsAdd(p.v,T('Рулетка')+' · '+p.d);try{celebrate({k:'loop',title:'+'+p.v+' '+T('баллов'),sub:T('Рулетка')+' · '+p.d})}catch(e){toast('+'+p.v)}}
+  else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({k:'refresh',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
   else{
     var code='CH-'+Math.random().toString(36).slice(2,7).toUpperCase();
     winAdd({n:p.n,d:p.d,c:p.c,k:p.k,code:code,ts:Date.now()});
-    try{celebrate({icon:'🎁',title:p.n,sub:T('Промокод')+' '+code})}catch(e){toast(p.n+' · '+code)}
+    try{celebrate({k:'gift',title:p.n,sub:T('Промокод')+' '+code})}catch(e){toast(p.n+' · '+code)}
   }
   renderLuckHud();renderWins();
 }
@@ -7045,10 +7232,90 @@ function renderWins(){
       '<span class="wr-code"'+(w.used?'':' onclick="winUse('+i+')"')+'>'+(w.used?T('использован'):w.code)+'</span></div>';
   }).join('');
 }
-function partnerJoin(){
+/* ═══════════════ РЕКЛАМА ДЛЯ ЗАВЕДЕНИЙ — витрина и заявка ═══════════════
+   Слово «Реклама» в бегущей строке было просто дисклеймером. Но мы эти места
+   действительно продаём — значит подпись обязана быть входом, а не сноской:
+   владелец, увидевший чужое заведение в строке, ровно в этот момент хочет
+   узнать, как попасть туда самому.
+   Три ступени — по тому, насколько глубоко заведение входит в продукт:
+   строка (упоминание) → баннер (рекомендация) → репортаж (наша редакция).
+   Баннер ведёт в УЖЕ существующий аукцион, а не заводит второй способ
+   продавать то же место. */
+var AD_TIERS=[
+  {k:'ticker', n:'Строка',   pr:'90',   per:'/нед', ds:'Название и иконка в бегущей строке «Сегодня». Тап ведёт на карточку заведения.',
+   feat:['Показ всем в городе','Срок от 1 недели','Тап → карточка и маршрут'], ic:'megaphone'},
+  {k:'banner', n:'Баннер',   pr:'340',  per:'/нед', tag:'Аукцион', hot:1, ds:'Главный баннер на «Сегодня» — место одно, его разыгрывает живой аукцион.',
+   feat:['Первый экран «Сегодня»','Ставка бьёт текущую','Аналитика показов и переходов'], ic:'crown'},
+  {k:'story',  n:'Репортаж', pr:'1 900', per:'/выпуск', ds:'Съёмка и материал о заведении в наших соцсетях плюс закреп в приложении на месяц.',
+   feat:['Съёмка и текст — на нас','Публикация в соцсетях CityHUB','Закреп в приложении на месяц','Промокод для читателей'], ic:'camera'}
+];
+var AD_WEEKS=[1,2,4,8];
+var AD_PICK={tier:'ticker',weeks:2};
+function adPrice(){
+  var t=AD_TIERS.find(function(x){return x.k===AD_PICK.tier})||AD_TIERS[0];
+  if(t.per==='/выпуск')return {v:parseInt(t.pr.replace(/\s/g,''),10),note:T('за выпуск')};
+  var base=parseInt(t.pr.replace(/\s/g,''),10);
+  return {v:base*AD_PICK.weeks,note:AD_PICK.weeks+' '+adWeekWord(AD_PICK.weeks)};
+}
+function adWeekWord(n){
+  if(curLang!=='RU')return n===1?'week':'weeks';
+  if(n===1)return 'неделя'; if(n<5)return 'недели'; return 'недель';
+}
+function openAdPlans(k){
+  if(k)AD_PICK.tier=k;
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Реклама в CityHUB')+'</h2>'+
+    '<p class="sub" style="margin-bottom:14px">'+T('Люди открывают приложение, когда решают, куда пойти. Место в этот момент — и есть реклама.')+'</p>'+
+    '<div class="ad-plans" id="adPlans"></div>'+
+    '<div id="adWeeksBox"></div>'+
+    '<div class="ad-total" id="adTotal"></div>'+
+    '<button class="cta gold" style="margin-top:12px" onclick="adRequest()">'+T('Оставить заявку')+'</button>'+
+    '<div class="hint" style="margin-top:10px">'+T('Заявка ни к чему не обязывает — сначала обсудим, что вам подходит.')+'</div>';
+  renderAdPlans();_openSheet();try{haptic('tap')}catch(e){}
+}
+function renderAdPlans(){
+  var box=document.getElementById('adPlans');if(!box)return;
+  box.innerHTML=AD_TIERS.map(function(t){
+    return '<button class="ad-plan'+(AD_PICK.tier===t.k?' on':'')+(t.hot?' hot':'')+'" onclick="adPick(\''+t.k+'\')">'+
+      (t.tag?'<span class="ap-tag">'+T(t.tag)+'</span>':'')+
+      '<span class="ap-ic">'+ico(t.ic,'currentColor',2)+'</span>'+
+      '<span class="ap-h"><b>'+T(t.n)+'</b><i>'+t.pr+'₾<small>'+T(t.per)+'</small></i></span>'+
+      '<span class="ap-d">'+T(t.ds)+'</span>'+
+      '<span class="ap-f">'+t.feat.map(function(f){return '<span>'+ico('check','currentColor',2.6)+T(f)+'</span>'}).join('')+'</span>'+
+    '</button>';
+  }).join('');
+  var t=AD_TIERS.find(function(x){return x.k===AD_PICK.tier})||AD_TIERS[0];
+  var wb=document.getElementById('adWeeksBox');
+  if(wb){
+    wb.innerHTML=(t.per==='/выпуск')?'':
+      '<div class="ad-weeks-h">'+T('Сколько держим')+'</div><div class="ad-weeks">'+
+      AD_WEEKS.map(function(w){return '<button class="ad-wk'+(AD_PICK.weeks===w?' on':'')+'" onclick="adWeeks('+w+')">'+w+' '+adWeekWord(w)+'</button>'}).join('')+'</div>';
+  }
+  var p=adPrice(),tot=document.getElementById('adTotal');
+  if(tot)tot.innerHTML='<span class="at-l">'+T('Итого')+'<small>'+p.note+'</small></span><b class="tabular">'+p.v.toLocaleString('ru-RU')+'₾</b>';
+}
+function adPick(k){AD_PICK.tier=k;renderAdPlans();try{haptic('select')}catch(e){}}
+function adWeeks(w){AD_PICK.weeks=w;renderAdPlans();try{haptic('select')}catch(e){}}
+function adRequest(){
+  var t=AD_TIERS.find(function(x){return x.k===AD_PICK.tier})||AD_TIERS[0];
+  /* Баннер продаёт аукцион — второго способа занять то же место мы не заводим. */
+  if(t.k==='banner'){closeSheet();setMode('biz','home');
+    setTimeout(function(){toast(T('Баннер разыгрывает аукцион — ставка на главной бизнес-экрана'))},350);return}
   closeSheet();
-  setMode('biz','add');
-  toast(T('Разместите заведение — и ваш приз попадёт в барабан'));
+  var p=adPrice();
+  setTimeout(function(){
+    openMascot();
+    setTimeout(function(){mascotIntent(T('Реклама'),
+      T('Хочу рекламу в CityHUB')+': '+T(t.n)+' · '+p.note+' · '+p.v+'₾. '+T('Расскажи, что входит и как начать.'))},300);
+  },240);
+  try{haptic('tap')}catch(e){}
+}
+function partnerJoin(){
+  /* Раньше здесь был тост и переброс в режим владельца — обещание без ответа
+     на единственный вопрос, который в этот момент есть: сколько это стоит.
+     Теперь обе кнопки («Стать партнёром» и подпись «Реклама») ведут в одну
+     витрину, а не в два разных объяснения одного и того же. */
+  openAdPlans();
 }
 
 /* ═══════════════ ЕЖЕДНЕВНЫЙ ВХОД — серия и награда ═══════════════
@@ -7101,7 +7368,7 @@ function dailySheet(streak,mode){
     cta='<button class="cta lime" onclick="streakRestore('+lost+')">'+ico('fire','currentColor',2.2)+T('Вернуть серию')+'<span class="gb-pts" style="margin-left:6px">'+Math.max(50,lost*10)+' ⭐</span></button>'+
         '<button class="cta ghost" style="margin-top:9px" onclick="closeSheet()">'+T('Начать заново')+'</button>';
   } else {
-    ptsAdd(rew);
+    ptsAdd(rew,T('Серия дней'));
     head='<div class="dl-ic">'+ico('fire','currentColor',2)+'</div>'+
       '<h2>'+(mode==='start'?T('Первый день'):T('День')+' '+streak)+'</h2>'+
       '<p class="sub">'+(mode==='start'?T('Заходи каждый день — серия растёт, награда тоже'):T('Серия продолжается. Награда за вход уже на счету'))+'</p>';
@@ -7309,12 +7576,50 @@ var FREE_SPIN_MS=6*3600*1000; /* бесплатный спин раз в 6 ча�
 
 function ptsGet(){var v=gameGet('pts',null);return v===null?PTS:v}
 function ptsSave(v){PTS=Math.max(0,Math.round(v));gameSet('pts',PTS);ptsSync();return PTS}
-function ptsAdd(n){return ptsSave(ptsGet()+n)}
-function ptsSpend(n){var c=ptsGet();if(c<n)return false;ptsSave(c-n);return true}
+function ptsAdd(n,why){try{walletAdd(n,why)}catch(e){}return ptsSave(ptsGet()+n)}
+function ptsSpend(n,why){var c=ptsGet();if(c<n)return false;try{walletAdd(-n,why)}catch(e){}ptsSave(c-n);return true}
 /* Все витрины баланса обновляются из одного места */
+/* ═══════════════ КОШЕЛЁК — единый дом баллов Loop ═══════════════
+   Баллы были размазаны по продукту: заработать — во вкладке «Задания»,
+   потратить — плиткой в профиле, докупить — кнопкой «+» в HUD, а сколько их
+   и откуда они берутся, нигде не объяснялось. Кошелёк собирает три действия
+   и историю в одно место: баланс → где взять → куда деть → где купить.
+   Открывается из ЛЮБОГО места, где показан баланс. */
+function walletLog(){try{return gameGet('ptsLog',[])||[]}catch(e){return []}}
+function walletAdd(delta,reason){
+  var a=walletLog();a.unshift({d:delta,r:reason||'',t:Date.now()});
+  if(a.length>40)a.length=40;gameSet('ptsLog',a);
+}
+function openWallet(){
+  var bal=ptsGet(), log=walletLog();
+  var rows=log.length?log.slice(0,8).map(function(x){
+    var d=new Date(x.t), plus=x.d>0;
+    return '<div class="wl-log'+(plus?'':' minus')+'"><span class="wl-log-d">'+d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0')+'</span>'+
+      '<span class="wl-log-r">'+(x.r||T('операция'))+'</span>'+
+      '<span class="wl-log-v">'+(plus?'+':'')+x.d+'</span></div>';
+  }).join(''):'<div class="wl-log-empty">'+T('Здесь появится история начислений и трат')+'</div>';
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<div class="wallet">'+
+      '<div class="wal-bal"><span class="wal-ic">'+ico('loop','currentColor',2)+'</span>'+
+        '<span class="wal-v tabular">'+bal.toLocaleString('ru-RU')+'</span>'+
+        '<span class="wal-t">'+T('баллов Loop')+'</span>'+
+        '<span class="wal-s">'+T('копятся за визиты и задания, тратятся на награды и спины')+'</span></div>'+
+      '<div class="wal-acts">'+
+        '<button class="wal-act" onclick="closeSheet();cgo(\'luck\');setTimeout(function(){luckGo(\'tasks\')},260)">'+
+          '<span class="wa-ic earn">'+ico('bolt','currentColor',2)+'</span><b>'+T('Заработать')+'</b><span>'+T('задания и визиты')+'</span></button>'+
+        '<button class="wal-act" onclick="closeSheet();setTimeout(openShop,240)">'+
+          '<span class="wa-ic spend">'+ico('gift','currentColor',2)+'</span><b>'+T('Потратить')+'</b><span>'+T('награды партнёров')+'</span></button>'+
+        '<button class="wal-act" onclick="closeSheet();setTimeout(openBuyPts,240)">'+
+          '<span class="wa-ic buy">'+ico('money','currentColor',2)+'</span><b>'+T('Докупить')+'</b><span>'+T('пакеты баллов')+'</span></button>'+
+      '</div>'+
+      '<div class="sec-h" style="margin-top:20px"><h2 style="font-size:16px">'+T('История')+'</h2></div>'+
+      '<div class="wal-log">'+rows+'</div>'+
+    '</div>';
+  _openSheet();try{haptic('tap')}catch(e){}
+}
 function ptsSync(){
   var v=ptsGet(),s=v.toLocaleString('ru-RU');
-  ['luckBal','ptsTop','shopBal','pfPts','ptsMiniV'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=s});
+  ['luckBal','ptsTop','shopBal','pfPts','ptsMiniV','pfWalletV'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=s});
   try{renderLuckHud()}catch(e){}
 }
 
@@ -7409,7 +7714,7 @@ function renderTasks(){
       '<div class="tk-ic">'+ico(t.k,done?'var(--txt-3)':'var(--lime)',2)+'</div>'+
       '<div class="tk-tx"><b>'+t.n+'</b><span>'+t.d+'</span></div>'+
       (done?'<svg class="tk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg>'
-           :'<span class="tk-pts">'+(t.soon?T('скоро'):'+'+t.p)+'</span>')+
+           :'<span class="tk-pts">'+(t.soon?T('скоро'):ei('loop','currentColor',11)+'+'+t.p)+'</span>')+
     '</div>';
   }).join('');
   var dot=document.getElementById('tasksDot');
@@ -7418,8 +7723,8 @@ function renderTasks(){
 function taskAward(t){
   if(!t.repeat&&taskDone(t.id))return;
   if(!t.repeat)taskMark(t.id);
-  ptsAdd(t.p);renderTasks();
-  try{celebrate({icon:'🎉',title:'+'+t.p+' '+T('баллов'),sub:t.n})}catch(e){try{haptic('reward')}catch(e2){}}
+  ptsAdd(t.p,T('Задание')+': '+t.n);renderTasks();
+  try{celebrate({k:'loop',title:'+'+t.p+' '+T('баллов'),sub:t.n})}catch(e){try{haptic('reward')}catch(e2){}}
 }
 function taskGo(id){
   var t=TASKS.find(function(x){return x.id===id});if(!t)return;
@@ -7537,7 +7842,7 @@ var __spinning=false;
 function spinWheel(){
   if(__spinning)return;
   var free=freeSpinReady();
-  if(!free&&!ptsSpend(SPIN_COST)){
+  if(!free&&!ptsSpend(SPIN_COST,T('Спин рулетки'))){
     toast(T('Не хватает баллов — выполни задание или докупи'));
     try{haptic('error')}catch(e){}
     openBuyPts();return;
@@ -7557,11 +7862,11 @@ function spinWheel(){
 }
 function wheelPrize(i){
   var p=WHEEL[i];
-  if(p.k==='pts'){ptsAdd(p.v);try{celebrate({icon:'🎉',title:'+'+p.v+' '+T('баллов'),sub:T('Рулетка')+' · '+p.d})}catch(e){toast('+'+p.v+' '+T('баллов'))}}
-  else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({icon:'🎡',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
+  if(p.k==='pts'){ptsAdd(p.v,T('Рулетка')+' · '+p.d);try{celebrate({k:'loop',title:'+'+p.v+' '+T('баллов'),sub:T('Рулетка')+' · '+p.d})}catch(e){toast('+'+p.v+' '+T('баллов'))}}
+  else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({k:'refresh',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
   else{
     var code='CH-'+Math.random().toString(36).slice(2,7).toUpperCase();
-    try{celebrate({icon:'🎁',title:p.n,sub:T('Промокод')+' '+code})}catch(e){toast(p.n+' · '+code)}
+    try{celebrate({k:'gift',title:p.n,sub:T('Промокод')+' '+code})}catch(e){toast(p.n+' · '+code)}
     toast(p.n+' · '+T('Промокод')+' '+code);
   }
   renderLuckHud();
