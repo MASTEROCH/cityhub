@@ -2695,6 +2695,7 @@ input,textarea{font-size:16px!important}
           <div class="sw-hint" id="swHint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 8L3 12l4 4M17 8l4 4-4 4M3 12h18"/></svg>Свайпни карточку — покажу другое</div>
         </div>
         <div class="ad-ticker" id="adTicker"></div>
+        <div id="vibeBox"></div>
 
         <button class="show-more" id="showMore" onclick="expandToday()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg><span data-i18n="show_more">Показать больше идей</span></button>
 
@@ -3664,10 +3665,43 @@ function bindTodaySnapExpand(){
   }
   sc.addEventListener('scroll',checkAndFire,{passive:true});
 }
+/* Ряд вайбов рисуется отдельно от карточки: порядок блоков на экране задаёт
+   разметка, а не то, что они когда-то жили в одном шаблоне. */
+function renderVibes(){
+  var el=document.getElementById('vibeBox');if(!el)return;
+  var C=CITIES[CITY];
+  el.innerHTML=`  <div class="vibe-head" style="margin-top:16px"><span class="vibe-title">Не то? Выбери вайб</span><span class="vibe-sub">или жми «Удиви меня»</span></div>
+  <div class="mood-row"><div class="mood-scroll">
+    <button class="mood vibe${curMood==='all'?' on':''}" data-mood="all"><span class="vibe-ic">${ico('sparkle','currentColor',2)}</span><span class="vibe-lb">Удиви меня</span></button>
+    <button class="mood vibe${curMood==='food'?' on':''}" data-mood="food"><span class="vibe-ic">${ico('food','currentColor',2)}</span><span class="vibe-lb">Поесть</span></button>
+    <button class="mood vibe${curMood==='coffee'?' on':''}" data-mood="coffee"><span class="vibe-ic">${ico('coffee','currentColor',2)}</span><span class="vibe-lb">Кофе</span></button>
+    <button class="mood vibe${curMood==='bar'?' on':''}" data-mood="bar"><span class="vibe-ic">${ico('bar','currentColor',2)}</span><span class="vibe-lb">Выпить</span></button>
+    <button class="mood vibe${curMood==='sea'?' on':''}" data-mood="sea"><span class="vibe-ic">${ico('sea','currentColor',2)}</span><span class="vibe-lb">Погулять</span></button>
+    <button class="mood vibe${curMood==='gym'?' on':''}" data-mood="gym"><span class="vibe-ic">${ico('gym','currentColor',2)}</span><span class="vibe-lb">Спорт</span></button>
+    <button class="mood vibe${curMood==='spa'?' on':''}" data-mood="spa"><span class="vibe-ic">${ico('spa','currentColor',2)}</span><span class="vibe-lb">Спа</span></button>
+    <button class="mood vibe${curMood==='beauty'?' on':''}" data-mood="beauty"><span class="vibe-ic">${ico('beauty','currentColor',2)}</span><span class="vibe-lb">Красота</span></button>
+    <button class="mood vibe${curMood==='art'?' on':''}" data-mood="art"><span class="vibe-ic">${ico('art','currentColor',2)}</span><span class="vibe-lb">Искусство</span></button>
+    <button class="mood vibe${curMood==='music'?' on':''}" data-mood="music"><span class="vibe-ic">${ico('music','currentColor',2)}</span><span class="vibe-lb">Музыка</span></button>
+    <button class="mood vibe${curMood==='shop'?' on':''}" data-mood="shop"><span class="vibe-ic">${ico('shop','currentColor',2)}</span><span class="vibe-lb">Шопинг</span></button>
+    <button class="mood vibe${curMood==='kids'?' on':''}" data-mood="kids"><span class="vibe-ic">${ico('kids','currentColor',2)}</span><span class="vibe-lb">С детьми</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Куда пойти позавтракать утром в Батуми? Кафе с хорошими завтраками и видом." data-vibe-t="Завтрак"><span class="vibe-ic">${ico('breakfast','currentColor',2)}</span><span class="vibe-lb">Завтрак</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Где встретить закат в Батуми — лучшие точки у моря или с высоты прямо сейчас." data-vibe-t="Закат"><span class="vibe-ic">${ico('sunset','currentColor',2)}</span><span class="vibe-lb">Закат</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Что открыто поздно ночью в Батуми? Бары, клубы, ночные заведения." data-vibe-t="Ночь"><span class="vibe-ic">${ico('night','currentColor',2)}</span><span class="vibe-lb">Ночь</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Кафе чтобы поработать с ноутбуком в Батуми — Wi-Fi, розетки, тихо, можно сидеть долго." data-vibe-t="Поработать"><span class="vibe-ic">${ico('laptop','currentColor',2)}</span><span class="vibe-lb">Поработать</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Лучшие пляжи Батуми — где чище, тише, удобнее." data-vibe-t="Пляж"><span class="vibe-ic">${ico('beach','currentColor',2)}</span><span class="vibe-lb">Пляж</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Здоровая еда — салаты, smoothie, vegan-friendly места в Батуми." data-vibe-t="Полезно"><span class="vibe-ic">${ico('salad','currentColor',2)}</span><span class="vibe-lb">Полезно</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Самые инстаграмные места в Батуми — для фото и сторис." data-vibe-t="Для фото"><span class="vibe-ic">${ico('camera','currentColor',2)}</span><span class="vibe-lb">Для фото</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Природа рядом с Батуми — горы, водопады, виды, что можно за полдня." data-vibe-t="Природа"><span class="vibe-ic">${ico('mountain','currentColor',2)}</span><span class="vibe-lb">Природа</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Места куда можно прийти с собакой в Батуми — pet-friendly кафе, парки, пляжи." data-vibe-t="С собакой"><span class="vibe-ic">${ico('paw','currentColor',2)}</span><span class="vibe-lb">С собакой</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Сладкое в Батуми — где самые вкусные десерты, выпечка, мороженое." data-vibe-t="Сладкое"><span class="vibe-ic">${ico('cake','currentColor',2)}</span><span class="vibe-lb">Сладкое</span></button>
+    <button class="mood vibe ai-vibe" data-vibe-q="Романтичное место для свидания — атмосфера, виды, тихий ужин." data-vibe-t="Свидание"><span class="vibe-ic">${ico('heart','currentColor',2)}</span><span class="vibe-lb">Свидание</span></button>
+  </div></div>`;
+  try{edgeFadeAll()}catch(e){}
+}
 function renderToday(){
   /* Каждый блок рисуется отдельно: падение одного не должно уносить экран.
      Ошибку не глотаем молча — пишем в консоль, чтобы её было видно. */
-  [renderDeal,renderForMe,renderAdTicker].forEach(function(f){
+  [renderDeal,renderForMe,renderAdTicker,renderVibes].forEach(function(f){
     try{f()}catch(e){console.error('renderToday:',f.name,e)}
   });
   // Hub Hunt banner (suббота)
@@ -3720,32 +3754,6 @@ function renderToday(){
     <h1>${top.n}</h1>
     <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}</div>
     <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick(1)" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
-  </div></div>
-  <div class="vibe-head" style="margin-top:16px"><span class="vibe-title">Не то? Выбери вайб</span><span class="vibe-sub">или жми «Удиви меня»</span></div>
-  <div class="mood-row"><div class="mood-scroll">
-    <button class="mood vibe${curMood==='all'?' on':''}" data-mood="all"><span class="vibe-ic">${ico('sparkle','currentColor',2)}</span><span class="vibe-lb">Удиви меня</span></button>
-    <button class="mood vibe${curMood==='food'?' on':''}" data-mood="food"><span class="vibe-ic">${ico('food','currentColor',2)}</span><span class="vibe-lb">Поесть</span></button>
-    <button class="mood vibe${curMood==='coffee'?' on':''}" data-mood="coffee"><span class="vibe-ic">${ico('coffee','currentColor',2)}</span><span class="vibe-lb">Кофе</span></button>
-    <button class="mood vibe${curMood==='bar'?' on':''}" data-mood="bar"><span class="vibe-ic">${ico('bar','currentColor',2)}</span><span class="vibe-lb">Выпить</span></button>
-    <button class="mood vibe${curMood==='sea'?' on':''}" data-mood="sea"><span class="vibe-ic">${ico('sea','currentColor',2)}</span><span class="vibe-lb">Погулять</span></button>
-    <button class="mood vibe${curMood==='gym'?' on':''}" data-mood="gym"><span class="vibe-ic">${ico('gym','currentColor',2)}</span><span class="vibe-lb">Спорт</span></button>
-    <button class="mood vibe${curMood==='spa'?' on':''}" data-mood="spa"><span class="vibe-ic">${ico('spa','currentColor',2)}</span><span class="vibe-lb">Спа</span></button>
-    <button class="mood vibe${curMood==='beauty'?' on':''}" data-mood="beauty"><span class="vibe-ic">${ico('beauty','currentColor',2)}</span><span class="vibe-lb">Красота</span></button>
-    <button class="mood vibe${curMood==='art'?' on':''}" data-mood="art"><span class="vibe-ic">${ico('art','currentColor',2)}</span><span class="vibe-lb">Искусство</span></button>
-    <button class="mood vibe${curMood==='music'?' on':''}" data-mood="music"><span class="vibe-ic">${ico('music','currentColor',2)}</span><span class="vibe-lb">Музыка</span></button>
-    <button class="mood vibe${curMood==='shop'?' on':''}" data-mood="shop"><span class="vibe-ic">${ico('shop','currentColor',2)}</span><span class="vibe-lb">Шопинг</span></button>
-    <button class="mood vibe${curMood==='kids'?' on':''}" data-mood="kids"><span class="vibe-ic">${ico('kids','currentColor',2)}</span><span class="vibe-lb">С детьми</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Куда пойти позавтракать утром в Батуми? Кафе с хорошими завтраками и видом." data-vibe-t="Завтрак"><span class="vibe-ic">${ico('breakfast','currentColor',2)}</span><span class="vibe-lb">Завтрак</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Где встретить закат в Батуми — лучшие точки у моря или с высоты прямо сейчас." data-vibe-t="Закат"><span class="vibe-ic">${ico('sunset','currentColor',2)}</span><span class="vibe-lb">Закат</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Что открыто поздно ночью в Батуми? Бары, клубы, ночные заведения." data-vibe-t="Ночь"><span class="vibe-ic">${ico('night','currentColor',2)}</span><span class="vibe-lb">Ночь</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Кафе чтобы поработать с ноутбуком в Батуми — Wi-Fi, розетки, тихо, можно сидеть долго." data-vibe-t="Поработать"><span class="vibe-ic">${ico('laptop','currentColor',2)}</span><span class="vibe-lb">Поработать</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Лучшие пляжи Батуми — где чище, тише, удобнее." data-vibe-t="Пляж"><span class="vibe-ic">${ico('beach','currentColor',2)}</span><span class="vibe-lb">Пляж</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Здоровая еда — салаты, smoothie, vegan-friendly места в Батуми." data-vibe-t="Полезно"><span class="vibe-ic">${ico('salad','currentColor',2)}</span><span class="vibe-lb">Полезно</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Самые инстаграмные места в Батуми — для фото и сторис." data-vibe-t="Для фото"><span class="vibe-ic">${ico('camera','currentColor',2)}</span><span class="vibe-lb">Для фото</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Природа рядом с Батуми — горы, водопады, виды, что можно за полдня." data-vibe-t="Природа"><span class="vibe-ic">${ico('mountain','currentColor',2)}</span><span class="vibe-lb">Природа</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Места куда можно прийти с собакой в Батуми — pet-friendly кафе, парки, пляжи." data-vibe-t="С собакой"><span class="vibe-ic">${ico('paw','currentColor',2)}</span><span class="vibe-lb">С собакой</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Сладкое в Батуми — где самые вкусные десерты, выпечка, мороженое." data-vibe-t="Сладкое"><span class="vibe-ic">${ico('cake','currentColor',2)}</span><span class="vibe-lb">Сладкое</span></button>
-    <button class="mood vibe ai-vibe" data-vibe-q="Романтичное место для свидания — атмосфера, виды, тихий ужин." data-vibe-t="Свидание"><span class="vibe-ic">${ico('heart','currentColor',2)}</span><span class="vibe-lb">Свидание</span></button>
   </div></div>
 `;
   try{swipeBind();swipeHintMaybe();edgeFadeAll()}catch(e){}
@@ -5777,7 +5785,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=40;try{renderConsent()}catch(e){}
+var APP_V=41;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
