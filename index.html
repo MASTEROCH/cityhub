@@ -1634,7 +1634,7 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 #mapHolder .leaflet-left .leaflet-control{margin-left:8px}
 .map-expand svg{width:15px;height:15px}
 .split-map #map{width:100%;height:100%;border-radius:var(--r-md);overflow:hidden;position:relative}
-.split-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 22px)}
+.split-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 52px)}
 .split-list::-webkit-scrollbar{display:none}
 .split-list .chips-row{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,var(--bg-0) 60%,transparent);padding:4px 0 10px;margin:0 0 4px}
 /* выделение выбранной карточки */
@@ -4559,7 +4559,7 @@ function buildMap(){
   // Loading skeleton пока Leaflet boot'ится
   if(host && (typeof L==='undefined')){if(!host.querySelector('.map-loading'))host.innerHTML='<div class="map-loading">'+T('Карта загружается…')+'</div>';return}
   if(!host)return;
-  const C=CITIES[CITY];var items=C.biz.filter(function(b){return filter==='all'||b.k===filter});
+  const C=CITIES[CITY];var items=listItems();
   // первый запуск или смена города → пересоздать
   if(!_LF_MAIN || _LF_MAIN._cityId!==CITY){
     if(_LF_MAIN){_LF_MAIN.remove();_LF_MAIN=null;_LF_MARKERS=[];_LF_ME=null}
@@ -4714,14 +4714,25 @@ function renderMapTab(){
     [...new Set(C.biz.map(function(b){return b.k}))].map(function(k){var n=NICHES.find(function(x){return x.k===k});return '<button class="mood vibe" data-filter="'+k+'"><span class="vibe-ic">'+ico(k,'currentColor',2)+'</span><span class="vibe-lb">'+n.n+'</span></button>'}).join('');
   renderList();
 }
+/* Порядок выдачи: сначала промо (заведение заплатило за место в выдаче и
+   даёт гостю двойные баллы), затем новинки, дальше — как есть. Один порядок
+   на отрисовку и на выбор по индексу, иначе тап открывает соседа. */
+function listItems(){
+  var C=CITIES[CITY];if(!C||!C.biz)return [];
+  var rank=function(b){return b.b==='promo'?0:b.b==='new'?1:2};
+  return C.biz.filter(function(b){return filter==='all'||b.k===filter})
+    .map(function(b,i){return {b:b,i:i}})
+    .sort(function(x,y){var d=rank(x.b)-rank(y.b);return d||(x.i-y.i)})
+    .map(function(x){return x.b});
+}
 function renderList(){
-  const C=CITIES[CITY];const items=C.biz.filter(b=>filter==='all'||b.k===filter);
+  const C=CITIES[CITY];const items=listItems();
   if(!items.length){document.getElementById('listHolder').innerHTML=`<div class="empty"><div class="ic">${ico('shop','currentColor',1.6)}</div><h3>В этой нише пока пусто</h3><p>Hub может подобрать похожее под твоё настроение.</p><button class="cta lime" style="margin-top:14px" onclick="openMascot();setTimeout(function(){mascotIntent('предложи что-нибудь похожее на ${filter}','что-то рядом')},280)">💬 Спросить Hub</button></div>`;return}
   document.getElementById('listHolder').innerHTML=items.map(function(b,idx){var nz=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',q:''};var bb=b.b==='promo'?'<span class="badge promo">Promo</span>':b.b==='new'?'<span class="badge new">New</span>':b.b==='free'?'<span class="badge free">Free</span>':'';var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}return '<div class="biz" id="card-'+idx+'" onclick="selectPlace('+idx+',false)"><div class="th">'+thumb(b,nz)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3>'+bb+'</div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+nz.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp"><div class="v">'+ei('loop','currentColor',12)+'+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
 }
 let selIdx=-1;
 function selectPlace(i,fromMap){
-  const C=CITIES[CITY];const items=C.biz.filter(b=>filter==='all'||b.k===filter);
+  const C=CITIES[CITY];const items=listItems();
   // ОДИН тап с list = сразу открыть детали; с карты = highlight + open
   if(!fromMap){
     // Авто-наведение карты на выбранный place ДО открытия модалки
@@ -5563,7 +5574,8 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open');try{ovlOpened()}catch(e){}}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
+var DICT={"Hub — есть что сказать":["Hub has something for you","Hub-ს რაღაც აქვს სათქმელი"],
+"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
 "сейчас":["now", "ახლა"],
 "Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
 "Как это работает":["How it works", "როგორ მუშაობს"],"Повесь плакат у кассы":["Put the poster at the counter", "დაკიდე პლაკატი სალაროსთან"],"Там, где гость стоит и ждёт — на стойке, у терминала, на столике":["Where the guest stands and waits — on the counter, by the terminal, on the table", "სადაც სტუმარი დგას და ელოდება — დახლზე, ტერმინალთან, მაგიდაზე"],"Гость наводит камеру":["The guest points their camera", "სტუმარი მიმართავს კამერას"],"Откроется твоя карточка в CityHUB — без установки, прямо в Telegram":["Your card opens in CityHUB — no install, right inside Telegram", "შენი ბარათი გაიხსნება CityHUB-ში — ინსტალაციის გარეშე, პირდაპირ Telegram-ში"],"Визит засчитан":["Visit counted", "ვიზიტი ჩაითვალა"],"Баллы падают гостю сразу, тебе — скан в статистике кабинета":["Points land for the guest instantly; you get the scan in your dashboard", "ქულები მაშინვე ჩაერიცხება სტუმარს, შენ — სკანი კაბინეტის სტატისტიკაში"],"Он возвращается":["They come back", "ის ბრუნდება"],"Баллы тратятся у партнёров — и у тебя. Это и есть повод прийти снова":["Points are spent at partners — and at your place. That is the reason to come back", "ქულები იხარჯება პარტნიორებთან — და შენთანაც. ეს არის დაბრუნების მიზეზი"],"Одна фраза удваивает сканы":["One sentence doubles the scans", "ერთი ფრაზა აორმაგებს სკანებს"],"«Отсканируй — получишь баллы на кофе». Просто скажите её на кассе.":["\"Scan this and get points toward a coffee.\" Just say it at the counter.", "«დაასკანერე — ქულებს მიიღებ ყავაზე». უბრალოდ თქვით სალაროსთან."],"Оплата включится вместе с релизом — тариф пока можно забронировать через Hub":["Payments go live with the release — for now you can reserve a plan through Hub", "გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ტარიფი შეგიძლია დაჯავშნო Hub-ით"],"Хочу подключить буст для заведения: что входит и когда можно оплатить?":["I want to enable a boost for my place: what is included and when can I pay?","მინდა ბუსტის ჩართვა: რა შედის და როდის შემიძლია გადახდა?"],
@@ -6547,7 +6559,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=60;try{renderConsent()}catch(e){}
+var APP_V=61;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6675,12 +6687,32 @@ try{facePreload('idle');facePreload('fun');faceIdleLoop()}catch(e){}
 document.addEventListener('visibilitychange',function(){
   if(document.hidden){clearInterval(FACE_ST.timer)}else{faceSet(FACE_ST.mood||'idle',1)}
 });
+var HUB_T0=Date.now();
+function hubReason(){
+  try{
+    if(freeSpinReady())return 'spin';                       /* бесплатный спин ждёт */
+    var w=winsAll().filter(function(x){return !x.used&&!winExpired(x)&&winLeftMs(x)<86400000});
+    if(w.length)return 'expire';                            /* выигрыш сгорает в ближайшие сутки */
+    var ready=TASKS.filter(function(t){return !t.soon&&!taskDone(t.id)});
+    if(ready.length>=3)return 'tasks';                      /* накопились невзятые задания */
+    /* Поздороваться — самый слабый повод, поэтому он и последний, и только
+       если человек уже освоился на экране, а не в первую секунду. */
+    if(gameGet('hubSeenDay','')!==new Date().toDateString()&&Date.now()-HUB_T0>45000)return 'hello';
+  }catch(e){}
+  return null;
+}
 function hubDotSync(){
   var d=document.querySelector('.tab-mascot .tm-dot');if(!d)return;
-  var today=new Date().toDateString();
-  d.style.display=(gameGet('hubSeenDay','')===today)?'none':'';
+  var why=hubReason();
+  d.style.display=why?'':'none';
+  d.dataset.why=why||'';
+  try{var b=document.querySelector('.tab-mascot');if(b)b.setAttribute('aria-label',why?T('Hub — есть что сказать'):'Hub AI')}catch(e){}
 }
+/* Пересчитываем по событиям и раз в минуту — повод может появиться сам
+   (доехал таймер бесплатного спина, начал сгорать приз). */
+setInterval(function(){try{hubDotSync()}catch(e){}},60000);
 function hubDotSeen(){try{gameSet('hubSeenDay',new Date().toDateString());hubDotSync()}catch(e){}}
+try{setTimeout(hubDotSync,46000)}catch(e){}
 function hideMwHint(){var h=document.getElementById('mwHint');if(h)h.classList.remove('show');clearTimeout(MW_STATE.t)}
 /* Было: первая подсказка через 2.5 с после загрузки и дальше КАЖДЫЕ 90 секунд,
    со случайной фразой из четырёх. Такой пузырь перебивает человека ровно тогда,
@@ -8835,8 +8867,26 @@ var GBOARD=[
  {n:'Артём',      c:'Дубай',    v:143, col:'#7C3AFF'},
  {n:'Sophie L.',  c:'Батуми',   v:128, col:'#D4FF4F'},
  {n:'Гио',        c:'Кутаиси',  v:117, col:'#00E0C7'},
- {n:'Нина',       c:'Батуми',   v:103, col:'#ff5d8f'}
+ {n:'Нина',       c:'Батуми',   v:103, col:'#ff5d8f'},
+ {n:'Emre Y.',    c:'Стамбул',  v:97,  col:'#FF7FAD'},
+ {n:'Дато',       c:'Тбилиси',  v:91,  col:'#B9A2FF'},
+ {n:'Anna P.',    c:'Лиссабон', v:88,  col:'#7FD4FF'},
+ {n:'Тамрико',    c:'Батуми',   v:84,  col:'#FFC46B'},
+ {n:'Yusuf K.',   c:'Стамбул',  v:79,  col:'#5edc9a'},
+ {n:'Саша',       c:'Батуми',   v:75,  col:'#ff8a3d'},
+ {n:'Mariam T.',  c:'Кутаиси',  v:71,  col:'#D79BFF'},
+ {n:'Лаша',       c:'Батуми',   v:68,  col:'#00E0C7'},
+ {n:'Julia R.',   c:'Дубай',    v:64,  col:'#FF9AD5'},
+ {n:'Ираклий',    c:'Батуми',   v:61,  col:'#ECFF8A'},
+ {n:'Kaan D.',    c:'Стамбул',  v:57,  col:'#8FC0FF'},
+ {n:'Софико',     c:'Тбилиси',  v:54,  col:'#F0C868'},
+ {n:'Miguel S.',  c:'Лиссабон', v:50,  col:'#7EE3A6'},
+ {n:'Георгий',    c:'Батуми',   v:47,  col:'#C4A6FF'},
+ {n:'Elif A.',    c:'Стамбул',  v:43,  col:'#FFA3C8'},
+ {n:'Ника',       c:'Батуми',   v:39,  col:'#21d4fd'},
+ {n:'Давид',      c:'Кутаиси',  v:35,  col:'#FFB547'}
 ];
+
 /* Вкладки внутри «Лиги»: свои и город. Рисуем только то, что открыто —
    глобальный зачёт не должен считаться, пока на него не смотрят. */
 function lgGo(g){
