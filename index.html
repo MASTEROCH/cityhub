@@ -2285,6 +2285,85 @@ input,textarea{font-size:16px!important}
 /* Задание, механика которого ещё не включена — видно, что оно неактивно */
 .earn-soon{opacity:.55}
 .earn-soon .m{color:var(--txt-3)}
+/* ═══════════════ УДАЧА — задания · рулетка · куда потратить ═══════════════ */
+/* HUD единой валюты — липнет к верху и виден на всех трёх вкладках */
+.luck-hud{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:12px;margin:0 0 12px;border-radius:var(--r-md);background:linear-gradient(135deg,rgba(212,255,79,.12),rgba(0,224,199,.08));border:1px solid rgba(212,255,79,.24);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 26px rgba(0,0,0,.4)}
+.luck-hud .lh-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:var(--grad-lime);box-shadow:0 6px 16px rgba(212,255,79,.3)}
+.luck-hud .lh-ic svg{width:20px;height:20px}
+.luck-hud .lh-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.luck-hud .lh-v{font-size:22px;font-weight:900;letter-spacing:-.02em;line-height:1.1;color:var(--txt)}
+.luck-hud .lh-v small{font-size:12px;font-weight:700;color:var(--txt-3);margin-left:3px}
+.luck-hud .lh-s{font-size:11.5px;color:var(--txt-3);font-weight:600;line-height:1.3}
+.luck-hud .lh-s b{color:var(--lime);font-weight:800}
+.luck-hud .lh-add{flex-shrink:0;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.09);border:1px solid var(--stroke);color:var(--txt);display:grid;place-items:center;cursor:pointer;transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast)}
+.luck-hud .lh-add:active{transform:scale(.9);background:rgba(255,255,255,.15)}
+.luck-hud .lh-add svg{width:19px;height:19px}
+
+/* Сегменты вкладок */
+.luck-seg{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);margin-bottom:14px}
+.luck-seg button{flex:1;min-height:40px;border-radius:999px;background:transparent;border:none;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--txt-3);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:color var(--dur-fast),background var(--dur-fast);position:relative}
+.luck-seg button svg{width:15px;height:15px}
+.luck-seg button.on{background:var(--grad-lime);color:#06210a;box-shadow:0 4px 14px rgba(212,255,79,.28)}
+.luck-seg button:active{transform:scale(.97)}
+.luck-seg button .seg-dot{position:absolute;top:5px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--rose);box-shadow:0 0 6px var(--rose)}
+.luck-seg button.on .seg-dot{display:none}
+.luck-pane{display:none}
+.luck-pane.on{display:block;animation:fadeUp .35s var(--ease-out)}
+
+/* ── Задания ── */
+.task{display:flex;gap:12px;padding:13px;border-radius:var(--r-md);margin-bottom:9px;align-items:center;background:rgba(255,255,255,.045);border:1px solid var(--stroke-soft);cursor:pointer;transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast),border-color var(--dur-fast);min-height:64px}
+.task:active{transform:scale(.985);background:rgba(255,255,255,.07)}
+.task .tk-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex-shrink:0;background:rgba(255,255,255,.06)}
+.task .tk-ic svg{width:20px;height:20px}
+.task .tk-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.task .tk-tx b{font-size:14px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.task .tk-tx span{font-size:11.5px;color:var(--txt-3);line-height:1.35}
+.task .tk-pts{flex-shrink:0;padding:7px 11px;border-radius:999px;font-size:12.5px;font-weight:900;color:var(--lime);background:rgba(212,255,79,.13);border:1px solid rgba(212,255,79,.26);white-space:nowrap}
+.task.done{opacity:.5}
+.task.done .tk-pts{color:var(--txt-3);background:rgba(255,255,255,.06);border-color:var(--stroke-soft)}
+.task.tk-soon{opacity:.55}
+.task.tk-soon .tk-pts{color:var(--txt-3);background:rgba(255,255,255,.06);border-color:var(--stroke-soft)}
+.task .tk-check{width:20px;height:20px;flex-shrink:0;color:var(--lime)}
+
+/* ── Рулетка ── */
+.wheel-wrap{position:relative;display:grid;place-items:center;padding:6px 0 4px}
+.wheel-stage{position:relative;width:min(84vw,320px);aspect-ratio:1}
+.wheel-glow{position:absolute;inset:-14%;border-radius:50%;background:radial-gradient(closest-side,rgba(124,58,255,.35),transparent 70%);pointer-events:none}
+.wheel{position:absolute;inset:0;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.16);box-shadow:0 18px 50px rgba(0,0,0,.6),inset 0 2px 0 rgba(255,255,255,.18);transition:transform 4.6s cubic-bezier(.15,.9,.16,1);will-change:transform}
+.wheel-lbl{position:absolute;left:0;top:0;width:100%;height:50%;transform-origin:50% 100%;display:flex;justify-content:center;align-items:flex-start;padding-top:7.5%;pointer-events:none}
+.wheel-lbl i{font-style:normal;font-size:11.5px;font-weight:900;letter-spacing:-.01em;white-space:nowrap;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,.28)}
+.wheel-hub{position:absolute;left:50%;top:50%;width:26%;height:26%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(38,44,66,.98),rgba(10,14,28,1) 70%);border:2px solid rgba(255,255,255,.2);display:grid;place-items:center;box-shadow:0 8px 22px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.22);z-index:2}
+.wheel-hub svg{width:44%;height:44%;color:var(--lime)}
+.wheel-pin{position:absolute;left:50%;top:-9px;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:22px solid var(--lime);filter:drop-shadow(0 3px 8px rgba(0,0,0,.6));z-index:3}
+.spin-cta{width:100%;margin-top:16px}
+.spin-meta{margin-top:10px;text-align:center;font-size:12px;color:var(--txt-3);line-height:1.45}
+.spin-meta b{color:var(--lime);font-weight:800}
+.spin-meta .sm-free{color:var(--acc-2)}
+/* Призовой фонд */
+.pool-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.pool-item{display:flex;gap:9px;align-items:center;padding:10px;border-radius:var(--r-sm);background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft)}
+.pool-item .pi-d{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pool-item .pi-t{font-size:11.5px;font-weight:700;line-height:1.25;min-width:0}
+.pool-item .pi-t span{display:block;font-size:10px;font-weight:600;color:var(--txt-3);margin-top:1px}
+
+/* ── Куда потратить ── */
+.spend-note{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:var(--r-sm);background:rgba(0,224,199,.08);border:1px solid rgba(0,224,199,.2);font-size:11.5px;color:var(--txt-2);line-height:1.4;margin-bottom:12px}
+.spend-note svg{width:17px;height:17px;flex-shrink:0;color:var(--acc-2)}
+
+/* ── Пакеты баллов ── */
+.pack{display:flex;gap:12px;align-items:center;padding:13px;border-radius:var(--r-md);margin-bottom:9px;background:rgba(255,255,255,.045);border:1px solid var(--stroke-soft);cursor:pointer;transition:transform var(--dur-fast) var(--ease-spring),border-color var(--dur-fast)}
+.pack:active{transform:scale(.985)}
+.pack.best{border-color:rgba(212,255,79,.35);background:rgba(212,255,79,.07)}
+.pack .pk-v{flex:1;min-width:0}
+.pack .pk-v b{display:block;font-size:16px;font-weight:900;letter-spacing:-.02em}
+.pack .pk-v span{display:block;font-size:11.5px;color:var(--txt-3);margin-top:2px}
+.pack .pk-p{flex-shrink:0;padding:9px 14px;border-radius:999px;font-size:13px;font-weight:800;background:rgba(255,255,255,.08);border:1px solid var(--stroke);white-space:nowrap}
+.pack.best .pk-p{background:var(--grad-lime);color:#06210a;border-color:transparent}
+.pack .pk-tag{position:absolute;top:-8px;right:12px;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:999px;background:var(--grad-lime);color:#06210a}
+.pack{position:relative}
+
+/* Ниши, переехавшие в «Рядом» */
+.map-niches{margin-top:20px}
 /* === LEGAL — правовая информация (privacy / terms / авторство) === */
 .lg-list{display:flex;flex-direction:column;gap:9px}
 .lg-opt{display:flex;align-items:center;gap:13px;padding:15px;border-radius:var(--r-md);background:rgba(255,255,255,.045);border:1px solid var(--stroke-soft);transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast),border-color var(--dur-fast);cursor:pointer;text-align:left;font-family:inherit;color:var(--txt);width:100%;min-height:56px}
@@ -2409,65 +2488,85 @@ input,textarea{font-size:16px!important}
         <div id="mapHolder"><div id="map"></div></div>
         <div class="split-list">
           <div class="mood-row" id="mapFilters"></div>
+          <div class="search-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="nicheSearch" placeholder="Ниша, кафе, место…" oninput="renderNiches(this.value)"></div>
           <div id="listHolder"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB: REWARDS -->
-    <section class="screen" id="c-rewards">
-      <div class="hdr"><div class="hdr-title" data-i18n="my_pts">Мои баллы</div><div style="display:flex;gap:8px;align-items:center"><button class="htool" onclick="openWishlist()" title="Избранное" aria-label="Избранное" style="color:#ff5d8f"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C.9 8.5 2.2 4 6.5 4c2.4 0 3.7 1.4 5.5 3.2C13.8 5.4 15.1 4 17.5 4c4.3 0 5.6 4.5 4 8-2.5 4.5-9.5 9-9.5 9z"/></svg></button><div class="avatar" id="hdrAva" onclick="cgo('me')">C</div></div></div>
-      <div class="scroll">
-
-        <!-- 1. СКОЛЬКО У МЕНЯ -->
-        <div class="balance-card fadein"><div class="bc-glow"></div>
-          <div class="bc-lbl" data-i18n="you_have">У тебя сейчас</div>
-          <div class="bc-big"><span class="tabular" id="balBig">1 240</span> <span class="bc-unit">баллов</span></div>
-          <div class="bc-money">это примерно <b>124 ₾</b> на скидки и подарки</div>
-          <div class="bc-progress"><div class="bcp-bar"><div class="bcp-fill" style="width:0%" data-w="77"></div></div><div class="bcp-txt">До уровня «Золото» осталось <b>360 баллов</b> — это даёт ×2 кэшбэк</div></div>
-          <div class="bc-actions"><button class="bc-btn primary" onclick="openShop()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg>Потратить</button><button class="bc-btn" onclick="cgo('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Заработать</button></div>
-        </div>
-
-        <!-- 2. ПОДАРОК ДНЯ -->
-        <div class="loot fadein" id="lootBox"><div class="lootglow"></div>
-          <div class="loot-box" id="lootEmoji" onclick="openLoot()"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9C12 6 10 4 8 4S5 6 6 8c1 1 6 1 6 1zM12 9c0-3 2-5 4-5s3 2 2 4c-1 1-6 1-6 1z"/></svg></div>
-          <h3 id="lootTitle">Подарок дня готов!</h3>
-          <p id="lootSub">Заходи каждый день — внутри баллы или скидка</p>
-          <button class="loot-btn" id="lootBtn" onclick="openLoot()">Открыть подарок</button>
-        </div>
-
-        <!-- 3. КУДА ПОТРАТИТЬ -->
-        <div class="sec-h"><h2>На что потратить</h2><span class="more" onclick="openShop()">все →</span></div>
-        <div class="shop-row" id="shopRow"></div>
-
-        <!-- 4. КАК ЗАРАБОТАТЬ -->
-        <div class="sec-h"><h2>Как получить ещё баллы</h2></div>
-        <div id="earn"></div>
-
-        <!-- ПОД КАТ: остальное -->
-        <button class="show-more" id="showMoreRew" onclick="expandRewards()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Достижения, лига и друзья</button>
-        <div id="moreRewards" class="more-today">
-          <div class="expire fadein"><div class="ei"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="et"><b>240 баллов сгорают через 3 дня</b><span>Потрать или сходи куда-нибудь, чтобы продлить</span></div></div>
-          <div class="sec-h"><h2>Квесты недели</h2><span class="more">3 дня</span></div>
-          <div id="quests"></div>
-          <div class="sec-h"><h2>Достижения</h2><span class="more">3 / 8</span></div>
-          <div class="ach-grid" id="achs"></div>
-          <div class="sec-h"><h2>Лига друзей</h2><span class="more">эта неделя</span></div>
-          <div id="league"></div>
-          <div class="sec-h"><h2>Друзья сейчас</h2></div>
-          <div id="feed"></div>
-          <div class="sec-h"><h2>Приведи друга</h2></div>
-          <div class="ref-card fadein"><div class="rg"></div>
-            <h3>Вы оба получите по 15₾</h3>
-            <p>Отправь другу свой код. Он установит CityHUB, сходит в любое место — и каждому упадёт по 15₾ на баллы.</p>
-            <div class="ref-code"><b id="refCode">RAMAN-2026</b><button onclick="shareLink(document.getElementById('refCode').textContent,T('Код скопирован'))">Копировать</button></div>
-            <button class="big-cta" style="margin-top:14px;background:#fff;color:#0a0d16" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Поделиться в Telegram</button>
+          <div class="map-niches">
+            <div class="sec-h"><h2 style="font-size:16px">Все ниши города</h2></div>
+  <div class="niche-list" id="nicheList"></div>
+  <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Это твой бизнес?</h2></div>
+  <div class="ai-cta" onclick="setMode('biz','add')"><div class="ai-ic" style="background:var(--grad-lime)"><svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div><div class="ai-tx"><b>Разместить бесплатно</b><span>Попади на карту Батуми за 3 поля</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+  <div class="ai-cta" style="margin-top:10px" onclick="openExternal(APP_LINKS.apphub)"><div class="ai-ic" style="background:var(--grad-gold)"><svg viewBox="0 0 24 24" fill="none" stroke="#2a1500" stroke-width="2"><path d="M7 4h10v16l-5-3-5 3z"/></svg></div><div class="ai-tx"><b>Заказать своё приложение</b><span>TMA под ключ от AppHub · от $0</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- TAB: ME -->
+    <!-- TAB: REWARDS -->
+    <!-- TAB: УДАЧА (задания · рулетка · куда потратить) -->
+    <section class="screen" id="c-luck">
+      <div class="hdr"><div class="hdr-title">Удача</div>
+        <button class="htool" onclick="openWishlist()" title="Избранное" aria-label="Избранное" style="color:#ff5d8f"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C.9 8.5 2.2 4 6.5 4c2.4 0 3.7 1.4 5.5 3.2C13.8 5.4 15.1 4 17.5 4c4.3 0 5.6 4.5 4 8-2.5 4.5-9.5 9-9.5 9z"/></svg></button>
+      </div>
+      <div class="scroll">
+
+        <!-- HUD единой валюты -->
+        <div class="luck-hud">
+          <div class="lh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2.2"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9l7.2-.1z"/></svg></div>
+          <div class="lh-tx">
+            <div class="lh-v"><span class="tabular" id="luckBal">0</span><small>баллов</small></div>
+            <div class="lh-s" id="luckSub">—</div>
+          </div>
+          <button class="lh-add" onclick="openBuyPts()" aria-label="Докупить баллы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="luck-seg" id="luckSeg">
+          <button class="on" data-l="tasks" onclick="luckGo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Задания<span class="seg-dot" id="tasksDot"></span></button>
+          <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg>Рулетка</button>
+          <button data-l="spend" onclick="luckGo('spend')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>Потратить</button>
+        </div>
+
+        <!-- 1. ЗАДАНИЯ -->
+        <div class="luck-pane on" id="pane-tasks">
+          <div id="taskList"></div>
+          <div class="sec-h" style="margin-top:22px"><h2 style="font-size:16px">Лига друзей</h2><span class="more">эта неделя</span></div>
+          <div id="league"></div>
+          <div class="sec-h" style="margin-top:20px"><h2 style="font-size:16px">Друзья сейчас</h2></div>
+          <div id="feed"></div>
+        </div>
+
+        <!-- 2. РУЛЕТКА -->
+        <div class="luck-pane" id="pane-wheel">
+          <div class="wheel-wrap">
+            <div class="wheel-stage">
+              <div class="wheel-glow"></div>
+              <div class="wheel-pin"></div>
+              <div class="wheel" id="wheel"></div>
+              <div class="wheel-hub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9l7.2-.1z"/></svg></div>
+            </div>
+          </div>
+          <button class="cta lime spin-cta" id="spinBtn" onclick="spinWheel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg><span id="spinLbl">Крутить</span></button>
+          <div class="spin-meta" id="spinMeta">—</div>
+          <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Что может выпасть</h2></div>
+          <div class="pool-grid" id="poolGrid"></div>
+          <div class="hint" style="margin-top:12px">Призы дают партнёры CityHUB, рекламодатели и проекты AppHub Studio. Состав барабана меняется — заглядывай.</div>
+        </div>
+
+        <!-- 3. КУДА ПОТРАТИТЬ -->
+        <div class="luck-pane" id="pane-spend">
+          <div class="spend-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg><span id="spendNote">Баллы Loop меняются на реальное у партнёров города.</span></div>
+          <div id="spendList"></div>
+          <div class="sec-h" style="margin-top:22px"><h2 style="font-size:16px">Приведи друга</h2></div>
+          <div class="ref-card fadein" style="margin-top:2px"><div class="rg"></div>
+            <h3 style="margin:0 0 6px;font-size:16px;font-weight:800">+200 баллов за каждого</h3>
+            <p style="margin:0 0 12px;font-size:12.5px;color:var(--txt-2);line-height:1.45">Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.</p>
+            <div class="ref-code"><b id="refCode">RAMAN-2026</b><button onclick="shareLink(document.getElementById('refCode').textContent,T('Код скопирован'))">Копировать</button></div>
+            <button class="cta lime" style="margin-top:12px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Пригласить друга</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
     <section class="screen" id="c-me">
       <div class="hdr"><div class="hdr-title">Профиль</div></div>
       <div class="scroll">
@@ -2487,7 +2586,7 @@ input,textarea{font-size:16px!important}
           </div>
           <div class="pf-stats">
             <button class="pf-stat" onclick="cgo('rewards')">
-              <div class="pf-s-v"><b>1 240</b></div>
+              <div class="pf-s-v"><b class="tabular" id="pfPts">1 240</b></div>
               <div class="pf-s-l">Баллов Loop</div>
               <div class="pf-s-trend">↗ +180 за неделю</div>
             </button>
@@ -2598,18 +2697,6 @@ input,textarea{font-size:16px!important}
     </section>
 
     <!-- TAB: NICHES (list + search) -->
-    <section class="screen" id="c-niches">
-      <div class="hdr"><div class="hdr-title">Ниши</div><div class="pts-chip" onclick="openMascot()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg>AI</div></div>
-      <div class="scroll">
-        <div class="search-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="nicheSearch" placeholder="Поиск ниши или места…" oninput="renderNiches(this.value)"></div>
-        <div class="niche-list" id="nicheList"></div>
-        <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Это твой бизнес?</h2></div>
-        <div class="ai-cta" onclick="setMode('biz','add')"><div class="ai-ic" style="background:var(--grad-lime)"><svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div><div class="ai-tx"><b>Разместить бесплатно</b><span>Попади на карту Батуми за 3 поля</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
-        <div class="ai-cta" style="margin-top:10px" onclick="openExternal(APP_LINKS.apphub)"><div class="ai-ic" style="background:var(--grad-gold)"><svg viewBox="0 0 24 24" fill="none" stroke="#2a1500" stroke-width="2"><path d="M7 4h10v16l-5-3-5 3z"/></svg></div><div class="ai-tx"><b>Заказать своё приложение</b><span>TMA под ключ от AppHub · от $0</span></div><svg class="ai-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
-      </div>
-    </section>
-
-    <!-- TAB: AI CONCIERGE -->
     <section class="screen" id="c-ai">
       <div class="hdr"><div><div class="hdr-sub" data-i18n="ai_sub">AI-консьерж CityHUB</div><div class="hdr-title" style="font-size:21px" data-i18n="ai_title">Спроси что угодно</div></div><div class="avatar ai-ava"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg></div></div>
       <div class="chat-wrap">
@@ -2624,7 +2711,7 @@ input,textarea{font-size:16px!important}
       <button class="tab on" data-t="today" onclick="cgo('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg><span data-i18n="nav_today">Сегодня</span></button>
       <button class="tab" data-t="map" onclick="cgo('map')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-i18n="nav_map">Рядом</span></button>
       <button class="tab tab-mascot" data-t="mascot" onclick="try{openMascot()}catch(e){toast(T('Hub недоступен — попробуй ещё раз'))}" aria-label="Hub AI"><span class="tm-orb"><span class="fmascot" id="fmTab" data-mood="idle"><img class="fm-back" src="mascot/Mascot_Back.png" alt=""><img class="fm-img" id="fmTabImg" src="mascot/idle/01.png" alt=""></span><span class="tm-dot"></span></span></button>
-      <button class="tab" data-t="niches" onclick="cgo('niches')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span data-i18n="nav_niches">Ниши</span></button>
+      <button class="tab" data-t="luck" onclick="cgo('luck')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg><span data-i18n="nav_luck">Удача</span></button>
       <button class="tab" data-t="me" onclick="cgo('me')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span data-i18n="nav_me">Профиль</span></button>
     </nav>
   </div>
@@ -3984,7 +4071,7 @@ async function chCheckin(venueToken){
   var r=await chCall('/api/checkin',{method:'POST',body:{venue:venueToken}});
   if(!r)return false;
   if(r.duplicate){toast(T('Уже отмечено сегодня'));return true}
-  PTS=r.balance;try{bumpNumber('balBig',PTS);bumpNumber('ptsTop',PTS)}catch(e){}
+  try{ptsSave(r.balance)}catch(e){PTS=r.balance}try{bumpNumber('ptsTop',PTS)}catch(e){}
   try{celebrate({icon:'🎉',title:'+'+r.awarded+' '+T('баллов'),sub:T('Визит засчитан')})}catch(e){haptic('reward')}
   return true;
 }
@@ -4387,13 +4474,7 @@ function animGame(){
 }
 function expandRewards(){var m=document.getElementById('moreRewards');var b=document.getElementById('showMoreRew');if(m)m.classList.add('open');if(b)b.classList.add('hide');window.__rewExpanded=true;if(navigator.vibrate)navigator.vibrate(8)}
 const REWARDS=[{k:'coffee',n:'Бесплатный кофе',d:'В любой партнёрской кофейне',c:300,col:'#c79a5e'},{k:'bolt',n:'−20% на счёт',d:'Скидка в ресторанах сети',c:500,col:'#ff8a3d'},{k:'spa',n:'СПА-сеанс −50%',d:'Victoria Spa, Hilton Spa',c:1200,col:'#5edc9a'},{k:'ticket',n:'Билет в кино',d:'Любой сеанс на неделе',c:800,col:'#7C3AFF'},{k:'gem',n:'VIP-статус на месяц',d:'×2 баллы и ранний доступ',c:2000,col:'#00E0C7'},{k:'sea',n:'Прогулка на катере',d:'Морская прогулка для двоих',c:3500,col:'#00E0C7'}];
-let PTS=1240;
-const LOOT=[{e:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>',t:'+120 баллов!',s:'Неплохой улов — так держать'},{e:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 0 0 4 2 2 0 0 1 0 4 2 2 0 0 1-2 2H5a2 2 0 0 1-2-2 2 2 0 0 0 0-4 2 2 0 0 1 0-4z"/></svg>',t:'Ваучер −20% в кофейню',s:'Действует 3 дня'},{e:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>',t:'×2 баллы на сегодня',s:'Все визиты сегодня вдвойне'},{e:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h11v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8zM15 9h2a2 2 0 0 1 0 4h-2M7 3v2M11 3v2"/></svg>',t:'Бесплатный кофе!',s:'В любой партнёрской кофейне'},{e:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M6 3h12l3 6-9 12L3 9zM3 9h18"/></svg>',t:'+250 баллов — джекпот!',s:'Тебе сегодня везёт'}];
-let lootDone=false;
-function openLoot(){if(lootDone){toast('Возвращайся завтра за новым подарком');return}
-  const emoji=document.getElementById('lootEmoji');emoji.classList.add('shake');if(navigator.vibrate)navigator.vibrate([10,40,10,40,15]);
-  setTimeout(()=>{const prize=LOOT[Math.floor(Math.random()*LOOT.length)];const box=document.getElementById('lootBox');box.classList.add('opened');emoji.classList.remove('shake');emoji.innerHTML=prize.e;document.getElementById('lootTitle').textContent=prize.t;document.getElementById('lootSub').textContent=prize.s;document.getElementById('lootBtn').textContent='Забрать награду';document.getElementById('lootBtn').onclick=function(){lootDone=true;emoji.innerHTML='<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>';document.getElementById('lootTitle').textContent='Награда твоя!';document.getElementById('lootSub').textContent='Следующий подарок — завтра. Не пропусти!';this.textContent='Открыто · приходи завтра';this.style.opacity='.6';celebrate({icon:prize.e||'🎁',title:prize.t||'Награда твоя!',sub:prize.s||''});if(navigator.vibrate)navigator.vibrate(16)}},550);
-}
+let PTS=1240;try{var __p=JSON.parse(localStorage.getItem('cityhub_game_v1')||'{}');if(typeof __p.pts==='number')PTS=__p.pts}catch(e){}
 
 function renderStatic(){
   try{renderGame()}catch(e){}
@@ -4407,8 +4488,8 @@ function renderStatic(){
     <div class="ach2-r"><div class="ach2-n">${a.n}</div><div class="ach2-p ${done?'on':''}">${done?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M5 12l5 5L20 7"/></svg> '+a.p:a.p}</div></div></div>
     <div class="ach2-bar"><div class="ach2-fill" style="width:${pct}%;background:${done?'var(--grad-lime)':'linear-gradient(90deg,'+nz.c+'88,'+nz.c+')'}"></div></div>
     <div class="ach2-meta"><span>${a.cur} / ${a.goal} ${a.unit}</span><span>${done?'получено':'+'+(a.goal-a.cur)+' до награды'}</span></div></div>`}).join(''));
-  setHTML('shopRow',REWARDS.map(r=>`<div class="shop-card" onclick="openShop()"><div class="sc-ic" style="background:${r.col}22">${ico(r.k,r.col,2)}</div><div class="sc-n">${r.n}</div><div class="sc-d">${r.d}</div><div class="sc-c">${ei('star','var(--lime)',14)} ${r.c.toLocaleString('ru-RU')}</div></div>`).join(''));
-  setHTML('earn',EARN.map(e=>`<div class="biz glass-soft${e.soon?' earn-soon':''}" onclick="earnGo('${e.act}')"><div class="th" style="background:rgba(255,255,255,.06);display:grid;place-items:center">${ico(e.i,'var(--lime)',2)}</div><div class="i"><h3 style="font-size:14.5px">${e.n}</h3><div class="m">${e.p}</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>`).join(''));
+  setHTML('__gone_shopRow',REWARDS.map(r=>`<div class="shop-card" onclick="openShop()"><div class="sc-ic" style="background:${r.col}22">${ico(r.k,r.col,2)}</div><div class="sc-n">${r.n}</div><div class="sc-d">${r.d}</div><div class="sc-c">${ei('star','var(--lime)',14)} ${r.c.toLocaleString('ru-RU')}</div></div>`).join(''));
+  setHTML('__gone_earn',EARN.map(e=>`<div class="biz glass-soft${e.soon?' earn-soon':''}" onclick="earnGo('${e.act}')"><div class="th" style="background:rgba(255,255,255,.06);display:grid;place-items:center">${ico(e.i,'var(--lime)',2)}</div><div class="i"><h3 style="font-size:14.5px">${e.n}</h3><div class="m">${e.p}</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>`).join(''));
   setHTML('myints',INTERESTS.map((t,i)=>`<button class="chip ${i<5?'on':''}" onclick="toggleChip(this)">${ei(t[0],'currentColor',15)} ${t[1]}</button>`).join(''));
   setHTML('plans',PLANS.map((p,pi)=>`<div class="plan ${p.f?'featured':'glass'}" onclick="openPlan(${pi})"><div class="ph"><h3>${p.n}</h3>${p.tag?`<span class="tag">${p.tag}</span>`:''}</div><div class="price">${p.pr}<small>₾${p.per}</small></div><ul>${p.feat.map(f=>`<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>${f}</li>`).join('')}</ul></div>`).join(''));
   setHTML('ahTiers',AHTIERS.map(t=>`<div class="tier-card ${t.hot?'hot':''}"><div class="nm">${t.nm}</div><div class="pr">${t.pr}${t.per?`<small>${t.per}</small>`:''}</div><div class="ds">${t.ds}</div></div>`).join(''));
@@ -4420,7 +4501,9 @@ function renderStatic(){
 }
 
 // ---------- nav ----------
-function cgo(t){document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);sc.classList.add('active');document.getElementById('w-client').classList.toggle('hide-fade',t==='ai');const navT=t==='rewards'?'me':t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;if(t==='map'){renderMapTab();buildMap();[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='niches')renderNiches('');if(t==='ai')initChat();if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame()}if(navigator.vibrate)navigator.vibrate(8)}
+function cgo(t){/* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
+  if(t==='niches')t='map';if(t==='rewards')t='luck';
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');document.getElementById('w-client').classList.toggle('hide-fade',t==='ai');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;if(t==='map'){renderMapTab();renderNiches('');buildMap();[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderSpend();renderLuckHud();luckTickStart();luckGo(gameGet('luckTab','tasks'));}if(t==='ai')initChat();if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync()}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:20,mine:0,bids:[
   {n:'Tangerine',v:340,me:false},
@@ -4516,6 +4599,51 @@ function openCity(){renderStatic();document.getElementById('cityBg').classList.a
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
 var DICT={
+/* — batch: раздел «Удача» (2026-09-11) — */
+'Удача':['Luck','ფორტუნა'],
+'Задания':['Tasks','დავალებები'],
+'Рулетка':['Wheel','რულეტკა'],
+'Потратить':['Spend','დახარჯვა'],
+'Бесплатный спин готов':['Free spin ready','უფასო დატრიალება მზადაა'],
+'Бесплатный спин через':['Free spin in','უფასო დატრიალება'],
+'Бесплатный спин доступен прямо сейчас':['Your free spin is ready right now','უფასო დატრიალება ახლავე ხელმისაწვდომია'],
+'Крутить бесплатно':['Spin for free','დაატრიალე უფასოდ'],
+'Крутить за':['Spin for','დატრიალება'],
+'Спин стоит':['A spin costs','დატრიალება ღირს'],
+'следующий бесплатный через':['next free one in','შემდეგი უფასო'],
+'Что может выпасть':['What you can win','რა შეიძლება მოგერგოს'],
+'Подписаться на канал':['Follow our channel','გამოიწერე ჩვენი არხი'],
+'Афиша города и ранние акции':['City events and early deals','ქალაქის აფიშა და ადრეული აქციები'],
+'Репост в сторис':['Share to your story','გააზიარე სთორიში'],
+'Расскажи о городе друзьям':['Tell your friends about the city','მოუყევი მეგობრებს ქალაქზე'],
+'Пригласить друга':['Invite a friend','მოიწვიე მეგობარი'],
+'Баллы получаете оба':['You both get points','ქულებს ორივე იღებთ'],
+'Как тебя зовут':['What is your name','რა გქვია'],
+'Имя видно в лигах и отзывах':['Your name shows in leagues and reviews','სახელი ჩანს ლიგებსა და შეფასებებში'],
+'Оставить отзыв о месте':['Review a place','შეაფასე ადგილი'],
+'Честный отзыв о том, где был':['An honest review of where you went','გულწრფელი შეფასება იქ, სადაც იყავი'],
+'Чек-ин в новом городе':['Check in in a new city','ჩექინი ახალ ქალაქში'],
+'CityHUB работает везде':['CityHUB works everywhere','CityHUB ყველგან მუშაობს'],
+'Механику включим с каталогом':['Ships with the live catalogue','ჩაირთვება კატალოგთან ერთად'],
+'Уже выполнено':['Already done','უკვე შესრულებულია'],
+'Канал откроется вместе с релизом бота':['The channel opens with the bot release','არხი გაიხსნება ბოტის რელიზთან ერთად'],
+'Не хватает баллов — выполни задание или докупи':['Not enough points — do a task or top up','ქულები არ ჰყოფნის — შეასრულე დავალება ან შეავსე'],
+'Докупить баллы':['Top up points','ქულების შევსება'],
+'Баллы нужны, чтобы крутить рулетку и менять на награды. Их всегда можно получить бесплатно — за визиты и задания.':['Points spin the wheel and buy rewards. You can always earn them free — by visiting places and doing tasks.','ქულებით ატრიალებ რულეტკას და ცვლი ჯილდოებზე. მათი უფასოდ მიღება ყოველთვის შეიძლება — ვიზიტებითა და დავალებებით.'],
+'Бесплатный спин раз в 6 часов, задания и визиты дают баллы без покупки.':['A free spin every 6 hours; tasks and visits give points without paying.','უფასო დატრიალება 6 საათში ერთხელ; დავალებები და ვიზიტები ქულებს უფასოდ აძლევს.'],
+'Оплата включится вместе с релизом — пока баллы только за визиты и задания':['Payments go live with the release — for now points come from visits and tasks','გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ქულები მხოლოდ ვიზიტებითა და დავალებებით'],
+'Ещё спин!':['Another spin!','კიდევ ერთი დატრიალება!'],
+'Барабан снова готов':['The wheel is ready again','ბარაბანი ისევ მზადაა'],
+'Промокод':['Promo code','პრომოკოდი'],
+'Все ниши города':['All categories','ქალაქის ყველა კატეგორია'],
+'Мой город в кармане':['My city in my pocket','ჩემი ქალაქი ჯიბეში'],
+'Сторис доступны в приложении Telegram — ссылка скопирована':['Stories work inside the Telegram app — link copied','სთორი მუშაობს Telegram-ის აპში — ბმული დაკოპირდა'],
+'нужно':['need','საჭიროა'],
+'У тебя':['You have','გაქვს'],
+'Баллы Loop меняются на реальное у партнёров города.':['Loop points turn into real things at city partners.','Loop-ქულები რეალურ რამედ იქცევა ქალაქის პარტნიორებთან.'],
+'Приведи друга':['Invite a friend','მოიწვიე მეგობარი'],
+'+200 баллов за каждого':['+200 points for each','+200 ქულა თითოეულზე'],
+'Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.':['A friend joins via your link — you both get points. No cap.','მეგობარი შემოდის შენი ბმულით — ქულებს ორივე იღებთ. ლიმიტის გარეშე.'],
 /* — batch: legal / авторство / честные заглушки (2026-09-10) — */
 'Доступ к микрофону запрещён':['Microphone access denied','მიკროფონზე წვდომა აკრძალულია'],
 'Не услышал — попробуй ещё':['Did not catch that — try again','ვერ გავიგე — სცადე ხელახლა'],
@@ -4561,7 +4689,7 @@ var DICT={
 "Твоё заведение":["Your place", "შენი ადგილი"],"Сканируй — получай баллы":["Scan — earn points", "დაასკანერე — მიიღე ქულები"],"Наведи камеру на QR → копи баллы Loop за визит, меняй на кофе и скидки":["Point your camera at the QR → earn Loop points per visit, redeem for coffee and discounts", "დაუმიზნე კამერა QR-ს → დააგროვე Loop ქულები ვიზიტზე, გადაცვალე ყავასა და ფასდაკლებებზე"],"твой город в кармане":["your city in your pocket", "შენი ქალაქი ჯიბეში"],"Печать / Сохранить PDF":["Print / Save PDF", "ბეჭდვა / PDF-ის შენახვა"],"Сделай скриншот плаката":["Take a screenshot of the poster", "გადაუღე სქრინშოტი პლაკატს"],"CityHUB — куда сходить прямо сейчас, всё в одном приложении.":["CityHUB — where to go right now, all in one app.", "CityHUB — სად წახვიდე ახლა, ყველაფერი ერთ აპში."],"Мой код":["My code", "ჩემი კოდი"],"Настройки":["Settings", "პარამეტრები"],"Пока пусто — сходи в любое место, и визиты появятся здесь":["Nothing yet — visit any place and your check-ins show up here", "ჯერ ცარიელია — ეწვიე ნებისმიერ ადგილს და ვიზიტები აქ გამოჩნდება"],"Отзывы":["Reviews", "შეფასებები"],"Оцени место":["Rate this place", "შეაფასე ადგილი"],"Твоя оценка":["Your rating", "შენი შეფასება"],"Расскажи, как было…":["Tell us how it was…", "მოგვიყევი როგორ იყო…"],"Оставить отзыв":["Post review", "გამოხმაურების დატოვება"],"Обновить отзыв":["Update review", "გამოხმაურების განახლება"],"Пока нет отзывов — будь первым":["No reviews yet — be the first", "ჯერ არ არის შეფასებები — იყავი პირველი"],"Поставь оценку":["Pick a rating", "აირჩიე შეფასება"],"Спасибо за отзыв!":["Thanks for the review!", "გმადლობთ შეფასებისთვის!"],"Отзыв обновлён":["Review updated", "შეფასება განახლდა"],"Ты":["You", "შენ"],"Гость":["Guest", "სტუმარი"],"Реклама":["Promoted", "რეკლამა"],"Популярно":["Popular", "პოპულარული"],"Хит недели":["Hit of the week", "კვირის ჰიტი"],"выбор горожан":["locals' choice", "ადგილობრივების არჩევანი"],"от тебя":["from you", "შენგან"],"Уже отмечено сегодня":["Already checked in today", "დღეს უკვე მონიშნულია"],"Визит засчитан":["Visit counted", "ვიზიტი ჩაითვალა"],"подряд":["in a row", "ზედიზედ"],"до награды":["to reward", "ჯილდომდე"],"Награда готова":["Reward ready", "ჯილდო მზადაა"],"Твоя серия":["Your streak", "შენი სერია"],"дня":["days", "დღე"],"×2 баллы за каждый визит":["×2 points per visit", "×2 ქულა ყოველ ვიზიტზე"],"Бесплатный кофе в подарок":["A free coffee, on us", "უფასო ყავა საჩუქრად"],"−30% на любой деал недели":["−30% on any weekly deal", "−30% კვირის ნებისმიერ შეთავაზებაზე"],"VIP-статус + ранний доступ к деалам":["VIP status + early deal access", "VIP სტატუსი + ადრეული წვდომა"],"Легендарный бейдж + морская прогулка":["Legendary badge + sea trip", "ლეგენდარული ბეჯი + ზღვის ტური"],"Что ешь?":["What do you eat?", "რას ჭამ?"],"Чтобы не предлагать тебе свинину если ты её не ешь":["So we don't suggest pork if you don't eat it", "რომ არ შემოგთავაზოთ ღორის ხორცი თუ არ ჭამ"],"Всё подряд":["Everything", "ყველაფერი"],"Веган":["Vegan", "ვეგანი"],"Без свинины":["No pork", "ღორის გარეშე"],"Пескетарианец":["Pescatarian", "პესკეტარიანელი"],"Веганец-флекс":["Flexi-vegan", "ფლექსი-ვეგანი"],"Бюджет на средний выход?":["Budget for an average outing?", "ბიუჯეტი საშუალო გასვლაზე?"],"Не предлагать ужины по 200₾ если ты на 30₾":["Don't suggest ₾200 dinners if you're on ₾30", "არ შემოგთავაზო 200₾ ვახშამი თუ 30₾-ზე ხარ"],"кофе, бранч, фастфуд":["coffee, brunch, fast food", "ყავა, ბრანჩი, ფასტფუდი"],"кафе, обеды":["cafes, lunches", "კაფეები, ლანჩი"],"рестораны":["restaurants", "რესტორნები"],"Без потолка":["No ceiling", "ჭერის გარეშე"],"премиум, спа, события":["premium, spa, events", "პრემიუმი, სპა, ივენთები"],"Чаще с кем выходишь?":["Who do you usually go out with?", "ვისთან გადიხარ ხშირად?"],"Атмосфера разная для каждого формата":["The vibe differs for each format", "ატმოსფერო განსხვავდება ფორმატის მიხედვით"],"Соло":["Solo", "მარტო"],"Пара":["Couple", "წყვილი"],"Друзья":["Friends", "მეგობრები"],"Семья":["Family", "ოჯახი"],"из 3":["of 3", "/ 3"],"Теперь буду подбирать с учётом этого.":["I'll match with this in mind now.", "ამის გათვალისწინებით შევარჩევ."],"Посмотреть демо-дашборд":["View demo dashboard", "სადემო დაშბორდის ნახვა"],"базовое размещение активно":["basic listing active", "საბაზისო განთავსება აქტიურია"],"Активность · 7 дней":["Activity · 7 days", "აქტივობა · 7 დღე"],"сравнение с прошлой неделей":["vs last week", "გასულ კვირასთან შედარებით"],"Кто к тебе ходит":["Who visits you", "ვინ მოდის შენთან"],"QR для кассы":["QR for checkout", "QR სალაროსთვის"],"скачать плакат A4":["download A4 poster", "ჩამოტვირთე A4 პლაკატი"],"Название заведения":["Place name", "ადგილის სახელი"],"Телефон владельца":["Owner's phone", "მფლობელის ტელეფონი"],"для верификации":["for verification", "ვერიფიკაციისთვის"],"Я партнёр-агент":["I'm a partner-agent", "მე პარტნიორ-აგენტი ვარ"],"подключаю чужие заведения":["I connect others' places", "ვაერთებ სხვის ადგილებს"],"Код агента":["Agent code", "აგენტის კოდი"],"Подтвердить и подключить":["Confirm and connect", "დადასტურება და დაკავშირება"],"Верх списка ниши":["Top of category list", "კატეგორიის სიის თავი"],"Полная аналитика + лиды":["Full analytics + leads", "სრული ანალიტიკა + ლიდები"],"Показов":["Impressions", "ჩვენებები"],"От партнёров":["From partners", "პარტნიორებიდან"],"ноутбук":["laptop", "ლეპტოპი"],"Победитель недели — место №1":["Weekly winner — spot #1", "კვირის გამარჯვებული — ადგილი №1"],"Базовое размещение + аналитика":["Basic listing + analytics", "საბაზისო განთავსება + ანალიტიკა"],"подключаю":["connect", "ვაერთებ"],"владельца":["owner's", "მფლობელის"],"владельцу":["to the owner", "მფლობელს"],"Активность":["Activity", "აქტივობა"],"Серебро":["Silver", "ვერცხლი"],"кэшбэк":["cashback", "ქეშბექი"],"Баллов Loop":["Loop points", "Loop ქულები"],"Дней подряд":["Days in a row", "დღე ზედიზედ"],"заморозки":["freezes", "გაყინვები"],"Города":["Cities", "ქალაქები"],"Районы":["Districts", "უბნები"],"открыто":["open", "ღიაა"],"Избранное":["Favorites", "რჩეული"],"мест":["places", "ადგილი"],"Битва":["Battle", "ბრძოლა"],"Квесты":["Quests", "ქვესტები"],"Маршруты по городу":["City routes", "ქალაქის მარშრუტები"],"Маршруты":["Routes", "მარშრუტები"],"Магазин на":["Shop for", "მაღაზია"],"Коллекция мест":["Places collection", "ადგილების კოლექცია"],"Посещено":["Visited", "მონახულებული"],"из":["of", "-დან"],"Цель — собрать весь город":["Goal — collect the whole city", "მიზანი — შეაგროვე მთელი ქალაქი"],"ждёт":["waiting", "გელის"],"Заходи каждый":["Come every", "შემოდი ყოველ"],"запоминает":["remembers", "იმახსოვრებს"],"Последние визиты":["Recent visits", "ბოლო ვიზიტები"],"Вкл":["On", "ჩართულია"],"сегодня":["today", "დღეს"],"Telegram-бот":["Telegram bot", "Telegram ბოტი"],"Помощь":["Help", "დახმარება"],"поддержка":["support", "მხარდაჭერა"],"покажи на кассе":["show at checkout", "აჩვენე სალაროსთან"],"сейчас":["now", "ახლა"],"Доброе утро":["Good morning","დილა მშვიდობისა"],"Добрый день":["Good afternoon","შუადღე მშვიდობისა"],"Доброй ночи":["Good night","ღამე მშვიდობისა"],"Завтрак":["Breakfast","საუზმე"],"Закат":["Sunset","მზის ჩასვლა"],"Ночь":["Night","ღამე"],"Поработать":["Work-friendly","სამუშაოდ"],"Полезно":["Healthy","სასარგებლო"],"Для фото":["For photos","ფოტოსთვის"],"С собакой":["With a dog","ძაღლთან"],"Сладкое":["Sweets","ტკბილეული"],"Свидание":["Date night","პაემანი"],"Пн":["Mon","ორშ"],"Вт":["Tue","სამ"],"Ср":["Wed","ოთხ"],"Чт":["Thu","ხუთ"],"Пт":["Fri","პარ"],"Сб":["Sat","შაბ"],"Вс":["Sun","კვი"],"Идём":["Go","წავიდეთ"],"места":["places","ადგილი"],"маршрут":["route","მარშრუტი"],"день":["day","დღე"],"дней":["days","დღე"],"Зови друзей · бонус всем":["Invite friends · bonus for all","მოიწვიე მეგობრები · ბონუსი ყველას"],"деал сгорит через":["deal ends in","შეთავაზება სრულდება"],"Скидка":["Discount","ფასდაკლება"],"в твоём вкусе":["in your taste","შენს გემოვნებაში"],"только сегодня в CityHUB":["only today on CityHUB","მხოლოდ დღეს CityHUB-ზე"],"Сегодня":["Today","დღეს"],"Рядом":["Nearby","ახლოს"],"Ниши":["Browse","კატეგორიები"],"Профиль":["Profile","პროფილი"],"Куда сегодня?":["Where to today?","სად წავიდეთ დღეს?"],"Не ищи — открыл и сразу знаешь, куда пойти":["Don't search — just open and know where to go","ნუ ეძებ — გახსენი და გაიგე სად წახვიდე"],"Спросить AI":["Ask AI","ჰკითხე AI"],"баллов":["points","ქულა"],"баллы":["points","ქულა"],"Тебе сегодня сюда":["Your spot for today","შენი ადგილი დღეს"],"Показать больше идей":["Show more ideas","მეტი იდეა"],"Для тебя сейчас":["For you now","შენთვის ახლა"],"всё на карте →":["all on map →","რუკაზე →"],"Квест по городу":["City quest","ქალაქის ქვესტი"],"Собрать сквад":["Build a squad","შეკრიბე გუნდი"],"Зови друзей — бонус всем":["Invite friends — bonus for all","მოიწვიე მეგობრები — ბონუსი ყველას"],"Ещё под тебя":["More for you","კიდევ შენთვის"],"На карте →":["On map →","რუკაზე →"],"Горячее сегодня":["Hot today","ცხელი დღეს"],"Подарок города ждёт":["A city gift awaits","ქალაქის საჩუქარი გელის"],"Сходи в любое место — скидка 10₾ твоя":["Visit any place — 10₾ off is yours","ეწვიე ნებისმიერ ადგილს — 10₾ ფასდაკლება შენია"],"Забрать":["Claim","აიღე"],"Мои баллы":["My points","ჩემი ქულები"],"У тебя сейчас":["You have now","ახლა გაქვს"],"это примерно":["that's about","ეს დაახლოებით"],"на скидки и подарки":["for discounts and gifts","ფასდაკლებებსა და საჩუქრებზე"],"— это даёт ×2 кэшбэк":["— that gives ×2 cashback","— ეს იძლევა ×2 ქეშბექს"],"До уровня «Золото» осталось":["To Gold level remaining","ოქროს დონემდე დარჩა"],"Потратить":["Spend","დახარჯვა"],"Заработать":["Earn","მოპოვება"],"Подарок дня готов!":["Daily gift ready!","დღის საჩუქარი მზადაა!"],"Заходи каждый день — внутри баллы или скидка":["Come daily — points or a discount inside","შემოდი ყოველდღე — შიგნით ქულები ან ფასდაკლება"],"Открыть подарок":["Open gift","საჩუქრის გახსნა"],"На что потратить":["What to spend on","რაზე დახარჯო"],"все →":["all →","ყველა →"],"Как получить ещё баллы":["How to earn more points","როგორ მოაგროვო მეტი ქულა"],"Достижения, лига и друзья":["Achievements, league & friends","მიღწევები, ლიგა და მეგობრები"],"Спроси что угодно":["Ask anything","იკითხე ნებისმიერი"],"AI-консьерж CityHUB":["CityHUB AI concierge","CityHUB AI კონსიერჟი"],"Напиши или выбери выше…":["Type or pick above…","დაწერე ან აირჩიე ზემოთ…"],"Язык":["Language","ენა"],"Выбери язык интерфейса":["Choose interface language","აირჩიე ინტერფეისის ენა"],"Популярное":["Popular","პოპულარული"],"Уведомления":["Notifications","შეტყობინებები"],"Прочитать всё":["Mark all read","ყველას წაკითხვა"],"Разместить":["List place","განთავსება"],"Я клиент":["I'm a guest","მე სტუმარი ვარ"],"Я владелец":["I'm an owner","მე მფლობელი ვარ"],"Я гость":["I'm a guest","მე სტუმარი ვარ"],"Название":["Name","სახელი"],"Ниша":["Category","კატეგორია"],"Адрес":["Address","მისამართი"],"Удиви меня":["Surprise me","გამაკვირვე"],"Поесть":["Eat","ჭამა"],"Выпить":["Drink","სასმელი"],"Погулять":["Walk","გასეირნება"],"Кофе":["Coffee","ყავა"],"Подробнее о месте":["More about place","ადგილის შესახებ"],"Другое":["Another","სხვა"],"Гид CityHUB":["CityHUB guide","CityHUB გიდი"],"● онлайн":["● online","● ონლაინ"],"Батуми":["Batumi","ბათუმი"],"Сменить город":["Change city","ქალაქის შეცვლა"],"Ты в новом городе?":["In a new city?","ახალ ქალაქში ხარ?"],"Запусти CityHUB в своём городе":["Launch CityHUB in your city","გაუშვი CityHUB შენს ქალაქში"],"Обсудить запуск":["Discuss launch","განვიხილოთ გაშვება"],"Мой QR":["My QR","ჩემი QR"],"Интересы":["Interests","ინტერესები"],"Добавить вкус":["Add a taste","გემოვნების დამატება"],"Твой вкус":["Your taste","შენი გემოვნება"],"Что тебе нравится?":["What do you like?","რა მოგწონს?"],"Что тебе ещё нравится? CityHUB будет учитывать это в подборе.":["What else do you like? CityHUB will factor it in.","კიდევ რა მოგწონს? CityHUB ამას გაითვალისწინებს."],"Роман К.":["Roman K.","რომან კ."],"@roman · Серебро":["@roman · Silver","@roman · ვერცხლი"],"Защити серию":["Protect your streak","დაიცავი სერია"],"Достижения":["Achievements","მიღწევები"],"Квесты недели":["Weekly quests","კვირის ქვესტები"],"Лига друзей":["Friends league","მეგობრების ლიგა"],"Друзья сейчас":["Friends now","მეგობრები ახლა"],"Приведи друга":["Invite a friend","მოიწვიე მეგობარი"],"Вы оба получите по 15₾":["You both get 15₾ each","ორივე მიიღებთ 15₾-ს"],"Отправь другу свой код. Он установит CityHUB, сходит в любое место — и каждому упадёт по 15₾ на баллы.":["Send your code to a friend. They install CityHUB, visit any place — and you each get 15₾ in points.","გაუგზავნე კოდი მეგობარს. ის დააყენებს CityHUB-ს, ეწვევა ადგილს — და თითოეული მიიღებთ 15₾-ს ქულებში."],"Копировать":["Copy","კოპირება"],"Поделиться в Telegram":["Share on Telegram","გაზიარება Telegram-ში"],"Магазин наград":["Rewards shop","ჯილდოების მაღაზია"],"Бесплатный кофе":["Free coffee","უფასო ყავა"],"−20% на счёт":["−20% off the bill","−20% ანგარიშზე"],"СПА-сеанс −50%":["Spa session −50%","სპა სეანსი −50%"],"Билет в кино":["Cinema ticket","კინო ბილეთი"],"VIP-статус на месяц":["VIP status for a month","VIP სტატუსი თვით"],"Прогулка на катере":["Boat trip","ნავით გასეირნება"],"В любой партнёрской кофейне":["At any partner cafe","ნებისმიერ პარტნიორ კაფეში"],"Скидка в ресторанах сети":["Discount at network restaurants","ფასდაკლება ქსელის რესტორნებში"],"Victoria Spa, Hilton Spa":["Victoria Spa, Hilton Spa","Victoria Spa, Hilton Spa"],"Любой сеанс на неделе":["Any session this week","ნებისმიერი სეანსი კვირაში"],"×2 баллы и ранний доступ":["×2 points and early access","×2 ქულა და ადრეული წვდომა"],"Морская прогулка для двоих":["Sea trip for two","საზღვაო გასეირნება ორისთვის"],"Лидер сейчас":["Current leader","ლიდერი ახლა"],"Ставка лидера":["Leader's bid","ლიდერის განაკვეთი"],"твоя позиция":["your position","შენი პოზიცია"],"Твоя ставка":["Your bid","შენი განაკვეთი"],"Сделать ставку":["Place bid","განაკვეთის დადება"],"Минимум — на ₾20 выше текущего лидера":["Minimum — ₾20 above current leader","მინიმუმი — ₾20-ით მეტი ლიდერზე"],"мин. ₾360":["min. ₾360","მინ. ₾360"],"До конца: 2д 14ч":["Ends in: 2d 14h","დასრულებამდე: 2დ 14სთ"],"Деньги спишутся":["Charged only","თანხა ჩამოიჭრება"],"только если победишь":["only if you win","მხოლოდ თუ გაიმარჯვებ"],"по итогам аукциона. Ставку можно поднять в любой момент.":["at auction end. You can raise your bid anytime.","აუქციონის ბოლოს. განაკვეთის გაზრდა ნებისმიერ დროს შეგიძლია."],"Баннер №1 на «Сегодня»":["Banner #1 on Today","ბანერი №1 «დღეს»-ზე"],"Видят все пользователи города при каждом входе":["Seen by every city user on each visit","ხედავს ქალაქის ყველა მომხმარებელი ყოველ შესვლისას"],"Победитель недели получает место №1 — это ~":["Weekly winner gets spot #1 — that's ~","კვირის გამარჯვებული იღებს ადგილს №1 — ეს ~"],"Начать бесплатно":["Start free","დაიწყე უფასოდ"],"Дашборд":["Dashboard","დაშბორდი"],"Тарифы":["Pricing","ფასები"],"Буст":["Boost","ბუსტი"],"Я на месте — показать QR":["I'm here — show QR","ადგილზე ვარ — QR-ის ჩვენება"],"Размещение бесплатно":["Listing is free","განთავსება უფასოა"],"3 поля — и ты на карте города":["3 fields — and you're on the city map","3 ველი — და უკვე ქალაქის რუკაზე ხარ"],"Разместить бесплатно":["List for free","განათავსე უფასოდ"],"Уточни точку на карте":["Refine point on map","დააზუსტე წერტილი რუკაზე"],"· необязательно":["· optional","· არასავალდებულო"],"Остальное (описание, баллы, партнёрство) — потом. Или напиши нам, разместим сами.":["The rest (description, points, partnership) — later. Or message us and we'll list it.","დანარჩენი (აღწერა, ქულები, პარტნიორობა) — მოგვიანებით. ან მოგვწერე და ჩვენ განვათავსებთ."],"Адрес найден":["Address found","მისამართი ნაპოვნია"],"Сейчас":["Now","ახლა"],"Загрузка…":["Loading…","იტვირთება…"],"Открыть":["Open","გახსნა"],"Дальше":["Next","შემდეგი"],"Пропустить":["Skip","გამოტოვება"],"Готово":["Done","მზადაა"],"Назад":["Back","უკან"],"Закрыть":["Close","დახურვა"],"Поделиться":["Share","გაზიარება"],"Построить маршрут":["Build a route","მარშრუტის აგება"],"Начать квест":["Start quest","ქვესტის დაწყება"],"Позвать друзей":["Invite friends","მეგობრების მოწვევა"],"Вас уже 2":["Already 2 of you","უკვე ხართ 2"],"Вдвоём":["Together","ერთად"],"друг был вчера":["a friend was here yesterday","მეგობარი იყო გუშინ"],"Лидов":["Leads","ლიდები"],"Часы":["Hours","საათები"],"Бронь":["Booking","ჯავშანი"],"Меню":["Menu","მენიუ"],"Компания":["Company","კომპანია"],"Своё приложение":["Your own app","საკუთარი აპლიკაცია"],"Заказать своё приложение":["Order your own app","შეუკვეთე საკუთარი აპი"],"Гость — находишь места и копишь баллы. Владелец — продвигаешь свой бизнес.":["Guest — find places and earn points. Owner — promote your business.","სტუმარი — პოულობ ადგილებს და აგროვებ ქულებს. მფლობელი — ავრცელებ შენს ბიზნესს."],"Авто-защита на 30 дней":["Auto-protect for 30 days","ავტო-დაცვა 30 დღით"],"Аукцион за главный баннер":["Auction for the main banner","აუქციონი მთავარ ბანერზე"],"В этой нише ещё нет мест":["No places in this category yet","ამ კატეგორიაში ჯერ არ არის ადგილები"],"Ничего не найдено":["Nothing found","ვერაფერი მოიძებნა"],"Попробуй другой запрос":["Try another query","სცადე სხვა მოთხოვნა"],"Не знаешь, чего хочешь?":["Not sure what you want?","არ იცი რა გინდა?"],"Спроси AI-консьержа — подберёт по настроению":["Ask the AI concierge — it'll match your mood","ჰკითხე AI კონსიერჟს — შეგირჩევს განწყობით"],"Твои баллы":["Your points","შენი ქულები"],"Мои баллы и достижения":["My points & achievements","ჩემი ქულები და მიღწევები"],"Город приводит":["The city brings","ქალაქი მოჰყავს"],"Получай живых гостей":["Get real guests","მიიღე ნამდვილი სტუმრები"],"эта неделя":["this week","ეს კვირა"],"в день":["per day","დღეში"],"Скачать плакат A4":["Download A4 poster","ჩამოტვირთე A4 პლაკატი"],"Показ QR на кассе":["Show QR at checkout","აჩვენე QR სალაროსთან"],"Покажи этот QR на кассе":["Show this QR at checkout","აჩვენე ეს QR სალაროსთან"],"Гурман":["Gourmet","გურმანი"],"бесплатно":["free","უფასო"],"Под тебя":["For you","შენთვის"],"лидер":["leader","ლიდერი"],"источник":["source","წყარო"],"рейтинг":["rating","რეიტინგი"],"средний чек":["average bill","საშუალო ჩეკი"],"затраты":["costs","ხარჯები"],"Визиты · 7 дней":["Visits · 7 days","ვიზიტები · 7 დღე"],"Показов на карте":["Map impressions","ჩვენებები რუკაზე"],"Сканов QR":["QR scans","QR სკანირებები"],"новых гостей":["new guests","ახალი სტუმრები"],"(ты)":["(you)","(შენ)"],"(₾ в неделю)":["(₾ per week)","(₾ კვირაში)"],". Не понравилось — жмёшь ещё раз.":[". Don't like it — tap again.",". არ მოგწონს — დააჭირე თავიდან."],". Это как деньги: накопил — потратил на кофе, ужин или скидку. Работает по всему городу.":[". It's like money: save up — spend on coffee, dinner or a discount. Works across the city.",". ფულივითაა: დააგროვე — დახარჯე ყავაზე, ვახშამზე ან ფასდაკლებაზე. მუშაობს მთელ ქალაქში."],"/год":["/yr","/წელი"],"/кв":["/qtr","/კვ"],"/мес":["/mo","/თვე"],"/нед":["/wk","/კვ"],"1 заморозка":["1 freeze","1 გაყინვა"],"14 дней · 3 города":["14 days · 3 cities","14 დღე · 3 ქალაქი"],"240 баллов сгорают через 3 дня":["240 points expire in 3 days","240 ქულა იწვება 3 დღეში"],"25-34, кофе":["25-34, coffee","25-34, ყავა"],"3 200 показов":["3,200 impressions","3 200 ჩვენება"],"3 дня":["3 days","3 დღე"],"3 заморозки":["3 freezes","3 გაყინვა"],"360 баллов":["360 points","360 ქულა"],"6 дней подряд — так держать":["6 days in a row — keep it up","6 დღე ზედიზედ — განაგრძე"],"7 дней подряд!":["7 days in a row!","7 დღე ზედიზედ!"],"90 переходов":["90 click-throughs","90 გადასვლა"],"AI-консьерж":["AI concierge","AI კონსიერჟი"],"AI-консьерж 24/7":["AI concierge 24/7","AI კონსიერჟი 24/7"],"AppHub Studio · для бизнеса":["AppHub Studio · for business","AppHub Studio · ბიზნესისთვის"],"CityHUB для бизнеса":["CityHUB for business","CityHUB ბიზნესისთვის"],"CityHUB ещё не запущен здесь. Хочешь быть первым, кто его приведёт?":["CityHUB isn't here yet. Want to be the first to bring it?","CityHUB აქ ჯერ არ არის. გინდა პირველი იყო, ვინც მოიყვანს?"],"CityHUB изучает тебя с каждым визитом. Чем больше ходишь — тем точнее подбор.":["CityHUB learns you with each visit. The more you go, the better the picks.","CityHUB სწავლობს შენ ყოველი ვიზიტით. რაც მეტს დადიხარ, მით უკეთესი შერჩევაა."],"CityHUB пока ничего не стоит — а гостей уже приводит":["CityHUB costs nothing yet — but already brings guests","CityHUB ჯერ არაფერი ღირს — მაგრამ უკვე მოჰყავს სტუმრები"],"CityHUB приводит клиентов. Своё TMA удерживает их: меню, бронь, оплата, лояльность Loop, AI-консьерж — без сайта и стора, запуск за 1 день.":["CityHUB brings clients. Your own TMA keeps them: menu, booking, payment, Loop loyalty, AI concierge — no site or store, launch in 1 day.","CityHUB მოჰყავს კლიენტები. შენი TMA აკავებს მათ: მენიუ, ჯავშანი, გადახდა, Loop ლოიალობა, AI კონსიერჟი — საიტისა და მაღაზიის გარეშე, გაშვება 1 დღეში."],"CityHUB соберёт маршрут на день под тебя — где поесть, что посмотреть, куда вечером":["CityHUB builds a day route for you — where to eat, what to see, where to go at night","CityHUB აგებს დღის მარშრუტს შენთვის — სად ჭამო, რა ნახო, სად წახვიდე საღამოს"],"CityHUB узнаёт тебя в любой точке мира":["CityHUB recognizes you anywhere in the world","CityHUB გცნობს მსოფლიოს ნებისმიერ წერტილში"],"CityHUB узнаёт тебя в любом городе мира":["CityHUB recognizes you in any city in the world","CityHUB გცნობს მსოფლიოს ნებისმიერ ქალაქში"],"Loop: партнёры рекомендуют вас, вы — их":["Loop: partners recommend you, you recommend them","Loop: პარტნიორები გირჩევენ, შენ — მათ"],"QR кассы":["QR checkout","QR სალარო"],"TMA под ключ от AppHub · от $0":["Turnkey TMA by AppHub · from $0","TMA AppHub-ისგან · $0-დან"],"«Веди туда»":["\"Take me there\"","«წამიყვანე იქ»"],"×2 баллы":["×2 points","×2 ქულა"],"А подешевле?":["Anything cheaper?","იაფი ხომ არ არის?"],"Базовая аналитика":["Basic analytics","ბაზისური ანალიტიკა"],"Баллы копятся за каждый визит. Чем активнее ходишь — тем больше наград.":["Points add up with every visit. The more active you are, the more rewards.","ქულები გროვდება ყოველი ვიზიტით. რაც აქტიური ხარ, მით მეტი ჯილდოა."],"Бары":["Bars","ბარები"],"Бесплатный режим · день 12":["Free mode · day 12","უფასო რეჟიმი · დღე 12"],"Бизнес":["Business","ბიზნესი"],"Бизнес на карте, профиль, QR, лояльность.":["Business on the map, profile, QR, loyalty.","ბიზნესი რუკაზე, პროფილი, QR, ლოიალობა."],"Бронь, доставка, push":["Booking, delivery, push","ჯავშანი, მიტანა, push"],"Буст откроется со 2-го месяца":["Boost unlocks from month 2","ბუსტი იხსნება მე-2 თვიდან"],"Видишь отдачу в деньгах":["See returns in money","ხედავ უკუგებას ფულში"],"Включить буст":["Enable boost","ბუსტის ჩართვა"],"Вот несколько мест, которые тебе зайдут:":["Here are a few places you'll like:","აი რამდენიმე ადგილი, რომელიც მოგეწონება:"],"Все модули, SLA 4ч":["All modules, SLA 4h","ყველა მოდული, SLA 4სთ"],"Встань на карту CityHUB — и попадай в рекомендации тысячам жителей и туристов. Без бюджета на рекламу, без агентств. Платишь только за результат.":["Get on the CityHUB map — and reach thousands of locals and tourists. No ad budget, no agencies. Pay only for results.","მოხვდი CityHUB-ის რუკაზე — და მიწვდი ათასობით მოსახლესა და ტურისტს. რეკლამის ბიუჯეტის გარეშე. იხდი მხოლოდ შედეგზე."],"Выбери что любишь — чем больше, тем точнее CityHUB подберёт места.":["Pick what you love — the more, the better CityHUB matches places.","აირჩიე რაც გიყვარს — რაც მეტი, მით უკეთ შეარჩევს CityHUB ადგილებს."],"Выручка от CityHUB · этот месяц":["Revenue from CityHUB · this month","შემოსავალი CityHUB-დან · ამ თვეს"],"Где меньше людей":["Where it's less crowded","სად ნაკლები ხალხია"],"Гио":["Gio","გიო"],"Готово! Баллы зачислены":["Done! Points credited","მზადაა! ქულები ჩაირიცხა"],"Дашборд показывает гостей, выручку и окупаемость в реальном времени":["The dashboard shows guests, revenue and ROI in real time","დაშბორდი აჩვენებს სტუმრებს, შემოსავალსა და ROI-ს რეალურ დროში"],"Деал дня":["Deal of the day","დღის შეთავაზება"],"День 0":["Day 0","დღე 0"],"Десерты":["Desserts","დესერტები"],"Дети":["Kids","ბავშვები"],"До 1 000 показов":["Up to 1,000 impressions","1 000 ჩვენებამდე"],"Добавь заведение за 2 минуты — название, ниша, точка на карте":["Add a place in 2 minutes — name, category, point on the map","დაამატე ადგილი 2 წუთში — სახელი, კატეგორია, წერტილი რუკაზე"],"Добрый вечер":["Good evening","საღამო მშვიდობისა"],"Еда":["Food","საჭმელი"],"Единый ключ к партнёрам в любой стране":["One key to partners in any country","ერთიანი გასაღები პარტნიორებთან ნებისმიერ ქვეყანაში"],"ЗОЖ":["Healthy living","ჯანსაღი ცხოვრება"],"За каждый визит получаешь":["For each visit you get","ყოველ ვიზიტზე იღებ"],"Забрать деал":["Claim deal","შეთავაზების აღება"],"Завтраки":["Breakfasts","საუზმეები"],"Загляни на ужин":["Drop by for dinner","შემოიარე ვახშამზე"],"Закрепление на квартал":["Pinned for a quarter","დამაგრება კვარტალით"],"Запас на месяц · −20%":["Month's supply · −20%","თვის მარაგი · −20%"],"Зафиксируй стартовую цену сейчас — для первых партнёров она останется навсегда":["Lock the starting price now — it stays forever for first partners","დააფიქსირე საწყისი ფასი ახლა — პირველი პარტნიორებისთვის ის სამუდამოდ რჩება"],"Заходи 7 дней подряд":["Visit 7 days in a row","შემოდი 7 დღე ზედიზედ"],"Заходи каждый день и забирай награды. Чем длиннее серия — тем круче приз.":["Come daily and collect rewards. The longer the streak, the bigger the prize.","შემოდი ყოველდღე და აიღე ჯილდოები. რაც გრძელი სერია, მით დიდი პრიზი."],"Здоровье":["Health","ჯანმრთელობა"],"Зови друзей в CityHUB. Чем больше вас придёт вместе, тем круче бонус для всей компании.":["Invite friends to CityHUB. The more of you come together, the bigger the bonus for everyone.","მოიწვიე მეგობრები CityHUB-ში. რაც მეტი მოხვალთ ერთად, მით დიდი ბონუსი ყველასთვის."],"Из партнёров":["From partners","პარტნიორებიდან"],"Искусство":["Art","ხელოვნება"],"Йога":["Yoga","იოგა"],"Кабинет бизнеса":["Business dashboard","ბიზნეს კაბინეტი"],"Как это работает":["How it works","როგორ მუშაობს"],"Кассир отсканировал":["Cashier scanned","მოლარემ დაასკანერა"],"Кафе, бар, спорт, место…":["Cafe, bar, sport, place…","კაფე, ბარი, სპორტი, ადგილი…"],"Кино":["Cinema","კინო"],"Клиент сканирует — копит баллы":["Client scans — earns points","კლიენტი ასკანერებს — აგროვებს ქულებს"],"Клиенты находят вас и копят баллы.":["Clients find you and earn points.","კლიენტები გპოულობენ და აგროვებენ ქულებს."],"Концерты":["Concerts","კონცერტები"],"Красота":["Beauty","სილამაზე"],"Куда после?":["Where after?","სად შემდეგ?"],"Лист ожидания":["Waitlist","მოლოდინის სია"],"Лояльность, Loop, CRM":["Loyalty, Loop, CRM","ლოიალობა, Loop, CRM"],"Лука":["Luka","ლუკა"],"Люди находят тебя, копят баллы и приходят с QR на кассу":["People find you, earn points and come with a QR to checkout","ხალხი გპოულობს, აგროვებს ქულებს და მოდის QR-ით სალაროსთან"],"Мари":["Mari","მარი"],"Менеджер":["Manager","მენეჯერი"],"Меню, корзина, игра":["Menu, cart, game","მენიუ, კალათა, თამაში"],"Меняй баллы Loop на реальное — кофе, скидки, впечатления":["Exchange Loop points for real things — coffee, discounts, experiences","გაცვალე Loop ქულები რეალურზე — ყავა, ფასდაკლება, შთაბეჭდილებები"],"Месяц 1 — органика":["Month 1 — organic","თვე 1 — ორგანული"],"Мини-квест":["Mini-quest","მინი-ქვესტი"],"Минимальная ставка — ₾":["Minimum bid — ₾","მინიმალური განაკვეთი — ₾"],"Можешь подсказать вручную — что тебе нравится:":["You can tell us manually — what you like:","შეგიძლია ხელით მითხრა — რა მოგწონს:"],"Море":["Sea","ზღვა"],"Музыка":["Music","მუსიკა"],"На двоих":["For two","ორისთვის"],"На первое посещение любого заведения.":["For the first visit to any place.","ნებისმიერი ადგილის პირველ ვიზიტზე."],"Награда за квест":["Quest reward","ქვესტის ჯილდო"],"Награды":["Rewards","ჯილდოები"],"Нина":["Nina","ნინო"],"Ничего не нужно искать. CityHUB сам подскажет лучшее место, а ты жмёшь":["No need to search. CityHUB suggests the best place, you just tap","ძებნა არ გჭირდება. CityHUB თავად გირჩევს საუკეთესო ადგილს, შენ უბრალოდ აჭერ"],"Ниша «Кофе» · 50 баллов/визит":["Category \"Coffee\" · 50 points/visit","კატეგორია «ყავა» · 50 ქულა/ვიზიტი"],"Ночная жизнь":["Nightlife","ღამის ცხოვრება"],"Обмен клиентами B2B2C":["B2B2C client exchange","კლიენტების გაცვლა B2B2C"],"Обмен клиентами включён":["Client exchange enabled","კლიენტების გაცვლა ჩართულია"],"Обновляется автоматически по твоим действиям":["Updates automatically based on your actions","ნახლდება ავტომატურად შენი ქმედებების მიხედვით"],"Одна кнопка —":["One button —","ერთი ღილაკი —"],"Оплата Telegram Stars":["Telegram Stars payment","გადახდა Telegram Stars-ით"],"Оплата в Telegram Stars · списывается один раз":["Payment in Telegram Stars · charged once","გადახდა Telegram Stars-ით · ერთხელ ჩამოიჭრება"],"Определить автоматически":["Detect automatically","ავტომატური განსაზღვრა"],"Оставь контакт — позовём тебя первым, когда запустимся. Первые получают подарки и эксклюзивные места.":["Leave a contact — we'll call you first at launch. Early ones get gifts and exclusive spots.","დატოვე კონტაქტი — პირველს დაგირეკავთ გაშვებისას. პირველები იღებენ საჩუქრებსა და ექსკლუზიურ ადგილებს."],"Открой 2 новых района":["Explore 2 new districts","აღმოაჩინე 2 ახალი უბანი"],"Открой город за 3 шага":["Open the city in 3 steps","გახსენი ქალაქი 3 ნაბიჯში"],"Открываешь — и сразу видишь,":["Open it — and instantly see","გახსნი — და მაშინვე ხედავ,"],"Открываю apphub.studio":["Opening apphub.studio","ვხსნი apphub.studio"],"Открываю конструктор AppHub":["Opening AppHub builder","ვხსნი AppHub კონსტრუქტორს"],"Открыто прямо сейчас":["Open right now","ღიაა ახლავე"],"Отличный выбор! Вот что советую в Батуми:":["Great choice! Here's what I suggest in Batumi:","შესანიშნავი არჩევანი! აი რას გირჩევ ბათუმში:"],"Первый месяц для всех. Полный доступ, без ограничений.":["First month for everyone. Full access, no limits.","პირველი თვე ყველასთვის. სრული წვდომა, შეზღუდვების გარეშე."],"Первый месяц — бесплатно":["First month — free","პირველი თვე — უფასოდ"],"Перетащи карту, чтобы указать точку":["Drag the map to set the point","გადაათრიე რუკა წერტილის მისათითებლად"],"Плакат A4 в PDF":["A4 poster in PDF","A4 პლაკატი PDF-ში"],"Пляж":["Beach","პლაჟი"],"Подарок при входе":["Welcome gift","სასტუმრო საჩუქარი"],"Позови ещё 2 — откроется бесплатный десерт":["Invite 2 more — unlock a free dessert","მოიწვიე კიდევ 2 — გაიხსნება უფასო დესერტი"],"Позовём тебя первым, как только CityHUB запустится здесь. Спасибо!":["We'll call you first as soon as CityHUB launches here. Thanks!","დაგირეკავთ პირველს, როგორც კი CityHUB აქ გაეშვება. გმადლობთ!"],"Пока пусто":["Empty for now","ჯერ ცარიელია"],"Покажи QR на кассе —":["Show the QR at checkout —","აჩვენე QR სალაროსთან —"],"Покажи QR на кассе — спишется ваучер и начислятся баллы Loop.":["Show the QR at checkout — the voucher is used and Loop points are credited.","აჩვენე QR სალაროსთან — ვაუჩერი ჩამოიჭრება და Loop ქულები ჩაირიცხება."],"Покажи на кассе — копятся баллы":["Show at checkout — points add up","აჩვენე სალაროსთან — ქულები გროვდება"],"Попади на карту Батуми за 3 поля":["Get on the Batumi map in 3 fields","მოხვდი ბათუმის რუკაზე 3 ველში"],"Потрать или сходи куда-нибудь, чтобы продлить":["Spend or go somewhere to extend","დახარჯე ან წადი სადმე გასაგრძელებლად"],"Приведи 1 друга":["Invite 1 friend","მოიწვიე 1 მეგობარი"],"Приоритет по городу":["Priority across the city","პრიორიტეტი ქალაქში"],"Природа":["Nature","ბუნება"],"Причина показа":["Why shown","ჩვენების მიზეზი"],"Продвинуть бизнес":["Promote business","ბიზნესის წახალისება"],"Пройди маршрут, отметься в каждом месте — получи награду. Идеально, когда не знаешь, чем заняться.":["Complete the route, check in at each place — get a reward. Perfect when you don't know what to do.","გაიარე მარშრუტი, მონიშნე ყველა ადგილი — მიიღე ჯილდო. იდეალურია, როცა არ იცი რა აკეთო."],"Промо в «Сегодня»":["Promo on Today","პრომო «დღეს»-ზე"],"Пропустишь день — серия сгорит, и награды придётся копить заново. Заморозка спасёт прогресс, пока тебя нет.":["Miss a day — the streak burns and you start over. A freeze saves your progress while you're away.","გამოტოვებ დღეს — სერია იწვის და თავიდან იწყებ. გაყინვა გადაარჩენს პროგრესს, სანამ არ ხარ."],"Путешествия":["Travel","მოგზაურობა"],"Развлечения":["Entertainment","გართობა"],"Разместись бесплатно":["List for free","განათავსე უფასოდ"],"Разместить заведение":["List a place","ადგილის განთავსება"],"Размещено бесплатно — QR готов":["Listed for free — QR ready","განთავსდა უფასოდ — QR მზადაა"],"Рекомендации по сегментам":["Recommendations by segment","რეკომენდაციები სეგმენტებით"],"Русский":["Russian","რუსული"],"С детьми":["With kids","ბავშვებთან"],"С питомцем":["With a pet","შინაურ ცხოველთან"],"СПА":["Spa","სპა"],"Своё Telegram-приложение под твой бизнес":["Your own Telegram app for your business","შენი Telegram აპი შენი ბიზნესისთვის"],"Серия не сгорит ни разу весь месяц":["The streak won't burn once all month","სერია არ ჩაიწვება მთელი თვის განმავლობაში"],"Сквад":["Squad","გუნდი"],"Со 2-го мес.":["From month 2","მე-2 თვიდან"],"Собери компанию — получите больше":["Gather a group — get more","შეკრიბე ჯგუფი — მიიღეთ მეტი"],"Соберём городской агрегатор и TMA под ключ за пару недель. Лояльность Loop, карта, ниши, AI-консьерж.":["We'll build a city aggregator and turnkey TMA in a couple of weeks. Loop loyalty, map, categories, AI concierge.","ავაგებთ ქალაქის აგრეგატორსა და TMA-ს რამდენიმე კვირაში. Loop ლოიალობა, რუკა, კატეგორიები, AI კონსიერჟი."],"Собрать TMA за 1 день":["Build a TMA in 1 day","ააგე TMA 1 დღეში"],"Спасёт 1 пропущенный день":["Saves 1 missed day","გადაარჩენს 1 გამოტოვებულ დღეს"],"Спорт":["Sport","სპორტი"],"Страк продлён":["Streak extended","სერია გაგრძელდა"],"Стрик продлён":["Streak extended","სერია გაგრძელდა"],"Студии — $15–40k и 3 месяца. AppHub — от $0 и 1 день.":["Studios — $15–40k and 3 months. AppHub — from $0 and 1 day.","სტუდიები — $15–40k და 3 თვე. AppHub — $0-დან და 1 დღე."],"Сходи в 3 кофейни":["Visit 3 cafes","ეწვიე 3 კაფეს"],"Тарифы буста":["Boost pricing","ბუსტის ფასები"],"Твоё заведение":["Your place","შენი ადგილი"],"Туры":["Tours","ტურები"],"Ты в списке!":["You're on the list!","სიაში ხარ!"],"Фастфуд":["Fast food","სწრაფი კვება"],"Фитнес":["Fitness","ფიტნესი"],"Хит":["Top","ჰიტი"],"Что-то поближе":["Something closer","რამე უფრო ახლოს"],"Шопинг":["Shopping","შოპინგი"],"Эксклюзив":["Exclusive","ექსკლუზივი"],"Эксклюзив кнопки ниши":["Category button exclusive","კატეგორიის ღილაკის ექსკლუზივი"],"Эксклюзив кнопки ниши, рекомендации, верх выдачи.":["Category button exclusive, recommendations, top of results.","კატეგორიის ღილაკის ექსკლუზივი, რეკომენდაციები, შედეგების თავში."],"Это твой бизнес?":["Is this your business?","ეს შენი ბიზნესია?"],"буст":["boost","ბუსტი"],"в твоей лиге":["in your league","შენს ლიგაში"],"вечер":["evening","საღამო"],"город угощает":["the city treats you","ქალაქი გასტუმრებს"],"город угощает!":["the city treats you!","ქალაქი გასტუმრებს!"],"двойные баллы":["double points","ორმაგი ქულები"],"и до":["and up to","და მდე"],"и ты на месте":["and you're there","და ადგილზე ხარ"],"или TBC iPay · отключить в любой момент":["or TBC iPay · cancel anytime","ან TBC iPay · გათიშე ნებისმიერ დროს"],"клиентов сам":["clients itself","კლიენტებს თავად"],"копишь баллы":["earn points","აგროვებ ქულებს"],"копятся на скидки":["add up toward discounts","გროვდება ფასდაკლებებზე"],"кофе":["coffee","ყავა"],"куда сходить и чем заняться":["where to go and what to do","სად წახვიდე და რა აკეთო"],"от 49 ₾":["from 49 ₾","49 ₾-დან"],"рядом. Кофе, еда, море, спорт — всё в одном месте.":["nearby. Coffee, food, sea, sport — all in one place.","ახლოს. ყავა, საჭმელი, ზღვა, სპორტი — ყველაფერი ერთ ადგილას."],"твой город в кармане":["your city in your pocket","შენი ქალაქი ჯიბეში"],"точность 84%":["84% accuracy","სიზუსტე 84%"],"ты на месте":["you're there","ადგილზე ხარ"],"ужин":["dinner","ვახშამი"],"фитнес":["fitness","ფიტნესი"],"цены растут каждый месяц":["prices rise every month","ფასები იზრდება ყოველთვე"],"−10 ₾ ваучер":["−10 ₾ voucher","−10 ₾ ვაუჩერი"],"−15% на двоих в любом партнёре":["−15% for two at any partner","−15% ორზე ნებისმიერ პარტნიორთან"],"−40% сегодня":["−40% today","−40% დღეს"],"☕ Кофе у моря":["☕ Coffee by the sea","☕ ყავა ზღვასთან"],"✨ Что нового":["✨ What's new","✨ რა არის ახალი"],"❤️ Романтический ужин":["❤️ Romantic dinner","❤️ რომანტიული ვახშამი"],"🌆 Вечер с друзьями":["🌆 Evening with friends","🌆 საღამო მეგობრებთან"],"🏋 Спорт рядом":["🏋 Sport nearby","🏋 სპორტი ახლოს"],"Спорт рядом":["Sport nearby","სპორტი ახლოს"],"Открыто сейчас":["Open now","ღიაა ახლა"],"Заканчивается":["Ending soon","იწურება"],"Новое":["New","ახალი"],"Живая музыка":["Live music","ცოცხალი მუსიკა"],"Напр. Coffee Lab":["e.g. Coffee Lab","მაგ. Coffee Lab"],"Улица и номер · напр. ул. Руставели, 12":["Street and number · e.g. Rustaveli St, 12","ქუჩა და ნომერი · მაგ. რუსთაველის გამზ. 12"],"Адрес найден — пин на карте обновлён":["Address found — map pin updated","მისამართი ნაპოვნია — პინი განახლდა"],"Минимум — ₾":["Minimum — ₾","მინიმუმი — ₾"],"Слишком мало — нужно минимум ₾":["Too low — need at least ₾","ცოტაა — მინიმუმ ₾"],"С этой ставкой ты станешь лидером 🏆":["This bid makes you the leader 🏆","ამ განაკვეთით ლიდერი გახდები 🏆"],"Лидируешь":["Leading","ლიდერობ"],"Перебили":["Outbid","გადააჭარბეს"],"Деал заканчивается":["Deal ending","შეთავაზება იწურება"],"Новое место в твоём вкусе":["A new place in your taste","ახალი ადგილი შენი გემოვნებით"],"Подарок дня готов":["Daily gift ready","დღის საჩუქარი მზადაა"],"QR сохранён":["QR saved","QR შენახულია"],"Возвращайся завтра за новым подарком":["Come back tomorrow for a new gift","დაბრუნდი ხვალ ახალი საჩუქრისთვის"],"Все вкусы уже добавлены":["All tastes already added","ყველა გემოვნება უკვე დამატებულია"],"Гео недоступно":["Location unavailable","გეო მიუწვდომელია"],"Добро пожаловать! 10₾ уже на счету":["Welcome! 10₾ already credited","კეთილი იყოს მობრძანება! 10₾ ჩაირიცხა"],"Задание в работе":["Task in progress","დავალება მუშავდება"],"Заявка принята":["Request accepted","განაცხადი მიღებულია"],"Код скопирован":["Code copied","კოდი დაკოპირდა"],"Маршрут построен":["Route built","მარშრუტი აგებულია"],"Награда зачислена":["Reward credited","ჯილდო ჩაირიცხა"],"Определяю…":["Detecting…","ვადგენ…"],"Открываю Telegram":["Opening Telegram","ვხსნი Telegram-ს"],"Размещено бесплатно — QR готов":["Listed for free — QR ready","განთავსდა უფასოდ — QR მზადაა"],"дней подряд":["days in a row","დღე ზედიზედ"],"ещё":["just","კიდევ"],"день до награды":["day to reward","დღე ჯილდომდე"],"бесплатный кофе":["free coffee","უფასო ყავა"],"сейчас здесь":["here now","აქ ახლა"],"за неделю":["this week","კვირაში"],"Любишь кофе · розовый рай для фото":["Love coffee · pink photo paradise","გიყვარს ყავა · ვარდისფერი ფოტო-სამოთხე"],"Кофе · лучшая выпечка":["Coffee · best pastries","ყავა · საუკეთესო ცომეული"],"Кофе · завтраки до 13:00":["Coffee · breakfast till 13:00","ყავა · საუზმე 13:00-მდე"],"Еда · хачапури по-аджарски":["Food · Adjarian khachapuri","საჭმელი · აჭარული ხაჭაპური"],"Еда · грузинская классика":["Food · Georgian classics","საჭმელი · ქართული კლასიკა"],"Еда · хинкали ручной лепки":["Food · handmade khinkali","საჭმელი · ხელით გაკეთებული ხინკალი"],"Бары · 86K в Instagram, топ-клуб":["Bars · 86K on Instagram, top club","ბარები · 86K Instagram-ზე, ტოპ კლუბი"],"Бары · крыша + lounge до 5:00":["Bars · rooftop + lounge till 5:00","ბარები · სახურავი + lounge 5:00-მდე"],"Бары · андеграунд + чайная":["Bars · underground + tearoom","ბარები · ანდერგრაუნდი + ჩაიხანა"],"Спорт · 2 ринга, топ-оборудование":["Sport · 2 rings, top gear","სპორტი · 2 რინგი, ტოპ აღჭურვილობა"],"Спорт · комьюнити и сила":["Sport · community and strength","სპორტი · კომიუნიტი და ძალა"],"Спорт · сеть клубов":["Sport · club network","სპორტი · კლუბების ქსელი"],"СПА · 3 сауны, хаммам, джакузи":["Spa · 3 saunas, hammam, jacuzzi","სპა · 3 საუნა, ჰამამი, ჯაკუზი"],"СПА · городской оазис":["Spa · city oasis","სპა · ქალაქის ოაზისი"],"Красота · −20% первый визит":["Beauty · −20% first visit","სილამაზე · −20% პირველ ვიზიტზე"],"Красота · брови и ресницы":["Beauty · brows and lashes","სილამაზე · წარბები და წამწამები"],"Шопинг · ТЦ в центре":["Shopping · mall downtown","შოპინგი · სავაჭრო ცენტრი ცენტრში"],"Шопинг · большой выбор":["Shopping · big selection","შოპინგი · დიდი არჩევანი"],"Море · набережная и закат":["Sea · promenade and sunset","ზღვა · სანაპირო და მზის ჩასვლა"],"Море · гламурный пляж":["Sea · glam beach","ზღვა · გლამურული პლაჟი"],"Море · смотровая 130 м":["Sea · 130m viewpoint","ზღვა · 130მ ხედვის წერტილი"],"Искусство · твоя витрина":["Art · your showcase","ხელოვნება · შენი ვიტრინა"],"Искусство · грузинские мастера":["Art · Georgian masters","ხელოვნება · ქართველი ოსტატები"],"Дети · шоу дельфинов":["Kids · dolphin show","ბავშვები · დელფინების შოუ"],"Здоровье · клиника 24/7":["Health · clinic 24/7","ჯანმრთელობა · კლინიკა 24/7"],"Музыка · концерты и опера":["Music · concerts and opera","მუსიკა · კონცერტები და ოპერა"],"Туры · горы Аджарии":["Tours · Adjara mountains","ტურები · აჭარის მთები"],"Туры · водопад + мост":["Tours · waterfall + bridge","ტურები · ჩანჩქერი + ხიდი"],"Выбери вайб":["Pick a vibe","აირჩიე ვაიბი"],"Вайб":["Vibe","ვაიბი"],"или жми «Удиви меня»":["or hit \"Surprise me\"","ან დააჭირე «გამაკვირვე»"],"Под какое настроение подобрать место":["What mood should we match","რა განწყობაზე შევარჩიოთ ადგილი"],"Город решит за тебя":["The city decides for you","ქალაქი გადაწყვეტს შენთვის"],"Рестораны и кухни":["Restaurants and cuisines","რესტორნები და სამზარეულო"],"Бары и коктейли":["Bars and cocktails","ბარები და კოქტეილები"],"Море и набережная":["Sea and promenade","ზღვა და სანაპირო"],"Кофейни рядом":["Cafes nearby","კაფეები ახლოს"],"Спа":["Spa","სპა"],"Залы и тренировки":["Gyms and workouts","დარბაზები და ვარჯიში"],"Сауны и релакс":["Saunas and relax","საუნები და რელაქსი"],"Салоны и уход":["Salons and care","სალონები და მოვლა"],"Галереи и выставки":["Galleries and shows","გალერეები და გამოფენები"],"Концерты и сцена":["Concerts and stage","კონცერტები და სცენა"],"Магазины и ТЦ":["Shops and malls","მაღაზიები და სავაჭრო ცენტრები"],"Семейные места":["Family spots","საოჯახო ადგილები"],"В этой нише пока пусто — показываю лучшее":["This category is empty — showing the best","ეს კატეგორია ცარიელია — გაჩვენებ საუკეთესოს"],"Открыто":["Open","ღიაა"],"Закрыто":["Closed","დაკეტილია"],"Показать на карте":["Show on map","რუკაზე ჩვენება"],"Серия продолжается":["Streak continues","სერია გრძელდება"],"Награда твоя!":["Reward is yours!","ჯილდო შენია!"]};
 var I18N={
   RU:{
-    nav_today:'Сегодня',nav_map:'Рядом',nav_niches:'Ниши',nav_me:'Профиль',
+    nav_today:'Сегодня',nav_map:'Рядом',nav_niches:'Ниши',nav_luck:'Удача',nav_me:'Профиль',
     greet:'Куда сегодня?',greet_sub:'Не ищи — открыл и сразу знаешь, куда пойти',
     ask_ai:'Спросить AI',pts_label:'баллов',
     today_here:'Тебе сегодня сюда',show_more:'Показать больше идей',
@@ -4582,7 +4710,7 @@ var I18N={
     name:'Название',niche:'Ниша',address:'Адрес'
   },
   EN:{
-    nav_today:'Today',nav_map:'Nearby',nav_niches:'Browse',nav_me:'Profile',
+    nav_today:'Today',nav_map:'Nearby',nav_niches:'Browse',nav_luck:'Luck',nav_me:'Profile',
     greet:'Where to today?',greet_sub:"Don't search — just open and know where to go",
     ask_ai:'Ask AI',pts_label:'points',
     today_here:'Your spot for today',show_more:'Show more ideas',
@@ -4603,7 +4731,7 @@ var I18N={
     name:'Name',niche:'Category',address:'Address'
   },
   GE:{
-    nav_today:'დღეს',nav_map:'ახლოს',nav_niches:'კატეგორიები',nav_me:'პროფილი',
+    nav_today:'დღეს',nav_map:'ახლოს',nav_niches:'კატეგორიები',nav_luck:'ფორტუნა',nav_me:'პროფილი',
     greet:'სად წავიდეთ დღეს?',greet_sub:'ნუ ეძებ — უბრალოდ გახსენი და გაიგე სად წახვიდე',
     ask_ai:'ჰკითხე AI',pts_label:'ქულა',
     today_here:'შენი ადგილი დღეს',show_more:'მეტი იდეა',
@@ -5000,7 +5128,7 @@ function openShop(){
   _openSheet();if(navigator.vibrate)navigator.vibrate(10);
 }
 function redeem(i){var r=REWARDS[i];if(PTS<r.c){toast('Не хватает '+(r.c-PTS).toLocaleString('ru-RU')+' баллов');if(navigator.vibrate)navigator.vibrate([10,30,10]);return}
-  PTS-=r.c;var b=document.getElementById('shopBal');if(b)b.textContent=PTS.toLocaleString('ru-RU');
+  ptsSpend(r.c);
   closeSheet();toast('Награда «'+r.n+'» твоя! Покажи на кассе');if(navigator.vibrate)navigator.vibrate([10,40,10,40,15]);
 }
 function joinWait(){var inp=document.querySelector('.sheet.open .wl-form input')||document.querySelector('.waitlist .wl-form input');var v=(inp&&inp.value||'').trim();if(!v){if(inp)inp.focus();return}var f=inp.closest('.waitlist');if(f)f.innerHTML='<div class="wl-glow"></div><div style="text-align:center;padding:14px 0;position:relative;z-index:2"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="1.8"><path d="M3 21l5-13 8 8zM14 8c1-1 1-3 0-4M17 5c2-2 4-2 5 0"/></svg><h3 style="margin-top:8px">Ты в списке!</h3><p style="margin-top:6px">Позовём тебя первым, как только CityHUB запустится здесь. Спасибо!</p></div>';if(navigator.vibrate)navigator.vibrate([10,40,10]);toast('Заявка принята')}
@@ -5302,7 +5430,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=25;try{renderConsent()}catch(e){}
+var APP_V=26;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6414,6 +6542,265 @@ function openPoster(){
 }
 function closePoster(){var o=document.getElementById('posterOv');if(o)o.remove()}
 /* ═══ Внешние ссылки — единая точка (TG openLink → window.open) ═══ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   УДАЧА — единая валюта, задания, рулетка, магазин.
+   Баллы Loop — ОДНА валюта на всё приложение: чек-ины, задания, спины, обмен.
+   Единственная точка правды — ptsGet(); писать только через ptsAdd/ptsSpend,
+   иначе экраны разъедутся (их четыре: HUD, чип «Сегодня», шторка магазина, профиль).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var SPIN_COST=100;            /* цена спина в баллах ≈ два визита */
+var FREE_SPIN_MS=6*3600*1000; /* бесплатный спин раз в 6 часов */
+
+function ptsGet(){var v=gameGet('pts',null);return v===null?PTS:v}
+function ptsSave(v){PTS=Math.max(0,Math.round(v));gameSet('pts',PTS);ptsSync();return PTS}
+function ptsAdd(n){return ptsSave(ptsGet()+n)}
+function ptsSpend(n){var c=ptsGet();if(c<n)return false;ptsSave(c-n);return true}
+/* Все витрины баланса обновляются из одного места */
+function ptsSync(){
+  var v=ptsGet(),s=v.toLocaleString('ru-RU');
+  ['luckBal','ptsTop','balBig','shopBal','pfPts'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=s});
+  try{renderLuckHud()}catch(e){}
+  try{renderSpend()}catch(e){}
+}
+
+/* ── Бесплатный спин по таймеру ── */
+function freeSpinLeft(){var last=gameGet('freeSpinAt',0);if(!last)return 0;var d=FREE_SPIN_MS-(Date.now()-last);return d>0?d:0}
+function freeSpinReady(){return freeSpinLeft()<=0}
+function hhmmss(ms){var s=Math.max(0,Math.ceil(ms/1000));var h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
+  return (h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(x<10?'0':'')+x}
+
+function renderLuckHud(){
+  var sub=document.getElementById('luckSub');if(!sub)return;
+  if(freeSpinReady())sub.innerHTML='<b>'+T('Бесплатный спин готов')+'</b>';
+  else sub.innerHTML=T('Бесплатный спин через')+' <b class="tabular">'+hhmmss(freeSpinLeft())+'</b>';
+  var b=document.getElementById('spinBtn'),l=document.getElementById('spinLbl'),m=document.getElementById('spinMeta');
+  if(l)l.textContent=freeSpinReady()?T('Крутить бесплатно'):T('Крутить за')+' '+SPIN_COST;
+  if(m){
+    if(freeSpinReady())m.innerHTML='<span class="sm-free">'+T('Бесплатный спин доступен прямо сейчас')+'</span>';
+    else m.innerHTML=T('Спин стоит')+' <b>'+SPIN_COST+'</b> '+T('баллов')+' · '+T('следующий бесплатный через')+' <b class="tabular">'+hhmmss(freeSpinLeft())+'</b>';
+  }
+  if(b)b.classList.toggle('ghost',!freeSpinReady()&&ptsGet()<SPIN_COST);
+}
+var __luckTick=null;
+function luckTickStart(){if(__luckTick)return;__luckTick=setInterval(function(){
+  if(!document.getElementById('c-luck').classList.contains('active')){clearInterval(__luckTick);__luckTick=null;return}
+  renderLuckHud();
+},1000)}
+
+/* ── Переключение вкладок ── */
+function luckGo(t){
+  document.querySelectorAll('#luckSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.l===t)});
+  document.querySelectorAll('.luck-pane').forEach(function(p){p.classList.toggle('on',p.id==='pane-'+t)});
+  gameSet('luckTab',t);
+  if(t==='wheel')buildWheel();
+  if(t==='spend')renderSpend();
+  if(t==='tasks')renderTasks();
+  var s=document.querySelector('#c-luck .scroll');if(s)s.scrollTop=0;
+  try{haptic('select')}catch(e){}
+}
+
+/* ═══ ЗАДАНИЯ ═══
+   act — реальное действие, а не тост. repeat:1 — можно выполнять снова. */
+var TASKS=[
+ {id:'sub',   n:'Подписаться на канал',         d:'Афиша города и ранние акции', p:100, k:'rocket', act:'channel'},
+ {id:'story', n:'Репост в сторис',                d:'Расскажи о городе друзьям',   p:150, k:'camera', act:'story'},
+ {id:'invite',n:'Пригласить друга',               d:'Баллы получаете оба',         p:200, k:'people', act:'invite', repeat:1},
+ {id:'name',  n:'Как тебя зовут',                 d:'Имя видно в лигах и отзывах', p:50,  k:'sparkle',act:'name'},
+ {id:'review',n:'Оставить отзыв о месте',         d:'Честный отзыв о том, где был',p:25,  k:'star',   act:'review', repeat:1},
+ {id:'city',  n:'Чек-ин в новом городе',          d:'CityHUB работает везде',      p:150, k:'globe',  act:'city',   repeat:1},
+ {id:'photo', n:'Фото из заведения',              d:'Механику включим с каталогом',p:40,  k:'camera', act:'photo',  soon:1}
+];
+function taskDone(id){try{return !!(gameGet('tasks',{})||{})[id]}catch(e){return false}}
+function taskMark(id){var o=gameGet('tasks',{})||{};o[id]=1;gameSet('tasks',o)}
+function renderTasks(){
+  var el=document.getElementById('taskList');if(!el)return;
+  el.innerHTML=TASKS.map(function(t){
+    var done=!t.repeat&&taskDone(t.id);
+    var cls='task'+(done?' done':'')+(t.soon?' tk-soon':'');
+    return '<div class="'+cls+'" onclick="taskGo('+jx(t.id)+')">'+
+      '<div class="tk-ic">'+ico(t.k,done?'var(--txt-3)':'var(--lime)',2)+'</div>'+
+      '<div class="tk-tx"><b>'+t.n+'</b><span>'+t.d+'</span></div>'+
+      (done?'<svg class="tk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg>'
+           :'<span class="tk-pts">'+(t.soon?T('скоро'):'+'+t.p)+'</span>')+
+    '</div>';
+  }).join('');
+  var dot=document.getElementById('tasksDot');
+  if(dot)dot.style.display=TASKS.some(function(t){return !t.soon&&!t.repeat&&!taskDone(t.id)})?'':'none';
+}
+function taskAward(t){
+  if(!t.repeat&&taskDone(t.id))return;
+  if(!t.repeat)taskMark(t.id);
+  ptsAdd(t.p);renderTasks();
+  try{celebrate({icon:'🎉',title:'+'+t.p+' '+T('баллов'),sub:t.n})}catch(e){try{haptic('reward')}catch(e2){}}
+}
+function taskGo(id){
+  var t=TASKS.find(function(x){return x.id===id});if(!t)return;
+  try{haptic('tap')}catch(e){}
+  if(t.soon){toast(T('Фото включим вместе с боевым каталогом — задание уже ждёт'));return}
+  if(!t.repeat&&taskDone(t.id)){toast(T('Уже выполнено'));return}
+  if(t.act==='channel'){
+    if(APP_LINKS.channel){openExternal(APP_LINKS.channel);setTimeout(function(){taskAward(t)},1200);return}
+    toast(T('Канал откроется вместе с релизом бота'));return;
+  }
+  if(t.act==='story'){shareStory(function(){taskAward(t)});return}
+  if(t.act==='invite'){shareTelegram();taskAward(t);return}
+  if(t.act==='name'){openEditName();return}
+  if(t.act==='review'){cgo('today');toast(T('Открой любое место — отзыв внизу карточки'));return}
+  if(t.act==='city'){openCity();return}
+}
+
+/* ═══ РЕПОСТ В СТОРИС ═══
+   По контракту shareToStory: ссылка живёт ТОЛЬКО в widget_link.url — в text она
+   не кликабельна, сторис выходят, а переходов ноль. Поддержка проверяется
+   feature detection: parseFloat('7.10')===7.1, сравнение версий молча уводит
+   рабочий клиент в фолбэк. */
+function chShareUrl(){
+  var code='';try{var rc=document.getElementById('refCode');if(rc)code=(rc.textContent||'').trim()}catch(e){}
+  var base='https://masteroch.github.io/cityhub/';
+  if(APP_LINKS.bot&&code)return APP_LINKS.bot+'?startapp=ref_'+encodeURIComponent(code);
+  return base;
+}
+/* Наблюдение 2026-09-11: одного feature detection МАЛО. Настоящий telegram-web-app.js
+   объявляет shareToStory функцией даже там, где метод не поддержан (platform
+   «unknown», version 6.0) — вызов молча уходит в консоль как unsupported, а мы бы
+   начислили баллы за несостоявшийся репост. Версию сравнивает сам SDK:
+   isVersionAtLeast корректно разбирает «7.10» (parseFloat дал бы 7.1 и увёл
+   рабочий клиент в фолбэк). */
+function canShareToStory(){
+  try{
+    var wa=window.Telegram&&Telegram.WebApp;
+    if(!wa||typeof wa.shareToStory!=='function')return false;
+    if(typeof wa.isVersionAtLeast!=='function')return false;
+    return !!wa.isVersionAtLeast('7.8');
+  }catch(e){return false}
+}
+function shareStory(onDone){
+  var media='https://masteroch.github.io/cityhub/og-cover.jpg';
+  var caption=T('Мой город в кармане')+' · CityHUB #cityhub #batumi';
+  if(canShareToStory()){
+    try{
+      Telegram.WebApp.shareToStory(media,{text:caption,widget_link:{url:chShareUrl(),name:'CityHUB'}});
+      if(onDone)onDone();
+      return;
+    }catch(e){}
+  }
+  /* Видимая деградация, а не тихая: человек должен понимать, что сторис не открылись */
+  toast(T('Сторис доступны в приложении Telegram — ссылка скопирована'));
+  shareLink(chShareUrl(),T('Ссылка скопирована'));
+  if(onDone)onDone();
+}
+
+/* ═══ РУЛЕТКА ═══
+   w — вес в барабане (не проценты: нормируются суммой). Призы партнёров и
+   проектов AppHub ничего не стоят нам в баллах, поэтому их вес выше. */
+var WHEEL=[
+ {s:'+50',      n:'+50 баллов',          d:'Loop',                  k:'pts',  v:50,  w:22, c:'#D4FF4F', ink:'#06210a'},
+ {s:'−20%',     n:'−20% в кофейне',      d:'Партнёры CityHUB',      k:'promo',       w:16, c:'#2b1f4d', ink:'#e6dcff'},
+ {s:'+150',     n:'+150 баллов',         d:'Loop',                  k:'pts',  v:150, w:12, c:'#00E0C7', ink:'#04231f'},
+ {s:'Кофе',     n:'Бесплатный кофе',     d:'Партнёрская кофейня',   k:'gift',        w:10, c:'#1d2b46', ink:'#cfe0ff'},
+ {s:'Ещё спин', n:'Ещё один спин',       d:'Крути снова',           k:'spin',        w:14, c:'#FFB547', ink:'#2a1500'},
+ {s:'PRO',      n:'AppHub PRO на месяц', d:'Проекты AppHub Studio', k:'sub',         w:6,  c:'#7C3AFF', ink:'#f4f0ff'},
+ {s:'−30% СПА', n:'−30% в Victoria Spa', d:'Партнёры CityHUB',      k:'promo',       w:8,  c:'#ff5d8f', ink:'#2d0512'},
+ {s:'+500',     n:'+500 баллов',         d:'Джекпот Loop',          k:'pts',  v:500, w:3,  c:'#f2ffb0', ink:'#06210a'},
+ {s:'+20',      n:'+20 баллов',          d:'Утешительный',          k:'pts',  v:20,  w:9,  c:'#243040', ink:'#c9d6e8'}
+];
+function buildWheel(){
+  var el=document.getElementById('wheel');if(!el||el.dataset.built)return;
+  var n=WHEEL.length,step=360/n,stops=[];
+  WHEEL.forEach(function(p,i){stops.push(p.c+' '+(i*step).toFixed(3)+'deg '+((i+1)*step).toFixed(3)+'deg')});
+  el.style.background='conic-gradient(from 0deg,'+stops.join(',')+')';
+  el.innerHTML=WHEEL.map(function(p,i){
+    var a=i*step+step/2;
+    return '<span class="wheel-lbl" style="transform:rotate('+a+'deg)"><i style="transform:rotate('+(-a)+'deg);color:'+(p.ink||'#06210a')+'">'+p.s+'</i></span>';
+  }).join('');
+  el.dataset.built='1';
+  var pg=document.getElementById('poolGrid');
+  if(pg)pg.innerHTML=WHEEL.map(function(p){
+    return '<div class="pool-item"><span class="pi-d" style="background:'+p.c+'"></span><div class="pi-t">'+p.n+'<span>'+p.d+'</span></div></div>';
+  }).join('');
+  renderLuckHud();
+}
+function wheelPick(){
+  var total=WHEEL.reduce(function(s,p){return s+p.w},0),r=Math.random()*total,acc=0;
+  for(var i=0;i<WHEEL.length;i++){acc+=WHEEL[i].w;if(r<acc)return i}
+  return WHEEL.length-1;
+}
+var __spinning=false;
+function spinWheel(){
+  if(__spinning)return;
+  var free=freeSpinReady();
+  if(!free&&!ptsSpend(SPIN_COST)){
+    toast(T('Не хватает баллов — выполни задание или докупи'));
+    try{haptic('error')}catch(e){}
+    openBuyPts();return;
+  }
+  if(free)gameSet('freeSpinAt',Date.now());
+  __spinning=true;
+  var el=document.getElementById('wheel'),n=WHEEL.length,step=360/n,idx=wheelPick();
+  var turns=5+Math.floor(Math.random()*2);
+  var jitter=(Math.random()-.5)*step*.55;           /* не в аптеку, а живо */
+  var target=360*turns-(idx*step+step/2)+jitter;
+  var cur=parseFloat(el.dataset.rot||'0');
+  el.dataset.rot=String(cur+target);
+  el.style.transform='rotate('+(cur+target)+'deg)';
+  try{haptic('tap')}catch(e){}
+  renderLuckHud();
+  setTimeout(function(){__spinning=false;wheelPrize(idx)},4700);
+}
+function wheelPrize(i){
+  var p=WHEEL[i];
+  if(p.k==='pts'){ptsAdd(p.v);try{celebrate({icon:'🎉',title:'+'+p.v+' '+T('баллов'),sub:T('Рулетка')+' · '+p.d})}catch(e){toast('+'+p.v+' '+T('баллов'))}}
+  else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({icon:'🎡',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
+  else{
+    var code='CH-'+Math.random().toString(36).slice(2,7).toUpperCase();
+    try{celebrate({icon:'🎁',title:p.n,sub:T('Промокод')+' '+code})}catch(e){toast(p.n+' · '+code)}
+    toast(p.n+' · '+T('Промокод')+' '+code);
+  }
+  renderLuckHud();
+}
+
+/* ═══ КУДА ПОТРАТИТЬ ═══ */
+function renderSpend(){
+  var el=document.getElementById('spendList');if(!el)return;
+  var bal=ptsGet();
+  el.innerHTML=REWARDS.map(function(r,i){
+    var can=bal>=r.c;
+    return '<div class="shop-item"><div class="si-ic" style="background:'+r.col+'22">'+ico(r.k,r.col,2)+'</div>'+
+      '<div class="si-t"><b>'+r.n+'</b><span>'+r.d+'</span></div>'+
+      '<button class="si-btn'+(can?'':' off')+'" onclick="redeem('+i+')">'+(can?r.c:T('нужно')+' '+(r.c-bal))+'</button></div>';
+  }).join('');
+  var nt=document.getElementById('spendNote');
+  if(nt)nt.textContent=T('У тебя')+' '+bal.toLocaleString('ru-RU')+' '+T('баллов')+'. '+T('Баллы Loop меняются на реальное у партнёров города.');
+}
+
+/* ═══ ДОКУПКА БАЛЛОВ ═══
+   Пакеты и цены свёрстаны; оплата включается одной функцией buyPack, когда
+   будут подключены Telegram Stars (P1 #5). Врать про оплату нельзя. */
+var PACKS=[
+ {p:500,  s:'50 ⭐',  d:'на 5 спинов'},
+ {p:1200, s:'99 ⭐',  d:'на 12 спинов', best:1, tag:'выгодно'},
+ {p:3000, s:'199 ⭐', d:'на 30 спинов'}
+];
+function openBuyPts(){
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Докупить баллы')+'</h2>'+
+    '<p class="sub" style="margin-bottom:14px">'+T('Баллы нужны, чтобы крутить рулетку и менять на награды. Их всегда можно получить бесплатно — за визиты и задания.')+'</p>'+
+    PACKS.map(function(k,i){return '<div class="pack'+(k.best?' best':'')+'" onclick="buyPack('+i+')">'+
+      (k.tag?'<span class="pk-tag">'+k.tag+'</span>':'')+
+      '<div class="pk-v"><b>'+k.p.toLocaleString('ru-RU')+' '+T('баллов')+'</b><span>'+k.d+'</span></div>'+
+      '<span class="pk-p">'+k.s+'</span></div>'}).join('')+
+    '<div class="hint" style="margin-top:12px">'+T('Бесплатный спин раз в 6 часов, задания и визиты дают баллы без покупки.')+'</div>';
+  _openSheet();try{haptic('tap')}catch(e){}
+}
+function buyPack(i){
+  /* TODO(P1 #5): Telegram Stars — tg.openInvoice + выдача баллов на бэке.
+     До подключения врать про оплату нельзя: честный отказ вместо ложного успеха. */
+  closeSheet();
+  toast(T('Оплата включится вместе с релизом — пока баллы только за визиты и задания'));
+  try{haptic('error')}catch(e){}
+}
+
 /* ==========================================================================
    LEGAL — правовая информация (P0 #3).
    Одна точка правки реквизитов: LEGAL_META. Перед приёмом платежей заменить
@@ -6857,7 +7244,7 @@ function openLegalDoc(k){
   haptic('tap');
 }
 
-var APP_LINKS={apphub:'https://apphub.studio',bot:''/* @CityHubBot появится на релизе (P0) */};
+var APP_LINKS={apphub:'https://apphub.studio',channel:''/* @cityhub_batumi появится на релизе */,bot:''/* @CityHubBot появится на релизе (P0) */};
 function openExternal(url){
   try{haptic('tap')}catch(e){}
   try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink){Telegram.WebApp.openLink(url);return}}catch(e){}
