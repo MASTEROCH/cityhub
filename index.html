@@ -5801,7 +5801,7 @@ function openLang(){
     '<div class="lang-list">'+LANGS.map(function(l){return '<button class="lang-opt'+(l.k===curLang?' on':'')+'" onclick="setLang(\''+l.k+'\')"><span class="lang-flag">'+l.f+'</span><span class="lang-name"><b>'+l.n+'</b><span>'+l.k+'</span></span>'+(l.k===curLang?'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>':'')+'</button>'}).join('')+'</div>';
   _openSheet();if(navigator.vibrate)navigator.vibrate(8);
 }
-function setLang(k){
+function setLang(k,silent){
   // сначала вернуть всё к русскому (восстановить оригиналы), затем перевести на новый язык
   curLang='RU';translateNode(document.body);
   curLang=k;
@@ -5811,9 +5811,10 @@ function setLang(k){
   var pf=document.getElementById('pfLang');if(pf)pf.textContent=k;
   try{renderToday()}catch(e){}
   applyLang();startLangObserver();
-  closeSheet();
   try{renderConsent()}catch(e){}
-  var l=LANGS.find(function(x){return x.k===k});toast(l.f+' '+l.n);haptic('select')
+  if(silent)return;                        /* старт приложения — не повод праздновать */
+  closeSheet();
+  var l=LANGS.find(function(x){return x.k===k});if(l){toast(l.f+' '+l.n)}haptic('select')
 }
 function openSearch(){
   var C=CITIES[CITY];
@@ -6395,13 +6396,8 @@ safe(renderStatic);safe(initOnb);
 safe(renderToday);safe(renderMapTab);
 /* восстановить язык прошлой сессии до первого перевода */
 safe(function(){var k='';try{k=localStorage.getItem('cityhub_lang_v1')||''}catch(e){}
-  if(k&&k!=='RU'&&(k==='EN'||k==='GE')){curLang=k;
-    try{document.documentElement.lang=k.toLowerCase()}catch(e){}
-    var c=document.getElementById('langCur');if(c)c.textContent=k;
-    var pf=document.getElementById('pfLang');if(pf)pf.textContent=k;
-    try{startLangObserver()}catch(e){}
-    try{renderToday()}catch(e){}
-  }});
+  if(k==='EN'||k==='GE')setLang(k,true);   /* тихо: без тоста, вибро и закрытия шторки */
+});
 safe(applyLang);safe(renderConsent);safe(edgeFadeAll);safe(hubDotSync);safe(ptsSync);safe(dailyCheck);setTimeout(function(){try{edgeFadeAll()}catch(e){}},700);
 safe(renderIdentity);
 safe(function(){if(notifIsRead())notifSetRead()});
@@ -6465,7 +6461,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=53;try{renderConsent()}catch(e){}
+var APP_V=54;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
