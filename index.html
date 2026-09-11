@@ -93,6 +93,59 @@
     TG.onEvent('viewportChanged',syncVP);
   }catch(e){}
 })();
+/* ═══════════ КРАЕВОЙ СВАЙП: НЕ ЗАКРЫВАТЬ ПРИЛОЖЕНИЕ ═══════════ (канон ROCH)
+   В iOS WebKit — а значит во встроенном браузере Telegram и в Mini App —
+   свайп от левого края экрана это системный жест «назад». Для веб-страницы
+   он означает «закрыть»: человек листает карточку, чуть промахивается краем,
+   и приложение исчезает вместе с несохранённым вводом. Официального API,
+   чтобы его отключить, нет — единственный работающий способ:
+   поймать touchstart в краевой зоне и отменить первый же touchmove.
+
+   Две оговорки, без которых лечение хуже болезни:
+   · Горизонтальные ленты у самого края (фильтры, бегущая строка, барабан)
+     обязаны продолжать прокручиваться — поэтому касание внутри такой ленты
+     не перехватываем.
+   · Отменяем только горизонтальное движение: вертикальная прокрутка страницы
+     от края — нормальный жест, и её ломать нельзя. */
+(function edgeGuard(){
+  var EDGE=26;                 /* системная зона iOS — около 20px; берём с запасом */
+  var st=null;
+  function scrollableX(el){
+    for(var n=el;n&&n!==document.body;n=n.parentElement){
+      try{
+        if(n.scrollWidth-n.clientWidth>4){
+          var ov=getComputedStyle(n).overflowX;
+          if(ov==='auto'||ov==='scroll')return true;
+        }
+      }catch(e){}
+    }
+    return false;
+  }
+  document.addEventListener('touchstart',function(e){
+    st=null;
+    if(e.touches.length!==1)return;
+    var t=e.touches[0], w=window.innerWidth;
+    if(t.clientX>EDGE && t.clientX<w-EDGE)return;          /* не край — не наше дело */
+    if(scrollableX(e.target))return;                       /* лента у края должна листаться */
+    st={x:t.clientX,y:t.clientY,armed:true};
+  },{passive:false});
+  document.addEventListener('touchmove',function(e){
+    if(!st||!st.armed||e.touches.length!==1)return;
+    var t=e.touches[0], dx=t.clientX-st.x, dy=t.clientY-st.y;
+    if(Math.abs(dx)<4&&Math.abs(dy)<4)return;
+    if(Math.abs(dy)>Math.abs(dx)){st.armed=false;return}    /* это вертикальная прокрутка */
+    if(e.cancelable)e.preventDefault();                     /* горизонталь от края — гасим */
+  },{passive:false});
+  document.addEventListener('touchend',function(){st=null},{passive:true});
+  document.addEventListener('touchcancel',function(){st=null},{passive:true});
+})();
+/* Вертикальный жест «смахнуть вниз, чтобы закрыть» в Mini App отключается
+   официально — если клиент это умеет. */
+try{
+  var WA=window.Telegram&&Telegram.WebApp;
+  if(WA&&typeof WA.disableVerticalSwipes==='function')WA.disableVerticalSwipes();
+  if(WA&&typeof WA.expand==='function')WA.expand();
+}catch(e){}
 /* visualViewport listener — для Android virtual keyboard (модальные элементы не перекрываются) */
 (function vvSync(){
   if(!window.visualViewport)return;
@@ -169,7 +222,7 @@ body.is-day #app{background:radial-gradient(140% 90% at 50% -10%,#100e24,#060712
   --font:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',system-ui,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
+html,body{overscroll-behavior:none;overscroll-behavior-x:none;height:100%;overflow:hidden}
 body{font-family:var(--font);color:var(--txt);background:var(--bg-0);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;line-height:1.5}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;touch-action:manipulation}
 button,a,[onclick],input,textarea{touch-action:manipulation}
@@ -2928,6 +2981,24 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
 /* Ритм колонки «Профиля» — одно правило вместо трёх инлайновых чисел */
 #c-me .scroll > .qr-card,#c-me .scroll > .ref-card,#c-me .scroll > .taste-card,
 #c-me .scroll > .coll-meter,#c-me .scroll > .hub-mood{margin-top:18px}
+.qr-steps{display:flex;flex-direction:column;gap:2px}
+.qs-row{display:flex;gap:13px;padding:12px 14px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);align-items:flex-start}
+.qs-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900;
+  background:rgba(255,181,71,.16);color:var(--gold);font-variant-numeric:tabular-nums}
+.qs-t b{display:block;font-size:14px;font-weight:800;letter-spacing:-.01em;line-height:1.25}
+.qs-t span{display:block;font-size:12px;color:var(--txt-2);line-height:1.4;margin-top:2px}
+.qr-tip{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:14px;border-radius:var(--r-md);
+  background:linear-gradient(150deg,rgba(255,181,71,.13),rgba(255,181,71,.04));border:1px solid rgba(255,181,71,.26)}
+.qr-tip b{display:block;font-size:14px;font-weight:800;letter-spacing:-.01em}
+.qr-tip span{display:block;font-size:12px;color:var(--txt-2);line-height:1.4;margin-top:2px}
+.qt-ic{flex-shrink:0;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;
+  background:rgba(255,181,71,.16);color:var(--gold)}
+.qt-ic svg{width:19px;height:19px}
+.field label .req{font-style:normal;color:var(--rose);font-weight:900;margin-left:2px}
+.field label .opt{color:var(--txt-3);font-weight:500}
+.field.invalid input,.field.invalid select,.field.invalid .addr-input{border-color:var(--rose)!important;
+  box-shadow:0 0 0 3px rgba(255,93,143,.14)}
+.field.invalid label{color:var(--rose)}
 </style>
 </head>
 <body class="client">
@@ -3233,7 +3304,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
 
     <!-- BIZ HOME / DASHBOARD -->
     <section class="screen active" id="b-intro">
-      <div class="hdr"><div class="hdr-title" style="font-size:22px">CityHUB для бизнеса</div>
+      <div class="hdr"><div class="hdr-title">CityHUB для бизнеса</div>
         <button class="mode-pill toclient" onclick="setMode('client')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Я клиент</button>
       </div>
       <div class="scroll">
@@ -3341,7 +3412,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
 
     <!-- BIZ ADD / PLACE -->
     <section class="screen" id="b-add">
-      <div class="hdr"><div class="hdr-title" style="font-size:22px">Разместить</div>
+      <div class="hdr"><div class="hdr-title">Разместить</div>
         <button class="mode-pill toclient" onclick="setMode('client')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Я клиент</button>
       </div>
       <div class="scroll">
@@ -3349,14 +3420,14 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
           <div style="width:40px;height:40px;border-radius:12px;background:rgba(212,255,79,.15);display:grid;place-items:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>
           <div><div style="font-weight:800;font-size:14px;color:var(--lime)">Размещение бесплатно</div><div style="font-size:12px;color:var(--txt-2)">3 поля — и ты на карте города</div></div>
         </div>
-        <div class="field"><label>Название заведения</label><input id="bizName" placeholder="Напр. Coffee Lab" aria-label="Название заведения"></div>
-        <div class="field"><label>Ниша</label><select id="nichesel"></select></div>
-        <div class="field"><label>Адрес</label><div class="addr-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><input id="bizAddr" placeholder="Улица и номер · напр. ул. Руставели, 12" oninput="addrHint(this)"></div><div class="addr-sug" id="addrSug"></div></div>
+        <div class="field"><label>Название заведения<i class="req">*</i></label><input id="bizName" placeholder="Напр. Coffee Lab" aria-label="Название заведения"></div>
+        <div class="field"><label>Ниша<i class="req">*</i></label><select id="nichesel"></select></div>
+        <div class="field"><label>Адрес <span class="opt">· необязательно</span></label><div class="addr-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><input id="bizAddr" placeholder="Улица и номер · напр. ул. Руставели, 12" oninput="addrHint(this)"></div><div class="addr-sug" id="addrSug"></div></div>
         <div class="field"><label>Уточни точку на карте <span style="color:var(--txt-3);font-weight:500">· необязательно</span></label><div id="bizmap"></div></div>
-        <div class="field"><label>Телефон владельца <span style="color:var(--lime);font-weight:700;font-size:11px">· для верификации</span></label><input id="bizPhone" type="tel" inputmode="tel" placeholder="+995 5XX XXX XXX" aria-label="Телефон владельца"></div>
+        <div class="field"><label>Телефон владельца<i class="req">*</i> <span class="opt">· для верификации</span></label><input id="bizPhone" type="tel" inputmode="tel" placeholder="+995 5XX XXX XXX" aria-label="Телефон владельца"></div>
         <details class="agent-toggle"><summary>Я партнёр-агент <span class="agt-hint">— подключаю чужие заведения</span></summary>
           <div class="field" style="margin-top:10px"><label>Код агента</label><input id="agentCode" placeholder="Например, ROCH" style="text-transform:uppercase;letter-spacing:.04em" aria-label="Код агента"></div>
-          <div class="hint" style="margin-top:0">Агенты подключают бизнесы за баллы. Запросить код — пиши <b>@cityhub_team</b>.</div>
+          <div class="hint" style="margin-top:0">Агенты подключают заведения за баллы. Нет кода — <a onclick="openMascot();setTimeout(function(){mascotIntent('Код агента','Хочу стать партнёром-агентом CityHUB: как получить код?')},300)">спроси Hub</a>.</div>
         </details>
         <button class="cta lime" onclick="placeBiz()" style="margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Подтвердить и подключить</button>
         <div class="hint">SMS-код придёт владельцу. Это защищает от подключения чужих заведений.</div>
@@ -3365,22 +3436,41 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
 
     <!-- BIZ QR -->
     <section class="screen" id="b-qr">
-      <div class="hdr"><div class="hdr-title" style="font-size:22px">QR кассы</div>
+      <div class="hdr"><div class="hdr-title">QR кассы</div>
         <button class="mode-pill toclient" onclick="setMode('client')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Я клиент</button>
       </div>
       <div class="scroll">
+        <!-- Экран показывал код и молчал о том, что с ним делать. Порядок теперь
+             такой же, как в жизни: повесить → гость сканирует → баллы → возврат. -->
         <div class="qr-card glass"><div style="font-size:13px;color:var(--txt-2);font-weight:600;margin-bottom:4px">Клиент сканирует — копит баллы</div>
           <div class="qr-box" id="bizqr"><div class="qr-scan"></div></div>
-          <div style="font-size:18px;font-weight:800">Coffee Lab</div><div style="font-size:12.5px;color:var(--txt-2);margin-top:4px">Ниша «Кофе» · 50 баллов/визит</div>
-          <button class="cta ghost" style="margin-top:16px" onclick="openPoster()">Скачать плакат A4</button>
+          <div style="font-size:18px;font-weight:800" id="bizQrName">Coffee Lab</div>
+          <div style="font-size:13px;color:var(--txt-2);margin-top:4px" id="bizQrSub">Ниша «Кофе» · 50 баллов за визит</div>
+          <button class="cta lime" style="margin-top:16px" onclick="openPoster()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Скачать плакат A4</button>
         </div>
-        <div class="card glass pad-sm" style="margin-top:14px;display:flex;gap:11px;align-items:center"><div style="font-size:24px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2M18 4v5h-5M6 20v-5h5"/></svg></div><div><div style="font-weight:700;font-size:14px">Обмен клиентами включён</div><div style="font-size:12px;color:var(--txt-2)">Loop: партнёры рекомендуют вас, вы — их</div></div></div>
+
+        <div class="sec-h" style="margin-top:20px;margin-bottom:10px"><h2 style="font-size:15px">Как это работает</h2></div>
+        <div class="qr-steps">
+          <div class="qs-row"><span class="qs-n">1</span><div class="qs-t"><b>Повесь плакат у кассы</b><span>Там, где гость стоит и ждёт — на стойке, у терминала, на столике</span></div></div>
+          <div class="qs-row"><span class="qs-n">2</span><div class="qs-t"><b>Гость наводит камеру</b><span>Откроется твоя карточка в CityHUB — без установки, прямо в Telegram</span></div></div>
+          <div class="qs-row"><span class="qs-n">3</span><div class="qs-t"><b>Визит засчитан</b><span>Баллы падают гостю сразу, тебе — скан в статистике кабинета</span></div></div>
+          <div class="qs-row"><span class="qs-n">4</span><div class="qs-t"><b>Он возвращается</b><span>Баллы тратятся у партнёров — и у тебя. Это и есть повод прийти снова</span></div></div>
+        </div>
+
+        <div class="qr-tip"><span class="qt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
+          <div><b>Одна фраза удваивает сканы</b><span>«Отсканируй — получишь баллы на кофе». Просто скажите её на кассе.</span></div>
+        </div>
+
+        <div class="card glass pad-sm" style="margin-top:14px;display:flex;gap:11px;align-items:center">
+          <span class="qt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2M18 4v5h-5M6 20v-5h5"/></svg></span>
+          <div><div style="font-weight:700;font-size:14px">Обмен клиентами включён</div><div style="font-size:12px;color:var(--txt-2)">Loop: партнёры рекомендуют вас, вы — их</div></div>
+        </div>
       </div>
     </section>
 
     <!-- BIZ BOOST -->
     <section class="screen" id="b-boost">
-      <div class="hdr"><div class="hdr-title" style="font-size:22px">Буст</div>
+      <div class="hdr"><div class="hdr-title">Буст</div>
         <button class="mode-pill toclient" onclick="setMode('client')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Я клиент</button>
       </div>
       <div class="scroll">
@@ -3394,7 +3484,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
         </div>
         <div class="sec-h"><h2>Тарифы буста</h2></div>
         <div id="plans"></div>
-        <button class="cta lime" style="margin-top:8px" onclick="toast('Оплата Telegram Stars')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9l7.2-.1z"/></svg>Включить буст</button>
+        <button class="cta lime" style="margin-top:8px" onclick="boostBuy()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9l7.2-.1z"/></svg>Включить буст</button>
         <div class="hint">Telegram Stars <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> или TBC iPay · отключить в любой момент</div>
         <div class="sec-h" style="margin-top:30px"><h2>Своё приложение</h2></div>
         <div class="upsell fadein"><div class="glow"></div>
@@ -5182,7 +5272,8 @@ function renderStatic(){
   setHTML('myints',INTERESTS.map((t,i)=>`<button class="chip ${i<5?'on':''}" onclick="toggleChip(this)">${ei(t[0],'currentColor',15)} ${t[1]}</button>`).join(''));
   setHTML('plans',PLANS.map((p,pi)=>`<div class="plan ${p.f?'featured':'glass'}" onclick="openPlan(${pi})"><div class="ph"><h3>${p.n}</h3>${p.tag?`<span class="tag">${p.tag}</span>`:''}</div><div class="price">$${p.pr}<small>${p.per}</small>${priceStars(parseInt((''+p.pr).replace(/\s/g,''),10))}</div><ul>${p.feat.map(f=>`<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>${f}</li>`).join('')}</ul></div>`).join(''));
   setHTML('ahTiers',AHTIERS.map(t=>`<div class="tier-card ${t.hot?'hot':''}"><div class="nm">${t.nm}</div><div class="pr">${t.pr}${t.per?`<small>${t.per}</small>`:''}</div><div class="ds">${t.ds}</div></div>`).join(''));
-  setHTML('nichesel',NICHES.map(n=>`<option>${n.n}</option>`).join(''));
+  /* nichesel заполняет populateNicheSelect() — с плейсхолдером и ключами ниш.
+     Второй писатель здесь ставил имена без значений и ломал валидацию. */
   var uq=$('userqr');if(uq){var oldu=uq.querySelector('svg');if(oldu)oldu.remove();var __uid='48210934';try{__uid=cityhubId().replace(/\s/g,'')}catch(e){}uq.insertAdjacentHTML('afterbegin',qr('CityHUB-USER-'+__uid))}
   var bq=$('bizqr');if(bq){var oldb=bq.querySelector('svg');if(oldb)oldb.remove();bq.insertAdjacentHTML('afterbegin',qr('CityHUB-BIZ-COFFEELAB'))}
   var sp=$('spark');if(sp){var vals=[40,55,48,72,65,88,96];sp.innerHTML=vals.map(function(){return '<span style="height:0"></span>'}).join('');setTimeout(function(){var ch=sp.querySelectorAll('span');for(var i=0;i<ch.length;i++)ch[i].style.height=vals[i]+'%'},200)}
@@ -5377,7 +5468,9 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open');try{ovlOpened()}catch(e){}}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={"Подробнее":["Details", "დეტალები"],
+var DICT={"Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
+"Как это работает":["How it works", "როგორ მუშაობს"],"Повесь плакат у кассы":["Put the poster at the counter", "დაკიდე პლაკატი სალაროსთან"],"Там, где гость стоит и ждёт — на стойке, у терминала, на столике":["Where the guest stands and waits — on the counter, by the terminal, on the table", "სადაც სტუმარი დგას და ელოდება — დახლზე, ტერმინალთან, მაგიდაზე"],"Гость наводит камеру":["The guest points their camera", "სტუმარი მიმართავს კამერას"],"Откроется твоя карточка в CityHUB — без установки, прямо в Telegram":["Your card opens in CityHUB — no install, right inside Telegram", "შენი ბარათი გაიხსნება CityHUB-ში — ინსტალაციის გარეშე, პირდაპირ Telegram-ში"],"Визит засчитан":["Visit counted", "ვიზიტი ჩაითვალა"],"Баллы падают гостю сразу, тебе — скан в статистике кабинета":["Points land for the guest instantly; you get the scan in your dashboard", "ქულები მაშინვე ჩაერიცხება სტუმარს, შენ — სკანი კაბინეტის სტატისტიკაში"],"Он возвращается":["They come back", "ის ბრუნდება"],"Баллы тратятся у партнёров — и у тебя. Это и есть повод прийти снова":["Points are spent at partners — and at your place. That is the reason to come back", "ქულები იხარჯება პარტნიორებთან — და შენთანაც. ეს არის დაბრუნების მიზეზი"],"Одна фраза удваивает сканы":["One sentence doubles the scans", "ერთი ფრაზა აორმაგებს სკანებს"],"«Отсканируй — получишь баллы на кофе». Просто скажите её на кассе.":["\"Scan this and get points toward a coffee.\" Just say it at the counter.", "«დაასკანერე — ქულებს მიიღებ ყავაზე». უბრალოდ თქვით სალაროსთან."],"Оплата включится вместе с релизом — тариф пока можно забронировать через Hub":["Payments go live with the release — for now you can reserve a plan through Hub", "გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ტარიფი შეგიძლია დაჯავშნო Hub-ით"],"Хочу подключить буст для заведения: что входит и когда можно оплатить?":["I want to enable a boost for my place: what is included and when can I pay?","მინდა ბუსტის ჩართვა: რა შედის და როდის შემიძლია გადახდა?"],
+"Подробнее":["Details", "დეტალები"],
 "Следующий шаг":["Next step", "შემდეგი ნაბიჯი"],"Поставь QR на кассу":["Put the QR at the counter", "დადე QR სალაროსთან"],"Гость сканирует — получает баллы и возвращается":["Guests scan, earn points and come back", "სტუმარი სკანირებს, იღებს ქულებს და ბრუნდება"],"Скачать плакат":["Download poster", "პლაკატის ჩამოტვირთვა"],"Положи приз в барабан":["Put a prize in the drum", "ჩადე პრიზი დოლურაში"],"Твой приз крутят все гости города — это показы бесплатно":["Every guest in the city spins your prize — free impressions", "ქალაქის ყველა სტუმარი ატრიალებს შენს პრიზს — უფასო ჩვენებები"],"Настроить приз":["Set up the prize", "პრიზის კონფიგურაცია"],"Обнови фото и описание":["Refresh photo and description", "განაახლე ფოტო და აღწერა"],"Карточка с живым фото собирает вдвое больше переходов":["A card with a real photo gets twice the clicks", "ცოცხალი ფოტოთი ბარათი ორჯერ მეტ გადასვლას აგროვებს"],"Открыть карточку":["Open the card", "ბარათის გახსნა"],"Подними позицию в нише":["Raise your rank in the niche", "აწიე პოზიცია ნიშაში"],"Буст выводит наверх в момент, когда человек выбирает":["Boost puts you on top exactly when people choose", "ბუსტი ზემოთ გაყავს ზუსტად არჩევის მომენტში"],"Смотреть тарифы":["See plans", "ტარიფების ნახვა"],"Забери главный баннер":["Take the main banner", "აიღე მთავარი ბანერი"],"Одно место на весь город — разыгрывает аукцион":["One slot for the whole city — decided by auction", "ერთი ადგილი მთელ ქალაქზე — აუქციონი წყვეტს"],"Сделать ставку":["Place a bid", "ფსონის დადება"],"Всё настроено":["All set", "ყველაფერი მზადაა"],"Заведение работает на полную — дальше только цифры":["Your place is fully set up — now it is just numbers", "დაწესებულება სრულად მუშაობს — შემდეგ მხოლოდ ციფრები"],
 "Показать ещё":["Show more", "მეტის ჩვენება"],"Все места на карте":["All places on the map", "ყველა ადგილი რუკაზე"],
 "легенда":["legend", "ლეგენდა"],"эпик":["epic", "ეპიკური"],"Не хватает":["Short by", "აკლია"],"До спина":["To a spin", "სპინამდე"],"каждый друг — ровно один спин":["each friend = exactly one spin", "თითო მეგობარი = ზუსტად ერთი სპინი"],"Выполнить задание":["Do a task", "დავალების შესრულება"],"баллы за визиты и действия":["points for visits and actions", "ქულები ვიზიტებსა და ქმედებებზე"],"Докупить баллы":["Top up points", "ქულების შევსება"],"бесплатный спин через":["free spin in", "უფასო სპინი"],"Друг придёт по твоей ссылке — +100 баллов упадут сразу":["When your friend joins via your link, +100 points land right away", "როცა მეგობარი შენი ბმულით შემოვა, +100 ქულა მაშინვე ჩაირიცხება"],"Выдаём вручную после проверки — напишем в чат":["Handed over manually after review — we will message you", "გადმოგცემთ ხელით შემოწმების შემდეგ — მოგწერთ ჩატში"],"Главный приз":["Top prize of the drum", "დოლურას მთავარი პრიზი"],"Fragment · можно передать":["Fragment collection · transferable or sellable", "Fragment-ის კოლექცია · გადაცემადი ან გასაყიდი"],"Fragment · редкий":["Fragment collection · rare, appreciating", "Fragment-ის კოლექცია · იშვიათი, ფასი იზრდება"],"ДЖЕКПОТ · 1000 Stars":["JACKPOT · 1000 Stars", "ჯეკპოტი · 1000 Stars"],
@@ -6119,6 +6212,14 @@ function populateNicheSelect(){
   var sel=document.getElementById('nichesel');if(!sel||sel.options.length)return;
   sel.innerHTML='<option value="">Выбери...</option>'+NICHES.map(function(n){return '<option value="'+n.k+'">'+n.n+'</option>'}).join('');
 }
+/* Оплата Stars не подключена. Пока это так, кнопка обязана говорить правду —
+   тост «Оплата Telegram Stars» выглядел как успешный платёж. */
+function boostBuy(){
+  closeSheet();
+  toast(T('Оплата включится вместе с релизом — тариф пока можно забронировать через Hub'));
+  try{haptic('error')}catch(e){}
+  setTimeout(function(){openMascot();setTimeout(function(){mascotIntent(T('Буст'),T('Хочу подключить буст для заведения: что входит и когда можно оплатить?'))},300)},420);
+}
 function placeBiz(){
   var getv=function(id){var e=document.getElementById(id);return e?(e.value||'').trim():''};
   var data={
@@ -6129,8 +6230,22 @@ function placeBiz(){
     agentCode:getv('agentCode').toUpperCase(),
     source:'owner'
   };
-  if(!data.name){toast('Укажи название заведения');return}
-  if(!data.phone){toast('Укажи телефон владельца');return}
+  /* Раньше ошибка жила только в тосте: он гас, а человек оставался гадать,
+     какое из пяти полей не понравилось. Теперь поле называет себя само. */
+  var bad=null;
+  if(!data.name)bad=['bizName',T('Укажи название заведения')];
+  else if(!data.niche)bad=['nichesel',T('Выбери нишу — без неё место не попадёт в фильтры')];
+  else if(!data.phone)bad=['bizPhone',T('Укажи телефон владельца')];
+  if(bad){
+    var el=document.getElementById(bad[0]);
+    document.querySelectorAll('#b-add .field.invalid').forEach(function(f){f.classList.remove('invalid')});
+    if(el){var f=el.closest('.field');if(f)f.classList.add('invalid');
+      try{el.scrollIntoView({behavior:'smooth',block:'center'})}catch(e){}
+      setTimeout(function(){try{el.focus()}catch(e){}},260);}
+    toast(bad[1]);try{haptic('error')}catch(e){}
+    return;
+  }
+  document.querySelectorAll('#b-add .field.invalid').forEach(function(f){f.classList.remove('invalid')});
   // Agent code shortcut — мгновенная верификация
   if(data.agentCode){
     if(AGENT_CODES.indexOf(data.agentCode)>=0){
@@ -6147,7 +6262,7 @@ function openVerifyOTP(data){
   haptic('open');
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Подтверди, что ты владелец</h2>'+
-    '<p style="font-size:13.5px;color:var(--txt-2);margin-bottom:18px;line-height:1.5">Мы пришлём SMS-код на <b>'+data.phone+'</b>. Только владелец заведения может его подключить.</p>'+
+    '<p style="font-size:13.5px;color:var(--txt-2);margin-bottom:18px;line-height:1.5">SMS-код на <b>'+data.phone+'</b> включится вместе с релизом — сейчас подтверждение демонстрационное. Проверка нужна, чтобы заведение может его подключить.</p>'+
     '<div class="field"><label>Код из SMS</label><input id="otpInput" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align:center;letter-spacing:.4em;font-size:22px;font-weight:800"></div>'+
     '<button class="cta lime" onclick="confirmOTP()">Подтвердить</button>'+
     '<div class="hint" style="margin-top:14px">Для демо: код <b style="color:var(--lime)">1234</b></div>'+
@@ -6338,7 +6453,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=51;try{renderConsent()}catch(e){}
+var APP_V=52;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
