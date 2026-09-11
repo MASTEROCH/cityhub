@@ -1218,6 +1218,93 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 /* Подложка под фото мест: если картинка не приехала, видно фирменный
    градиент, а не битую иконку. */
 .biz .th,.mini .th,.qst-th,.si-th,.pf-recent .pr-th{background:linear-gradient(135deg,rgba(124,58,255,.38),rgba(0,224,199,.18))!important}
+/* ── Reward-экран: медальон, послойное появление, блик ── */
+.celebrate .cb-halo{position:absolute;top:42%;left:50%;width:78vw;height:78vw;max-width:420px;max-height:420px;
+  transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(212,255,79,.28),rgba(124,58,255,.18) 45%,transparent 72%);
+  filter:blur(14px);transition:transform .9s var(--ease-out),opacity .7s var(--ease-out)}
+.celebrate.show .cb-halo{transform:translate(-50%,-50%) scale(1);opacity:1;animation:haloBreath 3.4s ease-in-out 1s infinite alternate}
+@keyframes haloBreath{to{transform:translate(-50%,-50%) scale(1.08)}}
+.celebrate .cb-medal{width:92px;height:92px;margin:0 auto 16px;border-radius:28px;display:grid;place-items:center;position:relative;
+  background:linear-gradient(160deg,rgba(212,255,79,.3),rgba(0,224,199,.14));
+  border:1px solid rgba(212,255,79,.42);color:var(--lime);
+  box-shadow:0 14px 40px rgba(212,255,79,.3),inset 0 2px 0 rgba(255,255,255,.3);
+  transform:scale(.4) rotate(-14deg);opacity:0;transition:transform .62s var(--ease-spring) .12s,opacity .3s .12s}
+.celebrate.show .cb-medal{transform:none;opacity:1}
+.celebrate .cb-medal-in{display:grid;place-items:center;font-size:38px;line-height:1}
+.celebrate .cb-medal-in svg{width:44px;height:44px;stroke-width:1.8}
+.celebrate .cb-card h2,.celebrate .cb-card p,.celebrate .cb-btn{opacity:0;transform:translateY(12px);
+  transition:opacity .4s var(--ease-out),transform .5s var(--ease-out)}
+.celebrate.show .cb-card h2{opacity:1;transform:none;transition-delay:.3s}
+.celebrate.show .cb-card p{opacity:1;transform:none;transition-delay:.4s}
+.celebrate.show .cb-btn{opacity:1;transform:none;transition-delay:.5s}
+.celebrate .cb-sheen{position:absolute;top:-60%;bottom:-60%;width:44%;left:-60%;z-index:3;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.16) 45%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.16) 55%,transparent);
+  transform:skewX(-20deg)}
+.celebrate.show .cb-sheen{animation:cbSheen 1.1s cubic-bezier(.3,0,.2,1) .45s}
+@keyframes cbSheen{to{left:130%}}
+@media (prefers-reduced-motion:reduce){.celebrate .cb-medal,.celebrate .cb-card h2,.celebrate .cb-card p,.celebrate .cb-btn{transition:none;opacity:1;transform:none}.celebrate .cb-sheen,.celebrate.show .cb-halo{animation:none}}
+/* ═══════ СПИННЕР — горизонтальная лента призов ═══════
+   Колесо на телефоне мелкое: сектора по 40°, подписи не читаются. Лента даёт
+   каждому призу полноценную карточку и физику разгон→торможение, которую
+   глаз читает как «вот-вот остановится». */
+.spin-stage{position:relative;margin:6px -18px 0;padding:0;overflow:hidden;
+  border-radius:var(--r-md);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border:1px solid var(--stroke-soft);border-left:none;border-right:none}
+.spin-stage::before,.spin-stage::after{content:'';position:absolute;top:0;bottom:0;width:66px;z-index:3;pointer-events:none}
+.spin-stage::before{left:0;background:linear-gradient(90deg,var(--bg-0),transparent)}
+.spin-stage::after{right:0;background:linear-gradient(270deg,var(--bg-0),transparent)}
+.spin-track{display:flex;gap:10px;padding:16px 0;will-change:transform}
+.spin-item{flex:0 0 108px;height:128px;border-radius:18px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 8px;
+  background:linear-gradient(170deg,rgba(255,255,255,.09),rgba(255,255,255,.03));
+  border:1px solid var(--stroke-soft);box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.spin-item .si-glow{position:absolute;inset:-40% 0 auto;height:70%;filter:blur(22px);opacity:.55}
+.spin-item .si-ic{position:relative;width:38px;height:38px;border-radius:12px;display:grid;place-items:center}
+.spin-item .si-ic svg{width:20px;height:20px}
+.spin-item .si-t{position:relative;font-size:11.5px;font-weight:800;text-align:center;line-height:1.2;letter-spacing:-.01em}
+.spin-item .si-d{position:relative;font-size:9.5px;font-weight:600;color:var(--txt-3);text-align:center;line-height:1.15}
+.spin-item.rare{border-color:rgba(255,181,71,.45)}
+.spin-item.epic{border-color:rgba(124,58,255,.5)}
+/* Метка центра — приз под ней и есть выигрыш */
+.spin-mark{position:absolute;left:50%;top:0;bottom:0;width:2px;transform:translateX(-50%);z-index:4;pointer-events:none;
+  background:linear-gradient(180deg,transparent,var(--lime) 14%,var(--lime) 86%,transparent);
+  box-shadow:0 0 14px var(--lime),0 0 34px rgba(212,255,79,.5)}
+.spin-mark::before,.spin-mark::after{content:'';position:absolute;left:50%;transform:translateX(-50%);
+  border-left:7px solid transparent;border-right:7px solid transparent}
+.spin-mark::before{top:2px;border-top:10px solid var(--lime)}
+.spin-mark::after{bottom:2px;border-bottom:10px solid var(--lime)}
+.spin-stage.spinning .spin-item{filter:blur(.4px)}
+.spin-stage.landed .spin-item.win{animation:winPulse .7s var(--ease-spring)}
+@keyframes winPulse{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.pool-item.pool-add{cursor:pointer;background:rgba(255,181,71,.08);border-color:rgba(255,181,71,.32);border-style:dashed}
+.pool-item.pool-add:active{transform:scale(.97)}
+.pool-item .pi-plus{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;color:var(--gold)}
+.pool-item .pi-plus svg{width:15px;height:15px}
+/* Инвентарь выигрышей */
+.win-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--r-md);margin-bottom:8px;
+  background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft)}
+.win-row .wr-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.win-row .wr-ic svg{width:19px;height:19px}
+.win-row .wr-t{flex:1;min-width:0}
+.win-row .wr-t b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.01em}
+.win-row .wr-t span{display:block;font-size:11px;color:var(--txt-3);margin-top:2px}
+.win-row .wr-code{flex-shrink:0;font-size:11.5px;font-weight:900;letter-spacing:.04em;padding:6px 10px;border-radius:9px;
+  background:rgba(212,255,79,.12);border:1px solid rgba(212,255,79,.3);color:var(--lime);font-family:ui-monospace,monospace}
+.win-row.used{opacity:.5}
+.win-row.used .wr-code{background:rgba(255,255,255,.06);border-color:var(--stroke-soft);color:var(--txt-3)}
+.wins-empty{padding:22px 16px;text-align:center;border-radius:var(--r-md);background:rgba(255,255,255,.03);border:1px dashed var(--stroke-soft)}
+.wins-empty b{display:block;font-size:14px;font-weight:800;margin-bottom:4px}
+.wins-empty span{font-size:12px;color:var(--txt-3);line-height:1.45}
+/* Стать партнёром */
+.partner-cta{display:flex;align-items:center;gap:12px;padding:14px;border-radius:var(--r-md);margin-top:14px;cursor:pointer;
+  background:linear-gradient(135deg,rgba(255,181,71,.16),rgba(255,93,143,.07));border:1px solid rgba(255,181,71,.32)}
+.partner-cta .pc-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex-shrink:0;
+  background:rgba(255,181,71,.2);color:var(--gold)}
+.partner-cta .pc-ic svg{width:21px;height:21px}
+.partner-cta .pc-t{flex:1;min-width:0}
+.partner-cta .pc-t b{display:block;font-size:14px;font-weight:800;letter-spacing:-.01em}
+.partner-cta .pc-t span{display:block;font-size:11.5px;color:var(--txt-2);margin-top:2px;line-height:1.35}
 /* Ежедневный вход */
 .daily-login{text-align:center;padding:4px 2px 6px}
 .daily-login .dl-ic{width:64px;height:64px;margin:2px auto 14px;border-radius:20px;display:grid;place-items:center;
@@ -2418,7 +2505,8 @@ input,textarea{font-size:16px!important}
 .earn-soon .m{color:var(--txt-3)}
 /* ═══════════════ УДАЧА — задания · рулетка · куда потратить ═══════════════ */
 /* HUD единой валюты — липнет к верху и виден на всех трёх вкладках */
-.luck-hud{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:12px;margin:0 0 12px;border-radius:var(--r-md);background:linear-gradient(135deg,rgba(212,255,79,.12),rgba(0,224,199,.08));border:1px solid rgba(212,255,79,.24);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 26px rgba(0,0,0,.4)}
+.luck-hud{transition:transform .28s var(--ease-out),opacity .22s var(--ease-out);
+  position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:12px;margin:0 0 12px;border-radius:var(--r-md);background:linear-gradient(135deg,rgba(212,255,79,.12),rgba(0,224,199,.08));border:1px solid rgba(212,255,79,.24);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 26px rgba(0,0,0,.4)}
 .luck-hud .lh-ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:var(--grad-lime);box-shadow:0 6px 16px rgba(212,255,79,.3)}
 .luck-hud .lh-ic svg{width:20px;height:20px}
 .luck-hud .lh-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
@@ -2431,6 +2519,7 @@ input,textarea{font-size:16px!important}
 .luck-hud .lh-add svg{width:19px;height:19px}
 
 /* Сегменты вкладок */
+.luck-hud.hud-off{transform:translateY(-118%);opacity:0;pointer-events:none}
 .luck-seg{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);margin-bottom:14px}
 .luck-seg button{flex:1;min-width:0;min-height:40px;border-radius:999px;background:transparent;border:none;font-family:inherit;font-size:11.5px;letter-spacing:-.01em;font-weight:800;color:var(--txt-3);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:color var(--dur-fast),background var(--dur-fast);position:relative}
 .luck-seg button svg{width:14px;height:14px;flex-shrink:0}
@@ -2659,19 +2748,20 @@ input,textarea{font-size:16px!important}
 
         <!-- 2. РУЛЕТКА -->
         <div class="luck-pane" id="pane-wheel">
-          <div class="wheel-wrap">
-            <div class="wheel-stage">
-              <div class="wheel-glow"></div>
-              <div class="wheel-pin"></div>
-              <div class="wheel" id="wheel"></div>
-              <div class="wheel-hub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9l7.2-.1z"/></svg></div>
-            </div>
+          <div class="spin-stage" id="spinStage">
+            <div class="spin-mark"></div>
+            <div class="spin-track" id="spinTrack"></div>
           </div>
-          <button class="cta lime spin-cta" id="spinBtn" onclick="spinWheel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg><span id="spinLbl">Крутить</span></button>
+          <button class="cta lime spin-cta" id="spinBtn" onclick="spinRun()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg><span id="spinLbl">Крутить</span></button>
           <div class="spin-meta" id="spinMeta">—</div>
-          <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Что может выпасть</h2></div>
+
+          <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Мои выигрыши</h2><span class="more tabular" id="winsCount"></span></div>
+          <div id="winsList"></div>
+
+          <div class="sec-h" style="margin-top:24px"><h2 style="font-size:16px">Что может выпасть</h2><span class="more">призовой фонд</span></div>
           <div class="pool-grid" id="poolGrid"></div>
-          <div class="hint" style="margin-top:12px">Призы дают партнёры CityHUB, рекламодатели и проекты AppHub Studio. Состав барабана меняется — заглядывай.</div>
+
+
         </div>
 
         <!-- 3. КУДА ПОТРАТИТЬ -->
@@ -4643,7 +4733,7 @@ function renderStatic(){
 function cgo(t){if(t==='ai'){try{openMascot()}catch(e){}return}
   /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
   if(t==='niches')t='map';if(t==='rewards')t='luck';
-  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderGBoard();renderLuckHud();luckTickStart();luckGo((function(x){return (x==='spend'||!x)?'wheel':x})(gameGet('luckTab','wheel')));}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderGBoard();renderWins();renderLuckHud();luckTickStart();luckScrollBind();luckGo('wheel');}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:20,mine:0,bids:[
   {n:'Tangerine',v:340,me:false},
@@ -5335,10 +5425,31 @@ function celebrate(opts){
       conf+='<i style="left:'+left+'%;width:'+sz+'px;height:'+(sz*1.4)+'px;background:'+c+';border-radius:'+round+';animation-delay:'+delay+'s;animation-duration:'+dur+'s;--rot:'+rot+'deg;--sway:'+sway+'px"></i>';
     }
   }
-  ov.innerHTML='<div class="cb-flash"></div><div class="cb-rays"></div><div class="cb-confetti">'+conf+'</div>'+
-    '<div class="cb-card"><div class="cb-ic">'+icon+'</div><div class="cb-glow"></div><h2>'+T(title)+'</h2>'+(sub?'<p>'+T(sub)+'</p>':'')+'<button class="cb-btn" onclick="this.closest(\'.celebrate\').classList.add(\'out\');setTimeout(function(){var e=document.querySelector(\'.celebrate.out\');if(e)e.remove()},350)">'+T('Забрать')+'</button></div>';
+  /* Медальон с SVG вместо эмодзи, слои появляются по очереди (лучи → медальон →
+     заголовок → подпись → кнопка), число баллов прокручивается вверх, по карточке
+     один раз проходит блик. Момент награды должен ощущаться как момент. */
+  var num=(''+title).match(/^\+?(\d[\d\s]*)/);
+  var medal=opts.k?ico(opts.k,'currentColor',2):(icon&&icon.length<=3?icon:ico('star','currentColor',2));
+  ov.innerHTML='<div class="cb-flash"></div><div class="cb-rays"></div><div class="cb-halo"></div><div class="cb-confetti">'+conf+'</div>'+
+    '<div class="cb-card"><span class="cb-sheen"></span><div class="cb-medal"><span class="cb-medal-in">'+medal+'</span></div><div class="cb-glow"></div><h2'+(num?' data-num="'+num[1].replace(/\s/g,'')+'"':'')+'>'+T(title)+'</h2>'+(sub?'<p>'+T(sub)+'</p>':'')+'<button class="cb-btn" onclick="this.closest(\'.celebrate\').classList.add(\'out\');setTimeout(function(){var e=document.querySelector(\'.celebrate.out\');if(e)e.remove()},350)">'+T('Забрать')+'</button></div>';
   document.body.appendChild(ov);
-  requestAnimationFrame(function(){ov.classList.add('show')});
+  requestAnimationFrame(function(){ov.classList.add('show')});setTimeout(function(){ov.classList.add('show')},60);
+  /* счёт вверх — цифра «набегает», а не появляется готовой */
+  var hEl=ov.querySelector('h2[data-num]');
+  if(hEl&&!reduce){
+    var to=parseInt(hEl.dataset.num,10),pre=(''+title).indexOf('+')===0?'+':'';
+    var post=(''+title).replace(/^\+?[\d\u00a0\s]*\d/,'');
+    var fin=function(){hEl.textContent=pre+to.toLocaleString('ru-RU')+post};
+    var t0=performance.now(),dur=900;
+    hEl.textContent=pre+'0'+post;
+    var step=function(now){
+      var k=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-k,3);
+      hEl.textContent=pre+Math.round(to*e).toLocaleString('ru-RU')+post;
+      if(k<1)requestAnimationFrame(step);else fin();
+    };
+    setTimeout(function(){requestAnimationFrame(step)},260);
+    setTimeout(fin,dur+420);   /* rAF не идёт в фоне — число всё равно доедет */
+  }
   if(navigator.vibrate)navigator.vibrate([12,30,12,30,60]);
 }
 function ico2emoji(k){var m={bolt:'⚡',coffee:'☕',ticket:'🎟️',gem:'💎',sea:'🌊',food:'🍽️',bar:'🍸',gym:'🏋️',spa:'🧖',art:'🎨',music:'🎵',shop:'🛍️',kids:'🧸',beauty:'💅'};return m[k]||'🎉'}
@@ -5588,7 +5699,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=36;try{renderConsent()}catch(e){}
+var APP_V=37;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6085,7 +6196,7 @@ function openInApp(url,title){
   var ov=document.createElement('div');ov.className='inapp-ov';
   ov.innerHTML='<div class="inapp-hd"><button class="inapp-close" aria-label="Закрыть">✕</button><div class="inapp-ti">'+(title||url).replace(/</g,'&lt;')+'</div><a class="inapp-ext" href="'+url+'" target="_blank" rel="noopener" aria-label="Открыть в браузере"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7"/></svg></a></div><iframe class="inapp-fr" src="'+url+'" allow="autoplay; fullscreen"></iframe>';
   document.body.appendChild(ov);
-  requestAnimationFrame(function(){ov.classList.add('show')});
+  requestAnimationFrame(function(){ov.classList.add('show')});setTimeout(function(){ov.classList.add('show')},60);
   ov.querySelector('.inapp-close').onclick=function(){closeInApp(ov)};
   ov.addEventListener('click',function(e){if(e.target===ov)closeInApp(ov)});
   haptic('open');
@@ -6718,6 +6829,119 @@ function closePoster(){var o=document.getElementById('posterOv');if(o)o.remove()
       вертикальным скроллом ленты.
    Ось фиксируется на первых 6px движения и дальше не меняется: горизонталь —
    наша, вертикаль — отдаём скроллу целиком. */
+/* ═══════════ СПИННЕР + ИНВЕНТАРЬ ВЫИГРЫШЕЙ ═══════════
+   Колесо заменено горизонтальной лентой: на телефоне сектор в 40° не вмещает
+   ни названия приза, ни его источника, а карточка вмещает. Физика — разгон и
+   долгое торможение к метке по центру, глаз читает «вот-вот встанет».
+   Лента строится ДЛИННОЙ (циклы призов), выигрыш кладётся в известную позицию
+   ближе к концу — поэтому остановка всегда точная, без подкручивания. */
+var SPIN_LOOPS=9, SPIN_W=118;      /* 108 карточка + 10 гэп */
+var __spinBusy=false;
+
+function winsAll(){try{return gameGet('wins',[])||[]}catch(e){return []}}
+function winAdd(w){var a=winsAll();a.unshift(w);if(a.length>60)a.length=60;gameSet('wins',a);renderWins();}
+function winUse(i){var a=winsAll();if(a[i]){a[i].used=1;gameSet('wins',a);renderWins();toast(T('Показал на кассе — приз отмечен'))}}
+
+function buildSpin(){
+  var track=document.getElementById('spinTrack');if(!track)return;
+  if(track.dataset.built)return;
+  var html='';
+  for(var l=0;l<SPIN_LOOPS;l++){
+    WHEEL.forEach(function(p,i){
+      html+='<div class="spin-item'+(p.w<=6?' epic':(p.w<=10?' rare':''))+'" data-i="'+i+'">'+
+        '<span class="si-glow" style="background:'+p.c+'"></span>'+
+        '<span class="si-ic" style="background:'+p.c+'2e;color:'+p.c+'">'+ico(spinIcon(p),'currentColor',2)+'</span>'+
+        '<span class="si-t">'+p.s+'</span><span class="si-d">'+p.d+'</span></div>';
+    });
+  }
+  track.innerHTML=html;track.dataset.built='1';
+  track.style.transform='translateX('+spinOffset(Math.floor(SPIN_LOOPS/2)*WHEEL.length)+'px)';
+}
+function spinIcon(p){
+  return p.k==='pts'?'star':p.k==='spin'?'refresh':p.k==='sub'?'gem':p.k==='gift'?'gift':'ticket';
+}
+/* Смещение ленты так, чтобы карточка index оказалась ровно под меткой центра */
+function spinOffset(index){
+  var stage=document.getElementById('spinStage');
+  var half=stage?stage.clientWidth/2:180;
+  return half-(index*SPIN_W+SPIN_W/2)-0;
+}
+function spinRun(){
+  if(__spinBusy)return;
+  var free=freeSpinReady();
+  if(!free&&!ptsSpend(SPIN_COST)){
+    toast(T('Не хватает баллов — выполни задание или докупи'));
+    try{haptic('error')}catch(e){}
+    openBuyPts();return;
+  }
+  if(free)gameSet('freeSpinAt',Date.now());
+  __spinBusy=true;
+  var track=document.getElementById('spinTrack'),stage=document.getElementById('spinStage');
+  buildSpin();
+  stage.classList.add('spinning');stage.classList.remove('landed');
+  track.querySelectorAll('.win').forEach(function(e){e.classList.remove('win')});
+  var idx=wheelPick();
+  /* целевая карточка — в предпоследнем цикле, чтобы лента успела разогнаться */
+  var target=(SPIN_LOOPS-2)*WHEEL.length+idx;
+  var jitter=(Math.random()-.5)*(SPIN_W*.5);   /* встаём не строго по центру — живее */
+  track.style.transition='none';
+  track.style.transform='translateX('+spinOffset(Math.floor(SPIN_LOOPS/2)*WHEEL.length)+'px)';
+  void track.offsetWidth;
+  track.style.transition='transform 5.2s cubic-bezier(.11,.72,.09,1)';
+  track.style.transform='translateX('+(spinOffset(target)+jitter)+'px)';
+  try{haptic('tap')}catch(e){}
+  renderLuckHud();
+  /* тиканье: короткая вибрация, всё реже — физика чувствуется без звука */
+  var t=0,step=90;
+  var tick=function(){
+    if(t>4600)return;
+    try{if(navigator.vibrate)navigator.vibrate(5)}catch(e){}
+    t+=step;step=Math.round(step*1.13);
+    setTimeout(tick,step);
+  };
+  setTimeout(tick,220);
+  setTimeout(function(){
+    __spinBusy=false;
+    stage.classList.remove('spinning');stage.classList.add('landed');
+    var cards=track.children;if(cards[target])cards[target].classList.add('win');
+    spinPrize(idx);
+  },5300);
+}
+function spinPrize(i){
+  var p=WHEEL[i];
+  if(p.k==='pts'){ptsAdd(p.v);try{celebrate({icon:'🎉',title:'+'+p.v+' '+T('баллов'),sub:T('Рулетка')+' · '+p.d})}catch(e){toast('+'+p.v)}}
+  else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({icon:'🎡',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
+  else{
+    var code='CH-'+Math.random().toString(36).slice(2,7).toUpperCase();
+    winAdd({n:p.n,d:p.d,c:p.c,k:p.k,code:code,ts:Date.now()});
+    try{celebrate({icon:'🎁',title:p.n,sub:T('Промокод')+' '+code})}catch(e){toast(p.n+' · '+code)}
+  }
+  renderLuckHud();renderWins();
+}
+/* Инвентарь: всё выигранное лежит здесь, а не теряется в тосте */
+function renderWins(){
+  var el=document.getElementById('winsList');if(!el)return;
+  var a=winsAll();
+  var badge=document.getElementById('winsCount');
+  if(badge){var live=a.filter(function(w){return !w.used}).length;badge.textContent=live?live:'';badge.style.display=live?'':'none'}
+  if(!a.length){
+    el.innerHTML='<div class="wins-empty"><b>'+T('Пока пусто')+'</b><span>'+T('Крути спиннер — промокоды, подарки и подписки партнёров лягут сюда')+'</span></div>';
+    return;
+  }
+  el.innerHTML=a.map(function(w,i){
+    var d=new Date(w.ts);
+    return '<div class="win-row'+(w.used?' used':'')+'">'+
+      '<span class="wr-ic" style="background:'+w.c+'2e;color:'+w.c+'">'+ico(spinIcon(w),'currentColor',2)+'</span>'+
+      '<span class="wr-t"><b>'+w.n+'</b><span>'+w.d+' · '+d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0')+'</span></span>'+
+      '<span class="wr-code"'+(w.used?'':' onclick="winUse('+i+')"')+'>'+(w.used?T('использован'):w.code)+'</span></div>';
+  }).join('');
+}
+function partnerJoin(){
+  closeSheet();
+  setMode('biz','add');
+  toast(T('Разместите заведение — и ваш приз попадёт в барабан'));
+}
+
 /* ═══════════════ ЕЖЕДНЕВНЫЙ ВХОД — серия и награда ═══════════════
    Стрик перестал быть постоянным блоком на «Сегодня»: он показывается ОДИН
    РАЗ в сутки, при первом открытии. Остальное время он живёт цифрой в профиле.
@@ -6993,8 +7217,13 @@ function hhmmss(ms){var s=Math.max(0,Math.ceil(ms/1000));var h=Math.floor(s/3600
 
 function renderLuckHud(){
   var sub=document.getElementById('luckSub');if(!sub)return;
-  if(freeSpinReady())sub.innerHTML='<b>'+T('Бесплатный спин готов')+'</b>';
-  else sub.innerHTML=T('Бесплатный спин через')+' <b class="tabular">'+hhmmss(freeSpinLeft())+'</b>';
+  var ready=freeSpinReady();
+  if(sub.dataset.mode!==(ready?'r':'w')){
+    sub.dataset.mode=ready?'r':'w';
+    sub.innerHTML=ready?('<b>'+T('Бесплатный спин готов')+'</b>')
+      :(T('Бесплатный спин через')+' <b class="tabular" id="luckTimer"></b>');
+  }
+  if(!ready){var tm=document.getElementById('luckTimer');if(tm)tm.textContent=hhmmss(freeSpinLeft())}
   var b=document.getElementById('spinBtn'),l=document.getElementById('spinLbl'),m=document.getElementById('spinMeta');
   if(l)l.textContent=freeSpinReady()?T('Крутить бесплатно'):T('Крутить за')+' '+SPIN_COST;
   if(m){
@@ -7004,6 +7233,19 @@ function renderLuckHud(){
   if(b)b.classList.toggle('ghost',!freeSpinReady()&&ptsGet()<SPIN_COST);
 }
 var __luckTick=null;
+/* Шапка баланса уезжает, когда человек читает список, и возвращается, как
+   только он двинулся вверх: место отдаётся контенту, но баланс в одном движении. */
+function luckScrollBind(){
+  var sc=document.querySelector('#c-luck .scroll');if(!sc||sc.__hb)return;sc.__hb=1;
+  var last=0;
+  sc.addEventListener('scroll',function(){
+    var y=sc.scrollTop,hud=document.querySelector('#c-luck .luck-hud');if(!hud)return;
+    if(y<40)hud.classList.remove('hud-off');
+    else if(y>last+6)hud.classList.add('hud-off');
+    else if(y<last-6)hud.classList.remove('hud-off');
+    last=y;
+  },{passive:true});
+}
 function luckTickStart(){if(__luckTick)return;__luckTick=setInterval(function(){
   if(!document.getElementById('c-luck').classList.contains('active')){clearInterval(__luckTick);__luckTick=null;return}
   renderLuckHud();
@@ -7014,7 +7256,7 @@ function luckGo(t){
   document.querySelectorAll('#luckSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.l===t)});
   document.querySelectorAll('.luck-pane').forEach(function(p){p.classList.toggle('on',p.id==='pane-'+t)});
   gameSet('luckTab',t);
-  if(t==='wheel')buildWheel();
+  if(t==='wheel'){buildSpin();renderWins();renderPool();}
   if(t==='tasks')renderTasks();
   if(t==='league'){try{renderGame()}catch(e){}renderGBoard();}
   var s=document.querySelector('#c-luck .scroll');if(s)s.scrollTop=0;
@@ -7126,6 +7368,15 @@ var WHEEL=[
  {s:'+500',     n:'+500 баллов',         d:'Джекпот Loop',          k:'pts',  v:500, w:3,  c:'#f2ffb0', ink:'#06210a'},
  {s:'+20',      n:'+20 баллов',          d:'Утешительный',          k:'pts',  v:20,  w:9,  c:'#243040', ink:'#c9d6e8'}
 ];
+function renderPool(){
+  var pg=document.getElementById('poolGrid');if(!pg)return;
+  pg.innerHTML=WHEEL.map(function(p){
+    return '<div class="pool-item"><span class="pi-d" style="background:'+p.c+'"></span><div class="pi-t">'+p.n+'<span>'+p.d+'</span></div></div>';
+  }).join('')
+  /* Последней плиткой — приглашение бизнесу: барабан растёт вместе с партнёрами,
+     и место для этого приглашения ровно там, где человек смотрит призовой фонд. */
+  +'<div class="pool-item pool-add" onclick="partnerJoin()"><span class="pi-plus">'+ico('handshake','currentColor',2)+'</span><div class="pi-t">'+T('Стать партнёром')+'<span>'+T('свой приз в барабан')+'</span></div></div>';
+}
 function buildWheel(){
   var el=document.getElementById('wheel');if(!el||el.dataset.built)return;
   var n=WHEEL.length,step=360/n,stops=[];
