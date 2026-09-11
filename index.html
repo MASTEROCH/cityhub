@@ -1212,6 +1212,9 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .hdr.shrunk .pts-mini{max-width:120px;opacity:1;transform:none;pointer-events:auto;margin-right:0}
 @media (prefers-reduced-motion:reduce){#c-today #greet,#c-today #greetSub,#c-today .hdr-quick,.pts-mini{transition:none}}
 @media (prefers-reduced-motion:reduce){#c-today #greet,#c-today #greetSub,#c-today .hdr-quick{transition:none}}
+/* Подложка под фото мест: если картинка не приехала, видно фирменный
+   градиент, а не битую иконку. */
+.biz .th,.mini .th,.qst-th,.si-th,.pf-recent .pr-th{background:linear-gradient(135deg,rgba(124,58,255,.38),rgba(0,224,199,.18))!important}
 /* Свайп по карточке-герою: въезд новой карточки с той стороны, куда ушла
    старая, и одноразовое «покачивание» для обучения жесту. */
 .answer-wrap{position:relative}
@@ -1398,15 +1401,14 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .qsel-c .qsel-emo{font-size:14px;line-height:1}
 /* Quest cover — 3-photo collage + meta strip */
 .qcov{border-radius:var(--r-lg);overflow:hidden;position:relative;margin-bottom:14px;box-shadow:var(--shadow-lg);background:#0a0d16}
-.qcov-collage{display:grid;grid-template-columns:1.6fr 1fr;grid-template-rows:1fr 1fr;height:200px;gap:2px}
-.qcov-collage .qc-img{position:relative;overflow:hidden;background:#0c1018}
-.qcov-collage .qc-img:first-child{grid-row:1 / 3}
-.qcov-collage .qc-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s var(--ease-out)}
-.qcov:hover .qcov-collage .qc-img img{transform:scale(1.03)}
+.qcov-photo{position:relative;aspect-ratio:16/9;min-height:172px;overflow:hidden;
+  background:linear-gradient(135deg,rgba(124,58,255,.45),rgba(0,224,199,.22))}
+.qcov-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s var(--ease-out)}
+.qcov:hover .qcov-photo img{transform:scale(1.03)}
 .qcov-grad{position:absolute;left:0;right:0;bottom:0;height:62%;background:linear-gradient(180deg,transparent,rgba(5,6,10,.92) 75%)}
-.qcov-top{position:absolute;top:14px;left:14px;right:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:2}
-.qcov-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:6px 11px;border-radius:99px;background:var(--grad-lime);color:#06210a}
-.qcov-timer{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;padding:6px 11px;border-radius:99px;background:rgba(5,6,10,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);color:var(--gold);font-variant-numeric:tabular-nums}
+.qcov-top{position:absolute;top:14px;left:14px;right:14px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;z-index:2}
+.qcov-badge{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;max-width:100%;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:6px 11px;border-radius:99px;background:var(--grad-lime);color:#06210a}
+.qcov-timer{display:inline-flex;align-items:center;gap:5px;flex-shrink:0;font-size:11.5px;font-weight:800;padding:6px 11px;border-radius:99px;background:rgba(5,6,10,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);color:var(--gold);font-variant-numeric:tabular-nums}
 .qcov-timer svg{width:12px;height:12px}
 .qcov-bot{position:absolute;left:14px;right:14px;bottom:14px;z-index:2}
 .qcov-bot h2{font-size:var(--fs-xl);font-weight:900;letter-spacing:-.02em;line-height:1.1;margin-bottom:6px;text-shadow:0 2px 18px rgba(0,0,0,.7)}
@@ -1454,9 +1456,9 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .quest-reward::before{content:'';position:absolute;top:-50%;right:-15%;width:55%;height:170%;background:radial-gradient(closest-side,rgba(255,181,71,.35),transparent);filter:blur(20px);pointer-events:none}
 .quest-reward .qr-ic{flex-shrink:0;width:48px;height:48px;border-radius:14px;background:rgba(255,181,71,.2);display:grid;place-items:center;color:var(--gold);position:relative;z-index:1}
 .quest-reward .qr-ic svg{width:24px;height:24px}
-.quest-reward .qr-tx{flex:1;position:relative;z-index:1}
+.quest-reward .qr-tx{flex:1;min-width:0;position:relative;z-index:1}
 .quest-reward b{font-size:14px;display:block;font-weight:900;letter-spacing:-.01em}
-.quest-reward span{font-size:12px;color:var(--txt-2);line-height:1.4;display:block;margin-top:2px}
+.quest-reward span{font-size:12px;color:var(--txt-2);line-height:1.4;display:block;margin-top:2px;overflow-wrap:anywhere}
 .quest-reward .qr-pts{flex-shrink:0;font-size:20px;font-weight:900;color:var(--gold);position:relative;z-index:1;letter-spacing:-.02em}
 /* squad sheet */
 .squad-tiers{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
@@ -3158,19 +3160,19 @@ const NICHE_POOL={
 // === REAL PHOTOS via Pexels CDN (free, no API key, stable, gorgeous) ===
 // Curated photo IDs verified working. Каждое заведение получает deterministic фото по имени.
 var PEXELS_POOL={
-  coffee:[1833399,312418,851555,1739292,159853,2074130,2074127,1855214,2877761,2074129],
-  food:[67468,262978,941861,1639561,46239,1640774,1581384,1437267,776538,2059151],
-  bar:[1267697,274192,1483956,3009788,3858345,3727230,3756523,1267356,1170599,2796050],
+  coffee:[1833399,312418,851555,2074130,2074127,1855214,2877761,2074129],
+  food:[67468,262978,941861,1639561,1640774,1581384,1437267,776538,2059151],
+  bar:[1267697,274192,3009788,3756523,1267356,1170599,2796050],
   gym:[1431282,949131,1552242,1552103,841130,1954524,3076509,2261477,3076509,4753986],
   beauty:[3997992,3993465,3993459,3997983,3825586,3997981,3851581,3997994,3997989,3997977],
-  spa:[3997984,3865711,3865558,3865781,3865538,3997989,3997991,3997988,3997992,3997996],
+  spa:[3997984,3865711,3865558,3865781,3997989,3997991,3997988,3997992,3997996],
   shop:[1488463,2090650,1488463,1884583,5650032,3987133,4498152,3965547,4498146,5650023],
-  sea:[189349,33545,158063,1098365,1032650,1188751,1029604,1287460,1583582,1450355],
-  art:[1153213,1647116,2422476,2519364,2519390,2387418,1565982,2387873,1572105,1545558],
+  sea:[189349,1098365,1032650,1188751,1029604,1287460,1583582,1450355],
+  art:[1647116,2519364,2519390,2387418,1565982,2387873,1572105,1545558],
   music:[167636,1190297,1105666,2034851,1916818,1666816,2167618,1763075,167092,1644924],
   travel:[1029599,207247,2356045,1271619,2387873,1287145,2425567,2434267,2104882,2403568],
-  med:[247786,4173251,4047148,3845981,7088522,4226119,3845544,4225920,4173249,4225930],
-  kids:[1648377,1620760,1648376,1620378,1715164,1648387,1648402,1620404,1648392,1648368]
+  med:[247786,4173251,4047148,3845981,7088522,4226119,3845544,4225920,4173249],
+  kids:[1648377,1620760,1648376,1648387,1648402,1648392,1648368]
 };
 function nicheImg(k,seed){
   var pool=PEXELS_POOL[k]||PEXELS_POOL.coffee;
@@ -3675,9 +3677,9 @@ function questPickStops(tpl,C){
   return stops;
 }
 function questCover(tpl,stops){
-  // 3 фото из stops для коллажа
   var arr=stops.slice(0,3);while(arr.length<3)arr.push(stops[0]);
-  return '<div class="qcov-collage">'+arr.map(function(b){return '<div class="qc-img"><img src="'+ph(b.k,b.n.length,b.n)+'" alt="" loading="lazy" onerror="this.onerror=null;this.style.background=\'linear-gradient(135deg,#7C3AFF44,#00E0C722)\';this.removeAttribute(\'src\')"></div>'}).join('')+'</div>';
+  var b=arr[0];
+  return '<div class="qcov-photo"><img src="'+ph(b.k,b.n.length,b.n)+'" alt="" loading="lazy" onerror="this.onerror=null;this.remove()"></div>';
 }
 function openQuest(qid){
   var C=CITIES[CITY];
@@ -5540,7 +5542,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=31;try{renderConsent()}catch(e){}
+var APP_V=32;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6670,6 +6672,13 @@ function closePoster(){var o=document.getElementById('posterOv');if(o)o.remove()
       вертикальным скроллом ленты.
    Ось фиксируется на первых 6px движения и дальше не меняется: горизонталь —
    наша, вертикаль — отдаём скроллу целиком. */
+/* Битые фото мест: скрываем сам <img>, под ним остаётся фирменный градиент.
+   Слушаем на ФАЗЕ ЗАХВАТА: error у <img> не всплывает. */
+document.addEventListener('error',function(e){
+  var t=e.target;
+  if(t&&t.tagName==='IMG'&&/pexels\.com|unsplash\.com/.test(t.currentSrc||t.src||''))t.style.display='none';
+},true);
+
 var SW={x:0,y:0,t:0,on:false,lock:null,el:null};
 function swipeReset(el){
   var c=el||SW.el;if(!c)return;
