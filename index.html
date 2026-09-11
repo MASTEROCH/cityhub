@@ -3123,6 +3123,8 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
   background:radial-gradient(120% 80% at 50% 42%,rgba(5,6,10,.55),rgba(5,6,10,.78));
   animation:fadein .45s var(--ease-out)}
 .sw-hint{box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.answer .live-strip .closing i{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.answer .live-strip .closing{color:var(--gold)}
 </style>
 </head>
 <body class="client">
@@ -3228,7 +3230,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
         <!-- Вкладки -->
         <div class="luck-seg" id="luckSeg">
           <button class="on" data-l="tasks" onclick="luckGo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Задания<span class="seg-dot" id="tasksDot"></span></button>
-          <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16.17 7.83 2 22"/><path d="M4.02 12a2.827 2.827 0 1 1 3.81-4.17A2.827 2.827 0 1 1 12 4.02a2.827 2.827 0 1 1 4.17 3.81A2.827 2.827 0 1 1 19.98 12a2.827 2.827 0 1 1-3.81 4.17A2.827 2.827 0 1 1 12 19.98a2.827 2.827 0 1 1-4.17-3.81A2.827 2.827 0 1 1 4.02 12z" stroke-linejoin="round"/><path d="m7.83 7.83 8.34 8.34"/></svg>Рулетка</button>
+          <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4.02 12a2.827 2.827 0 1 1 3.81-4.17A2.827 2.827 0 1 1 12 4.02a2.827 2.827 0 1 1 4.17 3.81A2.827 2.827 0 1 1 19.98 12a2.827 2.827 0 1 1-3.81 4.17A2.827 2.827 0 1 1 12 19.98a2.827 2.827 0 1 1-4.17-3.81A2.827 2.827 0 1 1 4.02 12z" stroke-linejoin="round"/><path d="m7.83 7.83 8.34 8.34"/></svg>Рулетка</button>
           <button data-l="league" onclick="luckGo('league')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>Лига</button>
         </div>
 
@@ -4217,19 +4219,23 @@ function renderToday(){
     <div class="upsell fadein" style="margin-top:14px"><div class="glow"></div><div class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> AppHub Studio · для бизнеса</div><h3>Запусти CityHUB в своём городе</h3><p>Соберём городской агрегатор и TMA под ключ за пару недель. Лояльность Loop, карта, ниши, AI-консьерж.</p><button class="cta gold" style="margin-top:14px" onclick="openExternal(APP_LINKS.apphub)"><span>Обсудить запуск</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>`;document.getElementById('altList').innerHTML='';return}
   const top=C.biz[0];const nz=NICHES.find(n=>n.k===top.k)||{c:'#7C3AFF',n:'',q:''};
   // живые сигналы города (псевдо-реалтайм по названию)
-  var sd=0;for(var ci=0;ci<top.n.length;ci++)sd+=top.n.charCodeAt(ci);
-  var liveNow=4+sd%18; var friendWas=sd%3===0;
+  /* Живых цифр посещаемости у нас пока нет — и придумывать их нельзя.
+     Вместо «сейчас здесь 18» показываем честное: время работы. */
+  var hhNow=new Date().getHours();
+  var closesAt=(top.k==='bar'||top.k==='night')?2:23;
+  var hrsLeft=(closesAt>hhNow?closesAt-hhNow:(24-hhNow+closesAt));
+  var openNow=(closesAt===2)?(hhNow>=18||hhNow<2):(hhNow>=8&&hhNow<closesAt);
   // живые сигналы — плавающая полоса над фото (новая композиция)
   var liveSignalsTop='<span class="live-strip">'+
-    '<span><i></i>'+liveNow+' '+T('сейчас')+'</span>'+
-    (friendWas?'<span class="friend">'+T('друг был вчера')+'</span>':'')+'</span>';
+    (openNow&&hrsLeft<=3?'<span class="closing"><i></i>'+T('закрывается через')+' '+hrsLeft+' '+pl3(hrsLeft,T('час'),T('часа'),T('часов'))+'</span>':
+      openNow?'<span><i></i>'+T('открыто до')+' '+closesAt+':00</span>'
+             :'<span><i></i>'+T('откроется в')+' '+(closesAt===2?'18:00':'8:00')+'</span>')+'</span>';
   var promoChip=top.b==='promo'?'<span class="m-dot"></span><span class="m-promo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>×2 '+T('баллы')+'</span>':'';
   // контекст времени
   var ctxLine=hh<12?'Лучшее начало утра рядом с тобой':hh<18?'Идеально для дневной паузы':hh<23?'Вечер обещает быть хорошим':'Открыто прямо сейчас';
   // расстояние от центра города (грубо, в метрах) + статус
   var dist='';
   if(top.o&&C.c){var dlat=(top.o[0]-C.c[0])*111000;var dlng=(top.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));dist=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}
-  var openNow=hh>=8&&hh<23;
   // prefetch top-3 фото (под current vibe) — ускоряет «Другое»
   try{var pool=C.biz.filter(function(b){return curMood==='all'||b.k===curMood}).slice(0,3);pool.forEach(function(b){var im=new Image();im.src=ph(b.k,b.n.length,b.n)})}catch(e){}
   document.getElementById('answerBox').innerHTML=`
@@ -5617,7 +5623,9 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open');try{ovlOpened()}catch(e){}}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={"До награды за":["To the reward at","ჯილდომდე"],"ещё":["left","დარჩა"],"и множитель":["and multiplier","და მამრავლი"],"Отлично":["Got it","შესანიშნავია"],
+var DICT={"откроется в":["opens at","გაიხსნება"],
+"закрывается через":["closes in","იხურება"],"открыто до":["open until","ღიაა"],"час":["hour","საათი"],"часа":["hours","საათი"],"часов":["hours","საათი"],
+"До награды за":["To the reward at","ჯილდომდე"],"ещё":["left","დარჩა"],"и множитель":["and multiplier","და მამრავლი"],"Отлично":["Got it","შესანიშნავია"],
 "Пришёл по приглашению":["Joined via invite","მოწვევით შემოვიდა"],"Тебя пригласили в CityHUB":["You were invited to CityHUB","შენ მოგიწვიეს CityHUB-ში"],"Код друга":["Friend's code","მეგობრის კოდი"],"Баллы уже на счету. Друг получит свои, когда ты сходишь в первое место.":["Points are already yours. Your friend gets theirs once you visit your first place.","ქულები უკვე შენია. მეგობარი თავისას მიიღებს, როცა პირველ ადგილს ეწვევი."],"Показать, куда сходить":["Show me where to go","მაჩვენე სად წავიდე"],"друзей пришло":["friends joined","მეგობარი შემოვიდა"],"Приглашений отправлено":["Invites sent","გაგზავნილი მოწვევები"],"баллы придут, когда друг откроет приложение":["points arrive when your friend opens the app","ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Отправь ссылку — баллы придут, когда друг откроет приложение":["Send the link — points arrive when your friend opens the app","გააგზავნე ბმული — ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Ваучер города":["City voucher","ქალაქის ვაუჩერი"],
 "Hub — есть что сказать":["Hub has something for you","Hub-ს რაღაც აქვს სათქმელი"],
 "Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
@@ -6625,7 +6633,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=65;try{renderConsent()}catch(e){}
+var APP_V=66;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
