@@ -2747,7 +2747,7 @@ input,textarea{font-size:16px!important}
 .spin-meta b{color:var(--lime);font-weight:800}
 .spin-meta .sm-free{color:var(--acc-2)}
 /* Призовой фонд */
-.pool-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.pool-grid{display:flex;flex-direction:column;gap:5px;margin-top:4px}
 .pool-item{display:flex;gap:9px;align-items:center;padding:10px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft)}
 .pool-item .pi-d{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 .pool-item .pi-t{font-size:12px;font-weight:700;line-height:1.25;min-width:0}
@@ -3055,6 +3055,27 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 .grow .g-r .lm{display:grid;place-items:center;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5))}
 .grow .g-r .lm svg{width:30px;height:30px}
 .grow .g-r{display:grid;place-items:center;min-width:38px}
+/* Призовой фонд — прокручиваемый список, а не сетка */
+.pool-list{max-height:58vh;overflow-y:auto;overscroll-behavior:contain;margin:0 -4px;padding:0 4px;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 14px,#000 calc(100% - 18px),transparent);
+  mask-image:linear-gradient(180deg,transparent,#000 14px,#000 calc(100% - 18px),transparent)}
+.pool-grp{margin-bottom:14px}
+.pg-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+  font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-3);
+  margin:8px 2px 7px;position:sticky;top:0;z-index:2;padding:6px 0;
+  background:linear-gradient(180deg,rgba(16,20,31,.96) 60%,rgba(16,20,31,0))}
+.pg-h b{color:var(--txt-2);font-variant-numeric:tabular-nums}
+.pool-list .pool-item{display:flex;gap:11px;align-items:center;padding:10px 12px;margin-bottom:5px;
+  border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft)}
+.pool-item .pi-ic{flex-shrink:0;width:34px;height:34px;border-radius:11px;display:grid;place-items:center}
+.pool-item .pi-ic svg{width:18px;height:18px}
+.pool-item .pi-t{flex:1;min-width:0}
+.pool-item .pi-t b{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
+.pool-item .pi-t span{display:block;font-size:11px;color:var(--txt-3);line-height:1.3;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pool-item.epic{border-color:rgba(124,58,255,.34)}
+.pool-item.legend{border-color:rgba(255,213,74,.42);background:rgba(255,213,74,.05)}
+.pool-grid .pool-item{display:flex;gap:11px;align-items:center;padding:10px 12px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft)}
 </style>
 </head>
 <body class="client">
@@ -5542,7 +5563,8 @@ function setMode(m,tab){if(m==='biz')return goBiz(tab);return goClient(tab)}
 function openCity(){renderStatic();document.getElementById('cityBg').classList.add('open');try{ovlOpened()}catch(e){}}
 var LANGS=[{k:'RU',n:'Русский',f:'🇷🇺'},{k:'EN',n:'English',f:'🇬🇧'},{k:'GE',n:'ქართული',f:'🇬🇪'}];
 var curLang='RU';
-var DICT={"сейчас":["now", "ახლა"],
+var DICT={"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
+"сейчас":["now", "ახლა"],
 "Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
 "Как это работает":["How it works", "როგორ მუშაობს"],"Повесь плакат у кассы":["Put the poster at the counter", "დაკიდე პლაკატი სალაროსთან"],"Там, где гость стоит и ждёт — на стойке, у терминала, на столике":["Where the guest stands and waits — on the counter, by the terminal, on the table", "სადაც სტუმარი დგას და ელოდება — დახლზე, ტერმინალთან, მაგიდაზე"],"Гость наводит камеру":["The guest points their camera", "სტუმარი მიმართავს კამერას"],"Откроется твоя карточка в CityHUB — без установки, прямо в Telegram":["Your card opens in CityHUB — no install, right inside Telegram", "შენი ბარათი გაიხსნება CityHUB-ში — ინსტალაციის გარეშე, პირდაპირ Telegram-ში"],"Визит засчитан":["Visit counted", "ვიზიტი ჩაითვალა"],"Баллы падают гостю сразу, тебе — скан в статистике кабинета":["Points land for the guest instantly; you get the scan in your dashboard", "ქულები მაშინვე ჩაერიცხება სტუმარს, შენ — სკანი კაბინეტის სტატისტიკაში"],"Он возвращается":["They come back", "ის ბრუნდება"],"Баллы тратятся у партнёров — и у тебя. Это и есть повод прийти снова":["Points are spent at partners — and at your place. That is the reason to come back", "ქულები იხარჯება პარტნიორებთან — და შენთანაც. ეს არის დაბრუნების მიზეზი"],"Одна фраза удваивает сканы":["One sentence doubles the scans", "ერთი ფრაზა აორმაგებს სკანებს"],"«Отсканируй — получишь баллы на кофе». Просто скажите её на кассе.":["\"Scan this and get points toward a coffee.\" Just say it at the counter.", "«დაასკანერე — ქულებს მიიღებ ყავაზე». უბრალოდ თქვით სალაროსთან."],"Оплата включится вместе с релизом — тариф пока можно забронировать через Hub":["Payments go live with the release — for now you can reserve a plan through Hub", "გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ტარიფი შეგიძლია დაჯავშნო Hub-ით"],"Хочу подключить буст для заведения: что входит и когда можно оплатить?":["I want to enable a boost for my place: what is included and when can I pay?","მინდა ბუსტის ჩართვა: რა შედის და როდის შემიძლია გადახდა?"],
 "Подробнее":["Details", "დეტალები"],
@@ -6525,7 +6547,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=59;try{renderConsent()}catch(e){}
+var APP_V=60;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8697,21 +8719,38 @@ function shareStory(onDone){
    `ic` — ОТДЕЛЬНЫЙ яркий цвет иконки. Цвет карточки `c` для этого не годится:
    у тёмных лотов он совпадает с фоном. */
 var WHEEL=[
- {s:'+20',      n:'+20 баллов',           d:'Утешительный',          k:'pts',  v:20,   w:2595, r:'common', c:'#243040', ic:'#9fb3cc', ink:'#c9d6e8'},
- {s:'+50',      n:'+50 баллов',           d:'Loop',                  k:'pts',  v:50,   w:2400, r:'common', c:'#2a3a1a', ic:'#D4FF4F', ink:'#06210a'},
- {s:'−20%',     n:'−20% в кофейне',       d:'Партнёры CityHUB',      k:'promo',pol:'d30', w:1500, r:'common', c:'#2b1f4d', ic:'#B9A2FF', ink:'#e6dcff'},
- {s:'Ещё спин', n:'Ещё один спин',        d:'Крути снова',           k:'spin',         w:1200, r:'rare',   c:'#3a2a12', ic:'#FFB547', ink:'#2a1500'},
- {s:'+150',     n:'+150 баллов',          d:'Loop',                  k:'pts',  v:150,  w:900,  r:'rare',   c:'#0e3733', ic:'#00E0C7', ink:'#04231f'},
- {s:'Кофе',     n:'Бесплатный кофе',      d:'Партнёрская кофейня',   k:'gift', get pol(){try{return prizePolGet()}catch(e){return 'd7'}}, w:700, r:'rare', c:'#1d2b46', ic:'#8FC0FF', ink:'#cfe0ff'},
- {s:'−30% СПА', n:'−30% в Victoria Spa',  d:'Партнёры CityHUB',      k:'promo',pol:'d3',  w:400,  r:'rare',   c:'#3d1224', ic:'#FF7FAD', ink:'#ffd9e6'},
- {s:'+500',     n:'+500 баллов',          d:'Джекпот Loop',          k:'pts',  v:500,  w:180,  r:'epic',   c:'#3a4212', ic:'#ECFF8A', ink:'#06210a'},
- {s:'PRO',      n:'AppHub PRO на месяц',  d:'Проекты AppHub Studio', k:'sub',  pol:'d90', w:80,  r:'epic',   c:'#2c1a5c', ic:'#C4A6FF', ink:'#f4f0ff'},
- /* Telegram-подарки: их можно передать другу или продать на Fragment —
-    единственный лот с настоящей рыночной ценой, поэтому он и тянет барабан. */
- {s:'Мишка',    n:'Telegram-подарок «Мишка»', d:'Fragment · можно передать', k:'tggift', gid:'bear', pol:'inf', w:35, r:'epic',   c:'#4a2a12', ic:'#FFC46B', ink:'#2a1500'},
- {s:'Кольцо',   n:'Telegram-подарок «Кольцо»',d:'Fragment · редкий',      k:'tggift', gid:'ring', pol:'inf', w:9,  r:'legend', c:'#3c2f0a', ic:'#FFE082', ink:'#2a1500'},
- {s:'1000 ⭐',  n:'ДЖЕКПОТ · 1000 Stars', d:'Главный приз', k:'stars', v:1000, pol:'inf', w:1, r:'legend', c:'#4a3a00', ic:'#FFD54A', ink:'#2a1500'}
+ /* Обычное — часто. Дорогое — почти никогда. Веса в десятитысячных, чтобы
+    описывать 0,01%; проценты считаются сами от суммы, так что фонд можно
+    пополнять партнёрами, не пересчитывая ничего руками. */
+ {s:'+20',      n:'+20 баллов',            d:'Утешительный',           k:'pts',  v:20,   w:2200, r:'common', c:'#243040', ic:'#9fb3cc', ink:'#c9d6e8'},
+ {s:'+50',      n:'+50 баллов',            d:'Loop',                   k:'pts',  v:50,   w:1900, r:'common', c:'#2a3a1a', ic:'#D4FF4F', ink:'#06210a'},
+ {s:'−10%',     n:'−10% на кофе',          d:'Любая партнёрская',      k:'promo',pol:'d30', w:1000, r:'common', c:'#2b2418', ic:'#E0B784', ink:'#efe2d2'},
+ {s:'Ещё спин', n:'Ещё один спин',         d:'Крути снова',            k:'spin',         w:1000, r:'common', c:'#3a2a12', ic:'#FFB547', ink:'#2a1500'},
+ {s:'+100',     n:'+100 баллов',           d:'Loop',                   k:'pts',  v:100,  w:800,  r:'common', c:'#1d3326', ic:'#7EE3A6', ink:'#04231f'},
+
+ {s:'+150',     n:'+150 баллов',           d:'Loop',                   k:'pts',  v:150,  w:700,  r:'rare',   c:'#0e3733', ic:'#00E0C7', ink:'#04231f'},
+ {s:'Кофе',     n:'Бесплатный кофе',       d:'Партнёрская кофейня',    k:'gift', get pol(){try{return prizePolGet()}catch(e){return 'd7'}}, w:550, r:'rare', c:'#1d2b46', ic:'#8FC0FF', ink:'#cfe0ff'},
+ {s:'−20%',     n:'−20% в кофейне',        d:'Партнёры CityHUB',       k:'promo',pol:'d30', w:500, r:'rare', c:'#2b1f4d', ic:'#B9A2FF', ink:'#e6dcff'},
+ {s:'Десерт',   n:'Десерт в подарок',      d:'Кондитерские города',    k:'gift', pol:'d14', w:400, r:'rare', c:'#3a1f2e', ic:'#FFA3C8', ink:'#ffd9e6'},
+ {s:'−30% СПА', n:'−30% в Victoria Spa',   d:'Партнёры CityHUB',       k:'promo',pol:'d3',  w:300, r:'rare', c:'#3d1224', ic:'#FF7FAD', ink:'#ffd9e6'},
+ {s:'Бранч',    n:'−25% на бранч вдвоём',  d:'Завтраки у моря',        k:'promo',pol:'d14', w:250, r:'rare', c:'#33290f', ic:'#F0C868', ink:'#2a1500'},
+
+ {s:'+500',     n:'+500 баллов',           d:'Джекпот Loop',           k:'pts',  v:500,  w:180,  r:'epic',   c:'#3a4212', ic:'#ECFF8A', ink:'#06210a'},
+ {s:'PRO',      n:'AppHub PRO на месяц',   d:'Проекты AppHub Studio',  k:'sub',  pol:'d90', w:80,  r:'epic',  c:'#2c1a5c', ic:'#C4A6FF', ink:'#f4f0ff'},
+ {s:'Массаж',   n:'−50% на массаж',        d:'СПА-партнёры',           k:'promo',pol:'d30', w:70,  r:'epic',  c:'#2a1636', ic:'#D79BFF', ink:'#f0e2ff'},
+ {s:'Ужин',     n:'Ужин на двоих',         d:'Ресторан-партнёр',       k:'gift', pol:'d30', w:60,  r:'epic',  c:'#3b1a1a', ic:'#FF9B7A', ink:'#ffe2d8'},
+ {s:'Авто',     n:'Прокат авто на день',   d:'Batumi Rent · партнёр',  k:'gift', pol:'d30', w:40,  r:'epic',  c:'#14314a', ic:'#7FD4FF', ink:'#dff1ff'},
+
+ /* Telegram-подарки: единственные лоты с настоящей рыночной ценой —
+    их можно передать другу или продать на Fragment. Они и тянут барабан. */
+ {s:'Мишка',    n:'Telegram-подарок «Мишка»',  d:'Fragment · можно передать', k:'tggift', gid:'bear',  pol:'inf', w:35, r:'epic',   c:'#4a2a12', ic:'#FFC46B', ink:'#2a1500'},
+ {s:'Сердце',   n:'Telegram-подарок «Сердце»', d:'Fragment · можно передать', k:'tggift', gid:'heart', pol:'inf', w:20, r:'legend', c:'#4a1228', ic:'#FF8FB4', ink:'#ffd9e6'},
+ {s:'Роза',     n:'Telegram-подарок «Роза»',   d:'Fragment · редкий',         k:'tggift', gid:'rose',  pol:'inf', w:15, r:'legend', c:'#3f1030', ic:'#FF9AD5', ink:'#ffe0f4'},
+ {s:'Кольцо',   n:'Telegram-подарок «Кольцо»', d:'Fragment · растёт в цене',  k:'tggift', gid:'ring',  pol:'inf', w:9,  r:'legend', c:'#3c2f0a', ic:'#FFE082', ink:'#2a1500'},
+ {s:'500 ⭐',   n:'500 Telegram Stars',        d:'Крупный приз',              k:'stars', v:500,  pol:'inf', w:5, r:'legend', c:'#43340a', ic:'#FFD54A', ink:'#2a1500'},
+ {s:'1000 ⭐',  n:'ДЖЕКПОТ · 1000 Stars',      d:'Главный приз',              k:'stars', v:1000, pol:'inf', w:1, r:'legend', c:'#4a3a00', ic:'#FFD54A', ink:'#2a1500'}
 ];
+
 var WHEEL_TOTAL=WHEEL.reduce(function(s,p){return s+p.w},0);
 function wheelOdds(p){
   var pc=p.w/WHEEL_TOTAL*100;
@@ -8728,12 +8767,27 @@ function spinIcon(p){
          p.k==='stars'?'star':p.k==='tggift'?(p.gid==='ring'?'gem':'pet'):'ticket';
 }
 
+/* Группировка по редкости: человек должен видеть не только «что бывает»,
+   но и «насколько это редко» — иначе список из двадцати позиций выглядит
+   одинаково ценным. */
+var POOL_TIERS=[['common','Выпадает часто'],['rare','Пореже'],['epic','Редкое'],['legend','Легендарное']];
+function poolGroups(){
+  return '<div class="pool-list">'+POOL_TIERS.map(function(t){
+    var rows=WHEEL.filter(function(p){return (p.r||'common')===t[0]});
+    if(!rows.length)return '';
+    var sum=rows.reduce(function(a,p){return a+p.w},0)/WHEEL_TOTAL*100;
+    return '<div class="pool-grp"><span class="pg-h">'+T(t[1])+
+      '<b>'+(sum>=1?sum.toFixed(0):sum.toFixed(2))+'%</b></span>'+
+      rows.map(poolItem).join('')+'</div>';
+  }).join('')+'</div>';
+}
 function poolItem(p){
   /* Шанс показан у каждого лота. Скрытые вероятности — то, чем казино
      отличается от игры; открытые азарт не убивают (кейсы CS:GO их показывают),
      зато не оставляют повода не верить барабану. */
-  return '<div class="pool-item '+(p.r||'common')+'"><span class="pi-d" style="background:'+(p.ic||p.c)+'"></span>'+
-    '<div class="pi-t">'+p.n+'<span>'+p.d+'</span></div>'+
+  return '<div class="pool-item '+(p.r||'common')+'">'+
+    '<span class="pi-ic" style="background:'+(p.ic||p.c)+'22;color:'+(p.ic||p.c)+'">'+ico(spinIcon(p),'currentColor',2)+'</span>'+
+    '<div class="pi-t"><b>'+p.n+'</b><span>'+p.d+'</span></div>'+
     '<span class="pi-odds">'+wheelOdds(p)+'</span></div>';
 }
 /* Полный фонд — отдельной шторкой: список будет расти с каждым партнёром,
@@ -8742,15 +8796,20 @@ function openPool(){
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Призовой фонд')+'</h2>'+
     '<p class="sub" style="margin-bottom:14px">'+T('Что может выпасть в спиннере. Фонд пополняется с каждым новым партнёром города.')+'</p>'+
-    '<div class="pool-grid">'+WHEEL.map(poolItem).join('')+'</div>'+
+    poolGroups()+
     '<button class="cta gold" style="margin-top:16px" onclick="partnerJoin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>'+T('Стать партнёром')+'</button>';
   _openSheet();try{haptic('tap')}catch(e){}
 }
 function renderPool(){
   var pg=document.getElementById('poolGrid');if(!pg)return;
-  pg.innerHTML=WHEEL.slice(0,6).map(function(p){
-    return poolItem(p);
-  }).join('');
+  /* Показываем не первые шесть подряд, а срез по редкости: две частые,
+     две средние и два самых редких — иначе превью выглядит как список
+     утешительных призов. */
+  var pick=[].concat(
+    WHEEL.filter(function(p){return p.r==='common'}).slice(0,2),
+    WHEEL.filter(function(p){return p.r==='rare'}).slice(0,2),
+    WHEEL.filter(function(p){return p.r==='legend'}).slice(-2));
+  pg.innerHTML=pick.map(poolItem).join('');
 }
 var __spinning=false;
 function wheelPrize(i){
