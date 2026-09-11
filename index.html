@@ -3144,6 +3144,26 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 .bat-pos{display:grid;place-items:center;min-width:30px}
 .answer .live-strip > span.shut i{background:var(--rose);box-shadow:0 0 8px var(--rose);animation:none}
 .answer .live-strip > span.shut{color:rgba(244,246,251,.82)}
+
+/* Вопрос после визита — шторка из двух равных решений.
+   Кегли 13/15/20 с лестницы, радиусы 14/18 из нормы проекта. */
+.ask-v{padding:6px 2px 2px;text-align:center}
+.av-ic{display:flex;align-items:center;justify-content:center;width:62px;height:62px;margin:2px auto 14px;border-radius:50%;background:var(--glass-strong);border:1px solid var(--stroke)}
+.av-ic svg{width:28px;height:28px}
+.av-h{font-size:20px;font-weight:800;line-height:1.25;letter-spacing:-.01em;margin:0}
+.av-sub{font-size:13px;color:var(--txt-3);margin:7px 0 16px}
+.av-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.av-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px 10px 14px;border-radius:18px;border:1px solid var(--stroke);background:var(--glass);color:var(--txt);cursor:pointer;transition:transform .16s cubic-bezier(.22,1,.36,1),background .16s,border-color .16s}
+.av-btn:active{transform:scale(.96)}
+.av-btn svg{width:24px;height:24px}
+.av-btn b{font-size:15px;font-weight:800}
+.av-btn span{font-size:11px;color:var(--txt-3);font-weight:600}
+.av-btn.good{border-color:rgba(212,255,79,.32);background:rgba(212,255,79,.09);color:var(--lime)}
+.av-btn.good b{color:var(--txt)}
+.av-btn.bad{border-color:rgba(255,93,143,.3);background:rgba(255,93,143,.08);color:var(--rose)}
+.av-btn.bad b{color:var(--txt)}
+.cta.ghost.av-no{margin-top:12px;font-size:13px;font-weight:700;background:none;border:none;box-shadow:none;color:var(--txt-3);height:40px}
+.cta.ghost.av-no:active{color:var(--txt-2);transform:none}
 </style>
 </head>
 <body class="client">
@@ -5658,7 +5678,7 @@ var DICT={"Скидка действует на всю компанию: пок�
 "До награды за":["To the reward at","ჯილდომდე"],"ещё":["left","დარჩა"],"и множитель":["and multiplier","და მამრავლი"],"Отлично":["Got it","შესანიშნავია"],
 "Пришёл по приглашению":["Joined via invite","მოწვევით შემოვიდა"],"Тебя пригласили в CityHUB":["You were invited to CityHUB","შენ მოგიწვიეს CityHUB-ში"],"Код друга":["Friend's code","მეგობრის კოდი"],"Баллы уже на счету. Друг получит свои, когда ты сходишь в первое место.":["Points are already yours. Your friend gets theirs once you visit your first place.","ქულები უკვე შენია. მეგობარი თავისას მიიღებს, როცა პირველ ადგილს ეწვევი."],"Показать, куда сходить":["Show me where to go","მაჩვენე სად წავიდე"],"друзей пришло":["friends joined","მეგობარი შემოვიდა"],"Приглашений отправлено":["Invites sent","გაგზავნილი მოწვევები"],"баллы придут, когда друг откроет приложение":["points arrive when your friend opens the app","ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Отправь ссылку — баллы придут, когда друг откроет приложение":["Send the link — points arrive when your friend opens the app","გააგზავნე ბმული — ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Ваучер города":["City voucher","ქალაქის ვაუჩერი"],
 "Hub — есть что сказать":["Hub has something for you","Hub-ს რაღაც აქვს სათქმელი"],
-"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
+"Как было в":["How was","როგორ იყო"],"Один ответ — и дальше подберу точнее":["One answer and I pick better from here","ერთი პასუხი — და შემდეგ უფრო ზუსტად შევარჩევ"],"Зашло":["Loved it","მომეწონა"],"хочу ещё такого":["more like this","მინდა კიდევ ასეთი"],"Не моё":["Not for me","ჩემი არაა"],"больше не предлагай":["stop suggesting it","აღარ შემომთავაზო"],"Я туда не дошёл":["I never made it there","იქ არ მივსულვარ"],"Понял — визит не засчитываю":["Got it — not counting the visit","გასაგებია — ვიზიტს არ ვითვლი"],"Отзыв о визите":["Visit feedback","ვიზიტის შეფასება"],"Спасибо — теперь знаю тебя лучше":["Thanks — I know you better now","მადლობა — ახლა უკეთ გიცნობ"],"Понял — такое больше не покажу":["Got it — I won't show these again","გასაგებია — ასეთს აღარ გაჩვენებ"],"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
 "сейчас":["now", "ახლა"],
 "Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
 "Как это работает":["How it works", "როგორ მუშაობს"],"Повесь плакат у кассы":["Put the poster at the counter", "დაკიდე პლაკატი სალაროსთან"],"Там, где гость стоит и ждёт — на стойке, у терминала, на столике":["Where the guest stands and waits — on the counter, by the terminal, on the table", "სადაც სტუმარი დგას და ელოდება — დახლზე, ტერმინალთან, მაგიდაზე"],"Гость наводит камеру":["The guest points their camera", "სტუმარი მიმართავს კამერას"],"Откроется твоя карточка в CityHUB — без установки, прямо в Telegram":["Your card opens in CityHUB — no install, right inside Telegram", "შენი ბარათი გაიხსნება CityHUB-ში — ინსტალაციის გარეშე, პირდაპირ Telegram-ში"],"Визит засчитан":["Visit counted", "ვიზიტი ჩაითვალა"],"Баллы падают гостю сразу, тебе — скан в статистике кабинета":["Points land for the guest instantly; you get the scan in your dashboard", "ქულები მაშინვე ჩაერიცხება სტუმარს, შენ — სკანი კაბინეტის სტატისტიკაში"],"Он возвращается":["They come back", "ის ბრუნდება"],"Баллы тратятся у партнёров — и у тебя. Это и есть повод прийти снова":["Points are spent at partners — and at your place. That is the reason to come back", "ქულები იხარჯება პარტნიორებთან — და შენთანაც. ეს არის დაბრუნების მიზეზი"],"Одна фраза удваивает сканы":["One sentence doubles the scans", "ერთი ფრაზა აორმაგებს სკანებს"],"«Отсканируй — получишь баллы на кофе». Просто скажите её на кассе.":["\"Scan this and get points toward a coffee.\" Just say it at the counter.", "«დაასკანერე — ქულებს მიიღებ ყავაზე». უბრალოდ თქვით სალაროსთან."],"Оплата включится вместе с релизом — тариф пока можно забронировать через Hub":["Payments go live with the release — for now you can reserve a plan through Hub", "გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ტარიფი შეგიძლია დაჯავშნო Hub-ით"],"Хочу подключить буст для заведения: что входит и когда можно оплатить?":["I want to enable a boost for my place: what is included and when can I pay?","მინდა ბუსტის ჩართვა: რა შედის და როდის შემიძლია გადახდა?"],
@@ -6167,7 +6187,7 @@ function confirmArrived(pts,bizName){
     try{celebrate({k:'loop',title:'+'+pts+' '+T('баллов'),sub:sub})}
     catch(e){toast('+'+pts+' '+T('баллов'))}
   },1300);
-  if(bizName){questAdvance(bizName);gameOnVisit(bizName);try{var __b=CITIES[CITY].biz.find(function(x){return x.n===bizName});if(__b)tasteBump(__b.k,1.8)}catch(e){}}
+  if(bizName){questAdvance(bizName);gameOnVisit(bizName);try{var __b=CITIES[CITY].biz.find(function(x){return x.n===bizName});if(__b)tasteBump(__b.k,1.25);askPush(bizName,__b?__b.k:'')}catch(e){}}
 }
 var __sheetTok=0;
 /* единая точка открытия шторки — отменяет незавершённое закрытие, чтобы не было down-анимации при reopen */
@@ -6601,7 +6621,7 @@ safe(renderToday);safe(renderMapTab);
 safe(function(){var k='';try{k=localStorage.getItem('cityhub_lang_v1')||''}catch(e){}
   if(k==='EN'||k==='GE')setLang(k,true);   /* тихо: без тоста, вибро и закрытия шторки */
 });
-safe(applyLang);safe(renderConsent);safe(edgeFadeAll);safe(hubDotSync);safe(ptsSync);safe(dailyCheck);setTimeout(function(){try{edgeFadeAll()}catch(e){}},700);
+safe(applyLang);safe(renderConsent);safe(edgeFadeAll);safe(hubDotSync);safe(ptsSync);safe(dailyCheck);setTimeout(function(){try{askMaybe()}catch(e){}},4200);setTimeout(function(){try{askMaybe()}catch(e){}},12000);setTimeout(function(){try{edgeFadeAll()}catch(e){}},700);
 safe(renderIdentity);
 safe(function(){if(notifIsRead())notifSetRead()});
 /* ═══ SHAKE-TO-SURPRISE — встряхнул телефон → новое место (сигнатурный жест CityHUB) ═══ */
@@ -6664,7 +6684,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=69;try{renderConsent()}catch(e){}
+var APP_V=70;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7206,6 +7226,102 @@ function gameOnVisit(bizName){
   var newOnes=current.filter(function(k){return prev.indexOf(k)<0});
   gameSet('earned',current);
   if(newOnes.length){setTimeout(function(){var a=ACHIEVEMENTS.find(function(x){return x.k===newOnes[0]});if(a&&typeof achievementReveal==='function')achievementReveal(a)},1500)}
+}
+
+/* ═══════════ ВОПРОС ПОСЛЕ ВИЗИТА ═══════════
+   До сих пор вкус учился на СВАЙПАХ — то есть на реакции на фотографию, и на
+   самом чек-ине. Оба сигнала описывают НАМЕРЕНИЕ: понравился кадр, дошёл ногами.
+   О том, чем визит кончился, система не знала ничего — а это ровно то, ради
+   чего человек сюда ходит. Один вопрос через пару часов закрывает петлю.
+
+   Четыре правила, без которых это станет назойливостью:
+   · спрашиваем ОДИН раз про одно место и больше не возвращаемся;
+   · не раньше чем через два часа — иначе человек ещё сидит за столом;
+   · не в момент визита, а при следующем открытии: пуш присылать нечем,
+     а выдёргивать человека из вечера незачем;
+   · промолчал дважды — снимаем вопрос сами, третий раз не спрашиваем.
+
+   Вес: чек-ин даёт ×1.25 (сходил — уже сигнал), ответ ×1.8 / ×0.4 —
+   опыт весит больше жеста и способен перебить собственный чек-ин. */
+var ASK_DELAY=2*3600*1000, ASK_SNOOZE=20*3600*1000, ASK_TRIES=2;
+function askQueue(){var q=gameGet('askQ',[]);return Array.isArray(q)?q:[]}
+function askDone(){var d=gameGet('askDone',{});return (d&&typeof d==='object')?d:{}}
+function askPush(name,k){
+  if(!name)return;
+  if(askDone()[name])return;                                  /* уже спрашивали */
+  var q=askQueue();
+  for(var i=0;i<q.length;i++)if(q[i].n===name){q[i].t=Date.now();gameSet('askQ',q);return}
+  q.push({n:name,k:k||'',t:Date.now(),tries:0});
+  while(q.length>5)q.shift();
+  gameSet('askQ',q);
+}
+function askDue(){
+  var q=askQueue(),now=Date.now();
+  for(var i=0;i<q.length;i++)if(now-q[i].t>=ASK_DELAY)return q[i];
+  return null;
+}
+function askResolve(name,verdict){
+  gameSet('askQ',askQueue().filter(function(x){return x.n!==name}));
+  var d=askDone();d[name]=verdict;gameSet('askDone',d);
+}
+/* Показ откладываем сразу, до ответа: если человек закроет шторку крестиком,
+   вопрос не всплывёт снова в этой же сессии и не превратится в преследование. */
+function askSnooze(it){
+  var q=askQueue();
+  for(var i=0;i<q.length;i++)if(q[i].n===it.n){
+    q[i].tries=(q[i].tries||0)+1;
+    if(q[i].tries>ASK_TRIES){askResolve(it.n,'silent');return}   /* спросили дважды — хватит */
+    q[i].t=Date.now()+ASK_SNOOZE-ASK_DELAY;gameSet('askQ',q);return;
+  }
+}
+function askMaybe(){
+  var it=askDue();if(!it)return;
+  var sh=document.getElementById('sheet');
+  if(sh&&sh.classList.contains('open'))return;                /* не поверх другого разговора */
+  if(document.querySelector('.celebrate,.ach-reveal,.peek.open,.onb.on'))return;   /* поверх праздника и онбординга не лезем */
+  askSheet(it);
+}
+function askSheet(it){
+  askSnooze(it); if(askDone()[it.n])return;                   /* третий заход — молча снимаем */
+  var nz=null;try{nz=NICHES.find(function(n){return n.k===it.k})}catch(e){}
+  var col=(nz&&nz.c)||'var(--acc)';
+  var sb=document.getElementById('sheet-body');if(!sb)return;
+  sb.innerHTML='<div class="grab"></div>'+
+    '<div class="ask-v">'+
+      '<span class="av-ic" style="color:'+col+'">'+ico(it.k||'pin','currentColor',2)+'</span>'+
+      '<h2 class="av-h">'+T('Как было в')+' '+it.n+'?</h2>'+
+      '<p class="av-sub">'+T('Один ответ — и дальше подберу точнее')+'</p>'+
+      '<div class="av-row">'+
+        '<button class="av-btn good" onclick="askAnswer(&quot;'+encodeURIComponent(it.n)+'&quot;,&quot;'+it.k+'&quot;,1)">'+
+          ico('heart','currentColor',2.2)+'<b>'+T('Зашло')+'</b><span>'+T('хочу ещё такого')+'</span></button>'+
+        '<button class="av-btn bad" onclick="askAnswer(&quot;'+encodeURIComponent(it.n)+'&quot;,&quot;'+it.k+'&quot;,-1)">'+
+          ico('nope','currentColor',2.2)+'<b>'+T('Не моё')+'</b><span>'+T('больше не предлагай')+'</span></button>'+
+      '</div>'+
+      '<button class="cta ghost av-no" onclick="askAnswer(&quot;'+encodeURIComponent(it.n)+'&quot;,&quot;'+it.k+'&quot;,0)">'+T('Я туда не дошёл')+'</button>'+
+    '</div>';
+  _openSheet();try{haptic('tap');mascotFeel('listen')}catch(e){}
+}
+function askAnswer(name,k,v){
+  name=decodeURIComponent(name);
+  askResolve(name,v);
+  closeSheet();
+  if(v===0){try{visitedDrop(name)}catch(e){}toast(T('Понял — визит не засчитываю'));return}
+  try{
+    if(k)tasteBump(k,v>0?1.8:0.4);
+    if(v<0)tasteSkip(name,true);
+    renderTasteBars();
+  }catch(e){}
+  if(v>0){try{ptsAdd(15,T('Отзыв о визите'));mascotFeel('fun')}catch(e){}
+    toast(T('Спасибо — теперь знаю тебя лучше')+' · +15');}
+  else{try{mascotFeel('think')}catch(e){}toast(T('Понял — такое больше не покажу'))}
+  try{renderToday()}catch(e){}
+}
+/* «Не дошёл» обязан снимать и кредит за визит: иначе достижения и вкус
+   продолжают опираться на событие, которого человек сам не подтвердил. */
+function visitedDrop(name){
+  var v=gameGet('visited',[]);if(!Array.isArray(v))return;
+  var i=v.indexOf(name);if(i<0)return;
+  v.splice(i,1);gameSet('visited',v);
 }
 
 /* === ACHIEVEMENTS SHEET === */
@@ -8375,7 +8491,8 @@ function streakRestore(lost){
    ним. Отсюда обещание экрана «открыл и сразу знаешь, куда пойти» становится
    правдой — система знает ЧТО именно знать.
    Вес ниши живёт в [0.15 … 4], стартует с 1. Лайк ×1.45, дизлайк ×0.6,
-   реальный визит ×1.8 — поступок весит больше жеста.
+   чек-ин ×1.25, а ответ ПОСЛЕ визита ×1.8 / ×0.4 — опыт весит больше
+   и жеста, и намерения, и способен перебить собственный чек-ин.
    Дизлайкнутое место придерживаем 20 показов, но не баним навсегда:
    вкус меняется, и продукт обязан давать второй шанс. */
 function tasteW(){try{return gameGet('tasteW',{})||{}}catch(e){return {}}}
