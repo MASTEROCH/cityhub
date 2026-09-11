@@ -583,7 +583,7 @@ body.biz .msc-ava{box-shadow:0 14px 38px rgba(0,0,0,.6),0 0 0 6px rgba(255,181,7
 .fm-img{position:absolute;top:14%;left:14%;width:72%;height:72%;object-fit:contain;pointer-events:none;transition:opacity .2s var(--ease-out);z-index:2}
 /* Лёгкий breathing scale на body — только idle/happy; на think/wow/excited — без анимаций (чтобы не лагало) */
 .fmascot[data-mood="idle"]{animation:mascotBreath 4s ease-in-out infinite}
-.fmascot[data-mood="happy"]{animation:mascotBreath 3s ease-in-out infinite}
+.fmascot[data-mood="listen"]{animation:mascotBreath 3s ease-in-out infinite}
 @keyframes mascotBreath{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.02)}}
 @media (prefers-reduced-motion:reduce){.fmascot{animation:none!important}}
 .msc-log{display:flex;flex-direction:column;gap:9px;margin-bottom:12px;min-height:80px;flex:1;overflow-y:auto;padding-right:2px}
@@ -1514,11 +1514,16 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
    и именно он должен остаться светлым. */
 .deck-card::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,10,.62),rgba(5,6,10,.12))}
 .deck-card{box-shadow:0 10px 26px rgba(0,0,0,.55)}
-.deck-card.d1{inset:14px 14px -14px;filter:blur(.6px) brightness(.92);opacity:1;z-index:2;border-color:rgba(255,255,255,.18)}
-.deck-card.d2{inset:26px 28px -26px;filter:blur(1.4px) brightness(.75);opacity:.95;z-index:1;border-color:rgba(255,255,255,.12)}
-/* Пока верхняя уходит, стопка подаётся вперёд — это и есть «тасовка» */
-.answer-wrap.shuffling .deck-card.d1{inset:5px 5px -5px;filter:none;opacity:1}
-.answer-wrap.shuffling .deck-card.d2{inset:16px 16px -16px;filter:blur(1px) brightness(.82);opacity:.92}
+/* В покое колоды нет вовсе: карточка одна, ничего не торчит. */
+.deck-card{inset:0;opacity:0;transform:translateX(0) scale(.94);
+  transition:transform .28s var(--ease-out),opacity .22s var(--ease-out),filter .28s var(--ease-out)}
+.deck-card.d1{z-index:2;filter:blur(.6px) brightness(.9);border-color:rgba(255,255,255,.16)}
+.deck-card.d2{z-index:1;filter:blur(1.6px) brightness(.72);border-color:rgba(255,255,255,.1)}
+/* Во время жеста положение карт задаёт JS (см. deckProgress) — в покое их нет */
+.answer-wrap.swiping .deck-card{transition:none}
+/* Верхняя улетела — следующая встаёт на место */
+.answer-wrap.shuffling .deck-card.d1{opacity:1;transform:none;filter:none}
+.answer-wrap.shuffling .deck-card.d2{opacity:.6;transform:translateX(0) scale(.95)}
 @keyframes swNudge{0%,100%{transform:none}18%{transform:translateX(20px) rotate(1.4deg)}42%{transform:translateX(-16px) rotate(-1.1deg)}64%{transform:translateX(8px) rotate(.5deg)}}
 .sw-nudge{animation:swNudge 1.8s var(--ease-in-out)}
 .sw-hint{position:absolute;left:50%;top:0;transform:translateX(-50%) translateY(8px);z-index:8;
@@ -3359,13 +3364,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
         </div>
 
         <!-- Hub mood card -->
-        <div class="hub-mood" id="hubMood">
-          <span class="hm-emo" id="hmEmo"><span class="fmascot"><img class="fm-back" src="mascot/Mascot_Back.png" alt=""><img class="fm-img" id="hmFace" src="mascot/idle/01.png" alt=""></span></span>
-          <div class="hm-tx"><b>Hub <span id="hmLabel">ждёт</span></b><span id="hmSub">Заходи каждый день — Hub запоминает</span></div>
-        </div>
 
-        <!-- Recent activity -->
-        <div class="sec-h" style="margin-top:20px;margin-bottom:10px"><h2 style="font-size:16px">Последние визиты</h2><span class="m" onclick="openHistory()" style="color:var(--acc-2);font-weight:700">все →</span></div>
         <div class="pf-recent" id="pfRecent"><div class="pf-empty"><span>Пока пусто — сходи в любое место, и визиты появятся здесь</span></div></div>
 
         <!-- Settings rows -->
@@ -3428,7 +3427,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
       <button class="tab on" data-t="today" onclick="cgo('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg><span data-i18n="nav_today">Сегодня</span></button>
       <button class="tab" data-t="map" onclick="cgo('map')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-i18n="nav_map">Рядом</span></button>
       <button class="tab tab-mascot" data-t="mascot" onclick="try{openMascot()}catch(e){toast(T('Hub недоступен — попробуй ещё раз'))}" aria-label="Hub AI"><span class="tm-orb"><span class="fmascot" id="fmTab" data-mood="idle"><img class="fm-back" src="mascot/Mascot_Back.png" alt=""><img class="fm-img" id="fmTabImg" src="mascot/idle/01.png" alt=""></span><span class="tm-dot"></span></span></button>
-      <button class="tab" data-t="luck" onclick="cgo('luck')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg><span data-i18n="nav_luck">Удача</span></button>
+      <button class="tab" data-t="luck" onclick="cgo('luck')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.17 7.83 2 22"/><path d="M4.02 12a2.827 2.827 0 1 1 3.81-4.17A2.827 2.827 0 1 1 12 4.02a2.827 2.827 0 1 1 4.17 3.81A2.827 2.827 0 1 1 19.98 12a2.827 2.827 0 1 1-3.81 4.17A2.827 2.827 0 1 1 12 19.98a2.827 2.827 0 1 1-4.17-3.81A2.827 2.827 0 1 1 4.02 12z" stroke-linejoin="round"/><path d="m7.83 7.83 8.34 8.34"/></svg><span data-i18n="nav_luck">Удача</span></button>
       <button class="tab" data-t="me" onclick="cgo('me')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span data-i18n="nav_me">Профиль</span></button>
     </nav>
   </div>
@@ -5326,9 +5325,6 @@ function renderGameStats(){
   var ct=document.getElementById('collTotal');if(ct)ct.textContent=total2;
   var cp=document.getElementById('collPct');if(cp)cp.textContent=pct+'%';
   // Hub mood
-  var m=hubMood();var hmf=document.getElementById('hmFace');if(hmf)hmf.src='mascot/'+m.m+'/01.png';
-  var hml=document.getElementById('hmLabel');if(hml)hml.textContent=m.label;
-  var hms=document.getElementById('hmSub');if(hms){var d=streakDaysSinceLast();hms.textContent=d===0?'Сегодня уже встретились':d===1?'Был вчера — приходи ещё':d+' дней назад · давай не теряйся'}
 }
 function renderGame(){
   try{renderRefBox()}catch(e){}
@@ -6298,7 +6294,7 @@ function buyFreeze(n){closeSheet();var msg=n>=99?'Авто-защита на 30 
 // === WOW: празднование награды (конфетти + вспышка + карточка приза) ===
 function celebrate(opts){
   opts=opts||{};
-  try{mascotFeel('adoration',2600)}catch(e){}
+  try{mascotFeel('adoration')}catch(e){}
   var icon=opts.icon||'🎉';var title=opts.title||'Награда твоя!';var sub=opts.sub||'';
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   var ov=document.createElement('div');ov.className='celebrate';
@@ -6629,7 +6625,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=64;try{renderConsent()}catch(e){}
+var APP_V=65;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -6688,89 +6684,103 @@ function showMwHint(force){
    статикой и не гасла никогда — бейдж, который нельзя закрыть, учит людей
    не смотреть на бейджи. Теперь она горит, пока свежее приветствие дня
    не прочитано, и гаснет, когда чат открыли. */
-/* ═══════════════ МИМИКА МАСКОТА ═══════════════
-   В навбаре висел ОДИН кадр из шестидесяти четырёх — маскот выглядел
-   наклейкой. Здесь он получает лицо: короткие проигрывания по поводу
-   («выиграл», «крутим», «слушаю») и редкие живые моменты в простое, чтобы
-   между событиями он не застывал.
+/* ═══════════════ ЛИЦО МАСКОТА ═══════════════
+   Прошлая версия дёргалась по трём причинам, и все три — про устройство, а не
+   про подбор кадров:
+   1. кадры проигрывались «туда-обратно» с одной скоростью для всех настроений,
+      хотя это одноразовые выражения, а не циклы — отсюда ощущение глюка;
+   2. покой был ОДНИМ замершим кадром, поэтому между реакциями лицо умирало;
+   3. не было приоритетов: случайное «подмигнул» перебивало восторг от награды.
 
-   Три правила, чтобы это не превратилось в мельтешение:
-   · реакция короткая и всегда возвращается в покой — эмоция это событие,
-     а не состояние;
-   · в простое пауза между «моментами» ДЛИННАЯ и случайная, иначе цикл
-     считывается как анимация загрузки;
-   · кадры не крутятся, когда вкладка скрыта или человек просил меньше
-     движения — и то и другое просто жжёт батарею. */
-var FACE={idle:8,fun:11,adoration:8,listen:9,pause:8,think:9,wink:6,wonder:5};
-var FACE_ST={mood:'idle',timer:null,back:null,idle:null,loaded:{}};
+   Здесь — маленький автомат состояний с двумя режимами:
+   ПОКОЙ  — медленная петля idle, живёт сама по себе;
+   РЕАКЦИЯ — настроение проигрывается ОДИН раз в своём темпе, держит последний
+            кадр и возвращается в покой.
+   У каждой реакции есть вес: слабое не перебивает сильное, пока оно играет.
+   Кадры не крутятся в скрытой вкладке, под шторкой и при reduced-motion —
+   это чистая трата батареи. */
+var FACE={
+  idle:      {n:8,  ms:190},
+  fun:       {n:11, ms:85,  hold:700},
+  adoration: {n:8,  ms:95,  hold:1100},
+  wonder:    {n:5,  ms:110, hold:900},
+  listen:    {n:9,  ms:105, hold:1200},
+  think:     {n:9,  ms:115, hold:800},
+  wink:      {n:6,  ms:80,  hold:400},
+  pause:     {n:8,  ms:150, hold:1200}
+};
+var FACE_PRI={idle:0,wink:1,pause:1,think:2,wonder:2,listen:2,fun:2,adoration:3};
+var FC={mood:'idle',pri:0,i:1,t:null,hold:null,guard:null,idleT:null,pre:{}};
+
+function faceImg(){return document.getElementById('fmTabImg')}
 function facePreload(m){
-  if(FACE_ST.loaded[m])return;FACE_ST.loaded[m]=1;
-  for(var i=1;i<=FACE[m];i++){var im=new Image();im.src='mascot/'+m+'/'+String(i).padStart(2,'0')+'.png'}
+  if(FC.pre[m]||!FACE[m])return;FC.pre[m]=1;
+  for(var i=1;i<=FACE[m].n;i++){var im=new Image();im.src='mascot/'+m+'/'+String(i).padStart(2,'0')+'.png'}
 }
-function faceEls(){
-  return [document.getElementById('fmTabImg'),document.getElementById('fmFabImg')].filter(Boolean);
-}
-function faceSet(m,i){
-  var src='mascot/'+m+'/'+String(i).padStart(2,'0')+'.png';
-  faceEls().forEach(function(el){el.src=src});
+function faceDraw(m,i){
+  var el=faceImg();if(!el)return;
+  el.src='mascot/'+m+'/'+String(i).padStart(2,'0')+'.png';
   var w=document.getElementById('fmTab');if(w)w.dataset.mood=m;
 }
-function faceStill(){
-  return (window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)
-      || document.hidden || document.body.classList.contains('anim-halt');
-}
-/* Проиграть настроение один раз и вернуться в покой */
-function mascotFeel(m,hold){
-  if(!FACE[m])return;
-  if(faceStill()){faceSet(m,1);clearTimeout(FACE_ST.back);
-    FACE_ST.back=setTimeout(function(){faceSet('idle',1)},hold||1600);return}
-  facePreload(m);
-  clearInterval(FACE_ST.timer);clearTimeout(FACE_ST.back);
-  FACE_ST.mood=m;
-  var n=FACE[m],i=1,dir=1;
-  faceSet(m,1);
-  FACE_ST.timer=setInterval(function(){
-    if(faceStill())return;
-    i+=dir;
-    if(i>=n){i=n;dir=-1}          /* туда-обратно: конец ленты не должен щёлкать в начало */
-    else if(i<=1&&dir<0){i=1;dir=1}
-    faceSet(m,i);
-  },110);
-  FACE_ST.back=setTimeout(function(){
-    clearInterval(FACE_ST.timer);FACE_ST.mood='idle';faceSet('idle',1);
-  },hold||1800);
-}
-/* Живые моменты в простое: редко, вразнобой и только когда экран виден */
-var FACE_IDLE=['wink','wonder','think','pause'];
-function faceIdleLoop(){
-  clearTimeout(FACE_ST.idle);
-  var wait=9000+Math.random()*11000;
-  FACE_ST.idle=setTimeout(function(){
-    var sheetOpen=(document.getElementById('sheet')||{classList:{contains:function(){return false}}}).classList.contains('open');
-    if(!faceStill()&&FACE_ST.mood==='idle'&&!sheetOpen){
-      mascotFeel(FACE_IDLE[Math.floor(Math.random()*FACE_IDLE.length)],1400);
-    }
-    faceIdleLoop();
-  },wait);
-}
-try{facePreload('idle');facePreload('fun');faceIdleLoop()}catch(e){}
-document.addEventListener('visibilitychange',function(){
-  if(document.hidden){clearInterval(FACE_ST.timer)}else{faceSet(FACE_ST.mood||'idle',1)}
-});
-var HUB_T0=Date.now();
-function hubReason(){
+function faceFrozen(){
   try{
-    if(freeSpinReady())return 'spin';                       /* бесплатный спин ждёт */
-    var w=winsAll().filter(function(x){return !x.used&&!winExpired(x)&&winLeftMs(x)<86400000});
-    if(w.length)return 'expire';                            /* выигрыш сгорает в ближайшие сутки */
-    var ready=TASKS.filter(function(t){return !t.soon&&!taskDone(t.id)});
-    if(ready.length>=3)return 'tasks';                      /* накопились невзятые задания */
-    /* Поздороваться — самый слабый повод, поэтому он и последний, и только
-       если человек уже освоился на экране, а не в первую секунду. */
-    if(gameGet('hubSeenDay','')!==new Date().toDateString()&&Date.now()-HUB_T0>45000)return 'hello';
+    if(document.hidden)return true;
+    if(document.body.classList.contains('anim-halt'))return true;
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return true;
   }catch(e){}
-  return null;
+  return false;
 }
+function faceStop(){clearInterval(FC.t);clearTimeout(FC.hold);clearTimeout(FC.guard);FC.t=null;FC.hold=null;FC.guard=null}
+
+/* ПОКОЙ: медленная петля — лицо живёт, пока ничего не происходит */
+function faceRest(){
+  if(FC.mood==='idle'&&FC.t)return;      /* уже в покое — второй таймер не заводим */
+  clearTimeout(FC.guard);FC.guard=null;
+  faceStop();FC.mood='idle';FC.pri=0;FC.i=1;facePreload('idle');
+  FC.t=setInterval(function(){
+    if(faceFrozen())return;
+    FC.i=FC.i%FACE.idle.n+1;
+    faceDraw('idle',FC.i);
+  },FACE.idle.ms);
+}
+/* РЕАКЦИЯ: один проход, удержание последнего кадра, возврат в покой */
+function mascotFeel(m,holdOverride){
+  var f=FACE[m];if(!f)return;
+  var pri=FACE_PRI[m]||1;
+  if(FC.pri>pri&&FC.t&&FC.mood!=='idle')return;      /* сильное доигрывает */
+  facePreload(m);faceStop();
+  FC.mood=m;FC.pri=pri;FC.i=1;faceDraw(m,1);
+  clearTimeout(FC.guard);
+  FC.guard=setTimeout(function(){if(FC.mood===m){FC.mood='x';faceRest()}},
+    f.n*f.ms+(holdOverride||f.hold||800)+500);
+  if(faceFrozen()){                                   /* без анимации — просто выражение */
+    FC.hold=setTimeout(faceRest,holdOverride||f.hold||900);return;
+  }
+  FC.t=setInterval(function(){
+    if(faceFrozen())return;
+    if(FC.i>=f.n){
+      clearInterval(FC.t);FC.t=null;
+      FC.hold=setTimeout(faceRest,holdOverride||f.hold||800);
+      return;
+    }
+    FC.i++;faceDraw(m,FC.i);
+  },f.ms);
+}
+/* Живые моменты в покое: редко, вразнобой, и только когда на лицо смотрят */
+var FACE_BEATS=['wink','wonder','think','pause'];
+function faceIdleLoop(){
+  clearTimeout(FC.idleT);
+  FC.idleT=setTimeout(function(){
+    var sh=document.getElementById('sheet');
+    var busy=(sh&&sh.classList.contains('open'))||faceFrozen()||FC.mood!=='idle';
+    if(!busy)mascotFeel(FACE_BEATS[Math.floor(Math.random()*FACE_BEATS.length)]);
+    faceIdleLoop();
+  },11000+Math.random()*13000);
+}
+document.addEventListener('visibilitychange',function(){
+  if(!document.hidden&&FC.mood==='idle'&&!FC.t)faceRest();
+});
+try{facePreload('idle');facePreload('fun');faceRest();faceIdleLoop()}catch(e){}
 function hubDotSync(){
   var d=document.querySelector('.tab-mascot .tm-dot');if(!d)return;
   var why=hubReason();
@@ -7546,7 +7556,7 @@ function notifClick(idx){
   haptic('tap');
 }
 function openMascot(){
-  try{mascotFeel('listen',2200)}catch(e){}
+  try{mascotFeel('listen')}catch(e){}
   hideMwHint();hubDotSeen();haptic('open');
   // первый запуск или смена режима — приветствие
   if(MW_CTX.mode!==MODE){MW_LOG=[{role:'bot',html:getMascotGreeting()}];MW_CTX.mode=MODE}
@@ -7560,7 +7570,7 @@ function openMascot(){
   var role=MODE==='biz'?'бизнес-аналитик':'городской консьерж';
   var aiStatus=aiHas()?'<span class="msc-ai-on">AI</span>':'<span class="msc-ai-off">офлайн</span>';
   var head='<div class="msc-head">'+
-    '<div class="msc-ava"><span class="fmascot" id="fmChat" data-mood="happy"><img class="fm-back" src="mascot/Mascot_Back.png" alt=""><img class="fm-img" id="fmChatImg" src="mascot/adoration/01.png" alt=""></span></div>'+
+    '<div class="msc-ava"><span class="fmascot" id="fmChat" data-mood="listen"><img class="fm-back" src="mascot/Mascot_Back.png" alt=""><img class="fm-img" id="fmChatImg" src="mascot/adoration/01.png" alt=""></span></div>'+
     '<div class="msc-info"><b>CityHUB '+aiStatus+'</b><span class="msc-sub"><i></i>'+T('online')+' · '+role+'</span></div>'+
     '<button class="msc-mode-flip" onclick="toggleMode();renderMascotLog();renderMascotQuick();var hd=document.querySelector(\'.msc-info .msc-sub\');if(hd)hd.innerHTML=\'<i></i>\'+T(\'online\')+\' · \'+(MODE===\'biz\'?\'бизнес-аналитик\':\'городской консьерж\');var mf=document.querySelector(\'.msc-mode-flip span\');if(mf)mf.textContent=(MODE===\'biz\'?T(\'клиент\'):T(\'бизнес\'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 4v16M4 7l3-3 3 3M17 20V4M14 17l3 3 3-3"/></svg><span>'+(MODE==='biz'?T('клиент'):T('бизнес'))+'</span></button>'+
     '</div>';
@@ -7942,7 +7952,7 @@ function spinOffset(index){
 }
 function spinRun(){
   if(__spinBusy)return;
-  try{mascotFeel('wonder',5200)}catch(e){}
+  try{mascotFeel('wonder',4200)}catch(e){}
   var free=freeSpinReady();
   if(!free&&!ptsSpend(SPIN_COST,T('Спин рулетки'))){
     toast(T('Не хватает баллов — выполни задание или докупи'));
@@ -8385,7 +8395,7 @@ function tastePick(pool,exceptName){
 }
 /* Реакция на карточку: dir +1 = нравится, -1 = не то */
 function tasteReact(dir,biz){
-  try{mascotFeel(dir>0?'fun':'think',1300)}catch(e){}
+  try{mascotFeel(dir>0?'fun':'think')}catch(e){}
   if(!biz)return;
   if(dir>0){tasteBump(biz.k,1.45);tasteSkip(biz.n,false)}
   else{tasteBump(biz.k,0.6);tasteSkip(biz.n,true)}
@@ -8417,7 +8427,26 @@ document.addEventListener('error',function(e){
 },true);
 
 var SW={x:0,y:0,t:0,on:false,lock:null,el:null};
+/* Прогресс жеста → положение колоды. Следующая карта выезжает с той стороны,
+   куда уходит верхняя, ровно настолько, насколько увёл палец. */
+function deckProgress(wrap,dx){
+  if(!wrap)return;
+  wrap.classList.add('swiping');
+  var p=Math.min(1,Math.abs(dx)/110), dir=dx>0?1:-1;
+  var d1=wrap.querySelector('.deck-card.d1'), d2=wrap.querySelector('.deck-card.d2');
+  if(d1){d1.style.opacity=p.toFixed(3);
+    d1.style.transform='translateX('+(-dir*(1-p)*46).toFixed(1)+'px) scale('+(0.94+p*0.06).toFixed(3)+')'}
+  if(d2){d2.style.opacity=(p*0.5).toFixed(3);
+    d2.style.transform='translateX('+(-dir*(1-p)*76).toFixed(1)+'px) scale(0.92)'}
+}
+function swipeDeckOff(){
+  document.querySelectorAll('.answer-wrap').forEach(function(w){
+    w.classList.remove('swiping');
+    w.querySelectorAll('.deck-card').forEach(function(c){c.style.opacity='';c.style.transform=''});
+  });
+}
 function swipeReset(el){
+  try{swipeDeckOff()}catch(e){}
   var c=el||SW.el;if(!c)return;
   c.style.transition='transform .34s var(--ease-spring),opacity .24s';
   c.style.transform='';c.style.opacity='';
@@ -8430,7 +8459,9 @@ function swipeCommit(dir){
   try{tasteReact(dir,CITIES[CITY].biz[0])}catch(e){}
   var wrap=c.closest('.answer-wrap');
   if(wrap){
-    wrap.classList.add('shuffling');   /* стопка подаётся вперёд */
+    wrap.classList.remove('swiping');
+    wrap.querySelectorAll('.deck-card').forEach(function(c){c.style.opacity='';c.style.transform=''});
+    wrap.classList.add('shuffling');   /* следующая встаёт на место */
   }
   c.style.transition='transform .32s cubic-bezier(.36,0,.66,-.06),opacity .26s ease-in';
   c.style.transform='translateX('+(dir*34)+'%) translateY(92%) rotate('+(dir*9)+'deg) scale(.86)';
@@ -8448,6 +8479,7 @@ function swipeCommit(dir){
    названии. */
 function renderDeck(){
   var st=document.getElementById('deckStack'),card=document.querySelector('#answerBox .answer');
+  try{swipeDeckOff()}catch(e){}          /* новая раздача — колода в исходном положении */
   if(!st)return;
   if(!card){st.innerHTML='';return}
   var C=CITIES[CITY];if(!C||!C.biz){st.innerHTML='';return}
@@ -8481,6 +8513,7 @@ function swipeBind(){
     }
     if(e.cancelable)e.preventDefault();
     SW.el.style.transform='translateX('+dx+'px) rotate('+(dx/24)+'deg)';
+    try{deckProgress(SW.el.closest('.answer-wrap'),dx)}catch(e){}
     SW.el.style.opacity=String(Math.max(.5,1-Math.abs(dx)/440));
     /* Штампы: человек должен видеть, что означает его жест, ДО того как отпустит */
     var lk=SW.el.querySelector('.sw-stamp.like'),np=SW.el.querySelector('.sw-stamp.nope');
@@ -8626,7 +8659,7 @@ var FREE_SPIN_MS=6*3600*1000; /* бесплатный спин раз в 6 ча�
 
 function ptsGet(){var v=gameGet('pts',null);return v===null?PTS:v}
 function ptsSave(v){PTS=Math.max(0,Math.round(v));gameSet('pts',PTS);ptsSync();return PTS}
-function ptsAdd(n,why){try{walletAdd(n,why)}catch(e){}try{if(n>=100)mascotFeel('adoration',2000);else if(n>0)mascotFeel('fun',1500)}catch(e){}return ptsSave(ptsGet()+n)}
+function ptsAdd(n,why){try{walletAdd(n,why)}catch(e){}try{if(n>=200)mascotFeel('adoration');else if(n>=50)mascotFeel('fun');else if(n>0)mascotFeel('wink')}catch(e){}return ptsSave(ptsGet()+n)}
 function ptsSpend(n,why){var c=ptsGet();if(c<n)return false;try{walletAdd(-n,why)}catch(e){}ptsSave(c-n);return true}
 /* Все витрины баланса обновляются из одного места */
 /* ═══════════════ КОШЕЛЁК — единый дом баллов Loop ═══════════════
@@ -8789,6 +8822,7 @@ function renderTasks(){
   if(dot)dot.style.display=TASKS.some(function(t){return !t.soon&&!t.repeat&&!taskDone(t.id)})?'':'none';
 }
 function taskAward(t){
+  try{mascotFeel('wink')}catch(e){}
   if(!t.repeat&&taskDone(t.id))return;
   if(!t.repeat)taskMark(t.id);
   ptsAdd(t.p,T('Задание')+': '+t.n);renderTasks();
@@ -8873,7 +8907,7 @@ function refCheckIncoming(){
         '<p class="rw-sub">'+T('Баллы уже на счету. Друг получит свои, когда ты сходишь в первое место.')+'</p>'+
         '<button class="cta lime" onclick="closeSheet();cgo(\'today\')">'+T('Показать, куда сходить')+'</button>'+
       '</div>';
-    _openSheet();try{haptic('reward');mascotFeel('adoration',2400)}catch(e){}
+    _openSheet();try{haptic('reward');mascotFeel('adoration')}catch(e){}
   },900);
 }
 /* Блок приглашения в профиле: живой код, ссылка и честный статус */
@@ -9016,6 +9050,7 @@ function poolItem(p){
 /* Полный фонд — отдельной шторкой: список будет расти с каждым партнёром,
    и на вкладке ему не место. */
 function openPool(){
+  try{mascotFeel('wonder')}catch(e){}
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Призовой фонд')+'</h2>'+
     '<p class="sub" style="margin-bottom:14px">'+T('Что может выпасть в спиннере. Фонд пополняется с каждым новым партнёром города.')+'</p>'+
