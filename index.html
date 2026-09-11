@@ -358,7 +358,7 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .ph-skel::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.05) 50%,transparent 60%);background-size:220% 100%;animation:qprogShimmer 1.8s linear infinite}
 .answer .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,10,.18) 0%,rgba(5,6,10,.05) 28%,rgba(5,6,10,.55) 62%,rgba(5,6,10,.95) 100%)}
 /* Top floating: rating + status — symmetric chips */
-.answer .top-strip{position:absolute;top:14px;left:14px;right:14px;z-index:3;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;pointer-events:none}
+.answer .top-strip{position:absolute;top:14px;left:14px;right:14px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none}
 .answer .chip-glass{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:99px;background:rgba(5,6,10,.55);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:800;color:var(--txt);pointer-events:auto;line-height:1}
 .answer .chip-glass.rate{color:var(--gold)}
 .answer .chip-glass.rate svg{width:13px;height:13px}
@@ -378,7 +378,7 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .live-strip .friend{color:#FFB547}
 /* Content block — bottom anchored */
 .answer .ct{position:relative;z-index:2}
-.answer .why{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:6px 11px;border-radius:99px;background:rgba(8,12,6,.82);-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);border:1px solid rgba(212,255,79,.42);color:var(--lime);margin-bottom:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.answer .why{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:6px 11px;border-radius:99px;background:rgba(8,12,6,.52);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(212,255,79,.42);color:var(--lime);margin-bottom:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .answer .why svg{width:12px;height:12px;color:var(--lime);flex-shrink:0}
 .answer h1{font-size:clamp(28px,7vw,36px);font-weight:900;letter-spacing:-.025em;line-height:1.04;margin-bottom:6px;text-shadow:0 2px 22px rgba(0,0,0,.75)}
 /* Compact meta — 2-3 items max, dot separators */
@@ -389,7 +389,7 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .meta-min .m-promo{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;padding:3px 9px;border-radius:99px;background:rgba(255,93,143,.18);border:1px solid rgba(255,93,143,.32);color:var(--rose);text-transform:uppercase;letter-spacing:.04em}
 .answer .meta-min .m-promo svg{width:11px;height:11px}
 /* CTA row — primary "Идём + N" + 2 icon-only secondaries */
-.answer .row{display:flex;gap:10px;margin-top:18px}
+.answer .row{display:flex;gap:10px;margin-top:14px}
 .go-btn{flex:1;padding:16px 18px;border-radius:var(--r-md);font-size:16px;font-weight:900;background:var(--grad-lime);color:#06210a;box-shadow:0 12px 34px rgba(212,255,79,.42);display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .15s,box-shadow .25s;letter-spacing:-.01em;position:relative;overflow:hidden}
 .go-btn:active{transform:scale(.96);box-shadow:0 6px 18px rgba(212,255,79,.32)}
 .go-btn svg{width:19px;height:19px}
@@ -943,7 +943,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .net-banner{position:fixed;top:0;left:0;right:0;z-index:12000;transform:translateY(-110%);transition:transform .35s var(--ease-spring);background:linear-gradient(90deg,#ff5d8f,#ff8a3d);color:#1a0509;font-size:12px;font-weight:800;text-align:center;padding:calc(var(--safe-t) + 8px) 16px 8px;pointer-events:none}
 .net-banner.on{transform:none}
 /* UPDATE BANNER — доступна новая версия */
-.upd-banner{position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-b) + 48px);transform:translate(-50%,80px);z-index:11000;padding:11px 20px;border-radius:99px;background:linear-gradient(135deg,#7C3AFF,#00E0C7);color:#fff;font-size:13px;font-weight:700;font-family:inherit;border:1px solid rgba(255,255,255,.22);box-shadow:0 12px 32px rgba(124,58,255,.5);cursor:pointer;transition:transform .45s var(--ease-spring);white-space:nowrap}
+.upd-banner{position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-b) + 48px);transform:translate(-50%,80px);z-index:11000;padding:11px 20px;border-radius:99px;background:linear-gradient(115deg,#7C3AFF 0%,#00E0C7 28%,#D4FF4F 52%,#00E0C7 74%,#7C3AFF 100%);background-size:320% 100%;animation:updFlow 16s linear infinite;color:#fff;font-size:13px;font-weight:700;font-family:inherit;border:1px solid rgba(255,255,255,.22);box-shadow:0 12px 32px rgba(124,58,255,.5);cursor:pointer;transition:transform .45s var(--ease-spring);white-space:nowrap}
 .upd-banner.on{transform:translate(-50%,0)}
 .upd-banner:active{transform:translate(-50%,0) scale(.95)}
 /* ONBOARDING */
@@ -1621,14 +1621,17 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
   transition:height .38s var(--ease-out)}
 .split-map.map-full #mapHolder{height:auto;flex:1 1 auto;padding-bottom:calc(var(--tab-h) + var(--safe-b) + 10px)}
 .split-map.map-full .split-list{display:none}
-.map-expand{position:absolute;top:12px;left:12px;z-index:420;display:inline-flex;align-items:center;gap:6px;
-  padding:9px 13px;border-radius:99px;font-size:12px;font-weight:800;color:var(--txt);cursor:pointer;font-family:inherit;
-  background:rgba(5,6,10,.66);-webkit-backdrop-filter:blur(14px) saturate(180%);backdrop-filter:blur(14px) saturate(180%);
-  border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 18px rgba(0,0,0,.45);min-height:38px}
+.map-expand{position:absolute;top:10px;left:14px;z-index:420;display:grid;place-items:center;
+  width:36px;height:36px;padding:0;border-radius:12px;color:var(--txt);cursor:pointer;font-family:inherit;
+  background:rgba(16,20,31,.85);-webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 22px rgba(0,0,0,.45)}
+.map-expand svg{width:17px;height:17px}
+.map-expand:hover{color:var(--lime)}
 .map-expand:active{transform:scale(.95)}
 /* Кнопка встала на зум Leaflet — сдвигаем зум ниже, а не двигаем кнопку:
    левый верх карты человек читает первым, и разворот важнее зума. */
-#mapHolder .leaflet-top.leaflet-left{margin-top:46px}
+#mapHolder .leaflet-top.leaflet-left{margin-top:42px}
+#mapHolder .leaflet-left .leaflet-control{margin-left:0}
 .map-expand svg{width:15px;height:15px}
 .split-map #map{width:100%;height:100%;border-radius:var(--r-md);overflow:hidden;position:relative}
 .split-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 22px)}
@@ -1942,7 +1945,7 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
    снято 2026-09-10: полноэкранная перерисовка фона ради невидимой под авророй дельты */
 /* Quiet mode после 22:00 — анимации замедляются */
 body.quiet .blob{animation-duration:80s,30s!important;opacity:.09!important}
-body.quiet *:not(.ad-track):not(.blob){animation-duration:1.5s!important;transition-duration:.35s!important}
+body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){animation-duration:1.5s!important;transition-duration:.35s!important}
 @media (prefers-reduced-motion:reduce){body #app{animation:none}}
 
 /* Number bump — реагирует когда число меняется */
@@ -2981,9 +2984,6 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
 .bn-card:active{transform:scale(.99)}
 .bn-card.all-done{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);border-color:var(--stroke-soft)}
 .bn-card.all-done .bn-ic{background:rgba(212,255,79,.16);color:var(--lime)}
-.answer .meta-min .m-more{margin-left:auto;display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:800;
-  color:rgba(255,255,255,.82);letter-spacing:-.01em;flex-shrink:0}
-.answer .meta-min .m-more svg{width:13px;height:13px}
 .answer{cursor:pointer}
 /* Ритм колонки «Профиля» — одно правило вместо трёх инлайновых чисел */
 #c-me .scroll > .qr-card,#c-me .scroll > .ref-card,#c-me .scroll > .taste-card,
@@ -3019,6 +3019,22 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
   background:radial-gradient(closest-side,rgba(5,6,10,.62),rgba(5,6,10,0) 82%);
   -webkit-mask-image:radial-gradient(closest-side,#000 52%,transparent 100%);
   mask-image:radial-gradient(closest-side,#000 52%,transparent 100%)}
+@keyframes updFlow{from{background-position:0% 50%}to{background-position:320% 50%}}
+body.anim-halt .upd-banner{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.upd-banner{animation:none}}
+/* Все чипы поверх фото — одной высоты и по одной линии */
+.answer .top-strip .chip-glass,.answer .top-strip .live-strip > span{min-height:29px;display:inline-flex;align-items:center;box-sizing:border-box}
+/* Пульс-намёк: плашка стоит на месте, «дышит» только кольцо вокруг неё.
+   Transform и opacity — не трогают раскладку, поэтому это дёшево. */
+.upd-banner::after{content:'';position:absolute;inset:-2px;border-radius:99px;pointer-events:none;
+  border:2px solid rgba(255,255,255,.55);opacity:0;animation:updPing 2.8s ease-out infinite}
+@keyframes updPing{
+  0%{transform:scale(1);opacity:.55}
+  55%{transform:scale(1.07);opacity:0}
+  100%{transform:scale(1.07);opacity:0}}
+body.anim-halt .upd-banner::after{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.upd-banner::after{animation:none;opacity:0}}
+.map-expand.on{color:var(--lime);border-color:rgba(212,255,79,.35)}
 </style>
 </head>
 <body class="client">
@@ -3067,10 +3083,10 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
         <div id="moreToday" class="more-today">
           <div class="vbanner fadein" id="voucherBanner" onclick="claimVoucher()"><div class="vbi"><b id="vbiAmt">10₾</b></div><div class="vbt"><b data-i18n="gift_t">Подарок города ждёт</b><span><span data-i18n="gift_s">Скидка 10₾</span> · <span class="vbt-timer" id="vbTimer">14:00:00</span></span></div><span class="vba" data-i18n="gift_a">Забрать</span></div>
           <div id="huntSlot"></div>
-          <div class="sec-h" style="margin-top:8px"><h2 style="font-size:16px;display:flex;align-items:center;gap:7px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span data-i18n="foryou">Для тебя сейчас</span></h2><span class="m" onclick="cgo('map')" data-i18n="all_map">всё на карте →</span></div>
-          <div class="forme-row" id="formeRow"><span class="skel skel-chip" style="width:158px;height:120px;border-radius:20px"></span><span class="skel skel-chip" style="width:158px;height:120px;border-radius:20px"></span></div>
-          <div class="sec-h" style="margin-top:18px"><h2 style="font-size:16px">Деал дня</h2><span class="more">до полуночи</span></div>
+          <div class="sec-h" style="margin-top:8px"><h2 style="font-size:16px">Деал дня</h2><span class="more">до полуночи</span></div>
           <div class="deal fadein" id="dealBox"></div>
+          <div class="sec-h" style="margin-top:18px"><h2 style="font-size:16px;display:flex;align-items:center;gap:7px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span data-i18n="foryou">Для тебя сейчас</span></h2><span class="m" onclick="cgo('map')" data-i18n="all_map">всё на карте →</span></div>
+          <div class="forme-row" id="formeRow"><span class="skel skel-chip" style="width:158px;height:120px;border-radius:20px"></span><span class="skel skel-chip" style="width:158px;height:120px;border-radius:20px"></span></div>
           <div id="altList"></div>
           <div id="altMore"></div>
           <div id="travelSlot"></div>
@@ -3085,7 +3101,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
       </div>
       <div class="split-map">
         <div id="mapHolder"><div id="map"></div>
-            <button class="map-expand" onclick="mapFull()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg><span id="mapFullLbl">На весь экран</span></button>
+            <button class="map-expand" id="mapFullBtn" onclick="mapFull()" title="На весь экран" aria-label="На весь экран"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
           </div>
         <div class="split-list">
           <div class="mood-row"><div class="mood-scroll" id="mapFilters"></div></div>
@@ -3992,32 +4008,12 @@ function renderDeal(){
     <div class="dtop"><span class="dlbl"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>Деал дня</span><span class="timer" id="dealTimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>--:--:--</span></div>
     <div class="dct"><span class="ddisc">−40% сегодня</span><h2>${d.n}</h2><div class="dsub">${nz.n} · <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> ${d.r} · только сегодня в CityHUB</div>
     <button class="dgo" onclick='openBiz(${jx(d)})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 11l18-5v12L3 14v-3zM11 13v6"/></svg>Забрать деал</button></div>`;
-  // streak — чистый недельный прогон серии (done / today / future), без дат-чисел и дублей
-  streak.onclick=openFreeze;
-  var cur=6,goal=7,goalName='бесплатный кофе';
-  var left=Math.max(0,goal-cur);
-  var dayLbls=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-  var _td=new Date();
-  var CHK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>';
-  var FL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 1 0 1-1 1-2 0-3-2-4-2-7z"/></svg>';
-  var cells='';
-  for(var n=1;n<=goal;n++){
-    var offset=(cur+1)-n;var dt=new Date(_td);dt.setDate(dt.getDate()-offset);
-    var isDone=n<=cur,isToday=n===cur+1,isFuture=n>cur+1;
-    cells+='<div class="sm-day'+(isDone?' done':'')+(isToday?' today':'')+(isFuture?' future':'')+'">'+
-      '<span class="smd-dot">'+(isDone?CHK:(isToday?FL:''))+'</span>'+
-      '<span class="smd-lbl">'+dayLbls[dt.getDay()]+'</span></div>';
-  }
-  var mult=streakMultiplier(cur);
-  streak.innerHTML=
-    '<div class="sm-top">'+
-      '<span class="sm-fire"><svg width="20" height="20" viewBox="0 0 24 24" fill="#ff8a3d" stroke="#ff8a3d" stroke-width="1.4"><path d="M12 2c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 1 0 1-1 1-2 0-3-2-4-2-7z"/></svg></span>'+
-      '<span class="sm-txt"><b>'+cur+' '+pl3(cur,'день','дня','дней')+' '+T('подряд')+(mult>1?'<span class="streak-mult">×'+mult+'</span>':'')+'</b>'+
-        '<span>'+(left>0?(T('ещё')+' <b>'+left+' '+pl3(left,'день','дня','дней')+'</b> '+T('до награды')+' · '+T(goalName)+' \uD83C\uDF81'):(T('Награда готова')+' · '+T(goalName)+' \uD83C\uDF81'))+'</span></span>'+
-      '<button class="sm-cta" onclick="event.stopPropagation();openFreeze();">'+T('Награды')+'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>'+
-    '</div>'+
-    '<div class="sm-week">'+cells+'</div>';
-    startDealTimer();
+  /* 🚨 Здесь оставался кусок удалённой недельной полосы стрика — он падал на
+     `streak is not defined` в ПЕРВОЙ же строке. Ошибку глотал try/catch вокруг
+     renderDeal, поэтому падение было невидимым: карточка деала рисовалась,
+     а всё, что идёт дальше, включая запуск таймера, не выполнялось никогда.
+     Отсюда «--:--:--» вместо обратного отсчёта. */
+  startDealTimer();
 }
 function startDealTimer(){
   if(dealTimer)clearInterval(dealTimer);
@@ -4152,7 +4148,7 @@ function renderToday(){
     </div>
     <div class="ct"><span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${T(top.why)}</span>
     <h1>${top.n}</h1>
-    <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}<span class="m-more">${T('Подробнее')}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 18l6-6-6-6"/></svg></span></div>
+    <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}</div>
     <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${T('Идём')}<span class="gb-pts"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.4l8.2 4.7v9.8L12 21.6 3.8 16.9V7.1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7"/></svg>+${top.pts}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="icon-btn" onclick="showOnMap(${jx(top.n)})" title="${T('На карте')}" aria-label="${T('На карте')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><button class="icon-btn refresh" onclick="this.classList.remove('spin');void this.offsetWidth;this.classList.add('spin');nextPick(1)" title="${T('Другой вариант')}" aria-label="${T('Другой вариант')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button></div>
   </div></div>
 `;
@@ -4649,8 +4645,9 @@ function openInMaps(name,lat,lng){
 function mapFull(){
   var sm=document.querySelector('#c-map .split-map');if(!sm)return;
   var on=sm.classList.toggle('map-full');
-  var lbl=document.getElementById('mapFullLbl');
-  if(lbl)lbl.textContent=on?T('Свернуть карту'):T('На весь экран');
+  var btn=document.getElementById('mapFullBtn');
+  if(btn){var t=on?T('Свернуть карту'):T('На весь экран');btn.title=t;btn.setAttribute('aria-label',t);
+    btn.classList.toggle('on',on);}
   try{haptic('tap')}catch(e){}
   [60,260,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)});
 }
@@ -6482,7 +6479,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=56;try{renderConsent()}catch(e){}
+var APP_V=57;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
