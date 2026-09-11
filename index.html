@@ -285,6 +285,13 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .hdr{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .hdr-loc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt-2);font-weight:700;background:var(--glass-strong);padding:7px 13px;border-radius:99px;border:1px solid var(--stroke)}
 .hdr-loc svg{width:14px;height:14px}.hdr-loc .chev{width:12px;height:12px;opacity:.6}
+/* В шапке пять элементов, а ширина — 375px. Как только приезжает баланс,
+   строка перестаёт помещаться и колокол уходит за экран на 28px. Поэтому в
+   свёрнутом состоянии город сворачивается до знака: нажимать его по-прежнему
+   можно, а место достаётся тому, что появилось. */
+.hdr-loc #cityName,.hdr-loc .chev{transition:max-width .3s var(--ease-out),opacity .2s var(--ease-out),margin .3s var(--ease-out);max-width:140px}
+.hdr.shrunk .hdr-loc{padding:7px 12px;gap:0}
+.hdr.shrunk .hdr-loc #cityName,.hdr.shrunk .hdr-loc .chev{max-width:0;opacity:0;margin:0;overflow:hidden}
 .hdr-title{font-size:var(--fs-xl);font-weight:800;letter-spacing:-.03em;line-height:1.05}
 .hdr-sub{font-size:13px;color:var(--txt-2);margin-top:2px}
 .pts-chip{display:flex;align-items:center;gap:6px;padding:8px 13px;border-radius:99px;background:var(--glass-strong);border:1px solid var(--stroke);font-weight:800;font-size:14px}
@@ -1220,9 +1227,10 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .pts-mini{width:auto!important;height:44px;display:inline-flex!important;flex-direction:row;align-items:center;justify-content:center;padding:0 12px!important;gap:6px;max-width:0;opacity:0;overflow:hidden;
   transform:translateY(-8px) scale(.86);pointer-events:none;white-space:nowrap;
   transition:max-width .34s var(--ease-out),opacity .24s var(--ease-out),transform .36s var(--ease-spring),margin .34s var(--ease-out);
-  margin-right:-10px;border-color:rgba(212,255,79,.28)!important}
+  margin-right:-10px}
 .pts-mini b{font-size:12px;font-weight:900;letter-spacing:-.01em}
-.pts-mini svg{width:14px;height:14px;color:var(--lime);flex-shrink:0}
+.pts-mini svg{width:14px;height:14px;flex-shrink:0}
+.htool.pts-mini svg{color:var(--lime)}
 .hdr.shrunk .pts-mini{max-width:120px;opacity:1;transform:none;pointer-events:auto;margin-right:0}
 @media (prefers-reduced-motion:reduce){#c-today #greet,#c-today #greetSub,#c-today .hdr-quick,.pts-mini{transition:none}}
 @media (prefers-reduced-motion:reduce){#c-today #greet,#c-today #greetSub,#c-today .hdr-quick{transition:none}}
@@ -2473,7 +2481,7 @@ input,textarea{font-size:16px!important}
 /* ═══ инструменты шапки: язык/поиск/уведомления ═══ */
 .hdr-toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .hdr-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.htool{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--glass-soft);border:1px solid var(--stroke-soft);position:relative;transition:all var(--dur-fast) var(--ease-spring);touch-action:manipulation}
+.htool{width:44px;height:44px;border-radius:99px;display:grid;place-items:center;background:var(--glass-soft);border:1px solid var(--stroke-soft);position:relative;transition:all var(--dur-fast) var(--ease-spring);touch-action:manipulation}
 .htool:active{transform:scale(.9);background:var(--glass-strong)}
 .htool:active{transform:scale(.9);background:var(--glass-strong)}
 .htool svg{width:19px;height:19px;color:var(--txt)}
@@ -5294,7 +5302,40 @@ function bgo(t){
   if(t==='add'){setTimeout(function(){try{initBizMap()}catch(e){}try{populateNicheSelect()}catch(e){}},150)}
   if(navigator.vibrate)navigator.vibrate(8);
 }
-function animNum(id,to,pre,grp){var el=document.getElementById(id);if(!el)return;var t0=Date.now(),dur=1000;(function tick(){var p=Math.min(1,(Date.now()-t0)/dur);var v=Math.floor(to*(1-Math.pow(1-p,3)));el.textContent=(pre||'')+(grp?v.toLocaleString('ru-RU'):v);if(p<1)requestAnimationFrame(tick)})()}
+/* 🚨 У счётчика было ДВА писателя: ptsSync() пишет правду, animNum() — кадры
+   анимации. Кто финишировал последним, тот и оставался на экране, поэтому
+   «Сегодня» показывал 1 190 при балансе 1 214.
+   Правильный ответ — не «кто кого перебьёт», а ОДНА цель: правда живёт в
+   el.__to, анимация каждый кадр смотрит на неё и доезжает туда, куда нужно
+   СЕЙЧАС. Тогда обновление баланса посреди счёта просто меняет пункт назначения. */
+function animTo(el,v){if(el)el.__to=v}
+function animStop(el){if(el)el.__animTok=(el.__animTok||0)+1,el.__running=false}
+function animFmt(v,pre,grp){return (pre||'')+(grp?Number(v).toLocaleString('ru-RU'):v)}
+function animNum(id,to,pre,grp){
+  var el=document.getElementById(id);if(!el)return;
+  animStop(el);
+  el.__to=to;el.__running=true;
+  var tok=el.__animTok,t0=Date.now(),dur=1000,from=0;
+  /* 🚨 requestAnimationFrame НЕ идёт в скрытой вкладке и в свёрнутом webview.
+     Без страховки счётчик замирал на первом кадре — то есть на нуле, — и
+     человек, вернувшись в приложение, видел баланс 0 вместо своих баллов.
+     Страховка добивает число по таймеру, который тикает всегда. */
+  clearTimeout(el.__animSafe);
+  el.__animSafe=setTimeout(function(){
+    if(el.__animTok!==tok)return;
+    el.__running=false;el.__animTok++;
+    el.textContent=animFmt(el.__to,pre,grp);
+  },dur+250);
+  (function tick(){
+    if(el.__animTok!==tok){return}
+    var p=Math.min(1,(Date.now()-t0)/dur);
+    var target=(typeof el.__to==='number')?el.__to:to;     /* цель могла смениться на лету */
+    var v=Math.floor(from+(target-from)*(1-Math.pow(1-p,3)));
+    el.textContent=animFmt(v,pre,grp);
+    if(p<1)requestAnimationFrame(tick);
+    else{el.__running=false;clearTimeout(el.__animSafe);el.textContent=animFmt(el.__to,pre,grp)}  /* добиваем точным числом, не результатом easing */
+  })();
+}
 function animROI(){
   var data=[['roiBig',4180,lcur(),' '],['roiGuests',96,'',''],['roiCheck',44,lcur(),'']];
   data.forEach(function(d){var el=document.getElementById(d[0]);if(!el)return;var to=d[1],pre=d[2],t0=Date.now(),dur=900;
@@ -6297,7 +6338,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=50;try{renderConsent()}catch(e){}
+var APP_V=51;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8208,7 +8249,11 @@ function starMark(col){return '<svg class="st-m" viewBox="0 0 24 24" fill="'+(co
 function priceStars(v,col){return '<span class="pstars">'+starMark(col)+starsOf(v)+'</span>'}
 function ptsSync(){
   var v=ptsGet(),s=v.toLocaleString('ru-RU');
-  ['luckBal','ptsTop','shopBal','pfPts','ptsMiniV','pfWalletV'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=s});
+  ['luckBal','ptsTop','shopBal','pfPts','ptsMiniV','pfWalletV'].forEach(function(id){
+    var e=document.getElementById(id);if(!e)return;
+    animTo(e,v);                       /* цель обновляем всегда */
+    if(!e.__running)e.textContent=s;   /* а текст — только если счётчик не бежит: он сам доедет до новой цели */
+  });
   try{renderLuckHud()}catch(e){}
 }
 
