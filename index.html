@@ -2571,6 +2571,24 @@ input,textarea{font-size:16px!important}
 .rev-card p{font-size:13px;color:var(--txt-2);line-height:1.45}
 .rev-empty{font-size:13px;color:var(--txt-3);text-align:center;padding:16px 14px;
   border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px dashed var(--stroke-soft)}
+/* Экономика отзыва — подпись под полем. Человек обязан видеть, во что
+   превратится его отзыв, ДО нажатия: сумму, причину и что сделать, чтобы
+   стало больше. Награда молча — это лотерея, а не правило. */
+.rev-pay{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:1px 10px;align-items:center;
+  padding:11px 13px;border-radius:var(--r-sm);background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);margin-bottom:10px}
+.rev-pay .rp-i{grid-row:1 / span 2;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.06);color:var(--txt-3)}
+.rev-pay .rp-i svg{width:15px;height:15px}
+.rev-pay .rp-i.on{background:rgba(212,255,79,.14);color:var(--lime)}
+.rev-pay b{font-size:13px;font-weight:800;letter-spacing:-.01em}
+.rev-pay b.acc{color:var(--lime)}
+.rev-pay span:last-child{font-size:11px;font-weight:600;color:var(--txt-3);line-height:1.35}
+.rev-note{font-size:11px;font-weight:600;color:var(--txt-3);margin:-6px 0 12px}
+.rv-tag{display:inline-flex;align-items:center;gap:4px;margin-top:7px;padding:3px 8px;border-radius:99px;
+  font-size:10px;font-weight:800;letter-spacing:.02em;text-transform:uppercase}
+.rv-tag svg{width:10px;height:10px}
+.rv-tag.been{background:rgba(212,255,79,.13);color:var(--lime)}
+.rv-tag.free{background:rgba(255,255,255,.06);color:var(--txt-3)}
 .pf-empty{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px dashed var(--stroke-soft);font-size:12px;color:var(--txt-3);line-height:1.4}
 .pf-empty-ic{font-size:20px;flex-shrink:0}
 /* 10/10 press-feedback на тапабельных карточках, где его не было (тактильная консистентность) */
@@ -6918,7 +6936,7 @@ const ACH=[
   {n:'Город в кармане',k:'shop',p:'+300',cur:9,goal:13,unit:'ниш',got:0}
 ];
 /* Задания за баллы. soon:1 — механика ещё не включена, рисуем честно и без обещания баллов. */
-const EARN=[{i:'people',n:'Пригласи друга',p:'+200 за каждого',act:'invite'},{i:'star',n:'Оставь отзыв',p:'+25 баллов',act:'review'},{i:'globe',n:'Чек-ин в новом городе',p:'+150 баллов',act:'city'},{i:'camera',n:'Фото из заведения',p:'скоро · +40 за фото',act:'photo',soon:1}];
+const EARN=[{i:'people',n:'Пригласи друга',p:'+200 за каждого',act:'invite'},{i:'star',n:'Отзыв после визита',p:'+40 · без визита +5',act:'review'},{i:'globe',n:'Чек-ин в новом городе',p:'+150 баллов',act:'city'},{i:'camera',n:'Фото из заведения',p:'скоро · +40 за фото',act:'photo',soon:1}];
 /* Earn-задания ведут к реальному действию, а не в тост */
 function earnGo(act){
   if(act==='invite'){shareTelegram();return}
@@ -9277,6 +9295,52 @@ function useGeo(){toast('Определяю…');if(navigator.geolocation){navig
 
 /* ═══════════ ОТЗЫВЫ И ОЦЕНКИ ═══════════
    Локально (localStorage по имени места) сейчас; при включённом бэкенде шлём в /api/reviews. */
+/* ═══════════ ЭКОНОМИКА ОТЗЫВА ═══════════
+   Отзыв — норма, а не подвиг: писать можно про любое место и без визита.
+   Но платит продукт за РАЗНОЕ, и разница должна быть видна до нажатия.
+
+   🚨 Было: +20 за первый отзыв о ЛЮБОМ месте, без проверки и без потолка.
+   При каталоге в 2 814 заведений это кран на 56 280 баллов, который качается
+   из кресла. Тот же класс, что награда за намерение вместо события [[#632]].
+
+   Три опоры:
+   1. ВИЗИТ ПОДТВЕРЖДЁН (QR отсканирован на кассе) — событие, за него платим
+      по-настоящему. Отзыв без текста тоже платят, но вчетверо меньше: звезда
+      без слов никому не помогает.
+   2. БЕЗ ВИЗИТА — мнение, а не опыт. Платим мало, требуем текст и держим
+      суточный потолок, который ВИДНО заранее.
+   3. ПОТОЛОК ОГРАНИЧИВАЕТ БАЛЛЫ, А НЕ РЕЧЬ. Исчерпал — отзыв всё равно
+      сохранится и будет виден. Иначе «отзывы — норма» превращается в паёк.
+
+   И четвёртое, ради честности рейтинга: средняя оценка считается ТОЛЬКО по
+   отзывам с визитом. Мнение того, кто не дошёл, видно в ленте и помечено,
+   но цифру, которую партнёр показывает гостям, оно не двигает. */
+var REV_VISIT=40, REV_VISIT_BARE=15, REV_FREE=5, REV_FREE_DAY=3, REV_MIN_TEXT=30;
+/* 🚨 Ключ дня — ЛОКАЛЬНЫМИ компонентами. toISOString().slice(0,10) съедает
+   ночь в UTC+4: отзыв в 02:00 засчитался бы во вчерашний лимит (#380, #435). */
+function revDayKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function revFreeUsed(){
+  var o=gameGet('revFree',null);
+  if(!o||typeof o!=='object'||o.d!==revDayKey())return 0;
+  return +o.n||0;
+}
+function revFreeLeft(){return Math.max(0,REV_FREE_DAY-revFreeUsed())}
+function revFreeBump(){gameSet('revFree',{d:revDayKey(),n:revFreeUsed()+1})}
+/* Платим за место один раз за всё время. Правка своего отзыва — не новый повод. */
+function revPaid(n){var o=gameGet('revPaid',{})||{};return !!o[n]}
+function revMarkPaid(n){var o=gameGet('revPaid',{})||{};o[n]=1;gameSet('revPaid',o)}
+function revVisited(n){try{return (gameGet('visited',[])||[]).indexOf(n)>=0}catch(e){return false}}
+/* Сколько дадут за ЭТОТ отзыв прямо сейчас — одна функция на подпись и на
+   начисление. Две независимые формулы разъезжаются: тост обещает одно,
+   на счёт падает другое, и это ловится только жалобой. */
+function revReward(name,text){
+  var been=revVisited(name), has=(text||'').trim().length>=REV_MIN_TEXT;
+  if(revPaid(name))return {pts:0,why:'paid',been:been};
+  if(been)return {pts:has?REV_VISIT:REV_VISIT_BARE,why:has?'visit':'visit_bare',been:true};
+  if(!has)return {pts:0,why:'short',been:false};
+  if(revFreeLeft()<=0)return {pts:0,why:'limit',been:false};
+  return {pts:REV_FREE,why:'free',been:false};
+}
 var _revCtx={name:null,base:0,draft:0};
 function revKey(n){return 'cityhub_rev_'+n}
 function revGet(n){try{return JSON.parse(localStorage.getItem(revKey(n))||'[]')}catch(e){return []}}
@@ -9290,33 +9354,82 @@ function renderReviews(name,baseRating){
   _revCtx.name=name;_revCtx.base=baseRating||0;
   var revs=revGet(name);
   var mine=revs.filter(function(r){return r.me})[0];
-  var avg=revs.length?(revs.reduce(function(a,r){return a+r.rating},0)/revs.length):(baseRating||0);
-  var cnt=revs.length;
+  /* Цифру, которую партнёр показывает гостям, двигают только те, кто дошёл. */
+  var ver=revs.filter(function(r){return r.v});
+  var avg=ver.length?(ver.reduce(function(a,r){return a+r.rating},0)/ver.length):(baseRating||0);
+  var cnt=ver.length, free=revs.length-ver.length;
   var d=_revCtx.draft||(mine?mine.rating:0);
   var pick='';for(var i=1;i<=5;i++)pick+='<button class="sp-star'+(i<=d?' on':'')+'" onclick="setStarPick('+i+')" aria-label="'+i+'/5">'+revStar(i<=d)+'</button>';
-  var composer=d>0?('<textarea id="revText" class="rev-text" maxlength="280" placeholder="'+T('Расскажи, как было…')+'">'+(mine&&mine.text?revEsc(mine.text):'')+'</textarea>'+
-    '<button class="cta lime rev-submit" onclick="submitReview()">'+(mine?T('Обновить отзыв'):T('Оставить отзыв'))+'</button>'):'';
+  var composer='';
+  if(d>0){
+    var txt=mine&&mine.text?mine.text:'';
+    /* Награда считается от ЧЕРНОВИКА и пересчитывается на каждом знаке: человек
+       должен видеть, во что превратится его отзыв, ДО нажатия, а не после. */
+    var rw=revReward(name,txt), left=revFreeLeft();
+    composer='<textarea id="revText" class="rev-text" maxlength="280" oninput="revHint()" placeholder="'+
+      (rw.been?T('Расскажи, как было…'):T('Что знаешь об этом месте?'))+'">'+revEsc(txt)+'</textarea>'+
+      '<div class="rev-pay" id="revPay">'+revPayHTML(name,txt)+'</div>'+
+      '<button class="cta lime rev-submit" onclick="submitReview()">'+(mine?T('Обновить отзыв'):T('Оставить отзыв'))+'</button>';
+  }
   var list=revs.length?revs.map(function(r){
-    return '<div class="rev-card"><div class="rev-card-top"><b>'+(r.me?T('Ты'):revEsc(r.name||T('Гость')))+'</b><span class="rev-stars-sm">'+revStarsSm(r.rating)+'</span></div>'+(r.text?'<p>'+revEsc(r.text)+'</p>':'')+'</div>';
+    var mark=r.v?'<span class="rv-tag been">'+ico('check','currentColor',3)+T('был здесь')+'</span>'
+                :'<span class="rv-tag free">'+T('без визита')+'</span>';
+    return '<div class="rev-card"><div class="rev-card-top"><b>'+(r.me?T('Ты'):revEsc(r.name||T('Гость')))+'</b><span class="rev-stars-sm">'+revStarsSm(r.rating)+'</span></div>'+
+      (r.text?'<p>'+revEsc(r.text)+'</p>':'')+mark+'</div>';
   }).join(''):'<div class="rev-empty">'+T('Пока нет отзывов — будь первым')+'</div>';
   el.innerHTML='<div class="rev-head"><b>'+T('Отзывы')+'</b>'+(cnt?'<span class="rev-avg">'+revStar(1)+' '+avg.toFixed(1)+' · '+cnt+'</span>':'')+'</div>'+
+    (cnt||free?'<div class="rev-note">'+(cnt?T('Оценка считается по отзывам с визитом')+' · '+cnt:T('Оценок с визитом пока нет'))+
+      (free?' · '+free+' '+T('без визита'):'')+'</div>':'')+
     '<div class="rev-yours"><span class="ry-label">'+(mine?T('Твоя оценка'):T('Оцени место'))+'</span><div class="sp-row">'+pick+'</div></div>'+
     composer+'<div class="rev-list">'+list+'</div>';
+}
+/* Подпись под полем — единственное место, где человек узнаёт правила, поэтому
+   она называет и сумму, и причину, и что делать, чтобы стало больше. */
+function revPayHTML(name,text){
+  var rw=revReward(name,text), left=revFreeLeft();
+  if(rw.why==='paid')return '<span class="rp-i muted">'+ico('check','currentColor',2.4)+'</span><b>'+T('За это место уже начислено')+'</b><span>'+T('правки не оплачиваются — но отзыв обновится')+'</span>';
+  if(rw.why==='visit')return '<span class="rp-i on">'+ico('check','currentColor',2.4)+'</span><b class="acc">'+T('Ты был здесь')+' · +'+REV_VISIT+'</b><span>'+T('отзыв с визитом весит больше всех')+'</span>';
+  if(rw.why==='visit_bare')return '<span class="rp-i on">'+ico('check','currentColor',2.4)+'</span><b class="acc">'+T('Ты был здесь')+' · +'+REV_VISIT_BARE+'</b><span>'+T('допиши от')+' '+REV_MIN_TEXT+' '+T('знаков')+' → +'+REV_VISIT+'</span>';
+  if(rw.why==='short')return '<span class="rp-i muted">'+ico('star','currentColor',2.4)+'</span><b>'+T('Без визита')+' · +'+REV_FREE+'</b><span>'+T('нужно от')+' '+REV_MIN_TEXT+' '+T('знаков')+' · '+T('осталось')+' '+left+' '+T('из')+' '+REV_FREE_DAY+' '+T('сегодня')+'</span>';
+  if(rw.why==='limit')return '<span class="rp-i muted">'+ico('star','currentColor',2.4)+'</span><b>'+T('Лимит на сегодня')+' · '+REV_FREE_DAY+'/'+REV_FREE_DAY+'</b><span>'+T('отзыв сохраним, баллы — завтра. За отзыв с визитом')+' +'+REV_VISIT+'</span>';
+  /* «осталось N» до отправки читается как текущий остаток и врёт на единицу.
+     Говорим порядковый номер: этот отзыв — такой-то из трёх за сегодня. */
+  return '<span class="rp-i on">'+ico('star','currentColor',2.4)+'</span><b class="acc">'+T('Без визита')+' · +'+REV_FREE+'</b><span>'+T('этот')+' — '+(revFreeUsed()+1)+'-'+T('й из')+' '+REV_FREE_DAY+' '+T('сегодня')+' · '+T('за отзыв с визитом')+' +'+REV_VISIT+'</span>';
+}
+/* Перерисовываем ТОЛЬКО подпись: полный renderReviews на каждом знаке убил бы
+   фокус в поле и увёл курсор в начало. */
+function revHint(){
+  var t=document.getElementById('revText'),p=document.getElementById('revPay');
+  if(!t||!p||!_revCtx.name)return;
+  p.innerHTML=revPayHTML(_revCtx.name,t.value||'');
 }
 function setStarPick(v){_revCtx.draft=v;haptic('select');renderReviews(_revCtx.name,_revCtx.base);setTimeout(function(){var t=document.getElementById('revText');if(t)t.focus()},60)}
 function submitReview(){
   var name=_revCtx.name;if(!name)return;
   var rating=_revCtx.draft;if(!rating){toast(T('Поставь оценку'));return}
   var t=document.getElementById('revText');var text=t?(t.value||'').trim():'';
-  var revs=revGet(name);var idx=revs.findIndex(function(r){return r.me});var first=idx<0;
-  var entry={me:true,name:revMyName(),rating:rating,text:text,ts:Date.now()};
+  var rw=revReward(name,text);
+  /* Отзыв без визита и без текста не несёт ничего: ни опыта, ни слов. Его не
+     отклоняем молча — говорим, чего не хватает, и оставляем написанное. */
+  if(rw.why==='short'){toast(T('Напиши хотя бы')+' '+REV_MIN_TEXT+' '+T('знаков — иначе это просто звезда'));try{haptic('warn')}catch(e){}return}
+  var revs=revGet(name);var idx=revs.findIndex(function(r){return r.me});
+  var entry={me:true,name:revMyName(),rating:rating,text:text,ts:Date.now(),v:rw.been?1:0};
   if(idx>=0)revs[idx]=entry;else revs.unshift(entry);
   revSave(name,revs);_revCtx.draft=0;
-  try{if(CH_API.on&&window._bizRef&&(_bizRef.id||_bizRef.qr_token))chCall('/api/reviews',{method:'POST',body:{venue:_bizRef.id||_bizRef.qr_token,rating:rating,text:text}})}catch(e){}
+  try{if(CH_API.on&&window._bizRef&&(_bizRef.id||_bizRef.qr_token))chCall('/api/reviews',{method:'POST',body:{venue:_bizRef.id||_bizRef.qr_token,rating:rating,text:text,visited:rw.been?1:0}})}catch(e){}
   haptic('success');
-  if(first){ptsAdd(20,T('Отзыв о месте'));try{celebrate({k:'loop',title:'+20 '+T('баллов'),sub:T('Спасибо за отзыв!')})}catch(e){}}
-  else toast(T('Отзыв обновлён'));
+  if(rw.pts>0){
+    revMarkPaid(name);
+    if(rw.why==='free')revFreeBump();          /* суточный счётчик тратит только отзыв без визита */
+    ptsAdd(rw.pts,T('Отзыв')+': '+name);
+    try{celebrate({k:'loop',title:'+'+rw.pts+' '+T('баллов'),
+      sub:rw.been?T('Спасибо — ты там был, это ценно вдвойне'):T('Спасибо за отзыв!')})}catch(e){}
+  }
+  else if(rw.why==='limit')toast(T('Отзыв сохранён. Баллы за отзывы без визита — завтра'));
+  else if(rw.why==='paid')toast(T('Отзыв обновлён'));
+  else toast(T('Отзыв сохранён'));
   renderReviews(name,_revCtx.base);
+  try{renderTasks()}catch(e){}
 }
 /* Shared-element переход: «призрак» фото карточки вылетает и разворачивается к hero шторки.
    Полностью аддитивно и устойчиво: при любой осечке — no-op, призрак всегда саморазрушается. */
@@ -9888,7 +10001,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=83;try{renderConsent()}catch(e){}
+var APP_V=84;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -10518,6 +10631,22 @@ function askSheet(it){
     '</div>';
   _openSheet();try{haptic('tap');mascotFeel('listen')}catch(e){}
 }
+function revAskSheet(b){
+  var sh=document.getElementById('sheet');
+  if(sh&&sh.classList.contains('open'))return;                 /* поверх другого разговора не лезем */
+  if(document.querySelector('.celebrate,.ach-reveal,.onb.on'))return;
+  var sb=document.getElementById('sheet-body');if(!sb)return;
+  sb.innerHTML='<div class="grab"></div>'+
+    '<div class="ask-v">'+
+      '<span class="av-ic" style="color:var(--lime)">'+ico('star','currentColor',2)+'</span>'+
+      '<h2 class="av-h">'+T('Пара слов о')+' '+bizName(b)+'?</h2>'+
+      '<p class="av-sub">'+T('Ты там был — такой отзыв весит больше всех и приносит')+' +'+REV_VISIT+'</p>'+
+      '<button class="cta lime" onclick="closeSheet();setTimeout(function(){revOpen('+jx(b)+')},260)">'+
+        ico('star','currentColor',2.2)+T('Написать отзыв')+'<b style="margin-left:8px">+'+REV_VISIT+'</b></button>'+
+      '<button class="cta ghost av-no" onclick="closeSheet()">'+T('Потом')+'</button>'+
+    '</div>';
+  _openSheet();try{haptic('tap')}catch(e){}
+}
 function askAnswer(name,k,v){
   name=decodeURIComponent(name);
   askResolve(name,v);
@@ -10537,6 +10666,13 @@ function askAnswer(name,k,v){
   try{var tk=TASKS.find(function(x){return x.id==='review'});if(tk){taskAward(tk);paid=true}}catch(e){}
   if(!paid)toast(v>0?T('Спасибо — теперь знаю тебя лучше'):T('Понял — такое больше не покажу'));
   try{renderToday();renderTasks()}catch(e){}
+  /* Отзыв должен быть нормой, а не отдельным походом в меню: одна кнопка
+     сразу после ответа, пока впечатление свежее. Предлагаем только тем, кто
+     дошёл и ещё не написал — иначе это спам поверх собственного праздника. */
+  if(!revPaid(name)){
+    var b=null;try{b=CITIES[CITY].biz.find(function(x){return x.n===name})}catch(e){}
+    if(b)setTimeout(function(){revAskSheet(b)},1500);
+  }
 }
 /* «Не дошёл» обязан снимать и кредит за визит: иначе достижения и вкус
    продолжают опираться на событие, которого человек сам не подтвердил. */
@@ -12323,6 +12459,7 @@ var TASKS=[
  {id:'invite',n:'Пригласить друга',             d:'Баллы получаете оба',         p:200, k:'people',   act:'invite', pend:1},
  {id:'name',  n:'Как тебя зовут',               d:'Имя видно в лигах и отзывах', p:50,  k:'sparkle',  act:'name'},
  {id:'review',n:'Рассказать, как было',         d:'Ответь на вопрос после визита',p:25, k:'star',     act:'review', repeat:1},
+ {id:'rev',   n:'Написать отзыв',                d:'',                            p:REV_VISIT,k:'pin',  act:'writerev',repeat:1},
  {id:'photo', n:'Фото из заведения',            d:'Механику включим с каталогом',p:40,  k:'camera',   act:'photo',  soon:1},
  {id:'city',  n:'Чек-ин в новом городе',        d:'Города за Батуми — на подходе',p:150,k:'globe',    act:'city',   soon:1}
 ];
@@ -12347,9 +12484,18 @@ function taskRow(t){
   var sent=t.pend?refInvitesSent():0;
   var cls='task'+(done?' done':'')+(t.soon?' tk-soon':'')+(t.pend&&sent?' tk-pend':'');
   var sub=(t.pend&&sent)?(T('Отправлено')+': '+sent+' · '+T('баллы придут, когда друг откроет')):t.d;
+  /* Отзыв — единственное задание с суточным потолком, и потолок обязан быть
+     виден В СТРОКЕ, а не открыться сюрпризом после того, как человек написал. */
+  if(t.id==='rev'){
+    var nv=revNextVenue(), left=revFreeLeft();
+    sub=nv?(T('Был в')+' '+bizName(nv)+' → +'+REV_VISIT)
+          :(T('Без визита')+' +'+REV_FREE+' · '+T('осталось')+' '+left+' '+T('из')+' '+REV_FREE_DAY+' '+T('сегодня'));
+  }
+  var pv=t.p;
+  if(t.id==='rev')pv=revNextVenue()?REV_VISIT:REV_FREE;
   var tail=done
     ?'<svg class="tk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg>'
-    :'<span class="tk-pts">'+(t.soon?T('скоро'):ei('loop','currentColor',11)+'+'+t.p)+'</span>';
+    :'<span class="tk-pts">'+(t.soon?T('скоро'):ei('loop','currentColor',11)+'+'+pv)+'</span>';
   return '<div class="'+cls+'" onclick="taskGo('+jx(t.id)+')">'+
     '<div class="tk-ic">'+ico(t.k,done?'var(--txt-3)':'var(--lime)',2)+'</div>'+
     '<div class="tk-tx"><b>'+t.n+'</b><span>'+sub+'</span></div>'+tail+'</div>';
@@ -12413,9 +12559,37 @@ function taskAward(t){
   ptsAdd(t.p,T('Задание')+': '+t.n);renderTasks();
   try{celebrate({k:'loop',title:'+'+t.p+' '+T('баллов'),sub:t.n})}catch(e){try{haptic('reward')}catch(e2){}}
 }
+/* Место, о котором отзыв ждут больше всего: последнее, где человек был и о
+   чём ещё не написал. Обход с конца — свежий визит помнится, месячной
+   давности уже нет. */
+function revNextVenue(){
+  var C=CITIES[CITY];if(!C)return null;
+  var v=[];try{v=gameGet('visited',[])||[]}catch(e){return null}
+  for(var i=v.length-1;i>=0;i--){
+    if(revPaid(v[i]))continue;
+    var b=C.biz.find(function(x){return x.n===v[i]});
+    if(b)return b;
+  }
+  return null;
+}
+/* Открыть карточку и подвести человека к полю отзыва. Пролистывание с
+   задержкой: шторка едет 260 мс, до конца анимации элемента ещё нет на месте. */
+function revOpen(b){
+  if(!b)return;
+  openBiz(b);
+  setTimeout(function(){
+    var el=document.getElementById('bizReviews');
+    if(el&&el.scrollIntoView){try{el.scrollIntoView({behavior:'smooth',block:'center'})}catch(e){}}
+  },420);
+}
 function taskGo(id){
   var t=TASKS.find(function(x){return x.id===id});if(!t)return;
   try{haptic('tap')}catch(e){}
+  if(t.act==='writerev'){
+    var nv=revNextVenue();
+    if(nv){revOpen(nv);return}
+    toast(T('Открой любое место — отзыв внизу карточки'));cgo('map');return;
+  }
   if(t.soon){toast(t.id==='city'?T('Батуми первый — остальные города открываем следом'):T('Фото включим вместе с боевым каталогом — задание уже ждёт'));return}
   if(!t.repeat&&!t.pend&&taskDone(t.id)){toast(T('Уже выполнено'));return}
   if(t.act==='channel'){
