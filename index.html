@@ -700,7 +700,6 @@ body.biz .msc-resp{background:rgba(255,181,71,.1);border-color:rgba(255,181,71,.
 /* Точка перед «+50» была просто точкой: знак, который ничего не называет.
    Заменена настоящим знаком балла Loop — тем же, что в HUD и в кошельке. */
 .biz .pp .v .ei{opacity:.95}
-.biz .pp .l{font-size:10px;color:var(--txt-3);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
 body.biz .biz .pp .v{background:rgba(255,181,71,.13);color:var(--gold);border-color:rgba(255,181,71,.22)}
 
 .sec-h{display:flex;align-items:center;justify-content:space-between;margin:20px 2px 12px}
@@ -2682,6 +2681,13 @@ input,textarea{font-size:16px!important}
 .biz .wl-heart,.mini .wl-heart{margin-left:6px;flex-shrink:0}
 /* Сердце живёт в углу фото, а не в строке с именем — строка отдана названию */
 .biz .th .wl-heart.th-heart{position:absolute;top:5px;right:5px;width:30px;height:30px;margin:0;z-index:2;border-radius:50%}
+/* Бейдж — на миниатюре, в свободном нижнем углу: сердце держит верхний правый.
+   В строке имени он стоил названию 68px, и обрезалось именно название. */
+/* На фото у бейджа нет гарантированного фона: над светлым небом золото по
+   полупрозрачному читалось на грани. Даём собственную тёмную подложку —
+   цвет текста остаётся ролевым, меняется только основание под ним. */
+.biz .th .badge,.mini .th .badge{position:absolute;left:5px;bottom:5px;z-index:2;background:rgba(5,6,10,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-color:rgba(255,255,255,.16)}
+.mini .th .badge{font-size:10px;padding:2px 6px;left:4px;bottom:4px}
 .biz .th .wl-heart.th-heart svg{width:15px;height:15px}
 /* === First-time mascot tooltip (контекстный коучер) === */
 .fab-firsttime{position:absolute;right:84px;bottom:8px;width:max-content;max-width:220px;padding:11px 14px;border-radius:14px 14px 4px 14px;background:rgba(16,20,31,.96);border:1px solid var(--accent);color:var(--txt);font-size:13px;font-weight:600;line-height:1.4;box-shadow:0 12px 36px rgba(0,0,0,.55),0 0 0 4px var(--accent-glow);animation:ffTipIn .5s var(--ease-spring) backwards,ffTipBounce 1.4s ease-in-out 1s infinite;z-index:601;pointer-events:auto}
@@ -4382,7 +4388,7 @@ function renderToday(){
   try{renderDeck()}catch(e){}
   try{ppBind(document.getElementById('answerBox'))}catch(e){}
   try{swipeBind();swipeHintMaybe();edgeFadeAll()}catch(e){}
-  document.getElementById('altList').innerHTML=C.biz.slice(1,1+ALT_SHOWN).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><h3><span class="nm">'+b.n+'</span>'+promo+'</h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp">'+ei('loop','currentColor',11)+'+'+b.pts+'</div></div>'}).join('')+
+  document.getElementById('altList').innerHTML=C.biz.slice(1,1+ALT_SHOWN).map(function(b,idx){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:'',q:''};var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}var promo=b.b==='promo'?' <span class="badge promo">PROMO</span>':b.b==='new'?' <span class="badge new">NEW</span>':'';return '<div class="mini" onclick="openBiz('+jx(b)+')"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+promo+'</div><div class="i"><h3><span class="nm">'+b.n+'</span></h3><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp">'+ei('loop','currentColor',11)+'+'+b.pts+'</div></div>'}).join('')+
   '';
   /* «Ты в новом городе?» и «Не знаешь, чего хочешь?» жили здесь постоянно и
      занимали экран у всех — включая тех, кто дома в Батуми и уже знает, чего
@@ -4911,7 +4917,7 @@ function listItems(){
 function renderList(){
   const C=CITIES[CITY];const items=listItems();
   if(!items.length){document.getElementById('listHolder').innerHTML=`<div class="empty"><div class="ic">${ico('shop','currentColor',1.6)}</div><h3>В этой нише пока пусто</h3><p>Hub может подобрать похожее под твоё настроение.</p><button class="cta lime" style="margin-top:14px" onclick="openMascot();setTimeout(function(){mascotIntent('предложи что-нибудь похожее на ${filter}','что-то рядом')},280)">💬 Спросить Hub</button></div>`;return}
-  document.getElementById('listHolder').innerHTML=items.map(function(b,idx){var nz=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',q:''};var bb=b.b==='promo'?'<span class="badge promo">Promo</span>':b.b==='new'?'<span class="badge new">New</span>':b.b==='free'?'<span class="badge free">Free</span>':'';var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}return '<div class="biz" id="card-'+idx+'" onclick="selectPlace('+idx+',false)"><div class="th">'+thumb(b,nz)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3>'+bb+'</div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+nz.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp"><div class="v">'+ei('loop','currentColor',12)+'+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
+  document.getElementById('listHolder').innerHTML=items.map(function(b,idx){var nz=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',q:''};var bb=b.b==='promo'?'<span class="badge promo">Promo</span>':b.b==='new'?'<span class="badge new">New</span>':b.b==='free'?'<span class="badge free">Free</span>':'';var bd='';if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));bd=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}return '<div class="biz" id="card-'+idx+'" onclick="selectPlace('+idx+',false)"><div class="th">'+thumb(b,nz)+heartBtn(b.n,'th-heart')+bb+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3></div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+nz.n+'</span>'+(bd?'<span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+bd+'</span>':'')+'</div></div><div class="pp"><div class="v">'+ei('loop','currentColor',12)+'+'+b.pts+'</div></div></div>'}).join('');
 }
 let selIdx=-1;
 function selectPlace(i,fromMap){
@@ -6772,7 +6778,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=76;try{renderConsent()}catch(e){}
+var APP_V=77;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7526,7 +7532,7 @@ function openWishlist(){
   if(!places.length){
     body+='<div class="empty"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C.9 8.5 2.2 4 6.5 4c2.4 0 3.7 1.4 5.5 3.2C13.8 5.4 15.1 4 17.5 4c4.3 0 5.6 4.5 4 8-2.5 4.5-9.5 9-9.5 9z"/></svg></div><h3 style="font-size:17px;color:var(--txt);font-weight:800">'+T('Пока пусто')+'</h3><p>'+T('Тапни на сердце у любого места, чтобы сохранить')+'</p></div>';
   } else {
-    body+=places.map(function(b){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''};return '<div class="biz glass-soft" onclick="closeSheet();setTimeout(function(){openBiz('+jx(b)+')},250)"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3></div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span></div></div><div class="pp"><div class="v">'+ei('loop','currentColor',12)+'+'+b.pts+'</div><div class="l">'+T('баллов')+'</div></div></div>'}).join('');
+    body+=places.map(function(b){var z=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''};return '<div class="biz glass-soft" onclick="closeSheet();setTimeout(function(){openBiz('+jx(b)+')},250)"><div class="th">'+thumb(b,z)+heartBtn(b.n,'th-heart')+'</div><div class="i"><div class="top"><h3>'+b.n+'</h3></div><div class="m"><span class="s"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span><span>'+z.n+'</span></div></div><div class="pp"><div class="v">'+ei('loop','currentColor',12)+'+'+b.pts+'</div></div></div>'}).join('');
   }
   document.getElementById('sheet-body').innerHTML=body;
   _openSheet();
