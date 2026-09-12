@@ -362,10 +362,6 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .chip-glass{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:99px;background:rgba(5,6,10,.55);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:800;color:var(--txt);pointer-events:auto;line-height:1}
 .answer .chip-glass.rate{color:var(--gold)}
 .answer .chip-glass.rate svg{width:13px;height:13px}
-.answer .chip-glass.status{font-weight:700;color:rgba(244,246,251,.92)}
-.answer .chip-glass.status .dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80}
-.answer .chip-glass.status.closed{color:var(--rose)}
-.answer .chip-glass.status.closed .dot{background:var(--rose);box-shadow:0 0 8px var(--rose)}
 /* Live signals — floating below top chips */
 .answer .live-strip{display:inline-flex;gap:7px;align-items:center;min-width:0;pointer-events:none;flex:1;overflow:hidden}
 /* В одну строку с рейтингом места мало: подпись обязана ужиматься
@@ -4350,8 +4346,10 @@ function renderToday(){
     <div class="top-strip">
       <span class="chip-glass rate"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${top.r}</span>
       ${liveSignalsTop}
+      <!-- Чип «Открыто/Закрыто» убран: рядом уже стоит «открыто до 23:00» —
+           тот же факт, та же зелёная точка, только информативнее. Две точки
+           подряд читались как рябь, а не как статус. -->
       <span style="display:flex;gap:8px;align-items:center;pointer-events:auto">
-        <span class="chip-glass status ${openNow?'':'closed'}"><span class="dot"></span>${openNow?T('Открыто'):T('Закрыто')}</span>
         ${heartBtn(top.n)}
       </span>
     </div>
@@ -5559,7 +5557,9 @@ function renderStatic(){
 function cgo(t){if(t==='ai'){try{openMascot()}catch(e){}return}
   /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
   if(t==='niches')t='map';if(t==='rewards')t='luck';
-  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderTasks();renderGBoard();renderWins();renderLuckHud();luckTickStart();luckScrollBind();luckGo('wheel');}if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8)}
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN)_LF_MAIN.invalidateSize()}catch(e){}},d)})}if(t==='luck'){ptsSync();renderLuckHud();luckTickStart();luckScrollBind();luckGo(gameGet('luckTab','tasks')||'tasks');}  /* возвращаемся туда, где были: luckGo сам рисует нужную вкладку */if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8);
+  try{ppRefresh()}catch(e){}   /* экран стал видимым — перемерить бегунки */
+}
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:10,mine:0,bids:[
   {n:'Tangerine',v:129,me:false},
@@ -6753,7 +6753,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=72;try{renderConsent()}catch(e){}
+var APP_V=73;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8746,6 +8746,13 @@ function swipeCommit(dir){
    в RU/EN/GE занимает разную ширину, и угадывать её нельзя. */
 var __ppT;
 window.addEventListener('resize',function(){clearTimeout(__ppT);__ppT=setTimeout(function(){try{ppBind()}catch(e){}},200)});
+/* Раз скрытое мы пропускаем, то ставшее видимым надо перемерить — иначе
+   чип на только что открытом экране останется без бегунка, когда он нужен. */
+function ppRefresh(){clearTimeout(__ppT);__ppT=setTimeout(function(){try{ppBind()}catch(e){}},90)}
+/* 🚨 Первый замер попадает на подменный шрифт: его метрики шире настоящего,
+   и чип, который в реальном шрифте помещается, объявляется переполненным —
+   строка начинает ездить на ровном месте. Перемеряем, когда шрифты готовы. */
+try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){try{ppBind()}catch(e){}})}catch(e){}
 function ppBind(root){
   var host=root||document;
   host.querySelectorAll('.pp').forEach(function(el){
@@ -8763,10 +8770,24 @@ function ppBind(root){
       el.appendChild(inner);
     }
     el.classList.remove('pp-on');inner.style.removeProperty('--pp');
+    /* 🚨 Про элемент, которого сейчас нет на экране, решать нельзя. Скрытый
+       элемент отдаёт clientWidth 0, и прежняя арифметика получала
+       avail = 0 − padding = −22, то есть «не влезает на 22px» — ВСЕГДА.
+       Так чипы со скрытых карточек получали pp-on заранее и начинали ездить,
+       когда карточка наконец появлялась, хотя текст помещался целиком.
+       Это и был бегающий «открыто до 23:00». */
+    if(!el.getClientRects().length||el.clientWidth<=0)return;
+    /* Меряем ГЕОМЕТРИЕЙ, а не вычитанием паддингов: рядом с текстом в чипе
+       живут точка, иконка и flex-gap, и в арифметику они не входили — та же
+       ошибка в другую сторону. Левый край текста уже знает про всех соседей. */
     var cs=getComputedStyle(el);
-    var avail=el.clientWidth-parseFloat(cs.paddingLeft||0)-parseFloat(cs.paddingRight||0);
-    var over=inner.scrollWidth-avail;
-    if(over>2){
+    var box=el.getBoundingClientRect(), inBox=inner.getBoundingClientRect();
+    var room=(box.right-parseFloat(cs.paddingRight||0))-inBox.left;
+    var over=inner.scrollWidth-room;
+    /* Порог 6px, а не 2: на чипе шириной 90px «не хватило двух пикселей» —
+       это округление и хинтинг шрифта, а не текст, которому тесно. Возить
+       строку ради шести пикселей хуже, чем незаметно их подрезать. */
+    if(over>6){
       inner.style.setProperty('--pp',over+2);
       /* Длительность от длины: короткий хвост не должен ползти так же долго,
          как длинный — иначе движение выглядит случайным. */
