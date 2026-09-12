@@ -458,45 +458,46 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 .leaflet-popup-content{margin:0!important;padding:12px 14px!important;font-family:var(--font)!important;font-size:13px!important;min-width:180px}
 .leaflet-popup-tip{background:rgba(16,20,31,.92)!important;border:1px solid rgba(255,255,255,.14)!important}
 .leaflet-popup-close-button{color:var(--txt-2)!important;font-size:20px!important;padding:5px 9px 0 0!important}
-.lf-popup{display:flex;flex-direction:column;gap:6px}
-.lf-popup b{font-size:14px;font-weight:800;letter-spacing:-.01em}
-.lf-popup .lp-meta{display:flex;gap:8px;font-size:12px;color:var(--txt-2);align-items:center;flex-wrap:wrap}
-.lf-popup .lp-meta .lp-rate{color:var(--gold);font-weight:800;display:inline-flex;align-items:center;gap:3px}
-.lf-popup .lp-meta .lp-pts{color:var(--lime);font-weight:800}
-.lf-popup .lp-go{margin-top:6px;padding:8px 12px;border-radius:12px;font-size:12px;font-weight:800;background:var(--grad-lime);color:#06210a;text-align:center;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;border:none;width:100%}
-.lf-popup .lp-go svg{width:13px;height:13px}
 /* Custom divIcon pins (CityHUB-style teardrop with category color) */
 .lf-pin-wrap{background:none!important;border:none!important}
+/* 🚨 Метка рисуется от масштаба и на общем плане это 9–12 px — палец в неё не
+   попадает, и метка выглядит «есть, но не нажимается». Видимый размер трогать
+   нельзя (иначе снова стена из шариков), поэтому зона нажатия отделена от
+   рисунка: прозрачный круг 44 px по центру метки — минимум Apple HIG. */
+.lf-pin-wrap::before,.lf-quest-num::before{content:'';position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%);border-radius:50%}
 .lf-dot{border-radius:50%;border:1.5px solid rgba(255,255,255,.5);box-shadow:0 2px 6px rgba(0,0,0,.5);opacity:.72}
 .lf-dot.pt{border:2px solid rgba(255,255,255,.9);opacity:1;box-shadow:0 3px 10px rgba(0,0,0,.6)}
 .lf-dot.promo{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,181,71,.25),0 2px 8px rgba(0,0,0,.6)}
-.lf-clu{border-radius:50%;display:grid;place-items:center;color:#f4f6fb;font-weight:900;
-  background:rgba(12,16,24,.86);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-  border:1.5px solid rgba(255,255,255,.22);box-shadow:0 4px 14px rgba(0,0,0,.5);
-  transition:transform .18s cubic-bezier(.2,1.4,.4,1)}
-.lf-clu.pt{border-color:rgba(212,255,79,.75);color:var(--lime);box-shadow:0 0 0 3px rgba(212,255,79,.16),0 4px 14px rgba(0,0,0,.5)}
-.lf-clu b{font-size:12px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.lf-pin-wrap:active .lf-clu{transform:scale(.92)}
 .lf-pin{width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.6);border:2.5px solid rgba(255,255,255,.85);position:relative;transition:transform .2s cubic-bezier(.2,1.4,.4,1)}
 .lf-pin svg{transform:rotate(45deg);width:18px;height:18px;color:#fff}
 .lf-pin.promo::after{content:'';position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:2px solid #05060a;transform:rotate(45deg);box-shadow:0 0 8px rgba(255,181,71,.6)}
 .lf-pin.promo::before{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 9px rgba(255,181,71,.18);pointer-events:none;opacity:0;animation:lfPinPulse 1.8s ease-in-out infinite}
 @keyframes lfPinPulse{0%,100%{transform:scale(.8);opacity:0}50%{transform:scale(1);opacity:1}}
 .lf-pin-wrap.sel .lf-pin{transform:rotate(-45deg) scale(1.25);box-shadow:0 0 0 5px rgba(212,255,79,.4),0 8px 24px rgba(0,0,0,.55)}
+.lf-pin-wrap.sel .lf-dot{box-shadow:0 0 0 5px rgba(212,255,79,.4),0 4px 14px rgba(0,0,0,.55);opacity:1}
+.lf-pin-wrap:active .lf-pin,.lf-pin-wrap:active .lf-dot{filter:brightness(1.15)}
 /* Me-dot (current user) */
 .lf-me{background:none!important;border:none!important}
 .lf-me-dot{width:18px;height:18px;border-radius:50%;background:var(--acc-2);border:3px solid #fff;box-shadow:0 0 0 6px rgba(0,224,199,.3),0 0 14px rgba(0,224,199,.6);animation:lfMePulse 2s ease-in-out infinite}
 /* Quest stop numbered bubbles (поверх маркеров активного квеста) */
-.lf-quest-num{background:none!important;border:none!important;pointer-events:none}
-.lqn{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:12px;border:2.5px solid #05060a;box-shadow:0 4px 12px rgba(0,0,0,.5);font-variant-numeric:tabular-nums}
+/* 🚨 Здесь стояло pointer-events:none — к пузырькам шагов был привязан popup,
+   который физически не мог открыться. Маршрут выглядел интерактивным и не был им. */
+.lf-quest-num{background:none!important;border:none!important}
+.lqn{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:12px;border:2.5px solid #05060a;box-shadow:0 4px 12px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;position:relative;transition:transform .18s cubic-bezier(.2,1.4,.4,1)}
+.lf-quest-num:active .lqn{transform:scale(.9)}
+/* Шаг, на котором человек стоит сейчас, обязан быть видно с одного взгляда. */
+.lqn.now{width:34px;height:34px;font-size:13px}
+.lqn.now::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(124,58,255,.7);animation:lqnPulse 1.9s ease-in-out infinite}
+.lqn.next{opacity:.82}
+@keyframes lqnPulse{0%,100%{transform:scale(.86);opacity:.25}50%{transform:scale(1.12);opacity:.9}}
 @keyframes lfMePulse{0%,100%{box-shadow:0 0 0 6px rgba(0,224,199,.3),0 0 14px rgba(0,224,199,.6)}50%{box-shadow:0 0 0 11px rgba(0,224,199,.08),0 0 18px rgba(0,224,199,.8)}}
 /* Glass hint overlay on map */
 .lf-hint{position:absolute;left:12px;bottom:12px;z-index:600;font-size:11px;font-weight:700;color:var(--txt-2);background:rgba(5,6,10,.65);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:6px 12px;border-radius:99px;border:1px solid var(--stroke-soft);pointer-events:none}
 /* Quest overlay button on map (когда квест активен) */
 .lf-quest-btn{position:absolute;right:14px;top:14px;z-index:700;display:flex;align-items:center;gap:9px;padding:9px 13px 9px 11px;border-radius:var(--r-sm);background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);border:1px solid rgba(212,255,79,.4);box-shadow:0 8px 22px rgba(0,0,0,.45);color:var(--txt);cursor:pointer;font-family:inherit;transition:transform .15s var(--ease-spring)}
 .lf-quest-btn:active{transform:scale(.95)}
-.lf-quest-btn b{font-size:13px;font-weight:800;display:block;line-height:1.1}
-.lf-quest-btn .lfqb-prog{font-size:11px;color:var(--accent);font-weight:700;display:block;margin-top:2px}
+.lf-quest-btn b{font-size:13px;font-weight:800;display:block;line-height:1.1;max-width:184px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lf-quest-btn .lfqb-prog{font-size:11px;color:var(--accent);font-weight:700;display:block;margin-top:2px;max-width:184px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Center-on-me FAB */
 .lf-me-btn{position:absolute;right:14px;bottom:14px;z-index:700;width:46px;height:46px;border-radius:50%;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;color:var(--acc-2);cursor:pointer;transition:transform .15s var(--ease-spring),background .25s;box-shadow:0 8px 22px rgba(0,0,0,.45)}
 .lf-me-btn:active{transform:scale(.92);background:rgba(0,224,199,.18)}
@@ -777,11 +778,11 @@ body.sw-teaching .sec-sw{opacity:0;pointer-events:none;transition:opacity .25s}
    размером тени: 36px-тень под 30px-пилюлей читается как ошибка.
    Состояния выбора (чипы, сегменты) сюда НЕ входят — это переключатели, не действия. */
 .cta.lime,.go-btn,.dgo,.lbtn.primary,.bc-btn.primary,.go-btn-new,.celebrate .cb-btn,
-.vbanner .vba,.lf-popup .lp-go,.ref-code button,.shop-item .si-btn:not(.locked):not(.off){
+.vbanner .vba,.ref-code button,.shop-item .si-btn:not(.locked):not(.off){
   background:var(--btn-fill)!important;color:var(--btn-ink)!important;
   text-shadow:0 1px 0 rgba(255,255,255,.25);border-color:transparent!important}
-.vbanner .vba,.lf-popup .lp-go,.ref-code button,.shop-item .si-btn:not(.locked):not(.off){box-shadow:var(--btn-sh-sm)!important}
-.vbanner .vba:active,.lf-popup .lp-go:active,.ref-code button:active,.shop-item .si-btn:active{transform:scale(.95)}
+.vbanner .vba,.ref-code button,.shop-item .si-btn:not(.locked):not(.off){box-shadow:var(--btn-sh-sm)!important}
+.vbanner .vba:active,.ref-code button:active,.shop-item .si-btn:active{transform:scale(.95)}
 .go-btn,.dgo,.lbtn.primary,.bc-btn.primary,.go-btn-new{background:var(--btn-fill)!important;color:var(--btn-ink)!important;box-shadow:0 14px 36px rgba(212,255,79,.5),0 4px 10px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 8px rgba(0,0,0,.18)!important;text-shadow:0 1px 0 rgba(255,255,255,.25)}
 .go-btn:active,.dgo:active,.lbtn.primary:active,.bc-btn.primary:active,.go-btn-new:active{box-shadow:0 6px 18px rgba(212,255,79,.4),0 2px 4px rgba(0,0,0,.3),inset 0 2px 4px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.3)!important}
 /* Gold variant — biz mode */
@@ -7389,20 +7390,53 @@ var QUEST_STATE=(function(){
 })();
 /* Любая правка прогресса обязана доезжать до диска — иначе это снова память. */
 function questSave(){try{gameSet('quest',{current:QUEST_STATE.current,progress:QUEST_STATE.progress})}catch(e){}}
+/* ═══════════ КАК СОБИРАЕТСЯ МАРШРУТ ═══════════
+   Два закона, оба оплачены замером на каталоге Батуми.
+
+   1. ТОЛЬКО ПАРТНЁРЫ. Фоновая точка города (pr:0) не даёт баллов — договора
+      нет, QR на кассе нет. А карточка шага печатает «+127» рядом с именем.
+      Прежний отбор брал pool[i%pool.length] из ВСЕГО каталога, и два квеста
+      из пяти вели человека в случайный OSM-салон с pts:0: «Ночь Батуми» →
+      Beer Time(0), «Перезагрузка» → Abashidze Beaty Art(0). Обещание, которое
+      некому исполнить, — то же враньё, что выдуманный рейтинг.
+
+   2. ПОРЯДОК ПО ЗЕМЛЕ, А НЕ ПО ПОЗИЦИИ В МАССИВЕ. Каждый следующий шаг —
+      ближайший подходящий к предыдущему, первый — ближайший к центру города.
+      Было: 2.0–3.4 км зигзагом через весь Батуми. Маршрут, по которому нельзя
+      пройти ногами, — не маршрут, а список.
+
+   Отбор остаётся детерминированным: openQuest, drawQuestRoute и questAdvance
+   зовут его порознь и обязаны получить один и тот же список. */
+function questWalk(a,b){var dy=(a[0]-b[0])*111000,dx=(a[1]-b[1])*82000;return Math.round(Math.sqrt(dx*dx+dy*dy))}
+function questDistTxt(m){return m<1000?(Math.round(m/50)*50)+' '+T('м'):(m/1000).toFixed(1)+' '+T('км')}
 function questPickStops(tpl,C){
-  // подобрать реальные заведения из CITY под каждую ниши тlemплате (deterministic by name length)
-  var used=[];var stops=[];
+  var all=(C&&C.biz)||[];
+  var partners=all.filter(function(b){return isPartner(b)&&b.o});
+  var used=[],stops=[],from=(C&&C.c)||null;
   for(var i=0;i<tpl.niches.length;i++){
     var k=tpl.niches[i];
-    var pool=C.biz.filter(function(b){return b.k===k&&used.indexOf(b.n)<0});
-    if(!pool.length){pool=C.biz.filter(function(b){return used.indexOf(b.n)<0})}
-    if(!pool.length){pool=C.biz}
-    var pick=pool[i%pool.length];
-    used.push(pick.n);
-    stops.push(pick);
+    var pool=partners.filter(function(b){return b.k===k&&used.indexOf(b.n)<0});
+    if(!pool.length)pool=partners.filter(function(b){return used.indexOf(b.n)<0});
+    if(!pool.length)pool=all.filter(function(b){return b.o&&used.indexOf(b.n)<0});
+    if(!pool.length)break;
+    var pick=pool[0];
+    if(from){var best=Infinity;pool.forEach(function(b){var d=questWalk(from,b.o);if(d<best){best=d;pick=b}})}
+    used.push(pick.n);stops.push(pick);from=pick.o;
   }
   return stops;
 }
+/* Одна точка правды о состоянии маршрута: шаблон, шаги и сколько пройдено.
+   Три места считали это независимо, и progress мог оказаться больше, чем
+   шагов, — после смены города список короче, а число на диске прежнее. */
+function questNow(){
+  var id=(typeof QUEST_STATE!=='undefined')&&QUEST_STATE.current;if(!id)return null;
+  var tpl=QUEST_TPL.find(function(t){return t.id===id});if(!tpl)return null;
+  var stops=questPickStops(tpl,CITIES[CITY]);if(!stops.length)return null;
+  return {id:id,tpl:tpl,stops:stops,done:Math.max(0,Math.min(QUEST_STATE.progress[id]||0,stops.length))};
+}
+/* Маршрут живёт на карте: любая правка прогресса обязана доехать до пузырьков
+   и до линии, иначе пройденный шаг остаётся «сейчас идём» до перестройки карты. */
+function questRefresh(){try{drawQuestRoute()}catch(e){}try{showQuestOverlay()}catch(e){}}
 function questCover(tpl,stops){
   var arr=stops.slice(0,3);while(arr.length<3)arr.push(stops[0]);
   var b=arr[0];
@@ -7452,6 +7486,7 @@ function openQuest(qid){
   // hint with share + reset
   var hint='<div style="display:flex;gap:9px;margin-top:10px"><button class="cta ghost" style="flex:1;margin-top:0;padding:13px;font-size:13px" onclick="shareQuest(\''+tpl.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>'+T('Позвать друга')+'</button>'+(done>0&&done<stops.length?'<button class="cta ghost" style="flex:0 0 auto;margin-top:0;padding:13px 16px;font-size:13px" onclick="resetQuest(\''+tpl.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 1 0 8-8M4 4v4h4"/></svg></button>':'')+'</div>';
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+sel+hero+prog+stopsHTML+rew+cta+hint;
+  questRefresh();/* сменили маршрут в листе — карта под ним обязана стать той же */
   _openSheet();if(navigator.vibrate)navigator.vibrate(10);
   // auto-scroll active quest selector chip into view
   setTimeout(function(){var on=document.querySelector('.qsel .qsel-c.on');if(on&&on.scrollIntoView){try{on.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}catch(e){}}},100);
@@ -7460,12 +7495,12 @@ function claimQuest(qid){
   var tpl=QUEST_TPL.find(function(t){return t.id===qid});if(!tpl)return;
   closeSheet();
   setTimeout(function(){celebrate({icon:tpl.emo,title:'Квест завершён!',sub:'+'+tpl.rew+' '+T('баллов')+' · '+T('бейдж')+' «'+tpl.badge+'»'})},260);
-  ptsAdd(tpl.rew,T('Квест')+': '+tpl.n);QUEST_STATE.progress[qid]=0;questSave();/* сброс прогресса после клейма */
+  ptsAdd(tpl.rew,T('Квест')+': '+tpl.n);QUEST_STATE.progress[qid]=0;questSave();questRefresh();/* сброс прогресса после клейма */
   try{gameSet('questsDone',(gameGet('questsDone',0)||0)+1)}catch(e){}
   var bb=document.getElementById('balBig');if(bb)bb.textContent=PTS.toLocaleString('ru-RU');
   var pt=document.getElementById('ptsTop');if(pt)pt.textContent=PTS.toLocaleString('ru-RU');
 }
-function resetQuest(qid){QUEST_STATE.progress[qid]=0;questSave();openQuest(qid);toast(T('Прогресс сброшен'));if(navigator.vibrate)navigator.vibrate([10,30,10])}
+function resetQuest(qid){QUEST_STATE.progress[qid]=0;questSave();questRefresh();openQuest(qid);toast(T('Прогресс сброшен'));if(navigator.vibrate)navigator.vibrate([10,30,10])}
 function shareQuest(qid){var tpl=QUEST_TPL.find(function(t){return t.id===qid});if(!tpl)return;var url='https://t.me/CityHubBot?start=quest_'+qid;shareLink(url,tpl.emo+' '+tpl.n+' · '+T('ссылка скопирована'))}
 // DEMO: hooking ARRIVED check-in to also advance quest progress
 function questAdvance(bizName){
@@ -7475,7 +7510,14 @@ function questAdvance(bizName){
   var cur=QUEST_STATE.progress[t]||0;
   if(cur<stops.length && stops[cur].n===bizName){
     QUEST_STATE.progress[t]=cur+1;questSave();
-    setTimeout(function(){toast(T('Точка квеста засчитана')+' '+(cur+1)+'/'+stops.length);if(navigator.vibrate)navigator.vibrate([10,40,15])},900);
+    questRefresh();
+    setTimeout(function(){
+      var left=stops.length-(cur+1);
+      toast(left>0
+        ? (T('Шаг')+' '+(cur+1)+'/'+stops.length+' · '+T('дальше')+': '+bizName(stops[cur+1]))
+        : (T('Маршрут пройден')+' · '+T('забери награду')));
+      if(navigator.vibrate)navigator.vibrate([10,40,15]);
+    },900);
   }
 }
 function openSquad(){
@@ -7560,29 +7602,23 @@ function lfPinIcon(b,nz,z){
     html:'<div class="lf-pin'+promo+'" style="background:'+nz.c+';width:'+sz+'px;height:'+sz+'px">'+ic+'</div>',
     iconSize:[sz,sz],iconAnchor:[sz/2,sz],popupAnchor:[0,-sz+4]});
 }
-function lfClusterIcon(n,hasPartner){
-  var sz=n>=100?50:n>=25?44:38;
-  return L.divIcon({className:'lf-pin-wrap',
-    html:'<div class="lf-clu'+(hasPartner?' pt':'')+'" style="width:'+sz+'px;height:'+sz+'px"><b>'+(n>999?'999+':n)+'</b></div>',
-    iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]});
-}
-function lfPopup(b,nz){
-  var dist='';var C=CITIES[CITY];if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000;var dlng=(b.o[1]-C.c[1])*82000;var dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));dist=dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}
-  return '<div class="lf-popup"><b>'+bizName(b)+'</b>'+
-    '<div class="lp-meta">'+(b.r?'<span class="lp-rate"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'+b.r+'</span>':'')+'<span>'+nz.n+'</span>'+(dist?'<span>'+dist+'</span>':'')+'<span class="lp-pts">+'+b.pts+'</span></div>'+
-    '<button class="lp-go" onclick="(function(){var c=document.querySelector(\'.leaflet-popup\');if(c)c.style.display=\'none\';openBiz('+jx(b)+')})()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'+T('Идём')+'</button>'+
-    '</div>';
-}
-/* ═══════════ МЕТКИ: КЛАСТЕРЫ И МАСШТАБ ═══════════
-   Каталог — 2 819 точек, и «нарисовать все» даёт стену из пинов, сквозь
-   которую не видно города. Так карты не делают. Два правила, оба про масштаб:
+/* ═══════════ МЕТКИ: ПРОРЕЖИВАНИЕ И МАСШТАБ ═══════════
+   Каталог — 2 814 точек. «Нарисовать все» даёт стену из пинов; первая попытка
+   чинить это кластерами дала стену из кружков с числами — на скриншоте видно
+   решётку, потому что кластер рисовался в центре ячейки, и ячейки выстроились
+   рядами. Плюс два греха: число «62 места в этом квадрате» не отвечает ни на
+   один вопрос человека, а серые бейджи забивали 28 партнёров — то есть ровно
+   то, ради чего продукт существует.
 
-   1. ЧЕМ ДАЛЬШЕ — ТЕМ КРУПНЕЕ ГРУППА. Близкие метки схлопываются в кластер
-      с числом. Сетка считается в ЭКРАННЫХ пикселях: в градусах одна и та же
-      ячейка на разном зуме даёт разный размер на экране, и кластеры то
-      слипаются, то рассыпаются. Размер ячейки растёт при отдалении, иначе
-      на общем плане получается стена уже из кружков.
+   Так карты не делают. Google и Яндекс не схлопывают POI в счётчики — они их
+   ПРОРЕЖИВАЮТ: чем дальше, тем меньше точек и тем они мельче. Отсюда правила:
+
+   1. ЭКРАННАЯ СЕТКА РЕШАЕТ ПЛОТНОСТЬ, А НЕ РИСУЕТСЯ САМА. На ячейку остаётся
+      один представитель фона — и он стоит на СВОЁМ месте, а не в центре
+      ячейки, поэтому поле точек читается как город, а не как таблица.
    2. ЧЕМ БЛИЖЕ — ТЕМ ПОДРОБНЕЕ МЕТКА (lfPinSize).
+   3. ПАРТНЁР НЕ ПРОРЕЖИВАЕТСЯ НИКОГДА. Их 28 на 2 786 фоновых; спрятать
+      оплаченного — значит продать место и не отдать его.
 
    Потолок остаётся: 2 792 DOM-метки вешают страницу так, что скриншот не
    снимается за 30 секунд — замерено. */
@@ -7618,28 +7654,28 @@ function mapDrawVisible(items){
     });
     groups=groups.slice(0,MAP_CAP);
   }
+  function drawPin(v){
+    var nz=NICHES.find(function(n){return n.k===v.b.k})||{c:'#7C3AFF',n:''};
+    var m=L.marker(v.b.o,{icon:lfPinIcon(v.b,nz,z),riseOnHover:true});
+    m.on('click',function(){mapOpenPlace(v.i)});
+    m._idx=v.i;m._b=v.b;
+    m.addTo(_LF_MAIN);_LF_MARKERS.push(m);
+  }
   groups.forEach(function(g){
-    /* Партнёр из группы не прячется в кластер: он оплачен, его видно. */
-    var pt=g.filter(function(v){return isPartner(v.b)});
-    if(g.length>1&&pt.length<=1){
-      var la=0,ln=0;g.forEach(function(v){la+=v.b.o[0];ln+=v.b.o[1]});
-      var cen=[la/g.length,ln/g.length];
-      var m=L.marker(cen,{icon:lfClusterIcon(g.length,pt.length>0)});
-      m.on('click',function(){
-        try{_LF_MAIN.setView(cen,Math.min(18,(_LF_MAIN.getZoom()||14)+2),{animate:true})}catch(e){}
-        try{haptic('tap')}catch(e){}
-      });
-      m.addTo(_LF_MAIN);_LF_MARKERS.push(m);
-      return;
+    /* 🚨 Партнёр НИКОГДА не прячется. Условие здесь было `pt.length<=1` — то
+       есть одинокий партнёр среди фона схлопывался в серый кружок. Ровно тот
+       случай, ради которого правило и писалось: партнёр один на сотню, в
+       группе он почти всегда один. */
+    var pt=[],bg=[];
+    g.forEach(function(v){(isPartner(v.b)?pt:bg).push(v)});
+    pt.forEach(drawPin);
+    /* Фон — один представитель на ячейку, ближайший к центру кадра: остальные
+       в этом масштабе всё равно легли бы друг на друга. Ближе подвёл — ячейка
+       мельче, проступают соседи. Это и есть «чем ближе, тем больше». */
+    if(bg.length){
+      var rep=bg[0];bg.forEach(function(v){if(v.d<rep.d)rep=v});
+      drawPin(rep);
     }
-    (pt.length>1?pt:g).forEach(function(v){
-      var nz=NICHES.find(function(n){return n.k===v.b.k})||{c:'#7C3AFF',n:''};
-      var m=L.marker(v.b.o,{icon:lfPinIcon(v.b,nz,z),riseOnHover:true});
-      m.bindPopup(lfPopup(v.b,nz),{closeButton:true,autoPan:true,maxWidth:260,offset:[0,-4]});
-      m.on('click',function(){selectPlace(v.i,true)});
-      m._idx=v.i;m._b=v.b;
-      m.addTo(_LF_MAIN);_LF_MARKERS.push(m);
-    });
   });
   var hint=document.getElementById('lfHint');
   if(hint)hint.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+items.length+' '+T('мест');
@@ -7718,37 +7754,52 @@ function centerOnMe(btn){
     var C=CITIES[CITY];if(_LF_MAIN)_LF_MAIN.setView(C.c,14,{animate:true});
   }
 }
-var _LF_QUEST_LINE=null,_LF_QUEST_STOPS=[];
+var _LF_QUEST_LINE=null,_LF_QUEST_WALKED=null,_LF_QUEST_STOPS=[];
 function drawQuestRoute(){
   if(!_LF_MAIN||typeof L==='undefined')return;
-  // снять старую линию + спец-маркеры стопов
-  if(_LF_QUEST_LINE){try{_LF_MAIN.removeLayer(_LF_QUEST_LINE)}catch(e){}_LF_QUEST_LINE=null}
+  [_LF_QUEST_LINE,_LF_QUEST_WALKED].forEach(function(l){if(l){try{_LF_MAIN.removeLayer(l)}catch(e){}}});
+  _LF_QUEST_LINE=null;_LF_QUEST_WALKED=null;
   _LF_QUEST_STOPS.forEach(function(m){try{_LF_MAIN.removeLayer(m)}catch(e){}});_LF_QUEST_STOPS=[];
-  var tplId=QUEST_STATE&&QUEST_STATE.current;if(!tplId)return;
-  var tpl=QUEST_TPL.find(function(t){return t.id===tplId});if(!tpl)return;
-  var stops=questPickStops(tpl,CITIES[CITY]);if(stops.length<2)return;
-  var done=QUEST_STATE.progress[tplId]||0;
+  var q=questNow();if(!q||q.stops.length<2)return;
+  var stops=q.stops,done=q.done,tpl=q.tpl;
   var coords=stops.map(function(b){return b.o});
-  // dashed lime polyline
-  _LF_QUEST_LINE=L.polyline(coords,{color:'#D4FF4F',weight:4,opacity:.85,dashArray:'8 9',lineCap:'round',lineJoin:'round'}).addTo(_LF_MAIN);
-  // кликабельные пузырьки stop-индексов (1/2/3) — popup с шагом квеста
+  /* Пройденное и оставшееся — две разные линии. Одна ровная нитка от старта до
+     финиша не отвечает на единственный вопрос человека в пути: где я сейчас. */
+  if(done>0)_LF_QUEST_WALKED=L.polyline(coords.slice(0,done+1),{color:'#D4FF4F',weight:4,opacity:.3,lineCap:'round',lineJoin:'round'}).addTo(_LF_MAIN);
+  if(done<stops.length-1)_LF_QUEST_LINE=L.polyline(coords.slice(done),{color:'#D4FF4F',weight:4,opacity:.9,dashArray:'8 9',lineCap:'round',lineJoin:'round'}).addTo(_LF_MAIN);
   stops.forEach(function(b,i){
-    var stateLbl=(i<done)?T('Готово'):(i===done?T('Сейчас идём'):T('Дальше'));
-    var label=(i<done)?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':(i+1);
-    var bg=(i<done)?'#D4FF4F':(i===done?'#7C3AFF':'rgba(255,255,255,.85)');
-    var col=(i<done)?'#06210a':(i===done?'#fff':'#05060a');
-    var ic=L.divIcon({className:'lf-quest-num',html:'<div class="lqn" style="background:'+bg+';color:'+col+'">'+label+'</div>',iconSize:[28,28],iconAnchor:[14,14]});
-    var m=L.marker(b.o,{icon:ic,zIndexOffset:900}).addTo(_LF_MAIN);
-    var task=tpl.tasks&&tpl.tasks[i]?tpl.tasks[i]:'';
-    var taskHTML=task?'<div class="lp-meta" style="margin-top:2px"><span>'+task+'</span></div>':'';
-    var popup='<div class="lf-popup"><b>'+(i+1)+'. '+bizName(b)+'</b>'+
-      '<div class="lp-meta"><span class="lp-pts" style="color:'+(i<done?'#D4FF4F':'#FFB547')+'">'+stateLbl+'</span></div>'+
-      taskHTML+
-      '<button class="lp-go" onclick="(function(){var c=document.querySelector(\'.leaflet-popup\');if(c)c.style.display=\'none\';openBiz('+jx(b)+')})()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'+T('Идём сюда')+'</button>'+
-      '</div>';
-    m.bindPopup(popup,{closeButton:true,autoPan:true,maxWidth:240,offset:[0,-14]});
+    var st=i<done?'done':(i===done?'now':'next');
+    var label=(st==='done')?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>':(i+1);
+    var bg=(st==='done')?'#D4FF4F':(st==='now'?'#7C3AFF':'rgba(255,255,255,.85)');
+    var col=(st==='done')?'#06210a':(st==='now'?'#fff':'#05060a');
+    var sz=(st==='now')?34:28;
+    var ic=L.divIcon({className:'lf-quest-num',html:'<div class="lqn '+st+'" style="background:'+bg+';color:'+col+'">'+label+'</div>',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]});
+    var m=L.marker(b.o,{icon:ic,zIndexOffset:(st==='now'?980:900)}).addTo(_LF_MAIN);
+    m.on('click',function(){questStepTap(i)});
     _LF_QUEST_STOPS.push(m);
   });
+}
+/* Тап по шагу. Маршрут последовательный — и лист квеста уже запирает шаги
+   после текущего. Карта обязана вести себя так же, иначе два экрана об одном
+   маршруте говорят разное: там заперто, тут открывается. */
+function questStepTap(i){
+  var q=questNow();if(!q)return;
+  var b=q.stops[i];if(!b)return;
+  try{haptic('tap')}catch(e){}
+  if(i>q.done){
+    var nx=q.stops[q.done];
+    toast(T('Сначала шаг')+' '+(q.done+1)+' · '+bizName(nx));
+    if(_LF_MAIN&&nx.o){try{_LF_MAIN.panTo(nx.o,{animate:true,duration:.45})}catch(e){}}
+    return;
+  }
+  openBiz(b);
+}
+/* Показать текущий шаг крупно — когда человек потерял себя на карте. */
+function questFocus(){
+  var q=questNow();if(!q||!_LF_MAIN)return;
+  var b=q.stops[Math.min(q.done,q.stops.length-1)];if(!b||!b.o)return;
+  try{_LF_MAIN.setView(b.o,16,{animate:true})}catch(e){}
+  try{haptic('tap')}catch(e){}
 }
 function initBizMap(){
   var host=document.getElementById('bizmap');if(!host||typeof L==='undefined')return;
@@ -7867,14 +7918,18 @@ function renderList(){
 let selIdx=-1;
 function selectPlace(i,fromMap){
   const C=CITIES[CITY];const items=listItems();
-  // ОДИН тап с list = сразу открыть детали; с карты = highlight + open
+  // Тап в списке — открыть карточку. Тап на карте открывает её сам (mapOpenPlace);
+  // сюда с карты приходит только подсветка выбранного из showOnMap.
   if(!fromMap){
     // Авто-наведение карты на выбранный place ДО открытия модалки
     var b=items[i];if(b&&b.o&&_LF_MAIN){try{_LF_MAIN.panTo(b.o,{animate:true,duration:.45})}catch(e){}}
     openBiz(items[i]);return;
   }
-  if(selIdx===i){openBiz(items[i]);return}
   selIdx=i;
+  /* Список подгружается порциями по 24. Если выбранное место лежит дальше
+     подгруженного, карточки в DOM просто нет — раньше подсветка молча
+     промахивалась и человек не понимал, что вообще выбралось. */
+  if(i>=LIST_SHOWN){LIST_SHOWN=Math.ceil((i+1)/LIST_STEP)*LIST_STEP;renderList()}
   // подсветить карточку
   document.querySelectorAll('#listHolder .biz').forEach(function(x){x.classList.remove('sel')});
   var card=document.getElementById('card-'+i);if(card){card.classList.add('sel');if(fromMap)card.scrollIntoView({behavior:'smooth',block:'center'})}
@@ -7891,7 +7946,13 @@ function showOnMap(name){
   cgo('map');
   setTimeout(function(){
     var C=CITIES[CITY];
-    var i=C.biz.findIndex(function(b){return b.n===name});
+    /* 🚨 Индекс обязан считаться по тому же списку, каким карта рисует метки.
+       Здесь брался C.biz, а selectPlace ходит по listItems() — а тот ставит
+       промо и новинки вперёд. Замер: 21 позиция из 2 814 расходится, то есть
+       «показать на карте» подсвечивало соседа. */
+    var items=listItems();
+    var i=items.findIndex(function(b){return b.n===name});
+    selIdx=-1;
     if(i>=0)selectPlace(i,true);
   },180);
   if(navigator.vibrate)navigator.vibrate(10);
@@ -9827,7 +9888,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=82;try{renderConsent()}catch(e){}
+var APP_V=83;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -10827,14 +10888,23 @@ function spark(values,col){
 }
 // === QUEST overlay button on map (показывается когда есть активный квест) ===
 function showQuestOverlay(){
-  if(typeof QUEST_STATE==='undefined'||!QUEST_STATE.current)return;
   var host=document.getElementById('map');if(!host)return;
   var old=document.getElementById('lfQuestBtn');if(old)old.remove();
+  var q=questNow();if(!q)return;
+  /* Здесь стояло '/3' числом. Пока у всех шаблонов ровно три ниши, это верно —
+     и молча соврёт на первом же шаблоне из двух или четырёх точек. */
+  var sub;
+  if(q.done>=q.stops.length)sub=T('Готово — забери награду');
+  else{
+    var from=q.done>0?q.stops[q.done-1].o:((CITIES[CITY]&&CITIES[CITY].c)||q.stops[0].o);
+    sub=T('дальше')+': '+bizName(q.stops[q.done])+' · '+questDistTxt(questWalk(from,q.stops[q.done].o));
+  }
   var btn=document.createElement('button');btn.id='lfQuestBtn';btn.className='lf-quest-btn';
-  var tpl=QUEST_TPL.find(function(t){return t.id===QUEST_STATE.current});if(!tpl)return;
-  var done=QUEST_STATE.progress[QUEST_STATE.current]||0;
-  btn.innerHTML='<span class="qbtn-ic">'+emoIco(tpl.emo,'currentColor',2.2)+'</span><span><b>'+tpl.n+'</b><span class="lfqb-prog">'+done+'/3 · '+T('маршрут')+'</span></span>';
-  btn.onclick=function(e){e.stopPropagation();openQuest(QUEST_STATE.current)};
+  btn.innerHTML='<span class="qbtn-ic">'+emoIco(q.tpl.emo,'currentColor',2.2)+'</span><span><b>'+q.done+'/'+q.stops.length+' · '+q.tpl.n+'</b><span class="lfqb-prog">'+sub+'</span></span>';
+  /* Тап ведёт к шагу на карте, долгий тап — в лист маршрута. Человек в пути
+     хочет увидеть, куда идти, а не прочитать описание квеста заново. */
+  btn.onclick=function(e){e.stopPropagation();questFocus()};
+  btn.oncontextmenu=function(e){e.preventDefault();openQuest(QUEST_STATE.current);return false};
   host.appendChild(btn);
 }
 // === NOTIF wiring — реальные клики ===
