@@ -5105,12 +5105,35 @@ async function chCall(path,opts){
   }catch(e){return null}
   finally{clearTimeout(to)}
 }
+/* 🚨 Здесь стояло `ptsSave(u.points)` — безусловная перезапись локального
+   баланса серверным. Пока бэкенд выключен, это не стреляет; выстрелит ровно
+   в день включения: у сервера новый пользователь с нулём, а на телефоне —
+   всё, что человек набрал за визиты и задания. Молча, без следа, у всех сразу
+   и только один раз — то есть заметить это на тестовом аккаунте нельзя.
+
+   Сервер становится источником правды, но не ценой обнуления. Если серверный
+   баланс МЕНЬШЕ локального и переноса ещё не было — разницу записываем в
+   `ptsPending` и оставляем локальный баланс на экране. Перенос делает сервер
+   (разово, по этому полю), и до тех пор мы ничего не теряем и ничего не врём:
+   человек видит свои баллы, а не чужой ноль. */
 function chSyncUser(u){
   try{
-    if(typeof u.points==='number'){try{ptsSave(u.points)}catch(e){PTS=u.points}}
+    if(typeof u.points==='number'){
+      var local=0;try{local=ptsGet()}catch(e){}
+      var migrated=false;try{migrated=!!gameGet('ptsMigrated',false)}catch(e){}
+      if(!migrated&&u.points<local){
+        try{gameSet('ptsPending',local-u.points);gameSet('ptsMigrated',true)}catch(e){}
+        /* баланс на экране остаётся локальным — сервер догонит переносом */
+      }else{
+        try{gameSet('ptsMigrated',true)}catch(e){}
+        try{ptsSave(u.points)}catch(e){PTS=u.points}
+      }
+    }
     if(u.plan){try{gameSet('plan',u.plan)}catch(e){}}
   }catch(e){}
 }
+/* Сколько баллов ждёт переноса на сервер (0 — ничего не ждёт). */
+function ptsPending(){try{return gameGet('ptsPending',0)||0}catch(e){return 0}}
 async function chCheckin(venueToken){
   if(!CH_API.on){return false}
   var r=await chCall('/api/checkin',{method:'POST',body:{venue:venueToken}});
@@ -6778,7 +6801,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=77;try{renderConsent()}catch(e){}
+var APP_V=78;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
