@@ -3432,20 +3432,25 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
             </div>
           </div>
           <div class="pf-stats">
+            <!-- 🚨 Из трёх главных чисел профиля два были зашиты в разметку:
+                 «14 дней подряд» при реальной серии 1, «3 города» у человека,
+                 который был в одном, и «2 заморозки» механики, которой в
+                 продукте нет вообще. Все три теперь считаются из того, что
+                 действительно записано. -->
             <button class="pf-stat" onclick="openWallet()">
-              <div class="pf-s-v"><b class="tabular" id="pfPts">1 240</b></div>
+              <div class="pf-s-v"><b class="tabular" id="pfPts">0</b></div>
               <div class="pf-s-l">Баллов Loop</div>
-              <div class="pf-s-trend">↗ +180 за неделю</div>
+              <div class="pf-s-trend" id="pfPtsWeek"></div>
             </button>
             <button class="pf-stat" onclick="openFreeze()">
-              <div class="pf-s-v"><b>14</b></div>
-              <div class="pf-s-l">Дней подряд</div>
-              <div class="pf-s-trend pf-trend-warm">2 заморозки</div>
+              <div class="pf-s-v"><b id="pfStreak">0</b></div>
+              <div class="pf-s-l" id="pfStreakL">Дней подряд</div>
+              <div class="pf-s-trend pf-trend-warm" id="pfStreakSub"></div>
             </button>
             <button class="pf-stat" onclick="openCity()">
-              <div class="pf-s-v"><b>3</b></div>
-              <div class="pf-s-l">Города</div>
-              <div class="pf-s-trend pf-trend-cyan">Батуми сейчас</div>
+              <div class="pf-s-v"><b id="pfCities">0</b></div>
+              <div class="pf-s-l" id="pfCitiesL">Города</div>
+              <div class="pf-s-trend pf-trend-cyan" id="pfCitySub"></div>
             </button>
           </div>
         </div>
@@ -5494,6 +5499,29 @@ function renderRecentVisits(){
     return '<div class="srch-item" '+(b?'onclick="histOpen(\''+name.replace(/'/g,'\\\'')+'\')"':'')+'><div class="si-th" style="border-radius:12px;overflow:hidden">'+(b?thumb(b,z):'<div style="width:100%;height:100%;background:'+z.c+'22;display:grid;place-items:center">📍</div>')+'</div><div class="si-i"><b>'+name+'</b><span>'+(z.n||T('визит'))+'</span></div></div>';
   }).join('');
 }
+/* В скольких городах человек действительно отмечался. Считаем по визитам:
+   визит записан именем заведения, а заведение принадлежит городу. Никакого
+   отдельного счётчика заводить не нужно — ответ уже лежит в данных. */
+function citiesVisited(){
+  var v=[];try{v=gameGet('visited',[])||[]}catch(e){return 0}
+  if(!v.length)return 0;
+  var n=0;
+  try{
+    Object.keys(CITIES).forEach(function(k){
+      var biz=(CITIES[k]&&CITIES[k].biz)||[];
+      if(biz.some(function(b){return v.indexOf(b.n)>=0}))n++;
+    });
+  }catch(e){}
+  return n;
+}
+/* Сколько набрано за последние 7 дней — из журнала кошелька, а не из головы.
+   Журнал хранит 40 последних операций со временем; этого хватает на неделю. */
+function ptsWeekDelta(){
+  var log=[];try{log=walletLog()||[]}catch(e){return 0}
+  var since=Date.now()-7*86400000,sum=0;
+  log.forEach(function(x){if(x&&x.t>=since&&x.d>0)sum+=x.d});
+  return sum;
+}
 function renderGameStats(){
   // AI status
   var ai=document.getElementById('pfAI');
@@ -5504,6 +5532,25 @@ function renderGameStats(){
   // Districts
   var dist=districtsUnlocked();var unl=dist.filter(function(x){return x.unlocked}).length;
   var dc=document.getElementById('pfDistrCount');if(dc)dc.textContent=unl+' / 8 открыто';
+  // Три главных числа профиля — из данных, а не из разметки
+  var wk=ptsWeekDelta();
+  var e1=document.getElementById('pfPtsWeek');
+  if(e1)e1.textContent=wk>0?('↗ +'+wk.toLocaleString('ru-RU')+' '+T('за неделю')):T('пока без движения');
+  var st=0;try{st=streakCurrent()}catch(e){}
+  var e2=document.getElementById('pfStreak');if(e2)e2.textContent=st;
+  /* «1 дней подряд» — мелочь, которую видно сразу: подпись склоняем по числу */
+  var e2l=document.getElementById('pfStreakL');
+  if(e2l)e2l.textContent=(curLang==='RU')?(pl3(st,'День','Дня','Дней')+' подряд'):T('Дней подряд');
+  var e3=document.getElementById('pfStreakSub');
+  if(e3){var mile=null;try{mile=streakNextMile(st)}catch(e){}
+    e3.textContent=mile?(T('до')+' '+mile+' '+T('осталось')+' '+(mile-st)):T('серия идёт');}
+  var cv=citiesVisited();
+  var e4=document.getElementById('pfCities');if(e4)e4.textContent=cv;
+  var e4l=document.getElementById('pfCitiesL');
+  if(e4l)e4l.textContent=(curLang==='RU')?pl3(cv,'Город','Города','Городов'):T('Города');
+  var e5=document.getElementById('pfCitySub');
+  if(e5)e5.textContent=cv?((CITIES[CITY]&&CITIES[CITY].name||'')+' '+T('сейчас')):T('новые города скоро');
+
   // Collection
   var visited=visitedCount();var total2=placesTotal();var pct=Math.min(100,Math.round(visited/total2*100));
   var cf=document.getElementById('collFill');if(cf)cf.style.width=pct+'%';
@@ -5811,7 +5858,7 @@ var DICT={"Скидка действует на всю компанию: пок�
 "До награды за":["To the reward at","ჯილდომდე"],"ещё":["left","დარჩა"],"и множитель":["and multiplier","და მამრავლი"],"Отлично":["Got it","შესანიშნავია"],
 "Пришёл по приглашению":["Joined via invite","მოწვევით შემოვიდა"],"Тебя пригласили в CityHUB":["You were invited to CityHUB","შენ მოგიწვიეს CityHUB-ში"],"Код друга":["Friend's code","მეგობრის კოდი"],"Баллы уже на счету. Друг получит свои, когда ты сходишь в первое место.":["Points are already yours. Your friend gets theirs once you visit your first place.","ქულები უკვე შენია. მეგობარი თავისას მიიღებს, როცა პირველ ადგილს ეწვევი."],"Показать, куда сходить":["Show me where to go","მაჩვენე სად წავიდე"],"друзей пришло":["friends joined","მეგობარი შემოვიდა"],"Приглашений отправлено":["Invites sent","გაგზავნილი მოწვევები"],"баллы придут, когда друг откроет приложение":["points arrive when your friend opens the app","ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Отправь ссылку — баллы придут, когда друг откроет приложение":["Send the link — points arrive when your friend opens the app","გააგზავნე ბმული — ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Ваучер города":["City voucher","ქალაქის ვაუჩერი"],
 "Hub — есть что сказать":["Hub has something for you","Hub-ს რაღაც აქვს სათქმელი"],
-"Как было в":["How was","როგორ იყო"],"Один ответ — и дальше подберу точнее":["One answer and I pick better from here","ერთი პასუხი — და შემდეგ უფრო ზუსტად შევარჩევ"],"Зашло":["Loved it","მომეწონა"],"хочу ещё такого":["more like this","მინდა კიდევ ასეთი"],"Не моё":["Not for me","ჩემი არაა"],"больше не предлагай":["stop suggesting it","აღარ შემომთავაზო"],"Я туда не дошёл":["I never made it there","იქ არ მივსულვარ"],"Понял — визит не засчитываю":["Got it — not counting the visit","გასაგებია — ვიზიტს არ ვითვლი"],"Отзыв о визите":["Visit feedback","ვიზიტის შეფასება"],"Спасибо — теперь знаю тебя лучше":["Thanks — I know you better now","მადლობა — ახლა უკეთ გიცნობ"],"Понял — такое больше не покажу":["Got it — I won't show these again","გასაგებია — ასეთს აღარ გაჩვენებ"],"Можно забрать сейчас":["Available right now","ხელმისაწვდომია ახლავე"],"Всё открытое выполнено":["Everything open is done","ყველა ღია დავალება შესრულებულია"],"новые появятся с городами":["more arrive with new cities","ახლები ახალ ქალაქებთან ერთად"],"Выполнено":["Done","შესრულებული"],"Отправлено":["Sent","გაგზავნილი"],"баллы придут, когда друг откроет":["points land when your friend opens the app","ქულები ჩაირიცხება, როცა მეგობარი გახსნის"],"Рассказать, как было":["Tell me how it went","მომიყევი, როგორ იყო"],"Ответь на вопрос после визита":["Answer the question after a visit","უპასუხე კითხვას ვიზიტის შემდეგ"],"Города за Батуми — на подходе":["Cities beyond Batumi are coming","ბათუმის შემდეგ სხვა ქალაქებიც იქნება"],"Фото из заведения":["Photo from the venue","ფოტო დაწესებულებიდან"],"Батуми первый — остальные города открываем следом":["Batumi comes first — other cities follow","ბათუმი პირველია — დანარჩენი ქალაქები მოჰყვება"],"Ссылка ушла — баллы придут, когда друг откроет приложение":["Link sent — points land when your friend opens the app","ბმული გაიგზავნა — ქულები ჩაირიცხება, როცა მეგობარი გახსნის"],"Сходи в любое место — через пару часов спрошу, как было":["Go anywhere — in a couple of hours I will ask how it went","წადი ნებისმიერ ადგილას — ორიოდე საათში გკითხავ, როგორ იყო"],"Где ещё берутся баллы":["Where else points come from","საიდან მოდის ქულები"],"Визит в место":["A visit to a venue","ვიზიტი ადგილზე"],"чек-ин по QR на кассе":["QR check-in at the counter","QR ჩექ-ინი სალაროსთან"],"Ответ после визита":["An answer after a visit","პასუხი ვიზიტის შემდეგ"],"через пару часов спрошу, как было":["I ask a couple of hours later","ორიოდე საათში გკითხავ"],"Серия дней":["Day streak","დღეების სერია"],"сейчас серия":["current streak","მიმდინარე სერია"],"дн.":["d","დღე"],"Друг открыл приложение":["A friend opened the app","მეგობარმა გახსნა აპლიკაცია"],"начислим, когда он зайдёт":["credited when they come in","ჩაირიცხება, როცა ის შემოვა"],"Найти, куда сходить":["Find somewhere to go","იპოვე, სად წახვიდე"],"Новичок":["Rookie","დამწყები"],"Бронза":["Bronze","ბრინჯაო"],"Серебро":["Silver","ვერცხლი"],"Золото":["Gold","ოქრო"],"Легенда":["Legend","ლეგენდა"],"первые шаги по городу":["first steps around the city","პირველი ნაბიჯები ქალაქში"],"десятая часть каталога":["a tenth of the catalogue","კატალოგის მეათედი"],"четверть города за спиной":["a quarter of the city behind you","ქალაქის მეოთხედი უკან"],"половина всех мест":["half of every place","ყველა ადგილის ნახევარი"],"каталог собран целиком":["the whole catalogue collected","კატალოგი მთლიანად შეგროვდა"],"До ступени":["To the tier","საფეხურამდე"],"Каталог собран целиком. Дальше — новые города.":["The whole catalogue is collected. New cities are next.","კატალოგი მთლიანად შეგროვდა. შემდეგი — ახალი ქალაქები."],"районов открыто":["districts unlocked","გახსნილი უბანი"],"каталога":["of the catalogue","კატალოგის"],"Таблица игроков откроется, когда в лиге наберутся участники. Придумывать соперников мы не станем — до тех пор соревнуешься с городом.":["The player table opens once the league has real members. We will not invent rivals — until then you compete with the city.","მოთამაშეების ცხრილი გაიხსნება, როცა ლიგას რეალური მონაწილეები ეყოლება. მოწინააღმდეგეებს არ გამოვიგონებთ — მანამდე ქალაქს ეჯიბრები."],"Джекпот":["Jackpot","ჯეკპოტი"],"главный приз барабана":["the drum's top prize","დოლურას მთავარი პრიზი"],"шанс":["odds","შანსი"],"весь фонд":["full pool","სრული ფონდი"],"спин сделан":["spin made","სპინი გაკეთდა"],"спина сделано":["spins made","სპინი გაკეთდა"],"спинов сделано":["spins made","სპინი გაკეთდა"],"лучший приз":["best prize","საუკეთესო პრიზი"],"Мои выигрыши":["My prizes","ჩემი მოგებები"],"Что может выпасть":["What can drop","რა შეიძლება ამოვარდეს"],"весь список":["full list","სრული სია"],"Весь призовой фонд":["The whole prize pool","მთელი საპრიზო ფონდი"],"Бесплатный спин готов":["Free spin ready","უფასო სპინი მზადაა"],"Утешительный":["Consolation","სანუგეშო"],"Крупный приз":["Big prize","დიდი პრიზი"],"Главный приз":["Top prize","მთავარი პრიზი"],"Стать партнёром":["Become a partner","გახდი პარტნიორი"],"Любая партнёрская":["Any partner venue","ნებისმიერი პარტნიორი"],"Кондитерские города":["City patisseries","ქალაქის საკონდიტროები"],"Сердце":["Heart","გული"],"Роза":["Rose","ვარდი"],"Кольцо":["Ring","ბეჭედი"],"свайп":["swipe","გადაფურცლე"],"Баллы перенесены в аккаунт":["Points moved to your account","ქულები გადატანილია ანგარიშზე"],"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
+"Как было в":["How was","როგორ იყო"],"Один ответ — и дальше подберу точнее":["One answer and I pick better from here","ერთი პასუხი — და შემდეგ უფრო ზუსტად შევარჩევ"],"Зашло":["Loved it","მომეწონა"],"хочу ещё такого":["more like this","მინდა კიდევ ასეთი"],"Не моё":["Not for me","ჩემი არაა"],"больше не предлагай":["stop suggesting it","აღარ შემომთავაზო"],"Я туда не дошёл":["I never made it there","იქ არ მივსულვარ"],"Понял — визит не засчитываю":["Got it — not counting the visit","გასაგებია — ვიზიტს არ ვითვლი"],"Отзыв о визите":["Visit feedback","ვიზიტის შეფასება"],"Спасибо — теперь знаю тебя лучше":["Thanks — I know you better now","მადლობა — ახლა უკეთ გიცნობ"],"Понял — такое больше не покажу":["Got it — I won't show these again","გასაგებია — ასეთს აღარ გაჩვენებ"],"Можно забрать сейчас":["Available right now","ხელმისაწვდომია ახლავე"],"Всё открытое выполнено":["Everything open is done","ყველა ღია დავალება შესრულებულია"],"новые появятся с городами":["more arrive with new cities","ახლები ახალ ქალაქებთან ერთად"],"Выполнено":["Done","შესრულებული"],"Отправлено":["Sent","გაგზავნილი"],"баллы придут, когда друг откроет":["points land when your friend opens the app","ქულები ჩაირიცხება, როცა მეგობარი გახსნის"],"Рассказать, как было":["Tell me how it went","მომიყევი, როგორ იყო"],"Ответь на вопрос после визита":["Answer the question after a visit","უპასუხე კითხვას ვიზიტის შემდეგ"],"Города за Батуми — на подходе":["Cities beyond Batumi are coming","ბათუმის შემდეგ სხვა ქალაქებიც იქნება"],"Фото из заведения":["Photo from the venue","ფოტო დაწესებულებიდან"],"Батуми первый — остальные города открываем следом":["Batumi comes first — other cities follow","ბათუმი პირველია — დანარჩენი ქალაქები მოჰყვება"],"Ссылка ушла — баллы придут, когда друг откроет приложение":["Link sent — points land when your friend opens the app","ბმული გაიგზავნა — ქულები ჩაირიცხება, როცა მეგობარი გახსნის"],"Сходи в любое место — через пару часов спрошу, как было":["Go anywhere — in a couple of hours I will ask how it went","წადი ნებისმიერ ადგილას — ორიოდე საათში გკითხავ, როგორ იყო"],"Где ещё берутся баллы":["Where else points come from","საიდან მოდის ქულები"],"Визит в место":["A visit to a venue","ვიზიტი ადგილზე"],"чек-ин по QR на кассе":["QR check-in at the counter","QR ჩექ-ინი სალაროსთან"],"Ответ после визита":["An answer after a visit","პასუხი ვიზიტის შემდეგ"],"через пару часов спрошу, как было":["I ask a couple of hours later","ორიოდე საათში გკითხავ"],"Серия дней":["Day streak","დღეების სერია"],"сейчас серия":["current streak","მიმდინარე სერია"],"дн.":["d","დღე"],"Друг открыл приложение":["A friend opened the app","მეგობარმა გახსნა აპლიკაცია"],"начислим, когда он зайдёт":["credited when they come in","ჩაირიცხება, როცა ის შემოვა"],"Найти, куда сходить":["Find somewhere to go","იპოვე, სად წახვიდე"],"Новичок":["Rookie","დამწყები"],"Бронза":["Bronze","ბრინჯაო"],"Серебро":["Silver","ვერცხლი"],"Золото":["Gold","ოქრო"],"Легенда":["Legend","ლეგენდა"],"первые шаги по городу":["first steps around the city","პირველი ნაბიჯები ქალაქში"],"десятая часть каталога":["a tenth of the catalogue","კატალოგის მეათედი"],"четверть города за спиной":["a quarter of the city behind you","ქალაქის მეოთხედი უკან"],"половина всех мест":["half of every place","ყველა ადგილის ნახევარი"],"каталог собран целиком":["the whole catalogue collected","კატალოგი მთლიანად შეგროვდა"],"До ступени":["To the tier","საფეხურამდე"],"Каталог собран целиком. Дальше — новые города.":["The whole catalogue is collected. New cities are next.","კატალოგი მთლიანად შეგროვდა. შემდეგი — ახალი ქალაქები."],"районов открыто":["districts unlocked","გახსნილი უბანი"],"каталога":["of the catalogue","კატალოგის"],"Таблица игроков откроется, когда в лиге наберутся участники. Придумывать соперников мы не станем — до тех пор соревнуешься с городом.":["The player table opens once the league has real members. We will not invent rivals — until then you compete with the city.","მოთამაშეების ცხრილი გაიხსნება, როცა ლიგას რეალური მონაწილეები ეყოლება. მოწინააღმდეგეებს არ გამოვიგონებთ — მანამდე ქალაქს ეჯიბრები."],"Джекпот":["Jackpot","ჯეკპოტი"],"главный приз барабана":["the drum's top prize","დოლურას მთავარი პრიზი"],"шанс":["odds","შანსი"],"весь фонд":["full pool","სრული ფონდი"],"спин сделан":["spin made","სპინი გაკეთდა"],"спина сделано":["spins made","სპინი გაკეთდა"],"спинов сделано":["spins made","სპინი გაკეთდა"],"лучший приз":["best prize","საუკეთესო პრიზი"],"Мои выигрыши":["My prizes","ჩემი მოგებები"],"Что может выпасть":["What can drop","რა შეიძლება ამოვარდეს"],"весь список":["full list","სრული სია"],"Весь призовой фонд":["The whole prize pool","მთელი საპრიზო ფონდი"],"Бесплатный спин готов":["Free spin ready","უფასო სპინი მზადაა"],"Утешительный":["Consolation","სანუგეშო"],"Крупный приз":["Big prize","დიდი პრიზი"],"Главный приз":["Top prize","მთავარი პრიზი"],"Стать партнёром":["Become a partner","გახდი პარტნიორი"],"Любая партнёрская":["Any partner venue","ნებისმიერი პარტნიორი"],"Кондитерские города":["City patisseries","ქალაქის საკონდიტროები"],"Сердце":["Heart","გული"],"Роза":["Rose","ვარდი"],"Кольцо":["Ring","ბეჭედი"],"свайп":["swipe","გადაფურცლე"],"Баллы перенесены в аккаунт":["Points moved to your account","ქულები გადატანილია ანგარიშზე"],"за неделю":["this week","ამ კვირაში"],"пока без движения":["nothing yet","ჯერ უმოძრაოდ"],"до":["to","მდე"],"осталось":["left","დარჩა"],"серия идёт":["streak is running","სერია მიდის"],"сейчас":["now","ახლა"],"новые города скоро":["new cities soon","ახალი ქალაქები მალე"],"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
 "сейчас":["now", "ახლა"],
 "Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
 "Как это работает":["How it works", "როგორ მუშაობს"],"Повесь плакат у кассы":["Put the poster at the counter", "დაკიდე პლაკატი სალაროსთან"],"Там, где гость стоит и ждёт — на стойке, у терминала, на столике":["Where the guest stands and waits — on the counter, by the terminal, on the table", "სადაც სტუმარი დგას და ელოდება — დახლზე, ტერმინალთან, მაგიდაზე"],"Гость наводит камеру":["The guest points their camera", "სტუმარი მიმართავს კამერას"],"Откроется твоя карточка в CityHUB — без установки, прямо в Telegram":["Your card opens in CityHUB — no install, right inside Telegram", "შენი ბარათი გაიხსნება CityHUB-ში — ინსტალაციის გარეშე, პირდაპირ Telegram-ში"],"Визит засчитан":["Visit counted", "ვიზიტი ჩაითვალა"],"Баллы падают гостю сразу, тебе — скан в статистике кабинета":["Points land for the guest instantly; you get the scan in your dashboard", "ქულები მაშინვე ჩაერიცხება სტუმარს, შენ — სკანი კაბინეტის სტატისტიკაში"],"Он возвращается":["They come back", "ის ბრუნდება"],"Баллы тратятся у партнёров — и у тебя. Это и есть повод прийти снова":["Points are spent at partners — and at your place. That is the reason to come back", "ქულები იხარჯება პარტნიორებთან — და შენთანაც. ეს არის დაბრუნების მიზეზი"],"Одна фраза удваивает сканы":["One sentence doubles the scans", "ერთი ფრაზა აორმაგებს სკანებს"],"«Отсканируй — получишь баллы на кофе». Просто скажите её на кассе.":["\"Scan this and get points toward a coffee.\" Just say it at the counter.", "«დაასკანერე — ქულებს მიიღებ ყავაზე». უბრალოდ თქვით სალაროსთან."],"Оплата включится вместе с релизом — тариф пока можно забронировать через Hub":["Payments go live with the release — for now you can reserve a plan through Hub", "გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ტარიფი შეგიძლია დაჯავშნო Hub-ით"],"Хочу подключить буст для заведения: что входит и когда можно оплатить?":["I want to enable a boost for my place: what is included and when can I pay?","მინდა ბუსტის ჩართვა: რა შედის და როდის შემიძლია გადახდა?"],
@@ -6454,7 +6501,9 @@ function redeem(i){var r=REWARDS[i];if(PTS<r.c){toast('Не хватает '+(r.
 }
 function joinWait(){var inp=document.querySelector('.sheet.open .wl-form input')||document.querySelector('.waitlist .wl-form input');var v=(inp&&inp.value||'').trim();if(!v){if(inp)inp.focus();return}var f=inp.closest('.waitlist');if(f)f.innerHTML='<div class="wl-glow"></div><div style="text-align:center;padding:14px 0;position:relative;z-index:2"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="1.8"><path d="M3 21l5-13 8 8zM14 8c1-1 1-3 0-4M17 5c2-2 4-2 5 0"/></svg><h3 style="margin-top:8px">Ты в списке!</h3><p style="margin-top:6px">Позовём тебя первым, как только CityHUB запустится здесь. Спасибо!</p></div>';if(navigator.vibrate)navigator.vibrate([10,40,10]);toast('Заявка принята')}
 function openFreeze(){
-  var cur=6;
+  /* Было `var cur=6` — третий независимый ответ на вопрос «какая у меня серия»:
+     карточка говорила 14, эта шторка 6, правда была 1. */
+  var cur=0;try{cur=streakCurrent()}catch(e){}
   var milestones=[{d:3,t:'×2 баллы за каждый визит',k:'bolt'},{d:7,t:'Бесплатный кофе в подарок',k:'coffee'},{d:14,t:'−30% на любой деал недели',k:'ticket'},{d:30,t:'VIP-статус + ранний доступ к деалам',k:'gem'},{d:100,t:'Легендарный бейдж + морская прогулка',k:'sea'}];
   var rows=milestones.map(function(m){
     var done=cur>=m.d;var left=m.d-cur;var ready=!done&&left<=1;
@@ -6815,7 +6864,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=79;try{renderConsent()}catch(e){}
+var APP_V=80;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7208,7 +7257,10 @@ function gameSet(k,v){var s=gameLoad();s[k]=v;gameSave(s)}
 /* 1. STREAK + множители */
 function streakMultiplier(days){if(days>=100)return 3;if(days>=30)return 2;if(days>=14)return 1.5;if(days>=7)return 1.2;return 1}
 function streakDaysSinceLast(){var last=gameGet('lastVisit',0);if(!last)return 0;return Math.floor((Date.now()-last)/86400000)}
-function streakCurrent(){return gameGet('streak',6)}
+/* 🚨 По умолчанию здесь стояло 6: человек, открывший приложение впервые,
+   получал «серию 6 дней» до того, как пришёл во второй раз. Серия — это
+   факт о поведении, у нового пользователя её нет. */
+function streakCurrent(){return gameGet('streak',0)}
 
 /* 2. HUB MOOD по дням простоя */
 function hubMood(){var d=streakDaysSinceLast();if(d<=1)return{m:'fun',label:'радуется',col:'#D4FF4F',emo:'😊'};if(d<=3)return{m:'idle',label:'ждёт',col:'#00E0C7',emo:'🙂'};if(d<=7)return{m:'pause',label:'скучает',col:'#FFB547',emo:'😔'};return{m:'pause',label:'грустит без тебя',col:'#ff5d8f',emo:'😢'}}
@@ -7216,7 +7268,17 @@ function hubMood(){var d=streakDaysSinceLast();if(d<=1)return{m:'fun',label:'р�
 /* 3. COLLECTION — посещённые места */
 function visitedAdd(name){var v=gameGet('visited',[]);if(v.indexOf(name)<0){v.push(name);gameSet('visited',v);return true}return false}
 function visitedCount(){return gameGet('visited',[]).length}
-function placesTotal(){var C=CITIES[CITY];return (C&&C.biz?C.biz.length:0)+219}/* 219 — фактуальные места в городе для прогресса */
+/* 🚨 Здесь было `biz.length + 219` с подписью «фактуальные места в городе».
+   Из 247 обещанных мест 219 не существуют нигде в приложении: их нельзя
+   открыть, посетить и отметить. То есть «Цель — собрать весь город» была
+   недостижима по построению, а полоска прогресса обречена стоять у нуля.
+   Тот же класс, что выдуманная таблица лиги: число выглядит данными,
+   но данными не является.
+
+   Считаем по РЕАЛЬНОМУ каталогу — и это та же цифра, по которой живут ступени
+   лиги. Один вопрос «сколько всего мест» должен иметь один ответ, иначе два
+   экрана разъедутся, как уже разъезжались вкусовые полосы. */
+function placesTotal(){return leagueCatalog()}
 
 /* 4. DISTRICTS — 8 районов Батуми */
 var DISTRICTS=[
