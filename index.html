@@ -904,8 +904,11 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .upsell .glow{position:absolute;top:-50%;right:-20%;width:60%;height:180%;background:radial-gradient(closest-side,rgba(255,181,71,.3),transparent);filter:blur(24px)}
 .upsell .k{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gold)}
 .upsell h3{font-size:18px;font-weight:800;margin:6px 0;line-height:1.15}.upsell p{font-size:13px;color:var(--txt-2);line-height:1.5}
-.upsell .feats{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.upsell .feats span{font-size:11px;font-weight:700;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid var(--stroke-soft)}
-.tier-row{display:flex;gap:9px;overflow-x:auto;margin:14px -18px 0;padding:0 18px 4px}.tier-row::-webkit-scrollbar{display:none}
+/* scroll-padding обязателен вместе со snap: у ряда есть 18px внутреннего
+   отступа, и без него точка привязки первой карточки оказывается на 18px,
+   ряд физически не может встать в ноль — левое затухание висит всегда
+   и подъедает букву «F» в FREE. */
+.tier-row{display:flex;gap:9px;overflow-x:auto;scroll-snap-type:x proximity;scroll-padding:0 18px;-webkit-overflow-scrolling:touch;margin:14px -18px 0;padding:0 18px 4px}.tier-row::-webkit-scrollbar{display:none}
 .tier-card{flex:0 0 132px;border-radius:var(--r-md);padding:14px;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);scroll-snap-align:start}
 .tier-card.hot{border-color:var(--acc);background:rgba(124,58,255,.1)}
 .tier-card .nm{font-size:13px;font-weight:800}.tier-card .pr{font-size:20px;font-weight:900;margin:4px 0 2px}.tier-card .pr small{font-size:11px;color:var(--txt-2);font-weight:600}.tier-card .ds{font-size:11px;color:var(--txt-2);line-height:1.35}
@@ -3741,7 +3744,10 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
           <div class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> AppHub Studio</div>
           <h3>Своё Telegram-приложение под твой бизнес</h3>
           <p>CityHUB приводит клиентов. Своё TMA удерживает их: меню, бронь, оплата, лояльность Loop, AI-консьерж — без сайта и стора, запуск за 1 день.</p>
-          <div class="feats"><span>Меню</span><span>Бронь</span><span>Loop</span><span>AI-консьерж</span><span>CRM</span></div>
+          <!-- Ряд чипов убран: абзац строкой выше перечисляет ровно это же —
+               «меню, бронь, оплата, лояльность Loop, AI-консьерж». Одни и те же
+               пять слов дважды подряд, второй раз — с висячим «CRM» на своей
+               строке. Повтор не усиливает, он разбавляет. -->
           <div class="tier-row" id="ahTiers"></div>
           <button class="cta gold" style="margin-top:16px" onclick="openExternal(APP_LINKS.apphub)"><span>Собрать TMA за 1 день</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
           <div class="hint" style="margin-top:10px">Студии — $15–40k и 3 месяца. AppHub — от $0 и 1 день.</div>
@@ -6766,7 +6772,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=75;try{renderConsent()}catch(e){}
+var APP_V=76;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8917,7 +8923,7 @@ function edgeFadeBind(el){
   /* содержимое рядов дорисовывается из JS — пересчитать, когда оно изменилось */
   try{if(window.ResizeObserver){var ro=new ResizeObserver(function(){edgeFadeUpdate(el)});ro.observe(el);[].forEach.call(el.children,function(c){ro.observe(c)})}}catch(e){}
 }
-function edgeFadeAll(){document.querySelectorAll('.mood-scroll,.chips-row,.qsel,.forme-row,.msc-moods-row,.msc-quick-grid').forEach(edgeFadeBind)}
+function edgeFadeAll(){document.querySelectorAll('.mood-scroll,.chips-row,.qsel,.forme-row,.msc-moods-row,.msc-quick-grid,.tier-row').forEach(edgeFadeBind)}
 window.addEventListener('resize',function(){document.querySelectorAll('.edge-fade').forEach(edgeFadeUpdate)});
 
 /* ═══════════════════════════════════════════════════════════════════════════
