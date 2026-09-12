@@ -2835,12 +2835,9 @@ input,textarea{font-size:16px!important}
 .lg-doc .lg-link{color:var(--acc-2);font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .lg-upd{margin-top:18px;padding-top:13px;border-top:1px solid var(--stroke-soft);font-size:12px;color:var(--txt-3);line-height:1.5}
 /* Подпись авторства в профиле */
-.lg-sign{margin-top:22px;padding:16px 14px 18px;border-radius:var(--r-md);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft);text-align:center}
-.lg-sign .lgs-logo{width:34px;height:34px;margin:0 auto 9px;border-radius:12px;display:grid;place-items:center;background:var(--grad);box-shadow:0 6px 18px rgba(124,58,255,.32)}
-.lg-sign .lgs-logo svg{width:18px;height:18px}
-.lg-sign b{display:block;font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--txt)}
-.lg-sign span{display:block;font-size:12px;color:var(--txt-3);margin-top:3px;line-height:1.5}
-.lg-sign .lgs-links{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.lg-ver{margin-top:18px;text-align:center;font-size:11px;line-height:1.6;color:var(--txt-3)}
+.lg-sign{margin-top:20px}
+.lg-sign .lgs-links{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .lg-sign .lgs-links button{padding:8px 13px;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);font-size:12px;font-weight:700;color:var(--txt-2);font-family:inherit;cursor:pointer;min-height:36px}
 .lg-sign .lgs-links button:active{transform:scale(.96);background:rgba(255,255,255,.12)}
 .onb-legal{margin-top:2px;padding:0 24px calc(var(--safe-b) + 14px);font-size:11px;line-height:1.5;color:var(--txt-3);text-align:center}
@@ -3447,12 +3444,10 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
           </div>
         </div>
 
-        <!-- Авторство + правовая информация -->
+        <!-- Правовая информация. Подпись студии и номер версии убраны из профиля:
+             человек открывает профиль ради себя, а не ради выходных данных.
+             Версия переехала в подвал правовой шторки — туда, где её и спрашивают. -->
         <div class="lg-sign">
-          <div class="lgs-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg></div>
-          <b>CityHUB</b>
-          <span>Продукт AppHub Studio · дизайн и разработка ROCH</span>
-          <span id="pfVer">Версия —</span>
           <div class="lgs-links">
             <button onclick="openLegal()">Правовая информация</button>
             <button onclick="openExternal(APP_LINKS.apphub)">Своё приложение</button>
@@ -5764,7 +5759,7 @@ var DICT={"Скидка действует на всю компанию: пок�
 'Я владелец заведения':['I own a venue','მე ვარ დაწესებულების მფლობელი'],
 'Кабинет бизнеса':['Business cabinet','ბიზნესის კაბინეტი'],
 'Политика, соглашение, авторство':['Policy, terms, authorship','პოლიტიკა, შეთანხმება, ავტორობა'],
-'Продукт AppHub Studio · дизайн и разработка ROCH':['A product by AppHub Studio · design & development by ROCH','პროდუქტი AppHub Studio · დიზაინი და დეველოპმენტი ROCH'],
+
 'Своё приложение':['Your own app','საკუთარი აპლიკაცია'],
 'Версия':['Version','ვერსია'],
 'Вышло обновление':['Update available','განახლება ხელმისაწვდომია'],
@@ -5991,8 +5986,6 @@ function renderConsent(){
   }[curLang]||null;
   var el=document.getElementById('onbLegal');
   if(el&&L)el.innerHTML=L[0]+'<u onclick="openLegalDoc(\'terms\')">'+L[1]+'</u>'+L[2]+'<u onclick="openLegalDoc(\'privacy\')">'+L[3]+'</u>';
-  var v=document.getElementById('pfVer');
-  if(v)v.textContent=({RU:'Версия',EN:'Version',GE:'ვერსია'}[curLang]||'Версия')+' '+(typeof APP_V!=='undefined'?APP_V:'—');
 }
 function openLang(){
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
@@ -6684,7 +6677,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=70;try{renderConsent()}catch(e){}
+var APP_V=71;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -9762,7 +9755,10 @@ function openLegal(){
         '<span class="lg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+ic[k]+'</svg></span>'+
         '<span class="lg-tx"><b>'+P[k].t+'</b><span>'+P[k].s+'</span></span>'+
         '<svg class="lg-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>';
-    }).join('')+'</div></div>';
+    }).join('')+'</div>'+
+    '<p class="lg-ver">CityHUB · '+({RU:'версия',EN:'version',GE:'ვერსია'}[curLang]||'версия')+' '+(typeof APP_V!=='undefined'?APP_V:'—')+'<br>'+
+      ({RU:'Продукт AppHub Studio · дизайн и разработка ROCH',EN:'A product by AppHub Studio · design \u0026 development by ROCH',GE:'\u10de\u10e0\u10dd\u10d3\u10e3\u10e5\u10e2\u10d8 AppHub Studio'}[curLang]||'')+'</p>'+
+    '</div>';
   _openSheet();haptic('tap');
 }
 /* Один документ */
