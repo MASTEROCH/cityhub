@@ -226,7 +226,7 @@ html,body{overscroll-behavior:none;overscroll-behavior-x:none;height:100%;overfl
 body{font-family:var(--font);color:var(--txt);background:var(--bg-0);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;line-height:1.5}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;touch-action:manipulation}
 button,a,[onclick],input,textarea{touch-action:manipulation}
-:focus-visible{outline:2px solid var(--acc-2);outline-offset:2px;border-radius:8px}
+:focus-visible{outline:2px solid var(--acc-2);outline-offset:2px;border-radius:6px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.05ms!important;scroll-behavior:auto!important}
   .blob{animation:none!important}
@@ -362,6 +362,10 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .answer .chip-glass{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:99px;background:rgba(5,6,10,.55);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:800;color:var(--txt);pointer-events:auto;line-height:1}
 .answer .chip-glass.rate{color:var(--gold)}
 .answer .chip-glass.rate svg{width:13px;height:13px}
+.answer .chip-glass.status{font-weight:700;color:rgba(244,246,251,.92)}
+.answer .chip-glass.status .dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80}
+.answer .chip-glass.status.closed{color:var(--rose)}
+.answer .chip-glass.status.closed .dot{background:var(--rose);box-shadow:0 0 8px var(--rose)}
 /* Live signals — floating below top chips */
 .answer .live-strip{display:inline-flex;gap:7px;align-items:center;min-width:0;pointer-events:none;flex:1;overflow:hidden}
 /* В одну строку с рейтингом места мало: подпись обязана ужиматься
@@ -454,7 +458,7 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 .leaflet-control-zoom{border:1px solid rgba(255,255,255,.14)!important;border-radius:12px!important;overflow:hidden;box-shadow:0 6px 22px rgba(0,0,0,.45)!important;backdrop-filter:blur(12px)}
 .leaflet-control-zoom a{background:rgba(16,20,31,.85)!important;color:var(--txt)!important;border-bottom:1px solid rgba(255,255,255,.08)!important;width:34px!important;height:34px!important;line-height:34px!important;font-size:18px!important;font-weight:700!important}
 .leaflet-control-zoom a:hover{background:rgba(28,32,46,.95)!important;color:var(--lime)!important}
-.leaflet-popup-content-wrapper{background:rgba(16,20,31,.92)!important;color:var(--txt)!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:18px!important;backdrop-filter:blur(20px) saturate(160%);box-shadow:0 12px 40px rgba(0,0,0,.55)!important;padding:0!important}
+.leaflet-popup-content-wrapper{background:rgba(16,20,31,.92)!important;color:var(--txt)!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:16px!important;backdrop-filter:blur(20px) saturate(160%);box-shadow:0 12px 40px rgba(0,0,0,.55)!important;padding:0!important}
 .leaflet-popup-content{margin:0!important;padding:12px 14px!important;font-family:var(--font)!important;font-size:13px!important;min-width:180px}
 .leaflet-popup-tip{background:rgba(16,20,31,.92)!important;border:1px solid rgba(255,255,255,.14)!important}
 .leaflet-popup-close-button{color:var(--txt-2)!important;font-size:20px!important;padding:5px 9px 0 0!important}
@@ -705,19 +709,6 @@ body.biz .biz .pp .v{background:rgba(255,181,71,.13);color:var(--gold);border-co
 
 .sec-h{display:flex;align-items:center;justify-content:space-between;margin:20px 2px 12px}
 .sec-h h2{font-size:var(--fs-lg);font-weight:800;letter-spacing:-.02em}.sec-h .more{font-size:13px;color:var(--acc-2);font-weight:700}
-/* Подпись жеста у заголовка. Стрелки «дышат» в разные стороны — это читается
-   как направление, а не как украшение; амплитуда 2px, чтобы не спорить
-   с карточкой под ней. */
-.sec-sw{display:inline-flex;align-items:center;gap:3px;flex-shrink:0;padding:4px 8px;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);color:var(--txt-3);user-select:none}
-.sec-sw b{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
-.sec-sw svg{width:12px;height:12px}
-.sec-sw svg:first-child{animation:swNudgeL 2.6s var(--ease-in-out) infinite}
-.sec-sw svg:last-child{animation:swNudgeR 2.6s var(--ease-in-out) infinite}
-@keyframes swNudgeL{0%,62%,100%{transform:translateX(0);opacity:.55}78%{transform:translateX(-2px);opacity:1}}
-@keyframes swNudgeR{0%,62%,100%{transform:translateX(0);opacity:.55}78%{transform:translateX(2px);opacity:1}}
-@media (prefers-reduced-motion:reduce){.sec-sw svg{animation:none;opacity:.7}}
-body.sw-teaching .sec-sw{opacity:0;pointer-events:none;transition:opacity .25s}
-.sec-sw{transition:opacity .3s}
 .card{border-radius:var(--r-lg);padding:18px}.card.pad-sm{padding:15px}
 .loyal{border-radius:var(--r-lg);padding:22px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(124,58,255,.35),rgba(0,224,199,.22));border:1px solid var(--stroke)}
 .loyal .shine{position:absolute;top:-40%;right:-20%;width:60%;height:160%;background:radial-gradient(closest-side,rgba(212,255,79,.4),transparent);filter:blur(20px)}
@@ -1382,11 +1373,11 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 /* Подсветка редкости снизу — «столб света» из-под лота, а не просто рамка */
 .spin-item .si-glow{position:absolute;left:50%;bottom:-34%;width:118%;height:74%;transform:translateX(-50%);
   filter:blur(20px);opacity:.5;pointer-events:none}
-.spin-item .si-ic{position:relative;z-index:2;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+.spin-item .si-ic{position:relative;z-index:2;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
 .spin-item .si-ic svg{width:23px;height:23px;stroke-width:2}
 .spin-item .si-t{position:relative;z-index:2;font-size:12px;font-weight:900;text-align:center;line-height:1.15;letter-spacing:-.015em;color:var(--txt)}
-.spin-item .si-d{position:relative;z-index:2;font-size:10px;font-weight:700;color:var(--txt-3);text-align:center;line-height:1.15;
+.spin-item .si-d{position:relative;z-index:2;font-size:9px;font-weight:700;color:var(--txt-3);text-align:center;line-height:1.15;
   text-transform:uppercase;letter-spacing:.05em;max-width:100%;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* Ступени редкости — каждая со своим характером, чтобы пролёт читался */
@@ -1399,7 +1390,7 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
   background-size:260% 100%;animation:legendShine 2.6s linear infinite}
 @keyframes legendShine{from{background-position:180% 0}to{background-position:-80% 0}}
 .spin-item .si-rar{position:absolute;top:7px;left:50%;transform:translateX(-50%);z-index:2;
-  font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3);opacity:.75}
+  font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3);opacity:.75}
 .spin-item.epic .si-rar{color:#C4A6FF;opacity:1}
 .spin-item.legend .si-rar{color:#FFD54A;opacity:1}
 
@@ -2776,7 +2767,7 @@ input,textarea{font-size:16px!important}
 .task.tk-pend{border-color:rgba(255,181,71,.28);background:rgba(255,181,71,.06)}
 .task.tk-pend .tk-pts{color:var(--gold);background:rgba(255,181,71,.13);border-color:rgba(255,181,71,.28)}
 /* Выполненные — одной строкой, а не четырьмя мёртвыми карточками */
-.tk-fold{display:flex;align-items:center;gap:8px;width:100%;margin-top:4px;padding:11px 13px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);color:var(--txt-3);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;min-height:44px}
+.tk-fold{display:flex;align-items:center;gap:8px;width:100%;margin-top:4px;padding:11px 13px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);color:var(--txt-3);font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;min-height:44px}
 .tk-fold svg{width:16px;height:16px;flex-shrink:0;color:var(--lime)}
 .tk-fold .tkf-chev{margin-left:auto;color:var(--txt-3);transition:transform var(--dur-fast) var(--ease-spring)}
 .tk-fold.on .tkf-chev{transform:rotate(180deg)}
@@ -2787,7 +2778,7 @@ input,textarea{font-size:16px!important}
 .tke-h{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-3);margin-bottom:11px}
 .tke-r{display:flex;align-items:center;gap:11px;padding:8px 0;border-top:1px solid var(--stroke-soft)}
 .tke-r:first-of-type{border-top:none;padding-top:0}
-.tke-i{width:30px;height:30px;flex-shrink:0;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.05);color:var(--txt-2)}
+.tke-i{width:30px;height:30px;flex-shrink:0;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05);color:var(--txt-2)}
 .tke-i svg{width:15px;height:15px}
 .tke-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .tke-t b{font-size:13px;font-weight:700;letter-spacing:-.01em}
@@ -2823,7 +2814,7 @@ input,textarea{font-size:16px!important}
 /* ── Мировой зачёт ── */
 /* ── Глобальная лига: ступень, прогресс, лестница ── */
 .gl-me{display:flex;align-items:center;gap:12px;padding:14px;border-radius:var(--r-md);background:color-mix(in srgb,var(--tc) 10%,transparent);border:1px solid color-mix(in srgb,var(--tc) 34%,transparent)}
-.glm-ic{width:44px;height:44px;flex-shrink:0;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--tc) 18%,transparent);color:var(--tc)}
+.glm-ic{width:44px;height:44px;flex-shrink:0;border-radius:13px;display:grid;place-items:center;background:color-mix(in srgb,var(--tc) 18%,transparent);color:var(--tc)}
 .glm-ic svg{width:23px;height:23px}
 .glm-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .glm-tx b{font-size:17px;font-weight:900;letter-spacing:-.02em;color:var(--txt)}
@@ -2841,7 +2832,7 @@ input,textarea{font-size:16px!important}
 .gl-step{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--r-md);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft);opacity:.55}
 .gl-step.on{opacity:1}
 .gl-step.now{background:color-mix(in srgb,var(--tc) 9%,transparent);border-color:color-mix(in srgb,var(--tc) 32%,transparent)}
-.gls-ic{width:32px;height:32px;flex-shrink:0;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.05);color:var(--tc)}
+.gls-ic{width:32px;height:32px;flex-shrink:0;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.05);color:var(--tc)}
 .gls-ic svg{width:17px;height:17px}
 .gls-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .gls-tx b{font-size:13px;font-weight:800;letter-spacing:-.01em}
@@ -2856,11 +2847,11 @@ input,textarea{font-size:16px!important}
 .gls-cell span{display:block;margin-top:3px;font-size:11px;color:var(--txt-3);line-height:1.35}
 .gl-soon{display:flex;gap:10px;margin-top:16px;padding:12px 13px;border-radius:var(--r-md);background:rgba(255,255,255,.03);border:1px dashed var(--stroke)}
 .gl-soon svg{width:17px;height:17px;flex-shrink:0;margin-top:1px;color:var(--txt-3)}
-.gl-soon span{font-size:11px;color:var(--txt-3);line-height:1.5}
+.gl-soon span{font-size:11.5px;color:var(--txt-3);line-height:1.5}
 /* Шапка джекпота — постоянное обещание над барабаном */
 .jack{display:flex;align-items:center;gap:11px;padding:11px 13px;margin-bottom:11px;border-radius:var(--r-md);background:linear-gradient(135deg,rgba(255,213,74,.13),rgba(255,181,71,.05));border:1px solid rgba(255,213,74,.26);cursor:pointer}
 .jack:active{transform:scale(.99)}
-.jk-ic{width:34px;height:34px;flex-shrink:0;border-radius:12px;display:grid;place-items:center;background:rgba(255,213,74,.16);color:#FFD54A}
+.jk-ic{width:34px;height:34px;flex-shrink:0;border-radius:11px;display:grid;place-items:center;background:rgba(255,213,74,.16);color:#FFD54A}
 .jk-ic svg{width:18px;height:18px}
 .jk-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .jk-tx b{font-size:14px;font-weight:900;letter-spacing:-.01em;color:#FFD54A}
@@ -2869,7 +2860,7 @@ input,textarea{font-size:16px!important}
 /* Свои цифры барабана */
 .spin-stat{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
 .ss-cell{padding:12px;border-radius:var(--r-md);background:rgba(255,255,255,.035);border:1px solid var(--stroke-soft);text-align:center}
-.ss-cell b{display:block;font-size:18px;font-weight:900;letter-spacing:-.02em;color:var(--txt)}
+.ss-cell b{display:block;font-size:19px;font-weight:900;letter-spacing:-.02em;color:var(--txt)}
 .ss-cell.best b{color:var(--bc)}
 .ss-cell span{display:block;margin-top:3px;font-size:11px;color:var(--txt-3)}
 /* ── Куда потратить ── */
@@ -2959,7 +2950,7 @@ input,textarea{font-size:16px!important}
   padding:14px;border-radius:var(--r-md);text-align:left;font-family:inherit;color:var(--txt);cursor:pointer;
   background:rgba(255,255,255,.03);border:1.5px solid var(--stroke-soft);transition:border-color .18s var(--ease-out),background .18s var(--ease-out)}
 .ad-plan.on{border-color:var(--gold);background:rgba(255,181,71,.08)}
-.ad-plan .ap-tag{position:absolute;top:-8px;right:12px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:900;
+.ad-plan .ap-tag{position:absolute;top:-8px;right:12px;padding:3px 9px;border-radius:99px;font-size:9px;font-weight:900;
   text-transform:uppercase;letter-spacing:.06em;background:var(--grad-gold);color:#2a1500}
 .ad-plan .ap-ic{grid-area:ic;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
   background:rgba(255,181,71,.14);color:var(--gold)}
@@ -3042,7 +3033,7 @@ input,textarea{font-size:16px!important}
 .win-sheet .cta svg{width:16px;height:16px;margin-right:7px}
 .prize-box{border-radius:var(--r-lg);padding:16px;background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft)}
 .pz-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.pz-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:rgba(212,255,79,.14);color:var(--lime);flex-shrink:0}
+.pz-ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(212,255,79,.14);color:var(--lime);flex-shrink:0}
 .pz-ic svg{width:21px;height:21px}
 .pz-tx b{display:block;font-size:15px;font-weight:800;letter-spacing:-.01em}
 .pz-tx span{font-size:12px;color:var(--txt-3);font-weight:600}
@@ -3067,7 +3058,7 @@ input,textarea{font-size:16px!important}
 .qbtn-ic{display:inline-grid;place-items:center;vertical-align:-.18em}.qbtn-ic svg{width:15px;height:15px}
 .msc-q-emo{display:grid;place-items:center}.msc-q-emo svg{width:18px;height:18px}
 .vc-ic{display:grid;place-items:center}.vc-ic svg{width:21px;height:21px}
-.alt-more{width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px}
+.alt-more{width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px}
 .alt-more svg{width:15px;height:15px;opacity:.8}
 .alt-more .am-n{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:99px;
   background:rgba(255,255,255,.12);font-size:11px;font-weight:900;font-variant-numeric:tabular-nums}
@@ -3078,7 +3069,7 @@ body.biz .bn-card{background:linear-gradient(150deg,rgba(255,181,71,.14),rgba(25
 .bn-step{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.09em;color:var(--gold)}
 .bn-prog{font-size:11px;font-weight:900;color:var(--txt-3);font-variant-numeric:tabular-nums}
 .bn-body{display:flex;align-items:flex-start;gap:12px}
-.bn-ic{flex-shrink:0;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+.bn-ic{flex-shrink:0;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;
   background:rgba(255,255,255,.12);color:var(--gold)}
 .bn-ic svg{width:20px;height:20px}
 .bn-tx{flex:1;min-width:0}
@@ -3169,32 +3160,32 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 .pg-h b{color:var(--txt-2);font-variant-numeric:tabular-nums}
 .pool-list .pool-item{display:flex;gap:11px;align-items:center;padding:10px 12px;margin-bottom:5px;
   border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft)}
-.pool-item .pi-ic{flex-shrink:0;width:34px;height:34px;border-radius:12px;display:grid;place-items:center}
+.pool-item .pi-ic{flex-shrink:0;width:34px;height:34px;border-radius:11px;display:grid;place-items:center}
 .pool-item .pi-ic svg{width:18px;height:18px}
 .pool-item .pi-t{flex:1;min-width:0}
-.pool-item .pi-t b{display:block;font-size:13px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
+.pool-item .pi-t b{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
 .pool-item .pi-t span{display:block;font-size:11px;color:var(--txt-3);line-height:1.3;margin-top:1px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pool-item.epic{border-color:rgba(124,58,255,.34)}
 .pool-item.legend{border-color:rgba(255,213,74,.42);background:rgba(255,213,74,.05)}
 .pool-grid .pool-item{display:flex;gap:11px;align-items:center;padding:10px 12px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft)}
-.ref-status{margin-top:9px;font-size:11px;color:var(--txt-2);line-height:1.45}
+.ref-status{margin-top:9px;font-size:11.5px;color:var(--txt-2);line-height:1.45}
 .ref-status b{color:var(--lime);font-weight:900}
 .ref-welcome{text-align:center;padding:6px 0 2px}
 .ref-welcome .rw-ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;margin:4px auto 12px;
   background:var(--grad-lime);color:#06210a;box-shadow:0 10px 28px rgba(212,255,79,.32)}
 .ref-welcome .rw-ic svg{width:27px;height:27px}
-.ref-welcome h2{font-size:22px;font-weight:900;letter-spacing:-.02em;line-height:1.15}
+.ref-welcome h2{font-size:23px;font-weight:900;letter-spacing:-.02em;line-height:1.15}
 .ref-welcome p{font-size:13px;color:var(--txt-2);margin-top:6px}
 .ref-welcome p b{color:var(--txt);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}
 .ref-welcome .rw-bonus{display:inline-flex;align-items:center;gap:6px;margin:14px 0 4px;
   font-size:40px;font-weight:900;letter-spacing:-.03em;color:var(--lime)}
 .ref-welcome .rw-bonus svg{width:26px;height:26px}
-.ref-welcome .rw-sub{font-size:12px;color:var(--txt-3);line-height:1.5;margin:6px auto 16px;max-width:290px}
+.ref-welcome .rw-sub{font-size:12.5px;color:var(--txt-3);line-height:1.5;margin:6px auto 16px;max-width:290px}
 .dl-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:14px 0 2px}
 .dw-c{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:52px;border-radius:12px;
   background:rgba(255,255,255,.03);border:1px solid var(--stroke-soft);color:var(--txt-3)}
-.dw-c i{font-style:normal;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.dw-c i{font-style:normal;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
 .dw-c svg{width:15px;height:15px}
 .dw-c.on{background:rgba(212,255,79,.12);border-color:rgba(212,255,79,.28);color:var(--lime)}
 .dw-c.now{background:var(--grad-gold);border-color:transparent;color:#2a1500}
@@ -3271,7 +3262,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
         </div>
       </div>
       <div class="scroll">
-        <div class="sec-h" style="margin-top:2px"><h2 style="font-size:16px;display:flex;align-items:center;gap:7px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg><span data-i18n="today_here">Тебе сегодня сюда</span></h2><!-- Постоянная подпись у жеста, а не обучающая подсказка: та всплывает      три сессии и уходит, а карточки листаются всегда — значит способ      это сделать должен быть виден всегда, тихо и на своём месте. --><span class="sec-sw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg><b>свайп</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></div>
+        <div class="sec-h" style="margin-top:2px"><h2 style="font-size:16px;display:flex;align-items:center;gap:7px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg><span data-i18n="today_here">Тебе сегодня сюда</span></h2></div>
         <div class="answer-wrap">
           <div class="deck-stack" id="deckStack"></div>
           <div id="answerBox"><div class="skel skel-hero"></div></div>
@@ -3288,7 +3279,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
           <div class="sec-h" style="margin-top:8px"><h2 style="font-size:16px">Деал дня</h2><span class="more">до полуночи</span></div>
           <div class="deal fadein" id="dealBox"></div>
           <div class="sec-h" style="margin-top:18px"><h2 style="font-size:16px;display:flex;align-items:center;gap:7px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span data-i18n="foryou">Для тебя сейчас</span></h2><span class="m" onclick="cgo('map')" data-i18n="all_map">всё на карте →</span></div>
-          <div class="forme-row" id="formeRow"><span class="skel skel-chip" style="width:158px;height:120px;border-radius:18px"></span><span class="skel skel-chip" style="width:158px;height:120px;border-radius:18px"></span></div>
+          <div class="forme-row" id="formeRow"><span class="skel skel-chip" style="width:158px;height:120px;border-radius:20px"></span><span class="skel skel-chip" style="width:158px;height:120px;border-radius:20px"></span></div>
           <div id="altList"></div>
           <div id="altMore"></div>
           <div id="travelSlot"></div>
@@ -3503,13 +3494,13 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
           <div style="font-size:13px;color:var(--txt-2);font-weight:600;margin-bottom:4px">Мой QR · покажи на кассе</div>
           <div class="qr-box" id="userqr"><div class="qr-scan"></div></div>
           <div style="font-size:18px;font-weight:800" id="chId">CityHUB ID</div>
-          <div style="font-size:12px;color:var(--txt-2);margin-top:4px">Единый ключ к партнёрам в любой стране</div>
+          <div style="font-size:12.5px;color:var(--txt-2);margin-top:4px">Единый ключ к партнёрам в любой стране</div>
           <button class="cta ghost" style="margin-top:14px" onclick="shareMyQR()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Поделиться</button>
         </div>
 
         <div class="ref-card fadein"><div class="rg"></div>
           <h3 style="margin:0 0 6px;font-size:16px;font-weight:800">+200 баллов за каждого</h3>
-          <p style="margin:0 0 12px;font-size:12px;color:var(--txt-2);line-height:1.45">Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.</p>
+          <p style="margin:0 0 12px;font-size:12.5px;color:var(--txt-2);line-height:1.45">Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.</p>
           <div class="ref-code"><b id="refCode">…</b><button onclick="shareLink(refLinkSelf(),T('Ссылка скопирована'));refMarkSent()">Копировать</button></div>
           <div class="ref-status" id="refStatus"></div>
           <button class="cta lime" style="margin-top:12px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Пригласить друга</button>
@@ -3583,7 +3574,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
       <div class="hdr">
         <div>
           <div class="hdr-sub">Кабинет бизнеса</div>
-          <div class="hdr-title" style="font-size:20px;display:flex;align-items:center;gap:8px">Coffee Lab <span class="bh-verified" title="Заведение подтверждено"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--lime)" stroke="#06210a" stroke-width="2.5" style="display:inline-block;vertical-align:-.16em"><path d="M12 1l2.5 2.5L18 3l1 3.5L22 8l-1.5 3.3L22 14l-2.5 1L18 18l-3.5-.5L12 21l-2.5-3L6 18l-1-3-3-1.7L3.5 11 2 8l3-1.5L6 3l3.5.5z" stroke-linejoin="round"/><path d="M8 12l3 3 5-6" fill="none" stroke="#06210a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="hdr-title" style="font-size:21px;display:flex;align-items:center;gap:8px">Coffee Lab <span class="bh-verified" title="Заведение подтверждено"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--lime)" stroke="#06210a" stroke-width="2.5" style="display:inline-block;vertical-align:-.16em"><path d="M12 1l2.5 2.5L18 3l1 3.5L22 8l-1.5 3.3L22 14l-2.5 1L18 18l-3.5-.5L12 21l-2.5-3L6 18l-1-3-3-1.7L3.5 11 2 8l3-1.5L6 3l3.5.5z" stroke-linejoin="round"/><path d="M8 12l3 3 5-6" fill="none" stroke="#06210a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
         </div>
         <button class="mode-pill toclient" onclick="setMode('client')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Я клиент</button>
       </div>
@@ -4111,7 +4102,7 @@ function openPlan(pi){
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:2px"><h2 style="font-weight:800;letter-spacing:-.02em">'+T('Тариф')+' «'+p.n+'»</h2>'+(p.tag?'<span class="tag" style="background:var(--grad-lime);color:#06210a;font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px">'+p.tag+'</span>':'')+'</div>'+
     '<div style="font-size:30px;font-weight:900;letter-spacing:-.03em;margin:6px 0 2px">$'+p.pr+' <small style="font-size:14px;font-weight:700;color:var(--txt-2)">'+p.per+'</small> '+priceStars(parseInt((''+p.pr).replace(/\s/g,''),10))+'</div>'+
-    '<p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13px">'+T('Для заведения в Батуми · отмена в любой месяц')+'</p>'+
+    '<p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13.5px">'+T('Для заведения в Батуми · отмена в любой месяц')+'</p>'+
     '<div class="glass-soft" style="border-radius:var(--r-md);padding:14px 16px;margin-bottom:14px">'+p.feat.map(function(f){return '<div style="display:flex;gap:10px;align-items:center;padding:6px 0;font-size:14px;font-weight:600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2.5" style="flex-shrink:0"><path d="M5 12l5 5L20 7"/></svg>'+f+'</div>'}).join('')+'</div>'+
     '<button class="cta lime" onclick="planAsk('+pi+')">'+T('Спросить Hub о тарифе')+'</button>'+
     '<button class="cta ghost" style="margin-top:10px" onclick="closeSheet()">'+T('Понятно')+'</button>';
@@ -4359,10 +4350,8 @@ function renderToday(){
     <div class="top-strip">
       <span class="chip-glass rate"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${top.r}</span>
       ${liveSignalsTop}
-      <!-- Чип «Открыто/Закрыто» убран: рядом уже стоит «открыто до 23:00» —
-           тот же факт, та же зелёная точка, только информативнее. Две точки
-           подряд читались как рябь, а не как статус. -->
       <span style="display:flex;gap:8px;align-items:center;pointer-events:auto">
+        <span class="chip-glass status ${openNow?'':'closed'}"><span class="dot"></span>${openNow?T('Открыто'):T('Закрыто')}</span>
         ${heartBtn(top.n)}
       </span>
     </div>
@@ -4629,7 +4618,7 @@ function openQuest(qid){
   else{ctaText='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg>'+T('Забрать награду');ctaAct='claimQuest(\''+tpl.id+'\')';}
   var cta='<button class="cta lime" style="margin-top:6px" onclick="'+ctaAct+'">'+ctaText+'</button>';
   // hint with share + reset
-  var hint='<div style="display:flex;gap:9px;margin-top:10px"><button class="cta ghost" style="flex:1;margin-top:0;padding:13px;font-size:13px" onclick="shareQuest(\''+tpl.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>'+T('Позвать друга')+'</button>'+(done>0&&done<stops.length?'<button class="cta ghost" style="flex:0 0 auto;margin-top:0;padding:13px 16px;font-size:13px" onclick="resetQuest(\''+tpl.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 1 0 8-8M4 4v4h4"/></svg></button>':'')+'</div>';
+  var hint='<div style="display:flex;gap:9px;margin-top:10px"><button class="cta ghost" style="flex:1;margin-top:0;padding:13px;font-size:13.5px" onclick="shareQuest(\''+tpl.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>'+T('Позвать друга')+'</button>'+(done>0&&done<stops.length?'<button class="cta ghost" style="flex:0 0 auto;margin-top:0;padding:13px 16px;font-size:13.5px" onclick="resetQuest(\''+tpl.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 1 0 8-8M4 4v4h4"/></svg></button>':'')+'</div>';
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+sel+hero+prog+stopsHTML+rew+cta+hint;
   _openSheet();if(navigator.vibrate)navigator.vibrate(10);
   // auto-scroll active quest selector chip into view
@@ -4862,7 +4851,7 @@ function openInMaps(name,lat,lng){
   var twogis='https://2gis.com/geo/'+lat+'%2C'+lng;
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Открыть в карте')+'</h2>'+
-    '<p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13px">'+(name||T('Маршрут к точке'))+'</p>'+
+    '<p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13.5px">'+(name||T('Маршрут к точке'))+'</p>'+
     '<div class="map-pick">'+
       '<a class="map-pick-row" href="'+google+'" target="_blank" rel="noopener" onclick="closeSheet()"><div class="mpk-ic" style="background:#1a73e822"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.8"/></svg></div><div class="mpk-t"><b>Google Maps</b><span>'+T('Маршрут + отзывы')+'</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></a>'+
       '<a class="map-pick-row" href="'+apple+'" target="_blank" rel="noopener" onclick="closeSheet()"><div class="mpk-ic" style="background:#ffffff14"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="color:#fff"><path d="M17.6 13.5c0-3 2.5-4.4 2.6-4.5-1.4-2.1-3.6-2.4-4.4-2.4-1.9-.2-3.6 1.1-4.6 1.1-.9 0-2.4-1.1-4-1.1-2 0-4 1.2-5 3.1-2.1 3.7-.6 9.1 1.5 12.1 1 1.5 2.2 3.1 3.8 3 1.5-.1 2.1-1 4-1s2.4 1 4 1c1.6 0 2.7-1.5 3.7-3 1.2-1.7 1.6-3.4 1.7-3.5-.1 0-3.3-1.3-3.3-4.8M14.7 4.5c.8-1 1.4-2.4 1.2-3.7-1.2 0-2.6.8-3.4 1.8-.8.9-1.5 2.3-1.3 3.6 1.3.1 2.7-.7 3.5-1.7"/></svg></div><div class="mpk-t"><b>Apple Maps</b><span>'+T('Откроется в iOS-картах')+'</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></a>'+
@@ -5016,7 +5005,7 @@ function recSelect(i){
   var card=document.getElementById('crec-'+i);if(card){card.classList.add('sel');card.scrollIntoView({behavior:'smooth',block:'center'})}
   if(navigator.vibrate)navigator.vibrate(8);
 }
-function addRec(b,idx){const z=NICHES.find(n=>n.k===b.k)||{c:'#7C3AFF',q:''};const r=document.getElementById('chatRows');const d=document.createElement('div');d.className='chat-rec';d.style.alignSelf='stretch';if(idx!=null){d.id='crec-'+idx;d.onclick=function(){recSelect(idx)}}else{d.onclick=function(){openBiz(b)}}d.innerHTML=`<div class="cr-th" style="border-radius:12px;overflow:hidden">${thumb(b,z)}</div><div class="i"><b>${b.n}</b><span>${z.n} \u00b7 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> ${b.r} \u00b7 +${b.pts} ${T('баллов')}</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2.5" style="align-self:center;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>`;r.appendChild(d);scrollChat()}
+function addRec(b,idx){const z=NICHES.find(n=>n.k===b.k)||{c:'#7C3AFF',q:''};const r=document.getElementById('chatRows');const d=document.createElement('div');d.className='chat-rec';d.style.alignSelf='stretch';if(idx!=null){d.id='crec-'+idx;d.onclick=function(){recSelect(idx)}}else{d.onclick=function(){openBiz(b)}}d.innerHTML=`<div class="cr-th" style="border-radius:13px;overflow:hidden">${thumb(b,z)}</div><div class="i"><b>${b.n}</b><span>${z.n} \u00b7 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> ${b.r} \u00b7 +${b.pts} ${T('баллов')}</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2.5" style="align-self:center;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>`;r.appendChild(d);scrollChat()}
 function scrollChat(){const s=document.getElementById('chatScroll');setTimeout(()=>s.scrollTop=s.scrollHeight,40)}
 function typing(on){const r=document.getElementById('chatRows');let t=document.getElementById('typingDots');if(on&&!t){t=document.createElement('div');t.id='typingDots';t.className='chat-typing';t.innerHTML='<span></span><span></span><span></span>';r.appendChild(t);scrollChat()}else if(!on&&t)t.remove()}
 
@@ -5357,14 +5346,14 @@ function aiParseRecs(text){
 function openAISetup(){
   var used=aiUsageToday();
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
-    '<h2 style="font-size:20px;font-weight:800;margin-bottom:6px">🤖 CityHUB AI</h2>'+
-    '<p class="sub" style="color:var(--txt-2);font-size:13px;margin-bottom:16px;line-height:1.5">Умный консьерж на базе Claude. Знает все места города, помогает выбрать под настроение, отвечает по делу.</p>'+
+    '<h2 style="font-size:21px;font-weight:800;margin-bottom:6px">🤖 CityHUB AI</h2>'+
+    '<p class="sub" style="color:var(--txt-2);font-size:13.5px;margin-bottom:16px;line-height:1.5">Умный консьерж на базе Claude. Знает все места города, помогает выбрать под настроение, отвечает по делу.</p>'+
     '<div class="hub-mood" style="margin-top:0">'+
       '<span class="hm-emo ok">'+ico('check','var(--lime)',2.6)+'</span>'+
       '<div class="hm-tx"><b>Подключён · <span style="color:var(--lime)">'+AI_MODEL+'</span></b><span>Использовано сегодня: '+used+' / '+AI_MAX_CALLS_DAY+'</span></div>'+
     '</div>'+
     '<button class="cta lime" style="margin-top:14px" onclick="closeSheet();setTimeout(openMascot,260)">Поговорить с AI</button>'+
-    '<div class="hint" style="margin-top:18px;color:var(--txt-3);font-size:11px">Лимит 80 реплик/день защищает от перерасхода. Сбрасывается в 00:00 по UTC.</div>';
+    '<div class="hint" style="margin-top:18px;color:var(--txt-3);font-size:11.5px">Лимит 80 реплик/день защищает от перерасхода. Сбрасывается в 00:00 по UTC.</div>';
   _openSheet();haptic('open');
 }
 
@@ -5395,7 +5384,7 @@ function renderIdentity(){
 function openEditName(){
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Как тебя называть?')+'</h2>'+
-    '<p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13px">'+T('Имя видно в отзывах, лигах и сквадах')+'</p>'+
+    '<p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13.5px">'+T('Имя видно в отзывах, лигах и сквадах')+'</p>'+
     '<div class="field"><input id="nameInput" maxlength="24" placeholder="'+T('Твоё имя')+'" onkeydown="if(event.key===\'Enter\')saveName()"></div>'+
     '<button class="cta lime" onclick="saveName()">'+T('Сохранить')+'</button>';
   _openSheet();
@@ -5423,12 +5412,12 @@ function openHistory(){
     body='<div class="srch-res" style="margin-top:4px">'+v.slice().reverse().map(function(name){
       var b=(C&&C.biz||[]).find(function(x){return x.n===name});
       var z=b?(NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''}):{c:'#7C3AFF',n:''};
-      return '<div class="srch-item" '+(b?'onclick="histOpen(\''+name.replace(/'/g,'\\\'')+'\')"':'')+'><div class="si-th" style="border-radius:12px;overflow:hidden">'+(b?thumb(b,z):'<div style="width:100%;height:100%;background:'+z.c+'22;display:grid;place-items:center">📍</div>')+'</div><div class="si-i"><b>'+name+'</b><span>'+(z.n||T('визит'))+(b?' · ★ '+b.r:'')+'</span></div>'+(b?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>':'')+'</div>';
+      return '<div class="srch-item" '+(b?'onclick="histOpen(\''+name.replace(/'/g,'\\\'')+'\')"':'')+'><div class="si-th" style="border-radius:11px;overflow:hidden">'+(b?thumb(b,z):'<div style="width:100%;height:100%;background:'+z.c+'22;display:grid;place-items:center">📍</div>')+'</div><div class="si-i"><b>'+name+'</b><span>'+(z.n||T('визит'))+(b?' · ★ '+b.r:'')+'</span></div>'+(b?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>':'')+'</div>';
     }).join('')+'</div>';
   }
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:2px">'+T('Твои визиты')+'</h2>'+
-    '<p class="sub" style="margin-bottom:10px;color:var(--txt-2);font-size:13px">'+v.length+' '+T('мест в коллекции')+'</p>'+body;
+    '<p class="sub" style="margin-bottom:10px;color:var(--txt-2);font-size:13.5px">'+v.length+' '+T('мест в коллекции')+'</p>'+body;
   _openSheet();haptic('open');
 }
 function histOpen(name){
@@ -5442,7 +5431,7 @@ function renderRecentVisits(){
   el.innerHTML=v.slice(-3).reverse().map(function(name){
     var b=(C&&C.biz||[]).find(function(x){return x.n===name});
     var z=b?(NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''}):{c:'#7C3AFF',n:''};
-    return '<div class="srch-item" '+(b?'onclick="histOpen(\''+name.replace(/'/g,'\\\'')+'\')"':'')+'><div class="si-th" style="border-radius:12px;overflow:hidden">'+(b?thumb(b,z):'<div style="width:100%;height:100%;background:'+z.c+'22;display:grid;place-items:center">📍</div>')+'</div><div class="si-i"><b>'+name+'</b><span>'+(z.n||T('визит'))+'</span></div></div>';
+    return '<div class="srch-item" '+(b?'onclick="histOpen(\''+name.replace(/'/g,'\\\'')+'\')"':'')+'><div class="si-th" style="border-radius:11px;overflow:hidden">'+(b?thumb(b,z):'<div style="width:100%;height:100%;background:'+z.c+'22;display:grid;place-items:center">📍</div>')+'</div><div class="si-i"><b>'+name+'</b><span>'+(z.n||T('визит'))+'</span></div></div>';
   }).join('');
 }
 function renderGameStats(){
@@ -5502,7 +5491,7 @@ function openAddTaste(){
   var chips=pool.map(function(t){return '<button class="taste-chip" data-tasteadd="'+t.k+'" style="--tc:'+t.c+'"><span class="tc-emo">'+ico(tasteIco(t.k),'currentColor',2)+'</span><span class="tc-n">'+t.n+'</span></button>'}).join('');
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Добавить вкус</h2>'+
-    '<p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13px">Тапни — добавится в твой профиль и будет учитываться в подборе</p>'+
+    '<p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13.5px">Тапни — добавится в твой профиль и будет учитываться в подборе</p>'+
     '<div class="taste-chip-row">'+chips+'</div>'+
     '<div class="taste-custom"><div class="tc-lbl">Своё</div><div class="tc-row"><span class="tc-emoji-pick" onclick="cycleCustomEmo(this)" data-emo-i="0">✨</span><input id="customTaste" placeholder="напр. «Бранчи у моря»" maxlength="32"><button class="tc-add" onclick="addCustomTaste()" aria-label="Добавить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></button></div></div>';
   _openSheet();haptic('open');
@@ -5554,7 +5543,7 @@ function renderStatic(){
     <div class="ach2-bar"><div class="ach2-fill" style="width:${pct}%;background:${done?'var(--grad-lime)':'linear-gradient(90deg,'+nz.c+'88,'+nz.c+')'}"></div></div>
     <div class="ach2-meta"><span>${a.cur} / ${a.goal} ${a.unit}</span><span>${done?'получено':'+'+(a.goal-a.cur)+' до награды'}</span></div></div>`}).join(''));
   setHTML('__gone_shopRow',REWARDS.map(r=>`<div class="shop-card" onclick="openShop()"><div class="sc-ic" style="background:${r.col}22">${ico(r.k,r.col,2)}</div><div class="sc-n">${r.n}</div><div class="sc-d">${r.d}</div><div class="sc-c">${ei('star','var(--lime)',14)} ${r.c.toLocaleString('ru-RU')}</div></div>`).join(''));
-  setHTML('__gone_earn',EARN.map(e=>`<div class="biz glass-soft${e.soon?' earn-soon':''}" onclick="earnGo('${e.act}')"><div class="th" style="background:rgba(255,255,255,.06);display:grid;place-items:center">${ico(e.i,'var(--lime)',2)}</div><div class="i"><h3 style="font-size:14px">${e.n}</h3><div class="m">${e.p}</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>`).join(''));
+  setHTML('__gone_earn',EARN.map(e=>`<div class="biz glass-soft${e.soon?' earn-soon':''}" onclick="earnGo('${e.act}')"><div class="th" style="background:rgba(255,255,255,.06);display:grid;place-items:center">${ico(e.i,'var(--lime)',2)}</div><div class="i"><h3 style="font-size:14.5px">${e.n}</h3><div class="m">${e.p}</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>`).join(''));
   setHTML('myints',INTERESTS.map((t,i)=>`<button class="chip ${i<5?'on':''}" onclick="toggleChip(this)">${ei(t[0],'currentColor',15)} ${t[1]}</button>`).join(''));
   setHTML('plans',PLANS.map((p,pi)=>`<div class="plan ${p.f?'featured':'glass'}" onclick="openPlan(${pi})"><div class="ph"><h3>${p.n}</h3>${p.tag?`<span class="tag">${p.tag}</span>`:''}</div><div class="price">$${p.pr}<small>${p.per}</small>${priceStars(parseInt((''+p.pr).replace(/\s/g,''),10))}</div><ul>${p.feat.map(f=>`<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>${f}</li>`).join('')}</ul></div>`).join(''));
   setHTML('ahTiers',AHTIERS.map(t=>`<div class="tier-card ${t.hot?'hot':''}"><div class="nm">${t.nm}</div><div class="pr">${t.pr}${t.per?`<small>${t.per}</small>`:''}</div><div class="ds">${t.ds}</div></div>`).join(''));
@@ -5762,7 +5751,7 @@ var DICT={"Скидка действует на всю компанию: пок�
 "До награды за":["To the reward at","ჯილდომდე"],"ещё":["left","დარჩა"],"и множитель":["and multiplier","და მამრავლი"],"Отлично":["Got it","შესანიშნავია"],
 "Пришёл по приглашению":["Joined via invite","მოწვევით შემოვიდა"],"Тебя пригласили в CityHUB":["You were invited to CityHUB","შენ მოგიწვიეს CityHUB-ში"],"Код друга":["Friend's code","მეგობრის კოდი"],"Баллы уже на счету. Друг получит свои, когда ты сходишь в первое место.":["Points are already yours. Your friend gets theirs once you visit your first place.","ქულები უკვე შენია. მეგობარი თავისას მიიღებს, როცა პირველ ადგილს ეწვევი."],"Показать, куда сходить":["Show me where to go","მაჩვენე სად წავიდე"],"друзей пришло":["friends joined","მეგობარი შემოვიდა"],"Приглашений отправлено":["Invites sent","გაგზავნილი მოწვევები"],"баллы придут, когда друг откроет приложение":["points arrive when your friend opens the app","ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Отправь ссылку — баллы придут, когда друг откроет приложение":["Send the link — points arrive when your friend opens the app","გააგზავნე ბმული — ქულები მოვა, როცა მეგობარი გახსნის აპს"],"Ваучер города":["City voucher","ქალაქის ვაუჩერი"],
 "Hub — есть что сказать":["Hub has something for you","Hub-ს რაღაც აქვს სათქმელი"],
-"Как было в":["How was","როგორ იყო"],"Один ответ — и дальше подберу точнее":["One answer and I pick better from here","ერთი პასუხი — და შემდეგ უფრო ზუსტად შევარჩევ"],"Зашло":["Loved it","მომეწონა"],"хочу ещё такого":["more like this","მინდა კიდევ ასეთი"],"Не моё":["Not for me","ჩემი არაა"],"больше не предлагай":["stop suggesting it","აღარ შემომთავაზო"],"Я туда не дошёл":["I never made it there","იქ არ მივსულვარ"],"Понял — визит не засчитываю":["Got it — not counting the visit","გასაგებია — ვიზიტს არ ვითვლი"],"Отзыв о визите":["Visit feedback","ვიზიტის შეფასება"],"Спасибо — теперь знаю тебя лучше":["Thanks — I know you better now","მადლობა — ახლა უკეთ გიცნობ"],"Понял — такое больше не покажу":["Got it — I won't show these again","გასაგებია — ასეთს აღარ გაჩვენებ"],"Можно забрать сейчас":["Available right now","ხელმისაწვდომია ახლავე"],"Всё открытое выполнено":["Everything open is done","ყველა ღია დავალება შესრულებულია"],"новые появятся с городами":["more arrive with new cities","ახლები ახალ ქალაქებთან ერთად"],"Выполнено":["Done","შესრულებული"],"Отправлено":["Sent","გაგზავნილი"],"баллы придут, когда друг откроет":["points land when your friend opens the app","ქულები ჩაირიცხება, როცა მეგობარი გახსნის"],"Рассказать, как было":["Tell me how it went","მომიყევი, როგორ იყო"],"Ответь на вопрос после визита":["Answer the question after a visit","უპასუხე კითხვას ვიზიტის შემდეგ"],"Города за Батуми — на подходе":["Cities beyond Batumi are coming","ბათუმის შემდეგ სხვა ქალაქებიც იქნება"],"Фото из заведения":["Photo from the venue","ფოტო დაწესებულებიდან"],"Батуми первый — остальные города открываем следом":["Batumi comes first — other cities follow","ბათუმი პირველია — დანარჩენი ქალაქები მოჰყვება"],"Ссылка ушла — баллы придут, когда друг откроет приложение":["Link sent — points land when your friend opens the app","ბმული გაიგზავნა — ქულები ჩაირიცხება, როცა მეგობარი გახსნის"],"Сходи в любое место — через пару часов спрошу, как было":["Go anywhere — in a couple of hours I will ask how it went","წადი ნებისმიერ ადგილას — ორიოდე საათში გკითხავ, როგორ იყო"],"Где ещё берутся баллы":["Where else points come from","საიდან მოდის ქულები"],"Визит в место":["A visit to a venue","ვიზიტი ადგილზე"],"чек-ин по QR на кассе":["QR check-in at the counter","QR ჩექ-ინი სალაროსთან"],"Ответ после визита":["An answer after a visit","პასუხი ვიზიტის შემდეგ"],"через пару часов спрошу, как было":["I ask a couple of hours later","ორიოდე საათში გკითხავ"],"Серия дней":["Day streak","დღეების სერია"],"сейчас серия":["current streak","მიმდინარე სერია"],"дн.":["d","დღე"],"Друг открыл приложение":["A friend opened the app","მეგობარმა გახსნა აპლიკაცია"],"начислим, когда он зайдёт":["credited when they come in","ჩაირიცხება, როცა ის შემოვა"],"Найти, куда сходить":["Find somewhere to go","იპოვე, სად წახვიდე"],"Новичок":["Rookie","დამწყები"],"Бронза":["Bronze","ბრინჯაო"],"Серебро":["Silver","ვერცხლი"],"Золото":["Gold","ოქრო"],"Легенда":["Legend","ლეგენდა"],"первые шаги по городу":["first steps around the city","პირველი ნაბიჯები ქალაქში"],"десятая часть каталога":["a tenth of the catalogue","კატალოგის მეათედი"],"четверть города за спиной":["a quarter of the city behind you","ქალაქის მეოთხედი უკან"],"половина всех мест":["half of every place","ყველა ადგილის ნახევარი"],"каталог собран целиком":["the whole catalogue collected","კატალოგი მთლიანად შეგროვდა"],"До ступени":["To the tier","საფეხურამდე"],"Каталог собран целиком. Дальше — новые города.":["The whole catalogue is collected. New cities are next.","კატალოგი მთლიანად შეგროვდა. შემდეგი — ახალი ქალაქები."],"районов открыто":["districts unlocked","გახსნილი უბანი"],"каталога":["of the catalogue","კატალოგის"],"Таблица игроков откроется, когда в лиге наберутся участники. Придумывать соперников мы не станем — до тех пор соревнуешься с городом.":["The player table opens once the league has real members. We will not invent rivals — until then you compete with the city.","მოთამაშეების ცხრილი გაიხსნება, როცა ლიგას რეალური მონაწილეები ეყოლება. მოწინააღმდეგეებს არ გამოვიგონებთ — მანამდე ქალაქს ეჯიბრები."],"Джекпот":["Jackpot","ჯეკპოტი"],"главный приз барабана":["the drum's top prize","დოლურას მთავარი პრიზი"],"шанс":["odds","შანსი"],"весь фонд":["full pool","სრული ფონდი"],"спин сделан":["spin made","სპინი გაკეთდა"],"спина сделано":["spins made","სპინი გაკეთდა"],"спинов сделано":["spins made","სპინი გაკეთდა"],"лучший приз":["best prize","საუკეთესო პრიზი"],"Мои выигрыши":["My prizes","ჩემი მოგებები"],"Что может выпасть":["What can drop","რა შეიძლება ამოვარდეს"],"весь список":["full list","სრული სია"],"Весь призовой фонд":["The whole prize pool","მთელი საპრიზო ფონდი"],"Бесплатный спин готов":["Free spin ready","უფასო სპინი მზადაა"],"Утешительный":["Consolation","სანუგეშო"],"Крупный приз":["Big prize","დიდი პრიზი"],"Главный приз":["Top prize","მთავარი პრიზი"],"Стать партнёром":["Become a partner","გახდი პარტნიორი"],"Любая партнёрская":["Any partner venue","ნებისმიერი პარტნიორი"],"Кондитерские города":["City patisseries","ქალაქის საკონდიტროები"],"Сердце":["Heart","გული"],"Роза":["Rose","ვარდი"],"Кольцо":["Ring","ბეჭედი"],"свайп":["swipe","გადაფურცლე"],"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
+"Как было в":["How was","როგორ იყო"],"Один ответ — и дальше подберу точнее":["One answer and I pick better from here","ერთი პასუხი — და შემდეგ უფრო ზუსტად შევარჩევ"],"Зашло":["Loved it","მომეწონა"],"хочу ещё такого":["more like this","მინდა კიდევ ასეთი"],"Не моё":["Not for me","ჩემი არაა"],"больше не предлагай":["stop suggesting it","აღარ შემომთავაზო"],"Я туда не дошёл":["I never made it there","იქ არ მივსულვარ"],"Понял — визит не засчитываю":["Got it — not counting the visit","გასაგებია — ვიზიტს არ ვითვლი"],"Отзыв о визите":["Visit feedback","ვიზიტის შეფასება"],"Спасибо — теперь знаю тебя лучше":["Thanks — I know you better now","მადლობა — ახლა უკეთ გიცნობ"],"Понял — такое больше не покажу":["Got it — I won't show these again","გასაგებია — ასეთს აღარ გაჩვენებ"],"Можно забрать сейчас":["Available right now","ხელმისაწვდომია ახლავე"],"Всё открытое выполнено":["Everything open is done","ყველა ღია დავალება შესრულებულია"],"новые появятся с городами":["more arrive with new cities","ახლები ახალ ქალაქებთან ერთად"],"Выполнено":["Done","შესრულებული"],"Отправлено":["Sent","გაგზავნილი"],"баллы придут, когда друг откроет":["points land when your friend opens the app","ქულები ჩაირიცხება, როცა მეგობარი გახსნის"],"Рассказать, как было":["Tell me how it went","მომიყევი, როგორ იყო"],"Ответь на вопрос после визита":["Answer the question after a visit","უპასუხე კითხვას ვიზიტის შემდეგ"],"Города за Батуми — на подходе":["Cities beyond Batumi are coming","ბათუმის შემდეგ სხვა ქალაქებიც იქნება"],"Фото из заведения":["Photo from the venue","ფოტო დაწესებულებიდან"],"Батуми первый — остальные города открываем следом":["Batumi comes first — other cities follow","ბათუმი პირველია — დანარჩენი ქალაქები მოჰყვება"],"Ссылка ушла — баллы придут, когда друг откроет приложение":["Link sent — points land when your friend opens the app","ბმული გაიგზავნა — ქულები ჩაირიცხება, როცა მეგობარი გახსნის"],"Сходи в любое место — через пару часов спрошу, как было":["Go anywhere — in a couple of hours I will ask how it went","წადი ნებისმიერ ადგილას — ორიოდე საათში გკითხავ, როგორ იყო"],"Где ещё берутся баллы":["Where else points come from","საიდან მოდის ქულები"],"Визит в место":["A visit to a venue","ვიზიტი ადგილზე"],"чек-ин по QR на кассе":["QR check-in at the counter","QR ჩექ-ინი სალაროსთან"],"Ответ после визита":["An answer after a visit","პასუხი ვიზიტის შემდეგ"],"через пару часов спрошу, как было":["I ask a couple of hours later","ორიოდე საათში გკითხავ"],"Серия дней":["Day streak","დღეების სერია"],"сейчас серия":["current streak","მიმდინარე სერია"],"дн.":["d","დღე"],"Друг открыл приложение":["A friend opened the app","მეგობარმა გახსნა აპლიკაცია"],"начислим, когда он зайдёт":["credited when they come in","ჩაირიცხება, როცა ის შემოვა"],"Найти, куда сходить":["Find somewhere to go","იპოვე, სად წახვიდე"],"Новичок":["Rookie","დამწყები"],"Бронза":["Bronze","ბრინჯაო"],"Серебро":["Silver","ვერცხლი"],"Золото":["Gold","ოქრო"],"Легенда":["Legend","ლეგენდა"],"первые шаги по городу":["first steps around the city","პირველი ნაბიჯები ქალაქში"],"десятая часть каталога":["a tenth of the catalogue","კატალოგის მეათედი"],"четверть города за спиной":["a quarter of the city behind you","ქალაქის მეოთხედი უკან"],"половина всех мест":["half of every place","ყველა ადგილის ნახევარი"],"каталог собран целиком":["the whole catalogue collected","კატალოგი მთლიანად შეგროვდა"],"До ступени":["To the tier","საფეხურამდე"],"Каталог собран целиком. Дальше — новые города.":["The whole catalogue is collected. New cities are next.","კატალოგი მთლიანად შეგროვდა. შემდეგი — ახალი ქალაქები."],"районов открыто":["districts unlocked","გახსნილი უბანი"],"каталога":["of the catalogue","კატალოგის"],"Таблица игроков откроется, когда в лиге наберутся участники. Придумывать соперников мы не станем — до тех пор соревнуешься с городом.":["The player table opens once the league has real members. We will not invent rivals — until then you compete with the city.","მოთამაშეების ცხრილი გაიხსნება, როცა ლიგას რეალური მონაწილეები ეყოლება. მოწინააღმდეგეებს არ გამოვიგონებთ — მანამდე ქალაქს ეჯიბრები."],"Джекпот":["Jackpot","ჯეკპოტი"],"главный приз барабана":["the drum's top prize","დოლურას მთავარი პრიზი"],"шанс":["odds","შანსი"],"весь фонд":["full pool","სრული ფონდი"],"спин сделан":["spin made","სპინი გაკეთდა"],"спина сделано":["spins made","სპინი გაკეთდა"],"спинов сделано":["spins made","სპინი გაკეთდა"],"лучший приз":["best prize","საუკეთესო პრიზი"],"Мои выигрыши":["My prizes","ჩემი მოგებები"],"Что может выпасть":["What can drop","რა შეიძლება ამოვარდეს"],"весь список":["full list","სრული სია"],"Весь призовой фонд":["The whole prize pool","მთელი საპრიზო ფონდი"],"Бесплатный спин готов":["Free spin ready","უფასო სპინი მზადაა"],"Утешительный":["Consolation","სანუგეშო"],"Крупный приз":["Big prize","დიდი პრიზი"],"Главный приз":["Top prize","მთავარი პრიზი"],"Стать партнёром":["Become a partner","გახდი პარტნიორი"],"Любая партнёрская":["Any partner venue","ნებისმიერი პარტნიორი"],"Кондитерские города":["City patisseries","ქალაქის საკონდიტროები"],"Сердце":["Heart","გული"],"Роза":["Rose","ვარდი"],"Кольцо":["Ring","ბეჭედი"],"Выпадает часто":["Common","ხშირად ვარდება"],"Пореже":["Uncommon","უფრო იშვიათად"],"Редкое":["Rare","იშვიათი"],"Легендарное":["Legendary","ლეგენდარული"],
 "сейчас":["now", "ახლა"],
 "Выбери нишу — без неё место не попадёт в фильтры":["Pick a category — without it the place will not show in filters", "აირჩიე ნიშა — მის გარეშე ადგილი ფილტრებში არ მოხვდება"],
 "Как это работает":["How it works", "როგორ მუშაობს"],"Повесь плакат у кассы":["Put the poster at the counter", "დაკიდე პლაკატი სალაროსთან"],"Там, где гость стоит и ждёт — на стойке, у терминала, на столике":["Where the guest stands and waits — on the counter, by the terminal, on the table", "სადაც სტუმარი დგას და ელოდება — დახლზე, ტერმინალთან, მაგიდაზე"],"Гость наводит камеру":["The guest points their camera", "სტუმარი მიმართავს კამერას"],"Откроется твоя карточка в CityHUB — без установки, прямо в Telegram":["Your card opens in CityHUB — no install, right inside Telegram", "შენი ბარათი გაიხსნება CityHUB-ში — ინსტალაციის გარეშე, პირდაპირ Telegram-ში"],"Визит засчитан":["Visit counted", "ვიზიტი ჩაითვალა"],"Баллы падают гостю сразу, тебе — скан в статистике кабинета":["Points land for the guest instantly; you get the scan in your dashboard", "ქულები მაშინვე ჩაერიცხება სტუმარს, შენ — სკანი კაბინეტის სტატისტიკაში"],"Он возвращается":["They come back", "ის ბრუნდება"],"Баллы тратятся у партнёров — и у тебя. Это и есть повод прийти снова":["Points are spent at partners — and at your place. That is the reason to come back", "ქულები იხარჯება პარტნიორებთან — და შენთანაც. ეს არის დაბრუნების მიზეზი"],"Одна фраза удваивает сканы":["One sentence doubles the scans", "ერთი ფრაზა აორმაგებს სკანებს"],"«Отсканируй — получишь баллы на кофе». Просто скажите её на кассе.":["\"Scan this and get points toward a coffee.\" Just say it at the counter.", "«დაასკანერე — ქულებს მიიღებ ყავაზე». უბრალოდ თქვით სალაროსთან."],"Оплата включится вместе с релизом — тариф пока можно забронировать через Hub":["Payments go live with the release — for now you can reserve a plan through Hub", "გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ტარიფი შეგიძლია დაჯავშნო Hub-ით"],"Хочу подключить буст для заведения: что входит и когда можно оплатить?":["I want to enable a boost for my place: what is included and when can I pay?","მინდა ბუსტის ჩართვა: რა შედის და როდის შემიძლია გადახდა?"],
@@ -6113,8 +6102,8 @@ function runSearch(q){
   if(!q){res.innerHTML='';return}
   var C=CITIES[CITY];
   var found=C.biz.filter(function(b){var z=NICHES.find(n=>n.k===b.k)||{n:''};return b.n.toLowerCase().indexOf(q)>=0||z.n.toLowerCase().indexOf(q)>=0||b.k.indexOf(q)>=0});
-  if(!found.length){res.innerHTML='<div class="srch-empty">'+T('Ничего не нашлось по')+' «'+q+'»<br><span style="font-size:12px;color:var(--txt-3)">'+T('Попробуй переформулировать или спроси Hub напрямую.')+'</span></div>';return}
-  res.innerHTML=found.slice(0,8).map(function(b){var z=NICHES.find(n=>n.k===b.k)||{c:'#7C3AFF',n:''};return '<div class="srch-item" onclick="closeSheet();openBiz('+jx(b)+')"><div class="si-th" style="border-radius:12px;overflow:hidden">'+thumb(b,z)+'</div><div class="si-i"><b>'+b.n+'</b><span>'+z.n+' · ★ '+b.r+'</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>'}).join('');
+  if(!found.length){res.innerHTML='<div class="srch-empty">'+T('Ничего не нашлось по')+' «'+q+'»<br><span style="font-size:12.5px;color:var(--txt-3)">'+T('Попробуй переформулировать или спроси Hub напрямую.')+'</span></div>';return}
+  res.innerHTML=found.slice(0,8).map(function(b){var z=NICHES.find(n=>n.k===b.k)||{c:'#7C3AFF',n:''};return '<div class="srch-item" onclick="closeSheet();openBiz('+jx(b)+')"><div class="si-th" style="border-radius:11px;overflow:hidden">'+thumb(b,z)+'</div><div class="si-i"><b>'+b.n+'</b><span>'+z.n+' · ★ '+b.r+'</span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc-2)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>'}).join('');
 }
 function notifIsRead(){try{return !!localStorage.getItem('cityhub_notif_read_v1')}catch(e){return false}}
 function notifSetRead(){try{localStorage.setItem('cityhub_notif_read_v1','1')}catch(e){}var d=document.querySelector('.notif-dot');if(d)d.style.display='none';var bb=document.getElementById('bellBtn');if(bb)bb.classList.remove('has-unread')}
@@ -6128,7 +6117,7 @@ function openNotif(){
     {ic:'coffee',col:'#c79a5e',t:'Подарок дня готов',s:'Открой ежедневный бонус',time:'утром',unread:false}
   ];
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
-    '<div class="notif-head"><h2 style="font-size:20px;font-weight:800">'+T('Уведомления')+'</h2><button class="notif-clear" onclick="markAllRead()">'+T('Прочитать всё')+'</button></div>'+
+    '<div class="notif-head"><h2 style="font-size:21px;font-weight:800">'+T('Уведомления')+'</h2><button class="notif-clear" onclick="markAllRead()">'+T('Прочитать всё')+'</button></div>'+
     '<div class="notif-list">'+notifs.map(function(n,i){return '<div class="notif-item'+(n.unread?' unread':'')+'" style="cursor:pointer" onclick="notifClick('+i+')"><div class="ni-ic" style="background:'+n.col+'22;color:'+n.col+'">'+ico(n.ic,n.col,2)+'</div><div class="ni-i"><b>'+n.t+'</b><span>'+n.s+'</span></div><span class="ni-time">'+n.time+'</span></div>'}).join('')+'</div>';
   _openSheet();notifSetRead();if(navigator.vibrate)navigator.vibrate(8);
 }
@@ -6210,7 +6199,7 @@ function morphHero(srcImg){
     if(!url)return;
     var vw=window.innerWidth,vh=window.innerHeight;
     var g=document.createElement('div');g.className='hero-ghost';
-    g.style.cssText='position:fixed;z-index:1500;pointer-events:none;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;background:#0a0e1a center/cover no-repeat;background-image:url("'+url+'");border-radius:18px;box-shadow:0 26px 64px rgba(0,0,0,.55);will-change:left,top,width,height,border-radius;transition:left .44s cubic-bezier(.2,.9,.25,1),top .44s cubic-bezier(.2,.9,.25,1),width .44s cubic-bezier(.2,.9,.25,1),height .44s cubic-bezier(.2,.9,.25,1),border-radius .44s';
+    g.style.cssText='position:fixed;z-index:1500;pointer-events:none;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;background:#0a0e1a center/cover no-repeat;background-image:url("'+url+'");border-radius:16px;box-shadow:0 26px 64px rgba(0,0,0,.55);will-change:left,top,width,height,border-radius;transition:left .44s cubic-bezier(.2,.9,.25,1),top .44s cubic-bezier(.2,.9,.25,1),width .44s cubic-bezier(.2,.9,.25,1),height .44s cubic-bezier(.2,.9,.25,1),border-radius .44s';
     document.body.appendChild(g);
     var tl=18,tw=vw-36,th=130,tt=Math.round(vh*0.12)+28;
     requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -6224,7 +6213,7 @@ function openBiz(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(
   try{var src=(window.event&&(window.event.currentTarget||window.event.target));if(src&&src.closest){var card=src.closest('.answer,.mini,.biz,.fm-card');if(card){_srcImg=card.querySelector('img');card.classList.add('tap-sink');setTimeout(function(){card.classList.remove('tap-sink')},300)}}}catch(e){}
   const srcBtn=b.u?`<button class="cta ghost" style="margin-top:18px" onclick='openInApp(${jx(b.u)},${jx(b.n+" — "+(b.src||"сайт"))})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7"/></svg>Открыть ${b.src||'сайт'}</button>`:'';
   document.getElementById('sheet-body').innerHTML=`<div class="grab"></div>
-    <div class="sheet-hero" style="background:linear-gradient(135deg,${nz.c}55,${nz.c}15)"><img src="${ph(nz.k,b.n.length,b.n)}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.style.display='none'"><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(5,6,10,.9),transparent 70%)"></div><button class="bh-refresh" onclick="refreshPlace(${jx(b.n)},${jx(b.k)},this);event.stopPropagation()" title="Другое место в этой нише" aria-label="Другое место"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button><div style="position:relative;display:flex;align-items:flex-end;gap:12px;width:100%"><div style="width:50px;height:50px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);flex-shrink:0">${ico(b.k,'#fff',2)}</div><div><h2>${b.n}</h2><div class="sub" style="margin-top:2px">${nz.n} · ${C.name} ${C.flag}</div></div></div></div>
+    <div class="sheet-hero" style="background:linear-gradient(135deg,${nz.c}55,${nz.c}15)"><img src="${ph(nz.k,b.n.length,b.n)}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.style.display='none'"><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(5,6,10,.9),transparent 70%)"></div><button class="bh-refresh" onclick="refreshPlace(${jx(b.n)},${jx(b.k)},this);event.stopPropagation()" title="Другое место в этой нише" aria-label="Другое место"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 5v4h-4"/><path d="M21 12a9 9 0 0 1-15.5 6.3M3 19v-4h4"/></svg></button><div style="position:relative;display:flex;align-items:flex-end;gap:12px;width:100%"><div style="width:50px;height:50px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);flex-shrink:0">${ico(b.k,'#fff',2)}</div><div><h2>${b.n}</h2><div class="sub" style="margin-top:2px">${nz.n} · ${C.name} ${C.flag}</div></div></div></div>
     <div style="display:flex;gap:10px;margin-bottom:6px"><div class="card glass-soft" style="flex:1;text-align:center;padding:13px"><div style="font-size:18px;font-weight:800;color:var(--gold)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> ${b.r}</div><div style="font-size:11px;color:var(--txt-2)">рейтинг</div></div><div class="card glass-soft" style="flex:1;text-align:center;padding:13px"><div style="font-size:18px;font-weight:800;background:var(--grad-lime);-webkit-background-clip:text;background-clip:text;color:transparent">+${b.pts}</div><div style="font-size:11px;color:var(--txt-2)">баллов</div></div><div class="card glass-soft" style="flex:1;text-align:center;padding:13px"><div style="font-size:13px;font-weight:800;color:var(--acc-2)">${b.src||'—'}</div><div style="font-size:11px;color:var(--txt-2)">источник</div></div></div>
     ${loreOf(b.n)?`<div class="place-lore"><div class="pl-emo">📖</div><div class="pl-tx"><b>История места</b>${loreOf(b.n)}</div></div>`:''}
     <div class="detail-row" style="margin-top:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="k">Часы</span><span class="vv">${hoursOf(b.n)} ${isOpenNow(b.n)?'<span style="color:var(--lime);font-weight:700;margin-left:6px">● открыто</span>':'<span style="color:var(--rose);font-weight:700;margin-left:6px">● закрыто</span>'}</span></div>
@@ -6559,7 +6548,7 @@ function openVerifyOTP(data){
   haptic('open');
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Подтверди, что ты владелец</h2>'+
-    '<p style="font-size:13px;color:var(--txt-2);margin-bottom:18px;line-height:1.5">SMS-код на <b>'+data.phone+'</b> включится вместе с релизом — сейчас подтверждение демонстрационное. Проверка нужна, чтобы заведение может его подключить.</p>'+
+    '<p style="font-size:13.5px;color:var(--txt-2);margin-bottom:18px;line-height:1.5">SMS-код на <b>'+data.phone+'</b> включится вместе с релизом — сейчас подтверждение демонстрационное. Проверка нужна, чтобы заведение может его подключить.</p>'+
     '<div class="field"><label>Код из SMS</label><input id="otpInput" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align:center;letter-spacing:.4em;font-size:22px;font-weight:800"></div>'+
     '<button class="cta lime" onclick="confirmOTP()">Подтвердить</button>'+
     '<div class="hint" style="margin-top:14px">Для демо: код <b style="color:var(--lime)">1234</b></div>'+
@@ -6766,7 +6755,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=75;try{renderConsent()}catch(e){}
+var APP_V=72;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7418,7 +7407,7 @@ function openAchievements(){
   var lockedHtml=locked.map(function(a){return achBadge(a,false)}).join('');
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Достижения</h2>'+
-    '<p class="sub" style="color:var(--txt-2);font-size:13px;margin-bottom:16px">Открыто <b style="color:var(--lime)">'+earned.length+'</b> из '+ACHIEVEMENTS.length+'</p>'+
+    '<p class="sub" style="color:var(--txt-2);font-size:13.5px;margin-bottom:16px">Открыто <b style="color:var(--lime)">'+earned.length+'</b> из '+ACHIEVEMENTS.length+'</p>'+
     '<div class="ach-section-lbl">Получено</div>'+
     '<div class="ach-grid-new">'+earnedHtml+'</div>'+
     '<div class="ach-section-lbl" style="margin-top:18px">В процессе</div>'+
@@ -7447,7 +7436,7 @@ function openDistricts(){
   }).join('');
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">Районы Батуми</h2>'+
-    '<p class="sub" style="color:var(--txt-2);font-size:13px;margin-bottom:16px">Открыто <b style="color:var(--lime)">'+unlocked+'</b> из 8 · посети 3+ места в районе чтобы открыть</p>'+
+    '<p class="sub" style="color:var(--txt-2);font-size:13.5px;margin-bottom:16px">Открыто <b style="color:var(--lime)">'+unlocked+'</b> из 8 · посети 3+ места в районе чтобы открыть</p>'+
     '<div class="distr-list">'+rows+'</div>'+
     (unlocked===8?'<div class="distr-crown" style="margin-top:14px">👑 Знаток Батуми · все районы открыты</div>':'');
   _openSheet();haptic('open');
@@ -7479,7 +7468,7 @@ function openHunt(){
   }).join('');
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<div class="hunt-hero">🎪 Hub\'s Saturday Hunt</div>'+
-    '<p class="sub" style="color:var(--txt-2);font-size:13px;margin-bottom:14px">Посети 15 мест за день · топ-3 в городе получают <b style="color:var(--lime)">5000 Loop</b> + Legendary Badge</p>'+
+    '<p class="sub" style="color:var(--txt-2);font-size:13.5px;margin-bottom:14px">Посети 15 мест за день · топ-3 в городе получают <b style="color:var(--lime)">5000 Loop</b> + Legendary Badge</p>'+
     '<div class="hunt-progress"><div class="hunt-pfill" style="width:'+Math.round(visited.length/15*100)+'%"></div><span>'+visited.length+'/15</span></div>'+
     '<div class="hunt-list">'+rows+'</div>';
   _openSheet();haptic('open');
@@ -7516,7 +7505,7 @@ function openWishlist(){
   var names=wlGet();var C=CITIES[CITY];
   var places=names.map(function(n){return C.biz.find(function(b){return b.n===n})}).filter(Boolean);
   haptic('open');
-  var body='<div class="grab"></div><h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Избранное')+'</h2><p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13px">'+T('Места, которые ты сохранил')+'</p>';
+  var body='<div class="grab"></div><h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Избранное')+'</h2><p class="sub" style="margin-bottom:14px;color:var(--txt-2);font-size:13.5px">'+T('Места, которые ты сохранил')+'</p>';
   if(!places.length){
     body+='<div class="empty"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C.9 8.5 2.2 4 6.5 4c2.4 0 3.7 1.4 5.5 3.2C13.8 5.4 15.1 4 17.5 4c4.3 0 5.6 4.5 4 8-2.5 4.5-9.5 9-9.5 9z"/></svg></div><h3 style="font-size:17px;color:var(--txt);font-weight:800">'+T('Пока пусто')+'</h3><p>'+T('Тапни на сердце у любого места, чтобы сохранить')+'</p></div>';
   } else {
@@ -8762,10 +8751,6 @@ window.addEventListener('resize',function(){clearTimeout(__ppT);__ppT=setTimeout
 /* Раз скрытое мы пропускаем, то ставшее видимым надо перемерить — иначе
    чип на только что открытом экране останется без бегунка, когда он нужен. */
 function ppRefresh(){clearTimeout(__ppT);__ppT=setTimeout(function(){try{ppBind()}catch(e){}},90)}
-/* 🚨 Первый замер попадает на подменный шрифт: его метрики шире настоящего,
-   и чип, который в реальном шрифте помещается, объявляется переполненным —
-   строка начинает ездить на ровном месте. Перемеряем, когда шрифты готовы. */
-try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){try{ppBind()}catch(e){}})}catch(e){}
 function ppBind(root){
   var host=root||document;
   host.querySelectorAll('.pp').forEach(function(el){
@@ -8797,10 +8782,7 @@ function ppBind(root){
     var box=el.getBoundingClientRect(), inBox=inner.getBoundingClientRect();
     var room=(box.right-parseFloat(cs.paddingRight||0))-inBox.left;
     var over=inner.scrollWidth-room;
-    /* Порог 6px, а не 2: на чипе шириной 90px «не хватило двух пикселей» —
-       это округление и хинтинг шрифта, а не текст, которому тесно. Возить
-       строку ради шести пикселей хуже, чем незаметно их подрезать. */
-    if(over>6){
+    if(over>2){
       inner.style.setProperty('--pp',over+2);
       /* Длительность от длины: короткий хвост не должен ползти так же долго,
          как длинный — иначе движение выглядит случайным. */
@@ -8875,7 +8857,6 @@ function swipeBind(){
    чтобы жест был виден, а не угадывался. Дальше молчим навсегда. */
 function swipeHintKill(learned){
   var h=document.getElementById('swHint');if(h)h.classList.remove('show');
-  document.body.classList.remove('sw-teaching');
   /* Затемнение живёт ровно столько же, сколько подсказка */
   document.querySelectorAll('.answer.sw-teach').forEach(function(c){c.classList.remove('sw-teach')});
   clearTimeout(window.__swT);
@@ -8895,7 +8876,6 @@ function swipeHintMaybe(){
   h.style.top=Math.round(card.offsetTop+card.offsetHeight*0.40)+'px';
   card.classList.add('sw-teach');          /* блюр + затемнение самой карточки */
   h.classList.add('show');
-  document.body.classList.add('sw-teaching');
   card.classList.add('sw-nudge');
   setTimeout(function(){card.classList.remove('sw-nudge')},1900);
   clearTimeout(window.__swT);window.__swT=setTimeout(swipeHintKill,7000);
@@ -9041,55 +9021,7 @@ function openWallet(){
    выручка заведения, бюджет гостя на ужин. Свою выручку заведения мы в доллары
    не пересчитываем — это их деньги, а не наш прайс.
    Одна точка правды для курса: 100 ⭐ ≈ $1.99 в Telegram → ~50 ⭐ за доллар. */
-/* 🚨 Курс живёт ФУНКЦИЕЙ, а не `var`. Четвёртый раз в этом файле ловим один и
-   тот же класс: объявление `var` поднимается, присваивание — нет. `renderStatic()`
-   рисует тарифы буста на старте, задолго до этой строки, и `Math.round(179 *
-   undefined)` давал NaN → на экране «Буст» рядом с ценой стояло «не число».
-   Рисуется один раз, значит оставалось до конца сессии — и именно на том
-   экране, где мы берём деньги. */
-function starsPerUsd(){return 50}
-/* ═══ САМОПРОВЕРКА ЭКРАНОВ ═══
-   Класс «значение не доехало до отрисовки» статически не ловится: `var`
-   поднимается, присваивание — нет, а арифметика с undefined не бросает
-   исключение, она молча возвращает NaN. Так на экране «Буст» рядом с ценой
-   стояло «не число» — на том самом экране, где мы берём деньги.
-
-   Зато рантаймом это ловится точно: пройти по видимому тексту всех экранов и
-   поискать следы неприехавших значений. Без UI — вызывается из консоли и из
-   регрессии перед деплоем: chSelfCheck(). */
-function chSelfCheck(){
-  var BAD=['NaN','не число','undefined','[object Object]','Infinity','не число'];
-  var found=[],seenTxt={};
-  /* 🚨 Пробелы тут не косметика: toLocaleString('ru-RU') для NaN отдаёт
-     «не<NBSP>число» — с неразрывным пробелом. Проверка с обычным пробелом
-     в игле молча не находит ровно тот дефект, ради которого написана,
-     и выглядит при этом работающей. Нормализуем обе стороны. */
-  function norm(x){return (x||'').replace(/[\u00A0\u202F\u2009]/g,' ').replace(/\s+/g,' ')}
-  function look(where){
-    var t=norm(document.body.innerText);
-    BAD.forEach(function(w){
-      var n=norm(w), i=t.indexOf(n);if(i<0)return;
-      var frag=t.slice(Math.max(0,i-45),i+25);
-      var key=n+frag;if(seenTxt[key])return;seenTxt[key]=1;
-      found.push(where+' → «'+n+'»: …'+frag+'…');
-    });
-  }
-  var back={mode:(document.body.classList.contains('biz')?'biz':'client'),luck:gameGet('luckTab','tasks')};
-  try{
-    look('старт');
-    ['today','map','luck','me'].forEach(function(t){cgo(t);look('client/'+t)});
-    cgo('luck');['tasks','wheel','league'].forEach(function(t){luckGo(t);look('luck/'+t)});
-    goBiz('home');['home','add','qr','boost'].forEach(function(t){bgo(t);look('biz/'+t)});
-  }catch(e){found.push('упало на обходе: '+e.message)}
-  try{                                   /* вернуть человека туда, где он был */
-    if(back.mode==='client'){goClient&&goClient();cgo('today')}
-    luckGo(back.luck);
-  }catch(e){}
-  if(found.length)console.warn('chSelfCheck: '+found.length+'\n'+found.join('\n'));
-  else console.log('chSelfCheck: чисто');
-  return found;
-}
-
+var STARS_PER_USD=50;
 /* Продукт глобальный, стартуем с Батуми. Поэтому две разные шкалы:
    НАШ прайс — всегда $ и ⭐ (одинаково в любой стране, Stars и есть глобальная
    валюта Telegram), а деньги ГОРОДА — ваучер, средний чек, бюджет на ужин —
@@ -9097,7 +9029,7 @@ function chSelfCheck(){
    Стамбула лиры появятся сами, без переписывания копирайта. */
 function lcur(){try{var c=CITIES[CITY];return (c&&c.cur)||'$'}catch(e){return '$'}}
 function usd(v){return '$'+Math.round(v).toLocaleString('en-US')}
-function starsOf(v){var n=Math.round((+v||0)*starsPerUsd());return n?n.toLocaleString('ru-RU'):''}
+function starsOf(v){return Math.round(v*STARS_PER_USD).toLocaleString('ru-RU')}
 function starMark(col){return '<svg class="st-m" viewBox="0 0 24 24" fill="'+(col||'currentColor')+'"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>'}
 /* Цена в долларах + чем за неё платят — звёздами. Второй строкой, не вместо. */
 function priceStars(v,col){return '<span class="pstars">'+starMark(col)+starsOf(v)+'</span>'}
