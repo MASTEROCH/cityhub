@@ -2637,6 +2637,40 @@ input,textarea{font-size:16px!important}
   font-size:13px;line-height:1.5;color:var(--txt-2)}
 /* Откуда данные и когда проверены: атрибуция ODbL плюс честный срок годности. */
 .fact-src{margin-top:12px;font-size:11px;font-weight:600;color:var(--txt-3);text-align:right}
+/* ═══ ПРИВЕДИ ЗАВЕДЕНИЕ — три шага, крупно ═══
+   Нумерованный список, а не карточки: три шага должны читаться сверху вниз
+   одним движением глаза, и номер сам говорит «их всего три». */
+.brg-hero{text-align:center;padding:6px 4px 16px}
+.brg-emo{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;
+  background:rgba(212,255,79,.12);border:1px solid rgba(212,255,79,.3);margin-bottom:10px}
+.brg-emo svg{width:24px;height:24px}
+.brg-hero h2{font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.brg-hero p{margin-top:6px;font-size:13px;color:var(--txt-2);line-height:1.45}
+.brg-steps{list-style:none;counter-reset:brg;display:flex;flex-direction:column;gap:10px}
+.brg-steps li{counter-increment:brg;position:relative;padding:14px 14px 14px 52px;border-radius:var(--r-sm);
+  background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft)}
+.brg-steps li::before{content:counter(brg);position:absolute;left:14px;top:13px;width:26px;height:26px;
+  border-radius:50%;display:grid;place-items:center;background:var(--grad-lime);color:#06210a;
+  font-size:13px;font-weight:900}
+.brg-steps li b{display:block;font-size:14px;font-weight:800;letter-spacing:-.01em}
+.brg-steps li>span{display:block;margin-top:3px;font-size:12px;color:var(--txt-3);line-height:1.45}
+.brg-socs{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.brg-soc{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:99px;
+  background:rgba(255,255,255,.06);border:1px solid var(--stroke-soft);
+  font-size:12px;font-weight:700;color:var(--txt);font-family:inherit;cursor:pointer}
+.brg-soc svg{width:13px;height:13px;color:var(--lime)}
+.brg-soc.off{opacity:.55}
+.brg-soc:active{transform:scale(.96)}
+.brg-plus{display:inline-flex!important;align-items:center;gap:6px;margin-top:10px;
+  font-size:11px;font-weight:700;color:var(--lime)}
+.brg-plus svg{width:12px;height:12px}
+.brg-btn{margin-top:11px;padding:12px;font-size:13px}
+.brg-stat{display:flex;gap:10px;margin-top:14px}
+.brg-stat span{flex:1;text-align:center;padding:11px;border-radius:var(--r-sm);
+  background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft);
+  font-size:12px;font-weight:700;color:var(--txt-3)}
+.brg-stat b{display:block;font-size:20px;font-weight:800;color:var(--txt);font-variant-numeric:tabular-nums}
+.brg-stat .brg-ok b{color:var(--lime)}
 .mood.vibe-open .vb-n{margin-left:6px;padding:1px 6px;border-radius:99px;background:rgba(212,255,79,.16);
   color:var(--lime);font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
 /* Активный чип — светлая подложка, и лаймовый счётчик на ней слепнет.
@@ -6716,6 +6750,13 @@ function useGeo(){toast('Определяю…');if(navigator.geolocation){navig
    отзывам с визитом. Мнение того, кто не дошёл, видно в ленте и помечено,
    но цифру, которую партнёр показывает гостям, оно не двигает. */
 var REV_VISIT=40, REV_VISIT_BARE=15, REV_FREE=5, REV_FREE_DAY=3, REV_MIN_TEXT=30;
+/* 🚨 BRING_PTS живёт ЗДЕСЬ, а не рядом со своей механикой, и это не небрежность.
+   Он читается в литерале TASKS, а тот вычисляется раньше по файлу: `var`
+   поднимает ОБЪЯВЛЕНИЕ, но не присваивание — и в задании печаталось
+   «+undefined». Пятый случай этого класса в файле (после GAME_KEY, openNow,
+   nichesel, STARS_PER_USD). Любая константа, которую читает литерал верхнего
+   уровня, обязана стоять ВЫШЕ него. */
+var BRING_PTS=1000;          /* амбассадору — когда заведение подтвердят */
 /* 🚨 Ключ дня — ЛОКАЛЬНЫМИ компонентами. toISOString().slice(0,10) съедает
    ночь в UTC+4: отзыв в 02:00 засчитался бы во вчерашний лимит (#380, #435). */
 function revDayKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
@@ -7408,7 +7449,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=88;try{renderConsent()}catch(e){}
+var APP_V=89;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7437,6 +7478,21 @@ safe(function(){
 });
 safe(function(){a11yEnhance(document.body)});
 safe(startLangObserver);
+/* Ссылка амбассадора помечена `biz=1`: по ней приходит ВЛАДЕЛЕЦ, и первым
+   экраном ему нужна инструкция, а не лента «куда сходить». */
+function bizJoinFromLink(){
+  var isBiz=false;
+  try{
+    if(/[?&]biz=1/.test(location.search))isBiz=true;
+    var sp=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.start_param;
+    if(sp&&/(^|_)biz(_|$)/.test(String(sp)))isBiz=true;
+  }catch(e){}
+  if(!isBiz)return;
+  if(gameGet('bizJoinSeen',0))return;         /* один раз, дальше не преследуем */
+  gameSet('bizJoinSeen',1);
+  setTimeout(function(){try{openBizJoin()}catch(e){}},900);
+}
+try{bizJoinFromLink()}catch(e){}
 function waitMap(n){if(typeof L!=='undefined'){safe(function(){buildMap()});return}if(n<40)setTimeout(function(){waitMap(n+1)},200)}
 waitMap(0);
 window.addEventListener('load',function(){safe(renderToday);waitMap(0)});
@@ -9542,6 +9598,65 @@ function adRequest(){
   },240);
   try{haptic('tap')}catch(e){}
 }
+/* ═══════ ТРИ ШАГА ДЛЯ ПОЛЬЗОВАТЕЛЯ: «приведи место, которое любишь» ═══════
+   Всё объяснение — три строки. Человек в зале, у него полминуты и одна рука. */
+function openBring(){
+  var sent=bringSent(), ok=bringOk();
+  var stat=sent?('<div class="brg-stat"><span><b>'+sent+'</b> '+T('отправлено')+'</span>'+
+    '<span class="brg-ok"><b>'+ok+'</b> '+T('подтверждено')+'</span></div>'):'';
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<div class="brg-hero"><span class="brg-emo">'+ico('shop','var(--lime)',2)+'</span>'+
+      '<h2>'+T('Приведи место, которое любишь')+'</h2>'+
+      '<p>'+T('Заведение попадёт в город, а ты получишь баллы — крупно.')+'</p></div>'+
+    '<ol class="brg-steps">'+
+      '<li><b>'+T('Отправь им ссылку')+'</b><span>'+T('прямо в зале, со своего телефона')+'</span></li>'+
+      '<li><b>'+T('Они пишут нам сами')+'</b><span>'+T('с рабочего аккаунта — так мы понимаем, что это правда они')+'</span></li>'+
+      '<li><b>'+T('Подтвердим — тебе')+' +'+BRING_PTS+'</b><span>'+T('баллы приходят за подтверждённое заведение, а не за отправку')+'</span></li>'+
+    '</ol>'+
+    stat+
+    '<button class="cta lime" style="margin-top:14px" onclick="bringShare()">'+
+      ico('rocket','currentColor',2.2)+T('Отправить заведению')+'</button>'+
+    '<div class="hint">'+T('Ссылка именная: по ней мы знаем, кого благодарить.')+'</div>';
+  _openSheet();try{haptic('open')}catch(e){}
+}
+/* ═══════ ТРИ ШАГА ДЛЯ ЗАВЕДЕНИЯ: то, что открывается по ссылке ═══════
+   Порядок неслучаен: сначала мы просим написать НАС — это одновременно и
+   проверка аккаунта, и разрешение отвечать. Только потом QR и фото. */
+function openBizJoin(){
+  var soc=BRING_SOC.map(function(x){
+    var on=!!APP_LINKS[x.k];
+    return '<button class="brg-soc'+(on?'':' off')+'" onclick="bizWrite('+jx(x.k)+')">'+
+      ico(x.i,'currentColor',2)+x.n+'</button>';
+  }).join('');
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
+    '<div class="brg-hero"><span class="brg-emo">'+ico('sparkle','var(--lime)',2)+'</span>'+
+      '<h2>'+T('Вы в CityHUB за три шага')+'</h2>'+
+      '<p>'+T('Размещение бесплатное. Платят только за продвижение, и только если захотят.')+'</p></div>'+
+    '<ol class="brg-steps big">'+
+      '<li><b>'+T('Напишите нам')+'</b><span>'+T('с рабочего аккаунта, любое сообщение. Пишете вы — так мы видим, что аккаунт ваш.')+'</span>'+
+        '<div class="brg-socs">'+soc+'</div>'+
+        '<span class="brg-plus">'+ico('loop','currentColor',2)+T('Каждый подтверждённый аккаунт увеличивает бонус')+'</span></li>'+
+      '<li><b>'+T('Повесьте QR')+'</b><span>'+T('гости сканируют его на кассе и получают баллы — вы получаете гостей')+'</span>'+
+        '<button class="cta ghost brg-btn" onclick="closeSheet();setMode(\'biz\');setTimeout(function(){bgo(\'qr\')},320)">'+
+        ico('shop','currentColor',2)+T('Скачать плакат A4')+'</button></li>'+
+      '<li><b>'+T('Пришлите фото, где он висит')+'</b><span>'+T('и получите месяц продвижения бесплатно')+'</span>'+
+        '<button class="cta ghost brg-btn" onclick="bizPhoto()">'+ico('camera','currentColor',2)+T('Отправить фото')+'</button></li>'+
+    '</ol>'+
+    '<div class="hint">'+T('Вопросы — спросите Hub прямо в приложении.')+'</div>';
+  _openSheet();try{haptic('open')}catch(e){}
+}
+function bizWrite(k){
+  var url=APP_LINKS[k];
+  if(!url){toast(T('Аккаунты открываются вместе с релизом — совсем скоро'));try{haptic('warn')}catch(e){}return}
+  if(k==='tg'){try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openTelegramLink){Telegram.WebApp.openTelegramLink(url);return}}catch(e){}}
+  openExternal(url);
+}
+function bizPhoto(){
+  /* Проверку фото делает сервер: на снимке должен быть ИМЕННО тот QR, что
+     выдан этому заведению. Пока сервера нет — не притворяемся, что приняли. */
+  toast(T('Приём фото включим вместе с ботом — он же и проверит, что QR ваш'));
+  try{haptic('warn')}catch(e){}
+}
 function partnerJoin(){
   /* Раньше здесь был тост и переброс в режим владельца — обещание без ответа
      на единственный вопрос, который в этот момент есть: сколько это стоит.
@@ -10247,6 +10362,7 @@ var TASKS=[
  {id:'name',  n:'Как тебя зовут',               d:'Имя видно в лигах и отзывах', p:50,  k:'sparkle',  act:'name'},
  {id:'review',n:'Рассказать, как было',         d:'Ответь на вопрос после визита',p:25, k:'star',     act:'review', repeat:1},
  {id:'rev',   n:'Написать отзыв',                d:'',                            p:REV_VISIT,k:'pin',  act:'writerev',repeat:1},
+ {id:'bring', n:'Приведи заведение',             d:'',                        p:BRING_PTS,k:'shop', act:'bring',   repeat:1},
  {id:'photo', n:'Фото из заведения',            d:'Механику включим с каталогом',p:40,  k:'camera',   act:'photo',  soon:1},
  {id:'city',  n:'Чек-ин в новом городе',        d:'Города за Батуми — на подходе',p:150,k:'globe',    act:'city',   soon:1}
 ];
@@ -10273,6 +10389,11 @@ function taskRow(t){
   var sub=(t.pend&&sent)?(T('Отправлено')+': '+sent+' · '+T('баллы придут, когда друг откроет')):t.d;
   /* Отзыв — единственное задание с суточным потолком, и потолок обязан быть
      виден В СТРОКЕ, а не открыться сюрпризом после того, как человек написал. */
+  if(t.id==='bring'){
+    var bs=bringSent(), bo=bringOk();
+    sub=bs?(T('отправлено')+': '+bs+(bo?' · '+T('подтверждено')+': '+bo:' · '+T('ждём ответа заведения'))) 
+          :T('место, куда ты и так ходишь — за подтверждённое +'+BRING_PTS);
+  }
   if(t.id==='rev'){
     var nv=revNextVenue(), left=revFreeLeft();
     sub=nv?(T('Был в')+' '+bizName(nv)+' → +'+REV_VISIT)
@@ -10372,6 +10493,7 @@ function revOpen(b){
 function taskGo(id){
   var t=TASKS.find(function(x){return x.id===id});if(!t)return;
   try{haptic('tap')}catch(e){}
+  if(t.act==='bring'){openBring();return}
   if(t.act==='writerev'){
     var nv=revNextVenue();
     if(nv){revOpen(nv);return}
@@ -11197,7 +11319,46 @@ function openLegalDoc(k){
   haptic('tap');
 }
 
-var APP_LINKS={apphub:'https://apphub.studio',channel:''/* @cityhub_batumi появится на релизе */,bot:''/* @CityHubBot появится на релизе (P0) */};
+var APP_LINKS={apphub:'https://apphub.studio',channel:''/* @cityhub_batumi появится на релизе */,bot:''/* @CityHubBot появится на релизе (P0) */,
+  /* TODO(go-live): рабочие аккаунты CityHUB. Пока пусто — кнопки честно
+     говорят «на релизе», а не ведут в никуда. Порядок = порядок показа. */
+  ig:''/* instagram.com/... */, fb:''/* facebook.com/... */, th:''/* threads.net/@... */};
+/* ═══════════════ ПРИВЕДИ ЗАВЕДЕНИЕ ═══════════════
+   Механика родилась из простого наблюдения: холодная рассылка заведениям не
+   работает и выглядит спамом. Поэтому поток разворачивается — ЗАВЕДЕНИЕ ПИШЕТ
+   НАМ, а не мы ему. Это решает сразу три задачи одним движением:
+     · подтверждает, что аккаунт действительно принадлежит заведению —
+       написать с официального профиля может только тот, у кого к нему доступ;
+     · открывает диалог с их стороны, а значит нам можно отвечать;
+     · снимает вопрос «откуда вы взяли мой контакт».
+
+   Приводит заведение ПОЛЬЗОВАТЕЛЬ — тот, кто это место любит. Ему за это
+   платят кратно больше, чем за друга: друг приносит одного человека,
+   заведение — поток гостей и выручку.
+
+   🚨 Награда только за ПОДТВЕРЖДЁННОЕ заведение, не за отправленную ссылку.
+   Иначе это снова кран: разослал сто ссылок — получил сто наград (закон
+   «награда за событие, а не за намерение»). */
+var BRING_SOC=[{k:'tg',n:'Telegram',i:'rocket'},{k:'ig',n:'Instagram',i:'sparkle'},{k:'fb',n:'Facebook',i:'people'}];
+function bringLog(){var v=gameGet('bringLog',[]);return Array.isArray(v)?v:[]}
+function bringSave(a){gameSet('bringLog',a)}
+function bringSent(){return bringLog().length}
+function bringOk(){return bringLog().filter(function(x){return x.st==='ok'}).length}
+function bringLink(){
+  /* Ссылка заведения = ссылка пользователя с пометкой «это бизнес»: по ней
+     мы знаем, КОГО благодарить, и открываем сразу инструкцию для владельца. */
+  var base=refLinkSelf();
+  return base+(base.indexOf('?')>=0?'&':'?')+'biz=1';
+}
+function bringShare(){
+  var txt=T('Привет! Я у вас бываю и добавил вас в CityHUB — городской гид, из которого люди узнают, куда пойти. Разместиться бесплатно:');
+  shareLink(txt+'\n'+bringLink(),T('Скопировано — отправьте заведению'));
+  var a=bringLog();
+  a.push({t:Date.now(),st:'sent'});
+  while(a.length>50)a.shift();
+  bringSave(a);
+  try{haptic('success');renderTasks()}catch(e){}
+}
 function openExternal(url){
   try{haptic('tap')}catch(e){}
   try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openLink){Telegram.WebApp.openLink(url);return}}catch(e){}
