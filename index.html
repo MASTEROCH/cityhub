@@ -2631,6 +2631,26 @@ input,textarea{font-size:16px!important}
 .tf-w{flex-shrink:0;font-size:11px;font-weight:700;color:var(--txt-3);font-variant-numeric:tabular-nums}
 .tf-empty{padding:12px 13px;border-radius:var(--r-sm);background:rgba(255,255,255,.04);
   border:1px dashed var(--stroke-soft);font-size:12px;line-height:1.45;color:var(--txt-3)}
+/* ═══ Городские сервисы: довести до места, а не только рассказать ═══ */
+.csv-row{display:flex;gap:9px;margin-top:9px}
+.csv-btn{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:12px 13px;
+  border-radius:var(--r-sm);background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);
+  color:var(--txt);font-family:inherit;cursor:pointer;text-align:left;
+  transition:transform .14s var(--ease-spring)}
+.csv-btn:active{transform:scale(.97)}
+.csv-ic{flex-shrink:0;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;
+  background:rgba(0,224,199,.12);color:var(--acc-2)}
+.csv-ic svg{width:15px;height:15px}
+.csv-t{min-width:0}
+.csv-t b{display:block;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.csv-t span{display:block;font-size:11px;color:var(--txt-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Настоящий факт о месте — из Википедии, а не сочинённый. */
+.wiki-card{margin-top:16px;padding:13px 14px;border-radius:var(--r-sm);
+  background:rgba(255,255,255,.04);border:1px solid var(--stroke-soft)}
+.wiki-h{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.04em;color:var(--txt-3);margin-bottom:7px}
+.wiki-h svg{width:12px;height:12px;color:var(--acc-2)}
+.wiki-card p{font-size:13px;line-height:1.5;color:var(--txt-2);margin-bottom:6px}
 .fm-sphere{position:absolute;inset:0;display:grid;place-items:center;padding:18% 18% 34%}
 .fm-sphere svg{width:100%;height:100%}
 /* ═══ ВЫБОР ГОРОДА: поиск, страны, «скоро» ═══ */
@@ -5281,15 +5301,11 @@ var MAP_CAP=350;
    едут по делу и ищут не здесь. Близость к центру кадра остаётся, но лишь
    как разрешение ничьей — иначе снова побеждает самый частый киоск. */
 var NICHE_W={coffee:6,food:6,bar:5,sea:5,art:5,spa:4,gym:4,music:4,travel:3,beauty:3,kids:3,med:1,shop:0};
+/* Представитель ячейки выбирается ТЕМ ЖЕ законом, что и всё остальное:
+   иначе карта показывает одно, а список считает важным другое. Вес ниши
+   добавляем сверху — на карте «куда сходить» важнее, чем «где купить». */
 function bgScore(v){
-  var b=v.b,sc=(NICHE_W[b.k]||0)*2;
-  if(b.h)sc+=3;
-  var oh=bizOpen(b);if(oh&&(oh.open||oh.always))sc+=2;
-  if(b.u)sc+=2;
-  if(b.ad)sc+=1;
-  if(b.am)sc+=1;
-  if(b.cu)sc+=1;
-  return sc-Math.min(1.5,(v.d||0)*900);   /* ничья решается близостью к центру кадра */
+  try{return chScore(v.b).v*(1+(NICHE_W[v.b.k]||0)*0.12)}catch(e){return 0}
 }
 function cluCell(z){return z<=12?150:z<=13?120:z<=14?96:z<=15?76:64}
 function mapDrawVisible(items){
@@ -5499,6 +5515,76 @@ function initBizMap(){
   var hint=L.DomUtil.create('div','lf-hint',host);hint.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+T('Перетащи или тапни — куда поставить пин');
   setTimeout(function(){if(_LF_BIZ)_LF_BIZ.invalidateSize()},120);
 }
+/* ═══════════════ ГОРОДСКИЕ СЕРВИСЫ ═══════════════
+   Консьерж отличается от справочника тем, что доводит до места, а не только
+   рассказывает о нём. Всё ниже работает БЕЗ единого ключа и в любой стране —
+   это ссылки в чужие приложения, а не интеграции, которые надо покупать.
+
+   Чего здесь намеренно НЕТ: расписаний автобусов собственной базой. Их нет в
+   открытом виде для большинства городов мира, а показать расписание, которое
+   врёт, хуже, чем не показать никакого. Вместо этого — маршрут на транспорте
+   в картах, где расписание настоящее и обновляется не нами. */
+function routeUrl(b,mode){
+  var la=b.o?b.o[0]:0, lo=b.o?b.o[1]:0;
+  var q=encodeURIComponent(bizName(b)+(b.ad?(' '+b.ad):''));
+  if(mode==='taxi_bolt')return 'https://bolt.eu/ride/?destination_lat='+la+'&destination_lng='+lo;
+  if(mode==='taxi_yandex')return 'https://3.redirect.appmetrica.yandex.com/route?end-lat='+la+'&end-lon='+lo+'&appmetrica_tracking_id=1178268795219780156';
+  /* Пешком и транспортом отдаём картам: у них живое расписание и пробки. */
+  var m=mode==='transit'?'transit':(mode==='drive'?'driving':'walking');
+  return 'https://www.google.com/maps/dir/?api=1&destination='+la+','+lo+'&destination_place_id=&travelmode='+m+'&dir_action=navigate';
+}
+function cityGo(bJson,mode){
+  var b=(typeof bJson==='string')?JSON.parse(bJson):bJson;
+  try{haptic('tap')}catch(e){}
+  openExternal(routeUrl(b,mode));
+}
+/* Блок «Как добраться». Время пешком считаем от расстояния по прямой и
+   говорим «примерно»: настоящего маршрута мы не строим и делать вид не будем. */
+function cityServices(b){
+  if(!b||!b.o)return '';
+  var d=null;
+  try{var c=listCenter();var dy=(b.o[0]-c[0])*111000,dx=(b.o[1]-c[1])*82000;d=Math.sqrt(dx*dx+dy*dy)}catch(e){}
+  var walkMin=d?Math.max(1,Math.round(d/75)):null;   /* 4.5 км/ч, по прямой */
+  var j=jx(b);
+  function btn(mode,ic,label,sub){
+    return '<button class="csv-btn" onclick=\'cityGo('+j+','+jx(mode)+')\'>'+
+      '<span class="csv-ic">'+ico(ic,'currentColor',2)+'</span>'+
+      '<span class="csv-t"><b>'+label+'</b>'+(sub?'<span>'+sub+'</span>':'')+'</span></button>';
+  }
+  return '<div class="sec-h" style="margin-top:18px"><h2 style="font-size:15px">'+T('Как добраться')+'</h2></div>'+
+    '<div class="csv-row">'+
+      btn('walk','sea',T('Пешком'),walkMin?('~'+walkMin+' '+T('мин')):'')+
+      btn('transit','rocket',T('Транспортом'),T('маршрут в картах'))+
+    '</div>'+
+    '<div class="csv-row">'+
+      btn('taxi_bolt','scooter','Bolt',T('вызвать такси'))+
+      btn('taxi_yandex','scooter','Yandex Go',T('вызвать такси'))+
+    '</div>';
+}
+/* Факт из Википедии — только там, где у места есть статья (23 из 2 814).
+   Тянем лениво, при открытии карточки: грузить 2 814 статей заранее незачем,
+   а показывать выдумку вместо факта нельзя. */
+var _wikiCache={};
+function wikiLoad(b){
+  if(!b||!b.wiki)return;
+  var box=document.getElementById('bizWiki');if(!box)return;
+  var parts=String(b.wiki).split(':'), lang=parts[0]||'ru', title=parts.slice(1).join(':');
+  var key=lang+':'+title;
+  if(_wikiCache[key]!==undefined){wikiShow(_wikiCache[key]);return}
+  fetch('https://'+encodeURIComponent(lang)+'.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(title.replace(/ /g,'_')))
+    .then(function(r){return r.ok?r.json():null})
+    .then(function(j){
+      var tx=(j&&j.extract)?String(j.extract):'';
+      _wikiCache[key]=tx; wikiShow(tx, j&&j.content_urls&&j.content_urls.desktop&&j.content_urls.desktop.page);
+    })
+    .catch(function(){_wikiCache[key]=''});
+}
+function wikiShow(tx,url){
+  var box=document.getElementById('bizWiki');if(!box||!tx)return;
+  box.innerHTML='<div class="wiki-card"><div class="wiki-h">'+ico('sparkle','currentColor',2)+T('Из Википедии')+'</div>'+
+    '<p>'+revEsc(tx.length>320?tx.slice(0,318)+'…':tx)+'</p>'+
+    (url?'<a class="tel-link" href="'+revEsc(url)+'" target="_blank" rel="noopener">'+T('читать целиком')+' →</a>':'')+'</div>';
+}
 // === Открыть в Google/Apple/Яндекс Maps ===
 function openInMaps(name,lat,lng){
   if(typeof lat==='undefined'||lat===null){lat=(CITIES[CITY]&&CITIES[CITY].c&&CITIES[CITY].c[0])||41.65;lng=(CITIES[CITY]&&CITIES[CITY].c&&CITIES[CITY].c[1])||41.64}
@@ -5605,16 +5691,11 @@ function listItems(){
     .map(function(b,i){
       var dy=b.o?(b.o[0]-ctr[0])*111000:9e6, dx=b.o?(b.o[1]-ctr[1])*82000:9e6;
       var d=Math.sqrt(dx*dx+dy*dy);
-      /* Полезность укорачивает расстояние, но не переставляет ярусы:
-         богатая данными кофейня «ближе» киоска при равных метрах. */
-      if(!isPartner(b)){
-        var sc=0;
-        sc+=(NICHE_W[b.k]||0)*40;
-        if(b.h)sc+=120; if(b.u)sc+=80; if(b.ad)sc+=40; if(b.cu)sc+=40;
-        var oh=null;try{oh=bizOpen(b)}catch(e){}
-        if(oh&&(oh.open||oh.always))sc+=120;
-        d=Math.max(0,d-sc);
-      }
+      /* Закон выдачи укорачивает расстояние: подходящее тебе место «ближе»
+         неподходящего при равных метрах. Ярусы он не переставляет — партнёр
+         остаётся в своём, и порядок остаётся объяснимым. */
+      var sc=0;try{sc=chScore(b,{center:ctr}).v}catch(e){}
+      d=Math.max(0,d-Math.min(700,sc*150));
       /* 🚨 Оплаченное место — СКИДКА К РАССТОЯНИЮ, а не обход реальности.
          Когда промо стояло абсолютно выше, во вкладке «Рядом» зал в 3.8 км
          оказывался над кофейней в 53 м — и подпись с метрами рядом сама это
@@ -7127,11 +7208,10 @@ function searchScore(b,q){
   var sc=0, at=name.indexOf(q);
   if(at===0)sc+=60; else if(at>0)sc+=40;
   else if(searchHay(b).indexOf(q)>=0)sc+=20; else return -1;
-  if(isPartner(b))sc+=25;
-  var oh=null;try{oh=bizOpen(b)}catch(e){}
-  if(oh&&(oh.open||oh.always))sc+=10; else if(oh)sc-=6;
-  if(b.r)sc+=Math.round(b.r);
-  if(b.h)sc+=2; if(b.u)sc+=2; if(b.ad)sc+=1;
+  /* Совпадение с запросом решает порядок величины, закон выдачи — порядок
+     внутри одинаково подходящих. Так «кофе» сначала находит кофейни, а уже
+     среди них — открытые, близкие и в твоём вкусе. */
+  try{sc+=Math.min(30,chScore(b).v*6)}catch(e){}
   return sc;
 }
 function runSearch(q){
@@ -7415,11 +7495,14 @@ function openBiz(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(
     <div class="hint">${T('Покажи QR на кассе — спишется ваучер и начислятся баллы Loop.')}</div>`
       : `<button class="cta lime" style="margin-top:10px" onclick='openInMaps(${jx(b.n)},${b.o?b.o[0]:0},${b.o?b.o[1]:0})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3zM9 7v13M15 4v13"/></svg>${T('Проложить маршрут')}</button>
     <div class="hint">${T('Место с карты города, не партнёр CityHUB: баллов за визит здесь нет. Отзыв написать можно — он поможет другим.')}</div>`}
+    <div id="bizWiki"></div>
+    ${cityServices(b)}
     <div class="rev-sec" id="bizReviews"></div>`;
   window._bizRef=b;try{_revCtx.draft=0}catch(e){}
   _openSheet();haptic('open');
   try{morphHero(_srcImg)}catch(e){}
   renderReviews(b.n,b.r);
+  try{wikiLoad(b)}catch(e){}
   /* TG native: показать MainButton «Веди туда» и BackButton */
   tgBackShow();
   tgMainShow('Веди туда → '+b.n,function(){try{openInMaps(b.n,b.o?b.o[0]:0,b.o?b.o[1]:0)}catch(e){}});
@@ -7950,7 +8033,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=101;try{renderConsent()}catch(e){}
+var APP_V=102;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8703,6 +8786,10 @@ var DIET=[{b:1,n:'халяль'},{b:2,n:'вегетарианцам'},{b:4,n:'в
 function bizWhy(b){
   if(!b)return '';
   if(b.why)return T(b.why);
+  /* Причина берётся из ТОГО ЖЕ счёта, что определил порядок: разойтись они
+     не могут по построению. Собственный список ниже остался для случая,
+     когда закон не нашёл ни одного сильного довода. */
+  try{var w=chWhy(b,2);if(w)return w}catch(e){}
   var out=[];
   try{
     var nz=NICHES.find(function(n){return n.k===b.k});
@@ -10410,6 +10497,85 @@ function subBump(key,mul){
 function subOf(key){var w=subW();return typeof w[key]==='number'?w[key]:1}
 /* Итоговый множитель места: ниша вообще × ниша в это время × уточнения.
    Уточнения влияют мягче — они уточняют, а не решают. */
+/* ═══════════════ ЗАКОН ВЫДАЧИ CityHUB ═══════════════
+   Правила подбора жили в СЕМИ разных функциях: карта прореживала по одним
+   весам, список сортировал по другим, поиск ранжировал по третьим, герой
+   выбирался по четвёртым, «Для тебя сейчас» по пятым. Каждая была разумной
+   по отдельности — и вместе они давали продукт, который на одном экране
+   советует одно, а на соседнем другое. Это и ощущается как «промахивается».
+
+   Один закон, шесть множителей. Все поверхности спрашивают его и только его.
+
+     score = ВКУС × ВРЕМЯ × СОСТОЯНИЕ × БЛИЗОСТЬ × ЗНАНИЕ × ДОГОВОР
+
+   · ВКУС      — ниша вообще, по событиям (визиты, свайпы, ответы)
+   · ВРЕМЯ     — та же ниша в это время суток + уточнения (кухня, удобства)
+   · СОСТОЯНИЕ — открыто · закроется вот-вот · закрыто · не знаем
+   · БЛИЗОСТЬ  — от центра кадра, затухает плавно, а не ступенькой
+   · ЗНАНИЕ    — сколько мы о месте знаем: часы, ссылка, адрес, кухня
+   · ДОГОВОР   — партнёр и промо-тариф. МНОЖИТЕЛЬ, а не обход: оплаченное
+                 выигрывает у сравнимого, но не у того, что человеку нужнее
+
+   🚨 И главное правило, ради которого всё это собрано в одном месте:
+   ОБЪЯСНЕНИЕ РОЖДАЕТСЯ ИЗ ТОГО ЖЕ СЧЁТА. `why` — не отдельный текст «под
+   карточку», а самый сильный множитель, названный словами. Поэтому оно не
+   может разойтись с решением: если написано «открыто и рядом», значит
+   победили именно состояние и близость. Разойтись они могли бы только если
+   считать дважды — а мы считаем один раз. */
+function chScore(b,opts){
+  opts=opts||{};
+  if(!b)return {v:0,why:[]};
+  var why=[],v=1;
+  /* ── ВКУС и ВРЕМЯ ── */
+  var t=tasteOf(b.k), ts=tasteSlotOf(b.k);
+  v*=t*Math.pow(ts,0.8);
+  if(t>=1.35||ts>=1.35){
+    var nz=NICHES.find(function(n){return n.k===b.k});
+    var nn=nz?String(nz.n).toLowerCase():'';
+    why.push({w:(ts>t?ts:t)*1.6,t:ts>=1.35?(T('ты любишь')+' '+nn+' '+slotName(slotNow())):(T('ты любишь')+' '+nn)});
+  }
+  var cu=b.cu?String(b.cu).split(';')[0].trim():'';
+  if(cu){var cs=subOf('cu:'+cu);v*=Math.pow(cs,0.5);
+    if(cs>=1.3&&CUISINE[cu])why.push({w:cs*1.3,t:T(CUISINE[cu])});}
+  var am=+b.am||0;
+  if(am)[1,2,4,8,16,32,64].forEach(function(bit){v*=Math.pow(subOf('am:'+bit),0.35)});
+  /* ── СОСТОЯНИЕ ── */
+  var oh=null;try{oh=bizOpen(b)}catch(e){}
+  if(!oh)v*=0.8;
+  else if(oh.always){v*=1;why.push({w:1.2,t:T('круглосуточно')})}
+  else if(!oh.open){v*=0.12;why.push({w:0.1,t:T('сейчас закрыто')})}
+  else if(typeof oh.left==='number'&&oh.left<45){v*=0.45;why.push({w:2.2,t:T('закрывается через')+' '+Math.max(1,Math.round(oh.left))+' '+T('мин')})}
+  else {v*=1.15;why.push({w:1.1,t:T('открыто сейчас')})}
+  /* ── БЛИЗОСТЬ: затухание, а не порог ── */
+  var d=null;
+  if(b.o){
+    var c=opts.center||listCenter();
+    var dy=(b.o[0]-c[0])*111000,dx=(b.o[1]-c[1])*82000;
+    d=Math.sqrt(dx*dx+dy*dy);
+    v*=1/(1+d/900);
+    if(d<=400)why.push({w:1.8,t:(Math.round(d/10)*10)+' '+T('м отсюда')});
+  }
+  /* ── ЗНАНИЕ: о месте, про которое мы ничего не знаем, и сказать нечего ── */
+  var known=0;
+  if(b.h)known++; if(b.u)known++; if(b.ad)known++; if(b.cu)known++; if(b.tel)known++;
+  v*=1+known*0.06;
+  /* ── ДОГОВОР ── */
+  if(isPartner(b)){
+    v*=1.6;
+    if(b.b==='promo'){v*=1.25;why.push({w:1.5,t:T('двойные баллы за визит')})}
+    else if(b.b==='new')why.push({w:1.0,t:T('новое место')})
+  }
+  if(b.r)why.push({w:b.r/4,t:b.r+'★'});
+  /* Придержанное («не моё») не выбрасываем — вкус меняется, даём второй шанс. */
+  try{var sk=gameGet('tasteSkip',{})||{};if(sk[b.n])v*=0.12}catch(e){}
+  why.sort(function(a,c){return c.w-a.w});
+  return {v:v,why:why,dist:d,open:oh};
+}
+/* Причина = самый сильный множитель словами. Один счёт — одно объяснение. */
+function chWhy(b,max){
+  var r=chScore(b);
+  return r.why.slice(0,max||2).map(function(x){return x.t}).join(' · ');
+}
 function tasteScore(b){
   if(!b)return 1;
   var v=tasteOf(b.k)*Math.pow(tasteSlotOf(b.k),0.8);
@@ -10444,7 +10610,7 @@ function tastePick(pool,exceptName){
   if(!cand.length)cand=pool.slice();
   var total=0,acc=[];
   cand.forEach(function(b){
-    var w=tasteScore(b)*(skip[b.n]?0.12:1)*openFactor(b);
+    var w=chScore(b).v;      /* закон выдачи считает и вкус, и часы, и всё прочее */
     total+=w;acc.push(total);
   });
   var r=Math.random()*total;
