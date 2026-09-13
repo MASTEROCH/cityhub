@@ -8117,7 +8117,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=106;try{renderConsent()}catch(e){}
+var APP_V=107;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -11263,6 +11263,61 @@ function chDeadRefs(){
     if(typeof window[n]!=='function')out.push(n+'() — обработчик карты не определён');
   });
   return out;
+}
+/* ═══════════ ДЫМОВАЯ ПРОВЕРКА: ЭКРАН ПУСТ ═══════════
+   🚨 Оплачено сломанным продом: оптимизация оставила карту без единой метки,
+   и ВСЕ ПЯТЬ стражей прошли зелёными. Они читают текст — а «ничего не
+   нарисовалось» в тексте не видно: пустой экран не содержит ошибок, он
+   вообще ничего не содержит. `chSelfCheck` ищет мусор вроде «undefined» и
+   тоже слеп к пустоте.
+
+   Отсюда проверка противоположного знака: не «нет ли лишнего», а ЕСТЬ ЛИ
+   ОБЯЗАТЕЛЬНОЕ. Каждая строка ниже — поверхность, без которой продукт не
+   работает, и число, ниже которого она считается сломанной.
+
+   Правило пользования: гонять ПОСЛЕ каждой правки, которая трогает рендер,
+   кэш или порядок. Дешевле секунды, а ловит целый класс, который иначе
+   находит Роч. */
+function chSmoke(){
+  var bad=[];
+  function need(what,n,min){if(!(n>=min))bad.push(what+': '+n+' (нужно ≥'+min+')')}
+  var prev=null;try{prev=document.querySelector('#w-client .screen.active');prev=prev&&prev.id}catch(e){}
+  try{
+    cgo('today');
+    need('герой «Сегодня»',document.querySelectorAll('#answerCard h1').length,1);
+    need('«Для тебя сейчас»',document.querySelectorAll('#formeRow .fm-card').length,3);
+    need('бегущая строка',document.querySelectorAll('.ad-track .ad-item').length,4);
+
+    cgo('map');
+    need('строки списка',document.querySelectorAll('#listHolder .biz').length,5);
+    need('фильтры карты',document.querySelectorAll('#mapFilters .mood').length,3);
+    /* 🚨 Первая версия этой строки давала ложную тревогу на ЗДОРОВОМ продукте:
+       сразу после переключения вкладки у контейнера карты ещё нулевой размер,
+       getBounds() пуст, и меток честно ноль. Ложная тревога дороже пропуска —
+       её один раз проверят, второй раз отмахнутся, третий отключат проверку.
+       Поэтому сначала возвращаем карте размер, потом судим. */
+    try{
+      if(window._LF_MAIN){
+        _LF_MAIN.invalidateSize();
+        mapDrawVisible(listItems(),true);
+        need('метки на карте',_LF_MARKERS.length,5);
+      }
+    }catch(e){bad.push('карта упала: '+e.message)}
+
+    cgo('luck');luckGo('tasks');
+    need('задания',document.querySelectorAll('#taskList .task').length,3);
+    luckGo('wheel');
+    need('барабан',document.querySelectorAll('.spin-strip .sp-item,.spin-item,#spinStrip *').length,1);
+
+    cgo('me');
+    need('плитки профиля',document.querySelectorAll('.pf-tile').length,3);
+
+    /* Выдача обязана что-то выдавать: пустой listItems — это пустой продукт. */
+    need('каталог в выдаче',listItems().length,10);
+    need('партнёры',partnersOf(CITIES[CITY]).length,5);
+  }catch(e){bad.push('ПАДЕНИЕ: '+e.message)}
+  try{if(prev)cgo(prev.replace(/^c-/,''))}catch(e){}
+  return bad;
 }
 function chSelfCheck(){
   var BAD=['NaN','не число','undefined','[object Object]','Infinity','не число'];
