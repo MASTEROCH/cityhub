@@ -4645,12 +4645,25 @@ function travelMode(){var C=CITIES[CITY];openMascot();setTimeout(function(){masc
 function jx(o){return JSON.stringify(o).replace(/"/g,'&quot;')}
 /* Бегущая строка рекламы — заведения без полного баннера (free-tier листинг).
    Бесшовный loop: список дублируется, трек уезжает на -50%. Тап → карточка заведения. */
+/* Потолок длины и скорость строки — рядом, чтобы их правили вместе.
+   9 px/с — спокойный шаг: имя успевает прочитаться, глаз не гонится. */
+var TICK_MAX=24, TICK_SPEED=9;
 function renderAdTicker(){
   var el=document.getElementById('adTicker');if(!el)return;
   var C=CITIES[CITY];if(!C||!C.biz||!C.biz.length){el.style.display='none';return}
-  // «не купившие баннер» — в демо берём все, кроме первых трёх featured, + добор по кругу
-  var ads=C.biz.slice(3).concat(C.biz.slice(0,3));
-  if(ads.length<4)ads=C.biz.slice();
+  /* ═══════════ 🚨 ПОЧЕМУ ЗДЕСЬ ПОТОЛОК ═══════════
+     Строка брала ВЕСЬ каталог и дублировала его для бесшовного цикла: после
+     импорта ГЕО это 5 628 кнопок и 675 263 px полотна. Скорость при этом
+     считалась верно — 12 px/с, — но браузер не умеет композитить слой шириной
+     в сорок пределов текстуры (16 384 px) и вместо плавного сдвига перерисовывает
+     рывками. Снаружи это и выглядит как «строка сошла с ума»: дёргается,
+     прыгает, живёт своей жизнью. Замедление тут не лечит — лечит длина.
+
+     И по делу: бегущая строка — РЕКЛАМНОЕ место. Показывать в нём весь город
+     значит раздать даром то, что продаётся. В строку идут партнёры. */
+  var ads=partnersOf(C);
+  if(ads.length<4)ads=C.biz.slice(0,12);
+  if(ads.length>TICK_MAX)ads=ads.slice(0,TICK_MAX);
   var item=function(b){
     var n=NICHES.find(function(x){return x.k===b.k})||{c:'#7C3AFF'};
     return '<button class="ad-item" onclick=\'openBiz('+jx(b)+')\'><span class="ad-ic" style="color:'+n.c+'">'+ico(b.k,n.c,2)+'</span><b>'+bizName(b)+'</b></button>';
@@ -4659,9 +4672,19 @@ function renderAdTicker(){
   el.innerHTML='<button class="ad-tick-label" onclick="openAdPlans()" aria-label="'+T('Реклама в CityHUB')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14zM11 13v6"/></svg>'+T('Реклама')+'<svg class="atl-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 18l6-6-6-6"/></svg></button>'+
     '<div class="ad-viewport"><div class="ad-track">'+row+row+'</div></div>';
   el.style.display='';
-  /* спокойная постоянная скорость ~16 px/с независимо от числа заведений */
+  /* Спокойная постоянная скорость независимо от числа заведений. Замер идёт
+     ПОСЛЕ раскладки и повторяется по готовности шрифта: первый замер попадает
+     на подменный шрифт и даёт другую ширину (тот же класс, что у пинг-понга). */
   var tr=el.querySelector('.ad-track');
-  if(tr&&window.requestAnimationFrame){requestAnimationFrame(function(){var half=tr.scrollWidth/2;if(half>40)tr.style.animationDuration=Math.max(90,Math.round(half/12))+'s'})}
+  function tick(){
+    if(!tr||!tr.isConnected)return;
+    var half=tr.scrollWidth/2;
+    if(half>40)tr.style.animationDuration=Math.max(60,Math.round(half/TICK_SPEED))+'s';
+  }
+  if(tr){
+    requestAnimationFrame(function(){requestAnimationFrame(tick)});
+    try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(tick)}catch(e){}
+  }
 }
 function renderForMe(){
   var row=document.getElementById('formeRow');if(!row)return;
@@ -7449,7 +7472,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=89;try{renderConsent()}catch(e){}
+var APP_V=90;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
