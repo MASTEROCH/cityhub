@@ -8191,7 +8191,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=112;try{renderConsent()}catch(e){}
+var APP_V=113;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8223,13 +8223,7 @@ safe(startLangObserver);
 /* Ссылка амбассадора помечена `biz=1`: по ней приходит ВЛАДЕЛЕЦ, и первым
    экраном ему нужна инструкция, а не лента «куда сходить». */
 function bizJoinFromLink(){
-  var isBiz=false;
-  try{
-    if(/[?&]biz=1/.test(location.search))isBiz=true;
-    var sp=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initDataUnsafe&&Telegram.WebApp.initDataUnsafe.start_param;
-    if(sp&&/(^|_)biz(_|$)/.test(String(sp)))isBiz=true;
-  }catch(e){}
-  if(!isBiz)return;
+  if(!chIsBizLink())return;
   if(gameGet('bizJoinSeen',0))return;         /* один раз, дальше не преследуем */
   gameSet('bizJoinSeen',1);
   setTimeout(function(){try{openBizJoin()}catch(e){}},900);
@@ -11741,10 +11735,28 @@ function refIncoming(){
   try{var u=new URLSearchParams(location.search).get('ref');if(u)return u}catch(e){}
   return '';
 }
+/* 🚨 Ссылка заведения — это именная ссылка пользователя ПЛЮС biz=1
+   (см. bringLink): иначе мы не знали бы, кого благодарить. Из-за этого
+   владелец, открыв её, попадал в обработчик друга и видел «Тебя пригласили
+   в CityHUB, +100 баллов» вместо своих трёх шагов — партнёрская воронка
+   ломалась на первом же экране. Найдено сквозным прогоном ?biz=1&ref=…
+   Признак «это бизнес» проверяется ОДНОЙ функцией, до любой развилки. */
+function chIsBizLink(){
+  try{
+    if(/[?&]biz=1/.test(location.search))return true;
+    var sp=chStartParam&&chStartParam();
+    if(sp&&/(^|_)biz(_|$)/.test(String(sp)))return true;
+  }catch(e){}
+  return false;
+}
 var REF_BONUS=100;
 function refCheckIncoming(){
   var code=refIncoming();if(!code)return;
   if(code===refCodeSelf())return;                       /* свою же ссылку не засчитываем */
+  /* Пришёл владелец заведения: благодарить всё равно есть кого, поэтому код
+     приведшего сохраняем — но ни бонуса «пришёл по приглашению», ни
+     приветствия для друга здесь быть не должно. Экран отдаём openBizJoin. */
+  if(chIsBizLink()){try{if(!gameGet('bizBroughtBy',''))gameSet('bizBroughtBy',code)}catch(e){}return}
   if(gameGet('invitedBy',''))return;                    /* пригласить можно один раз */
   gameSet('invitedBy',code);
   ptsAdd(REF_BONUS,T('Пришёл по приглашению'));
@@ -12492,6 +12504,12 @@ function openLegalDoc(k){
 var APP_LINKS={apphub:'https://apphub.studio',channel:''/* @cityhub_batumi появится на релизе */,bot:''/* @CityHubBot появится на релизе (P0) */,
   /* TODO(go-live): рабочие аккаунты CityHUB. Пока пусто — кнопки честно
      говорят «на релизе», а не ведут в никуда. Порядок = порядок показа. */
+  /* 🚨 tg — ОТДЕЛЬНЫЙ ключ, не bot и не channel. Заведение по инструкции
+     пишет живому аккаунту («напишите нам сами»), бот отвечает автоматически,
+     а канал — вещание. Кнопка Telegram в BRING_SOC читает именно APP_LINKS.tg,
+     и пока ключа не существовало, она осталась бы мёртвой даже после того,
+     как остальные ссылки проставят. */
+  tg:''/* t.me/... — личка для заведений */,
   ig:''/* instagram.com/... */, fb:''/* facebook.com/... */, th:''/* threads.net/@... */};
 /* ═══════════════ ПРИВЕДИ ЗАВЕДЕНИЕ ═══════════════
    Механика родилась из простого наблюдения: холодная рассылка заведениям не
@@ -12509,7 +12527,9 @@ var APP_LINKS={apphub:'https://apphub.studio',channel:''/* @cityhub_batumi по�
    🚨 Награда только за ПОДТВЕРЖДЁННОЕ заведение, не за отправленную ссылку.
    Иначе это снова кран: разослал сто ссылок — получил сто наград (закон
    «награда за событие, а не за намерение»). */
-var BRING_SOC=[{k:'tg',n:'Telegram',i:'rocket'},{k:'ig',n:'Instagram',i:'sparkle'},{k:'fb',n:'Facebook',i:'people'}];
+/* Четыре площадки — ровно те, что назвал Роч. Каждый подтверждённый аккаунт
+   увеличивает бонус заведению, поэтому показываем все, а не «главную». */
+var BRING_SOC=[{k:'tg',n:'Telegram',i:'rocket'},{k:'ig',n:'Instagram',i:'sparkle'},{k:'fb',n:'Facebook',i:'people'},{k:'th',n:'Threads',i:'megaphone'}];
 function bringLog(){var v=gameGet('bringLog',[]);return Array.isArray(v)?v:[]}
 function bringSave(a){gameSet('bringLog',a)}
 function bringSent(){return bringLog().length}
