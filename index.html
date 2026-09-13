@@ -4175,9 +4175,41 @@ function nicheImg(k,seed){
   var id=pool[Math.abs(seed||0)%pool.length];
   return 'https://images.pexels.com/photos/'+id+'/pexels-photo-'+id+'.jpeg?auto=compress&cs=tinysrgb&w=720&h=480&fit=crop';
 }
+/* 🚨 Снимок выбирался ХЭШЕМ ОТ ИМЕНИ — и два заведения одной ниши регулярно
+   получали одну картинку: Lovita Cafe и Dona Bakeshop показывали один и тот
+   же вид Батуми, MOON и Royal Sky — один и тот же бар. Это не невезение, а
+   арифметика: в нише три партнёра, в пуле восемь снимков, вероятность
+   совпадения около трети. Хэш равномерен, но НЕ РАЗЛИЧАЕТ — а здесь нужна
+   именно различимость.
+
+   Снимок показывают только партнёры (у фона эмблема), их в нише не больше
+   трёх, а в пуле 7–10. Значит раздаём ПО ПОРЯДКУ внутри ниши: совпадений не
+   будет по построению, и выбор остаётся стабильным между перерисовками. */
+var _phMap=null;
+function phMapBuild(){
+  _phMap={};
+  try{
+    var seen={};
+    Object.keys(CITIES).forEach(function(id){
+      (CITIES[id].biz||[]).forEach(function(b){
+        if(!isPartner(b))return;
+        var n=seen[b.k]=(seen[b.k]||0);
+        _phMap[id+'|'+b.n]=n;
+        seen[b.k]=n+1;
+      });
+    });
+  }catch(e){}
+  return _phMap;
+}
 function placeImg(name,k){
-  var h=0;for(var i=0;i<name.length;i++){h=(h*31+name.charCodeAt(i))|0}
-  return nicheImg(k,h);
+  var m=_phMap||phMapBuild();
+  var idx=m[CITY+'|'+name];
+  if(idx===undefined){
+    /* не партнёр (или другой город) — прежний путь, различимость там не нужна */
+    var h=0;for(var i=0;i<name.length;i++){h=(h*31+name.charCodeAt(i))|0}
+    return nicheImg(k,h);
+  }
+  return nicheImg(k,idx);
 }
 function ph(k,seed,name){if(name)return placeImg(name,k);return nicheImg(k,seed)}
 function refreshPlace(currentName,k,btn){
@@ -7826,7 +7858,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=97;try{renderConsent()}catch(e){}
+var APP_V=98;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
