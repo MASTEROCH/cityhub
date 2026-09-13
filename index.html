@@ -2622,6 +2622,15 @@ input,textarea{font-size:16px!important}
 .th-sphere svg{width:100%;height:100%}
 .peek-sphere{position:absolute;inset:0;display:grid;place-items:center;padding:16% 16% 30%}
 .peek-sphere svg{width:100%;height:100%}
+/* Что система знает — и на чём это основано. Основание рядом с выводом:
+   человек должен видеть не вердикт, а то, что может проверить. */
+.taste-facts{display:flex;flex-direction:column;gap:7px;margin:2px 0 14px}
+.tf-row{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:var(--r-sm);
+  background:rgba(212,255,79,.06);border:1px solid rgba(212,255,79,.18)}
+.tf-t{flex:1;min-width:0;font-size:13px;font-weight:700;color:var(--txt)}
+.tf-w{flex-shrink:0;font-size:11px;font-weight:700;color:var(--txt-3);font-variant-numeric:tabular-nums}
+.tf-empty{padding:12px 13px;border-radius:var(--r-sm);background:rgba(255,255,255,.04);
+  border:1px dashed var(--stroke-soft);font-size:12px;line-height:1.45;color:var(--txt-3)}
 .fm-sphere{position:absolute;inset:0;display:grid;place-items:center;padding:18% 18% 34%}
 .fm-sphere svg{width:100%;height:100%}
 /* ═══ ВЫБОР ГОРОДА: поиск, страны, «скоро» ═══ */
@@ -3709,6 +3718,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
         <div class="taste-card fadein collapsed" id="tasteCard"><button class="taste-head" onclick="toggleTaste()" aria-expanded="false"><b>Твой вкус</b><span class="acc" id="tasteAcc">точность 84%</span><svg class="taste-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
           <div class="taste-body">
           <div class="taste-sub">CityHUB изучает тебя с каждым визитом. Чем больше ходишь — тем точнее подбор.</div>
+          <div class="taste-facts" id="tasteFacts"></div>
           <div id="tasteBars"></div>
           <button class="add-taste" onclick="openAddTaste()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Добавить вкус</button>
           <div class="taste-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10c0-2-1-2-1-4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg>Обновляется автоматически по твоим действиям</div>
@@ -7940,7 +7950,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=100;try{renderConsent()}catch(e){}
+var APP_V=101;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8869,6 +8879,26 @@ function nextSaturday(){var d=new Date();var w=d.getDay();var add=(6-w+7)%7||7;d
 /* Hook for confirmArrived — gamification on visit */
 function gameOnVisit(bizName){
   var added=visitedAdd(bizName);
+  /* 🚨 Возврат — сильнейший сигнал, и раньше он ПРОПАДАЛ: `visitedAdd`
+     возвращал false на повторе и ничего не записывал. Второй поход в то же
+     место — единственное прямое доказательство, что там понравилось. */
+  try{
+    var b0=null;try{b0=CITIES[CITY].biz.find(function(x){return x.n===bizName})}catch(e){}
+    var k0=b0?b0.k:'';
+    var nth=visitLogAdd(bizName,k0);
+    var slot=slotNow();
+    if(k0){
+      tasteSlotBump(k0,nth>1?1.6:1.3,slot);
+      if(nth>1)tasteBump(k0,1.25);                       /* вернулся — поднимаем и общий */
+    }
+    if(b0){
+      var m=nth>1?1.5:1.2;
+      if(b0.cu)String(b0.cu).split(';').forEach(function(c){subBump('cu:'+c.trim(),m)});
+      var am0=+b0.am||0;
+      if(am0)[1,2,4,8,16,32,64].forEach(function(bit){if(am0&bit)subBump('am:'+bit,nth>1?1.3:1.12)});
+    }
+    if(nth>1)toast(T('Ты сюда вернулся — запомнил'));
+  }catch(e){}
   var hh=new Date().getHours();
   if(hh<11)gameSet('morningVisits',gameGet('morningVisits',0)+1);
   if(hh>=22||hh<5)gameSet('nightVisits',gameGet('nightVisits',0)+1);
@@ -10308,6 +10338,86 @@ function streakRestore(lost){
    и жеста, и намерения, и способен перебить собственный чек-ин.
    Дизлайкнутое место придерживаем 20 показов, но не баним навсегда:
    вкус меняется, и продукт обязан давать второй шанс. */
+/* ═══════════════ ВКУС: ТРИ ОСИ ВМЕСТО ОДНОЙ ═══════════════
+   Одна ось «ниша» упирается в потолок быстро: «кофе» — это и тихое место для
+   работы в девять утра, и шумная кофейня с друзьями в шесть вечера. Пока вес
+   один на нишу, система не может различить эти два случая, а значит и не
+   может «знать лучше самого человека» — ей нечем.
+
+   Три оси, все три учатся на СОБЫТИЯХ, а не на анкете:
+
+   1. НИША × ВРЕМЯ СУТОК. Вес ниши отдельно для утра (5–11), дня (11–17),
+      вечера (17–23) и ночи (23–5). Бар в девять утра и бар в девять вечера —
+      разные предложения, и путать их нельзя.
+   2. ВОЗВРАТ. Самый честный сигнал, какой вообще бывает: человек сходил
+      ВТОРОЙ раз. Не лайк, не свайп, не клик — ноги. Возврат весит ×1.6,
+      больше любого жеста, и он единственный, кто отвечает на вопрос
+      «а понравилось ли там», ради которого всё и затевалось.
+   3. УТОЧНЕНИЕ ВНУТРИ НИШИ — кухня и удобства. Пять визитов в грузинские
+      заведения это не «любит еду», а «любит грузинскую кухню»; три визита
+      на террасы — «выбирает места с террасой».
+
+   Всё живёт в localStorage и уедет на сервер одним объектом, когда он
+   включится: структура уже переносимая. */
+var SLOTS=[{k:'m',n:'утром',from:5,to:11},{k:'d',n:'днём',from:11,to:17},
+           {k:'e',n:'вечером',from:17,to:23},{k:'n',n:'ночью',from:23,to:5}];
+function slotNow(t){
+  var h=new Date(t||Date.now()).getHours();
+  for(var i=0;i<SLOTS.length;i++){
+    var s2=SLOTS[i];
+    if(s2.from<s2.to){if(h>=s2.from&&h<s2.to)return s2.k}
+    else if(h>=s2.from||h<s2.to)return s2.k;
+  }
+  return 'd';
+}
+function slotName(k){var s2=SLOTS.find(function(x){return x.k===k});return s2?s2.n:''}
+/* Журнал визитов — фундамент всего: без времени и без повторов учиться не на чем.
+   Прежний `visited` был списком имён и повтор ПРОСТО НЕ ЗАПИСЫВАЛ. */
+function visitLog(){var v=gameGet('visitLog',[]);return Array.isArray(v)?v:[]}
+function visitLogAdd(name,k){
+  var v=visitLog();
+  v.push({n:name,k:k||'',t:Date.now()});
+  while(v.length>400)v.shift();           /* года хватает, дальше вкус всё равно другой */
+  gameSet('visitLog',v);
+  return v.filter(function(x){return x.n===name}).length;   /* какой это по счёту визит */
+}
+function visitCountOf(name){return visitLog().filter(function(x){return x.n===name}).length}
+/* Вес по времени суток. Хранится отдельно от глобального, чтобы одно не
+   затирало другое: глобальный отвечает «что ты любишь вообще», слотовый —
+   «что ты любишь в это время». */
+function tasteSlotW(){try{return gameGet('tasteSlotW',{})||{}}catch(e){return {}}}
+function tasteSlotSet(w){try{gameSet('tasteSlotW',w)}catch(e){}}
+function tasteSlotBump(k,mul,slot){
+  if(!k)return;
+  slot=slot||slotNow();
+  var all=tasteSlotW(), w=all[slot]||{};
+  var v=(typeof w[k]==='number'?w[k]:1)*mul;
+  w[k]=Math.max(.15,Math.min(4,v));
+  all[slot]=w;tasteSlotSet(all);
+}
+function tasteSlotOf(k,slot){
+  var w=(tasteSlotW()||{})[slot||slotNow()]||{};
+  return typeof w[k]==='number'?w[k]:1;
+}
+/* Уточнения: кухня и удобства. Ключи с префиксом, чтобы не мешались с нишами. */
+function subW(){try{return gameGet('tasteSub',{})||{}}catch(e){return {}}}
+function subBump(key,mul){
+  if(!key)return;
+  var w=subW();var v=(typeof w[key]==='number'?w[key]:1)*mul;
+  w[key]=Math.max(.2,Math.min(4,v));
+  try{gameSet('tasteSub',w)}catch(e){}
+}
+function subOf(key){var w=subW();return typeof w[key]==='number'?w[key]:1}
+/* Итоговый множитель места: ниша вообще × ниша в это время × уточнения.
+   Уточнения влияют мягче — они уточняют, а не решают. */
+function tasteScore(b){
+  if(!b)return 1;
+  var v=tasteOf(b.k)*Math.pow(tasteSlotOf(b.k),0.8);
+  if(b.cu)String(b.cu).split(';').forEach(function(c){v*=Math.pow(subOf('cu:'+c.trim()),0.5)});
+  var am=+b.am||0;
+  if(am)[1,2,4,8,16,32,64].forEach(function(bit){if(am&bit)v*=Math.pow(subOf('am:'+bit),0.35)});
+  return v;
+}
 function tasteW(){try{return gameGet('tasteW',{})||{}}catch(e){return {}}}
 function tasteSet(w){try{gameSet('tasteW',w)}catch(e){}}
 function tasteBump(k,mul){
@@ -10334,7 +10444,7 @@ function tastePick(pool,exceptName){
   if(!cand.length)cand=pool.slice();
   var total=0,acc=[];
   cand.forEach(function(b){
-    var w=tasteOf(b.k)*(skip[b.n]?0.12:1)*openFactor(b);
+    var w=tasteScore(b)*(skip[b.n]?0.12:1)*openFactor(b);
     total+=w;acc.push(total);
   });
   var r=Math.random()*total;
@@ -10400,9 +10510,94 @@ function renderTasteBars(){
     return '<div class="tbar"><div class="tb-h"><span class="tb-ic" style="background:'+r.c+'22;color:'+r.c+'">'+ico(r.k,'currentColor',2)+'</span><b>'+r.n+'</b><span class="tb-v" style="color:'+r.c+'">'+pct+'%</span></div>'+
       '<div class="tb-track"><i style="width:'+pct+'%;background:linear-gradient(90deg,'+r.c+'88,'+r.c+')"></i></div></div>';
   }).join('');
+  /* 🚨 Здесь печаталась «точность 84%» по формуле `52+seen*4`. Точности мы не
+     измеряем ничем: нет ни разметки, ни исхода, с которым сравнивать. Число
+     было придумано, чтобы выглядеть умно. Показываем то, что правда: сколько
+     сигналов собрано — по нему видно, стоит ли верить выводам. */
   var acc=document.getElementById('tasteAcc');
-  var seen=gameGet('tasteSeen',0)||0;
-  if(acc)acc.textContent=seen<3?T('учусь…'):(T('точность')+' '+Math.min(96,52+seen*4)+'%');
+  var sig=tasteSignals();
+  if(acc)acc.textContent=sig<3?T('учусь…'):(sig+' '+pl3(sig,T('сигнал'),T('сигнала'),T('сигналов')));
+  try{renderTasteFacts()}catch(e){}
+}
+/* Сколько событий вообще легло в основу: визиты, свайпы, ответы после визита. */
+function tasteSignals(){
+  var n=0;
+  try{n+=visitLog().length}catch(e){}
+  try{n+=Object.keys(gameGet('askDone',{})||{}).length}catch(e){}
+  try{n+=gameGet('tasteSeen',0)||0}catch(e){}
+  return n;
+}
+/* ═══════════ ЧТО СИСТЕМА ЗНАЕТ — И ПОЧЕМУ ОНА ЭТО ЗНАЕТ ═══════════
+   Каждое утверждение обязано опираться на СЧИТАЕМОЕ число событий, и порог
+   не косметический: два визита — совпадение, три — привычка. Ниже порога
+   молчим. «Знать лучше самого человека» начинается с того, что система не
+   говорит о себе больше, чем есть оснований, — иначе её выводам перестают
+   верить на первом же промахе, и справедливо.
+
+   И каждое утверждение показывает своё основание: «по 4 визитам». Человек
+   должен видеть не вердикт, а вывод, который может проверить. */
+function tasteFacts(){
+  var out=[],log=[];
+  try{log=visitLog()}catch(e){}
+  if(!log.length)return out;
+  var C=CITIES[CITY]||{biz:[]};
+  function nicheName(k){var n=NICHES.find(function(x){return x.k===k});return n?String(n.n).toLowerCase():k}
+  /* 1. Ниша × время суток */
+  var bySlot={};
+  log.forEach(function(v){
+    if(!v.k)return;
+    var sl=slotNow(v.t);
+    (bySlot[sl]=bySlot[sl]||{})[v.k]=((bySlot[sl]||{})[v.k]||0)+1;
+  });
+  Object.keys(bySlot).forEach(function(sl){
+    var m=bySlot[sl],best=null,bn=0,tot=0;
+    Object.keys(m).forEach(function(k){tot+=m[k];if(m[k]>bn){bn=m[k];best=k}});
+    if(bn>=3&&bn/tot>=0.5){
+      /* «ты за еда» — родительный падеж, которого нет. Ниши хранятся в
+         именительном, склонять их значит городить таблицу на три языка ради
+         одной строки. Тире решает это точнее и переводится без потерь. */
+      var sn=slotName(sl);
+      out.push({t:sn.charAt(0).toUpperCase()+sn.slice(1)+' — '+nicheName(best),
+                w:bn,why:bn+' '+pl3(bn,T('визит'),T('визита'),T('визитов'))});
+    }
+  });
+  /* 2. Возвраты — куда ходишь снова */
+  var cnt={};log.forEach(function(v){cnt[v.n]=(cnt[v.n]||0)+1});
+  var again=Object.keys(cnt).filter(function(n){return cnt[n]>1});
+  if(again.length){
+    var top=again.sort(function(a,b){return cnt[b]-cnt[a]})[0];
+    out.push({t:T('Возвращаешься в')+' '+top,w:cnt[top]+2,why:cnt[top]+' '+pl3(cnt[top],T('раз'),T('раза'),T('раз'))});
+  }
+  /* 3. Кухня */
+  var cu={};
+  log.forEach(function(v){
+    var b=C.biz.find(function(x){return x.n===v.n});
+    if(b&&b.cu)String(b.cu).split(';').forEach(function(c){c=c.trim();if(CUISINE[c])cu[c]=(cu[c]||0)+1});
+  });
+  Object.keys(cu).forEach(function(c){if(cu[c]>=2)out.push({t:T('Любишь')+' '+T(CUISINE[c]),w:cu[c],why:cu[c]+' '+pl3(cu[c],T('место'),T('места'),T('мест'))})});
+  /* 4. Удобства */
+  var am={};
+  log.forEach(function(v){
+    var b=C.biz.find(function(x){return x.n===v.n});
+    var m=b?(+b.am||0):0;
+    if(m)AMEN.concat(AMEN2).forEach(function(a){if(m&a.b)am[a.n]=(am[a.n]||0)+1});
+  });
+  Object.keys(am).forEach(function(n){if(am[n]>=3)out.push({t:T('Выбираешь места, где есть')+' '+T(n),w:am[n]-1,why:am[n]+' '+pl3(am[n],T('место'),T('места'),T('мест'))})});
+  return out.sort(function(a,b){return b.w-a.w}).slice(0,4);
+}
+function renderTasteFacts(){
+  var el=document.getElementById('tasteFacts');if(!el)return;
+  var f=tasteFacts();
+  if(!f.length){
+    var sig=tasteSignals();
+    el.innerHTML='<div class="tf-empty">'+
+      (sig?T('Пока мало данных: два визита — совпадение, три — привычка. Схожу за тобой ещё пару раз.')
+          :T('Сходи в пару мест — и я начну понимать, что тебе заходит.'))+'</div>';
+    return;
+  }
+  el.innerHTML=f.map(function(x){
+    return '<div class="tf-row"><span class="tf-t">'+revEsc(x.t)+'</span><span class="tf-w">'+revEsc(x.why)+'</span></div>';
+  }).join('');
 }
 
 /* Битые фото мест: скрываем сам <img>, под ним остаётся фирменный градиент.
