@@ -5397,6 +5397,7 @@ function buildMap(){
   // первый запуск или смена города → пересоздать
   if(!_LF_MAIN || _LF_MAIN._cityId!==CITY){
     if(_LF_MAIN){_LF_MAIN.remove();_LF_MAIN=null;_LF_MARKERS=[];_LF_ME=null}
+    _mapSig='';
     host.innerHTML='';
     _LF_MAIN=L.map(host,{zoomControl:true,attributionControl:true,scrollWheelZoom:true,touchZoom:true,doubleClickZoom:true}).setView(C.c,14);
     _LF_MAIN._cityId=CITY;
@@ -5409,8 +5410,15 @@ function buildMap(){
     // фикс ресайза когда карта во вкладке инициализирована скрытой
     setTimeout(function(){if(_LF_MAIN)_LF_MAIN.invalidateSize()},120);
   }else{
-    // очистить старые маркеры (если фильтр изменился)
-    _LF_MARKERS.forEach(function(m){_LF_MAIN.removeLayer(m)});_LF_MARKERS=[];
+    /* 🚨 Здесь маркеры сносились ВТОРЫМ писателем — а снимает и ставит их
+       mapDrawVisible. После добавления проверки отпечатка (v105) это
+       обернулось пустой картой: buildMap чистил, mapDrawVisible видел тот же
+       кадр и отказывался рисовать. Ноль меток на всех входах.
+
+       Чиню устранением класса, а не заплаткой: владелец меток ОДИН, и это
+       mapDrawVisible. Здесь только сбрасываем отпечаток — «набор изменился,
+       перерисуй». */
+    _mapSig='';
     var hint=document.getElementById('lfHint');if(hint)hint.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+items.length+' '+T('мест');
   }
   /* 🚨 Рисовать ВСЕ места нельзя. Замер на каталоге Батуми: 28 маркеров — 41 мс,
@@ -8109,7 +8117,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=105;try{renderConsent()}catch(e){}
+var APP_V=106;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
