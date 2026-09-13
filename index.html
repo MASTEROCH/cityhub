@@ -6984,7 +6984,7 @@ function openBiz(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(
     ${bizTiles(b)}
     ${loreOf(b.n)?`<div class="place-lore"><div class="pl-emo">📖</div><div class="pl-tx"><b>История места</b>${loreOf(b.n)}</div></div>`:''}
     ${bizFacts(b)}
-        ${b.why?`<div class="detail-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg><span class="k">${T('Причина показа')}</span><span class="vv" style="color:var(--lime)">${T(b.why)}</span></div>`:''}
+        ${(function(){var w=bizWhy(b);return w?`<div class="detail-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg><span class="k">${T('Причина показа')}</span><span class="vv" style="color:var(--lime)">${w}</span></div>`:''})()}
     ${srcBtn}
     ${isPartner(b)
       ? `<button class="cta lime" style="margin-top:10px" onclick='arrived(${jx(b)})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3 8-8M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>${T('Я на месте — показать QR')}</button>
@@ -7527,7 +7527,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=92;try{renderConsent()}catch(e){}
+var APP_V=93;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8269,6 +8269,38 @@ var AMEN2=[{b:64,n:'посадка внутри',i:'shop'},{b:128,n:'туале�
   {b:256,n:'drive-through',i:'scooter'},{b:512,n:'Wi-Fi бесплатный',i:'wifi'}];
 var PAYM=[{b:1,n:'карты'},{b:2,n:'бесконтакт'},{b:4,n:'Apple / Google Pay'},{b:8,n:'наличные'}];
 var DIET=[{b:1,n:'халяль'},{b:2,n:'вегетарианцам'},{b:4,n:'веганам'},{b:8,n:'без глютена'}];
+/* ═══════════ ПРИЧИНА ПОКАЗА ═══════════
+   У 28 партнёров причина вписана руками. У 2 786 импортированных мест её не
+   было вовсе — а именно она отвечает на вопрос, ради которого продукт вообще
+   существует: «почему мне это?». Собираем из того, что ЗНАЕМ, и молчим, когда
+   не знаем: выдуманная причина хуже отсутствующей, потому что ей верят.
+
+   Порядок не случаен: сначала личное («ты любишь»), потом состояние
+   («открыто»), потом расстояние. Так же устроен `why` в GEOS. */
+function bizWhy(b){
+  if(!b)return '';
+  if(b.why)return T(b.why);
+  var out=[];
+  try{
+    var nz=NICHES.find(function(n){return n.k===b.k});
+    if(nz&&typeof tasteOf==='function'&&tasteOf(b.k)>=1.2)out.push(T('ты любишь')+' '+String(nz.n).toLowerCase());
+  }catch(e){}
+  var cu=cuisineName(b.cu);
+  if(cu&&out.length<2)out.push(T(cu));
+  try{
+    var r=bizOpen(b);
+    if(out.length<2&&r&&(r.open||r.always))out.push(T('открыто сейчас'));
+  }catch(e){}
+  if(out.length<2&&b.o){
+    try{
+      var c=listCenter();
+      var dy=(b.o[0]-c[0])*111000, dx=(b.o[1]-c[1])*82000;
+      var d=Math.round(Math.sqrt(dx*dx+dy*dy));
+      if(d<700)out.push(d<1000?(Math.round(d/10)*10)+' '+T('м отсюда'):'');
+    }catch(e){}
+  }
+  return out.filter(Boolean).slice(0,2).join(' · ');
+}
 function bizFacts(b){
   if(!b)return '';
   var rows='';
@@ -8304,11 +8336,19 @@ function bizFacts(b){
   if(b.br)rows+=row('<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',T('Сеть'),revEsc(b.br));
   /* — адрес: улица + этаж + город. Этаж в торговом центре это половина
        ответа «как найти», и он лежал в тегах невостребованным у 947 мест. — */
-  if(b.ad||b.ade||b.lv){
+  /* Этаж сам по себе не адрес: строка «Адрес · этаж 2» без улицы выглядит
+     обрывком. Он уточняет адрес, а не заменяет его. */
+  if(b.ad||b.ade||b.ac){
     var parts=[];
     var street=(curLang==='RU'||curLang==='GE')?(b.ad||b.ade):(b.ade||b.ad);
     if(street)parts.push(revEsc(street));
-    if(b.lv!==undefined)parts.push(T('этаж')+' '+b.lv);
+    /* 🚨 `level` в OSM считается от уровня входа: 0 — это тот этаж, на который
+       заходишь с улицы. Печатать «этаж 0» бессмысленно (857 карточек из 947
+       именно такие) и вдобавок неверно: и по-русски, и по-грузински этот
+       этаж называют первым. Поэтому ноль не показываем вовсе — он и есть
+       норма, — положительные сдвигаем на местный счёт, отрицательные
+       называем словом. */
+    if(b.lv!==undefined&&b.lv!==0)parts.push(b.lv<0?T('цокольный этаж'):(T('этаж')+' '+(b.lv+1)));
     if(b.ac&&(!street||street.indexOf(b.ac)<0))parts.push(revEsc(b.ac));
     var full=parts.join(' · ');
     rows+=row('<path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
