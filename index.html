@@ -332,7 +332,7 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .screen{position:absolute;inset:0;display:none;flex-direction:column;padding-top:var(--safe-t)}
 .screen.active{display:flex;animation:scrIn .4s cubic-bezier(.2,.8,.2,1)}
 @keyframes scrIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
-.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 52px);scroll-behavior:smooth}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 52px)}
 .tilt-card{transition:transform .4s cubic-bezier(.2,.9,.3,1)}
 .scroll::-webkit-scrollbar{display:none}
 .hdr{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -1873,8 +1873,16 @@ button:focus-visible,input:focus-visible,.biz:focus-visible,.mini:focus-visible{
 .hdr-loc,.pts-chip,.chat-send,.mode-pill,.skip-btn{min-height:44px}
 /* tap-delay устранение */
 button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:manipulation}
-/* плавный скролл-инерция везде */
-.scroll,.split-list,.chat-scroll,.forme-row,.mood-row,.quick-row{scroll-behavior:smooth}
+/* 🚨 Здесь стояло `scroll-behavior:smooth` на всех прокручиваемых слоях с
+   комментарием «плавный скролл-инерция везде» — и это заблуждение в самой
+   формулировке: свойство НЕ добавляет инерцию пальцу, оно влияет только на
+   ПРОГРАММНУЮ прокрутку. Зато вредит: в вебвью (iOS WebKit, Telegram) оно
+   вмешивается в нативный момент и делает прокрутку вязкой — ровно то, что
+   человек описывает как «скроллинг перестал работать».
+
+   Плавность там, где она нужна, и так задаётся явно в вызовах:
+   scrollIntoView({behavior:'smooth'}) по всему файлу. Пальцу же нужна
+   нативная инерция, а её даёт -webkit-overflow-scrolling:touch. */
 .ai-ava{background:linear-gradient(135deg,#7C3AFF,#00E0C7)!important;position:relative}
 .ai-ava::after{content:'';position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:#4ade80;border:2px solid var(--bg-1);box-shadow:0 0 6px #4ade80}
 /* rewards shop */
@@ -2614,6 +2622,8 @@ input,textarea{font-size:16px!important}
 .th-sphere svg{width:100%;height:100%}
 .peek-sphere{position:absolute;inset:0;display:grid;place-items:center;padding:16% 16% 30%}
 .peek-sphere svg{width:100%;height:100%}
+.fm-sphere{position:absolute;inset:0;display:grid;place-items:center;padding:18% 18% 34%}
+.fm-sphere svg{width:100%;height:100%}
 /* ═══ ВЫБОР ГОРОДА: поиск, страны, «скоро» ═══ */
 .city-srch{display:flex;align-items:center;gap:9px;padding:11px 14px;margin-bottom:10px;
   border-radius:var(--r-sm);background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft)}
@@ -2700,11 +2710,11 @@ input,textarea{font-size:16px!important}
   font-size:12px;font-weight:700;color:var(--txt-3)}
 .brg-stat b{display:block;font-size:20px;font-weight:800;color:var(--txt);font-variant-numeric:tabular-nums}
 .brg-stat .brg-ok b{color:var(--lime)}
-.mood.vibe-open .vb-n{margin-left:6px;padding:1px 6px;border-radius:99px;background:rgba(212,255,79,.16);
-  color:var(--lime);font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
-/* Активный чип — светлая подложка, и лаймовый счётчик на ней слепнет.
-   Роль цвета переворачивается вместе с фоном, как и положено токену. */
-.mood.on.vibe-open .vb-n{background:rgba(10,13,22,.1);color:#0a0d16}
+/* 🚨 Здесь висел счётчик «654» внутри подписи чипа. Остальные чипы — это
+   ВЕРТИКАЛЬНАЯ стопка «значок над словом», и вставленная в подпись плашка
+   ломала стопку: чип раздувался вширь, слово уезжало вбок, весь ряд терял
+   общую базовую линию. Счёт и так виден на карте («N мест»), а чип обязан
+   быть той же формы, что соседние: одинаковые элементы выглядят одинаково. */
 .bz-tiles{display:flex;gap:10px;margin-bottom:6px}
 .bz-tile{flex:1;text-align:center;padding:13px;min-width:0}
 .bz-tile .bzt-v{font-size:18px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -4382,6 +4392,11 @@ function refresh(m){}
 // ---------- CLIENT: answer + alt ----------
 // ---------- RETENTION: deal of day, streak, daily reward ----------
 let dealTimer=null;
+/* 🚨 Здесь стояло «−40% сегодня» ЗАШИТОЙ строкой — одинаковая скидка для
+   любого заведения, о которой никто не договаривался. Поля скидки в каталоге
+   нет вовсе: придумать её цифру значит пообещать за партнёра то, чего он не
+   давал. Настоящий механизм промо-тарифа другой и у нас есть: двойные баллы
+   за визит. Его и называем. */
 function renderDeal(){
   const C=CITIES[CITY];
   const wrap=document.getElementById('dealBox');
@@ -4393,7 +4408,7 @@ function renderDeal(){
   const nz=NICHES.find(n=>n.k===d.k)||{c:'#7C3AFF',n:''};
   wrap.innerHTML=`<img class="dph" src="${ph(d.k,d.n.length+9,d.n)}" alt="" loading="lazy" onerror="this.onerror=null;this.style.background='linear-gradient(135deg,${nz.c}aa,${nz.c}22)';this.removeAttribute('src')"><div class="dov"></div>
     <div class="dtop"><span class="dlbl"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>Деал дня</span><span class="timer" id="dealTimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>--:--:--</span></div>
-    <div class="dct"><span class="ddisc">−40% сегодня</span><h2>${d.n}</h2><div class="dsub">${nz.n} · <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> ${d.r} · только сегодня в CityHUB</div>
+    <div class="dct"><span class="ddisc">${T('×2 балла сегодня')}</span><h2>${bizName(d)}</h2><div class="dsub">${nz.n}${d.r?` · <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21l1.7-7L2 9.2l7.1-.6z"/></svg> ${d.r}`:''} · ${T('партнёр удвоил награду за визит')}</div>
     <button class="dgo" onclick='openBiz(${jx(d)})'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 11l18-5v12L3 14v-3zM11 13v6"/></svg>Забрать деал</button></div>`;
   /* 🚨 Здесь оставался кусок удалённой недельной полосы стрика — он падал на
      `streak is not defined` в ПЕРВОЙ же строке. Ошибку глотал try/catch вокруг
@@ -4534,7 +4549,7 @@ function renderToday(){
   // prefetch top-3 фото (под current vibe) — ускоряет «Другое»
   try{var pool=C.biz.filter(function(b){return curMood==='all'||b.k===curMood}).slice(0,3);pool.forEach(function(b){var im=new Image();im.src=ph(b.k,b.n.length,b.n)})}catch(e){}
   document.getElementById('answerBox').innerHTML=`
-  <div class="answer fadein" id="answerCard">
+  <div class="answer fadein" id="answerCard" onclick="heroTap(event)">
     <div class="ph-skel"></div><img class="ph" src="${ph(nz.k,top.n.length,top.n)}" alt="" loading="eager" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.classList.add('loaded');this.style.background='linear-gradient(135deg,${nz.c}cc,${nz.c}33)';this.removeAttribute('src')"><div class="ov"></div>
     <div class="top-strip">
       <span class="chip-glass rate"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${top.r}</span>
@@ -4592,15 +4607,46 @@ function altMore(){
   setTimeout(function(){var btn=document.getElementById('altMoreBtn');
     if(btn&&btn.scrollIntoView)try{btn.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}},80);
 }
+/* 🚨 Тап по карточке НЕ ОТКРЫВАЛ место. Открытие жило внутри обработчика
+   свайпа: `pointerup` считал `wasTap` и звал openBiz. Ветка срабатывала не
+   всегда — она требует, чтобы pointerdown прошёл через жестовую машину со
+   своими условиями, и живой указатель туда попадал не в каждом случае.
+   Проверено настоящим кликом: карточка не открывалась.
+
+   Урок тот же, что с геометками: ЖЕСТ И КЛИК — РАЗНЫЕ ВЕЩИ. Клик обязан быть
+   отдельным и явным, а жест — надстройкой над ним, а не его единственным
+   носителем. Внутренние кнопки обрабатывают себя сами, поэтому пропускаем их;
+   и не открываем сразу после свайпа, иначе смена карточки тут же превращается
+   в открытие той, что уехала. */
+function heroTap(e){
+  try{
+    if(e&&e.target&&e.target.closest&&e.target.closest('button,a,[onclick]:not(#answerCard),.th-heart'))return;
+    if(window.__swJust)return;
+    var C=CITIES[CITY];
+    var b=partnersOf(C)[0]||(C.biz&&C.biz[0]);
+    if(b)openBiz(b);
+  }catch(err){}
+}
 let pickIdx=0;
 function setMood(btn,m){
   try{
     curMood=m;
     var C=CITIES[CITY];if(!C)return;
     if(m!=='all'){
-      var idx=C.biz.findIndex(function(b){return b.k===m});
-      if(idx>=0){var picked=C.biz.splice(idx,1)[0];C.biz.unshift(picked)}
-      else{toast('В этой нише пока пусто — показываю лучшее');curMood='all'}
+      /* 🚨 Было `findIndex(b=>b.k===m)` — ПЕРВЫЙ в массиве. А поскольку
+         найденного тут же выносят в начало, он там и остаётся: «Кофе» вечно
+         давал Lovita, «Еда» вечно Heart of Batumi, хотя партнёров в каждой
+         нише по три. Повторное нажатие не меняло ничего — детерминированная
+         петля в самом заметном жесте экрана.
+
+         Теперь выбор идёт как везде: по вкусу, среди открытых, с исключением
+         того, что уже показано. Нажал ещё раз — увидел другое. */
+      var cur=(partnersOf(C)[0]||{}).n;
+      var pool=partnersOf(C).filter(function(b){return b.k===m&&b.n!==cur});
+      if(!pool.length)pool=partnersOf(C).filter(function(b){return b.k===m});
+      var picked=pool.length?pickOpenFirst(pool):null;
+      if(picked){var i2=C.biz.indexOf(picked);if(i2>0){C.biz.splice(i2,1);C.biz.unshift(picked)}}
+      else{toast(T('В этой нише пока нет партнёров — показываю лучшее'));curMood='all'}
     }
     // мгновенный visual feedback (не ждать renderToday)
     document.querySelectorAll('.mood-row .mood').forEach(function(x){x.classList.remove('on')});
@@ -4728,37 +4774,91 @@ function renderAdTicker(){
     try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(tick)}catch(e){}
   }
 }
+/* ═══════════ «ДЛЯ ТЕБЯ СЕЙЧАС» ═══════════
+   🚨 Этот ряд был чистой декорацией, и это худшее место для декорации: он
+   называется «для тебя сейчас» и стоит на главном экране — то есть ровно там,
+   где продукт обещает персональность.
+
+   Что тут было:
+   · пул — `C.biz.slice(0,10)`, первые десять из массива. Одни и те же
+     заведения у всех и всегда, вкус не читался вообще;
+   · поводы ВЫДУМАНЫ: «−40%, деал сгорит через 2 ч», «выбор горожан»,
+     «Хит недели», «Живая музыка с 20:00», «открыто до 23:00» зашитой
+     строкой — при том что настоящие часы у нас теперь есть.
+
+   Стало: пул ранжируется по вкусу и состоянию, соседние карточки не из одной
+   ниши, а повод у каждой — ФАКТ, который мы можем предъявить. Нет факта —
+   карточки нет. Скидок мы не знаем: «×2 балла» ставится только там, где у
+   партнёра действительно промо-тариф. */
 function renderForMe(){
   var row=document.getElementById('formeRow');if(!row)return;
   var C=CITIES[CITY];if(!C||!C.biz||!C.biz.length){row.innerHTML='';return}
   function z(b){return NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''}}
-  function distOf(b){if(b.o&&C.c){var dlat=(b.o[0]-C.c[0])*111000,dlng=(b.o[1]-C.c[1])*82000,dm=Math.round(Math.sqrt(dlat*dlat+dlng*dlng));return dm<1000?('~'+(Math.round(dm/50)*50)+' м'):('~'+(dm/1000).toFixed(1)+' км')}return ''}
-  // ротация «причин показа» — даёт богатый, разнообразный горизонтальный ряд
-  var tmpl=[
-    function(b){var n=z(b);return {tag:'Открыто сейчас',tagc:'#4ade80',t:b.n,sub:(n.n||'')+' · до 23:00',col:n.c,k:b.k,b:b}},
-    function(b){var n=z(b);return {tag:'Заканчивается',tagc:'#ff8a3d',t:'−40% в '+b.n,sub:'деал сгорит через 2 ч',col:n.c,k:b.k,b:b}},
-    function(b){var n=z(b);return {tag:'Новое',tagc:'#00E0C7',t:b.n,sub:'в твоём вкусе · '+(n.n||''),col:n.c,k:b.k,b:b}},
-    function(b){var n=z(b);var d=distOf(b);return {tag:'Рядом',tagc:'#D4FF4F',t:b.n,sub:d?(d+' от тебя'):(n.n||''),col:n.c,k:b.k,b:b}},
-    function(b){var n=z(b);return {tag:'Популярно',tagc:'#ff5d8f',t:b.n,sub:'выбор горожан · '+(n.n||''),col:n.c,k:b.k,b:b}},
-    function(b){var n=z(b);return {tag:'Хит недели',tagc:'#FFB547',t:b.n,sub:(b.r?b.r+'★ · ':'')+(n.n||''),col:n.c,k:b.k,b:b}}
-  ];
-  var pool=C.biz.slice(0,10),cards=[];
-  for(var fi=0;fi<pool.length;fi++){cards.push(tmpl[fi%tmpl.length](pool[fi]))}
-  if(pool[2]){var nz2=z(pool[2]);cards[2]={tag:'Сегодня',tagc:'#7C3AFF',t:'Живая музыка',sub:'в '+pool[2].n+' · с 20:00',col:nz2.c,k:pool[2].k,b:pool[2]}}
+  function distM(b){
+    if(!b.o||!C.c)return null;
+    var dy=(b.o[0]-C.c[0])*111000,dx=(b.o[1]-C.c[1])*82000;
+    return Math.round(Math.sqrt(dx*dx+dy*dy));
+  }
+  /* ВСЕ поводы, которые про это место правда, в порядке силы. Возвращаем
+     список, а не один: соседние карточки должны говорить РАЗНОЕ, иначе ряд
+     превращается в четыре «Двойных балла» подряд — правда, но монотонная,
+     и в ней теряется то, ради чего человек смотрит. */
+  function reasons(b){
+    var out=[];
+    if(b.b==='promo')out.push({tag:T('Двойные баллы'),c:'#FFB547',sub:T('партнёр удвоил награду за визит')});
+    var r=null;try{r=bizOpen(b)}catch(e){}
+    if(r&&r.open&&typeof r.left==='number'&&r.left<=90)
+      out.push({tag:T('Скоро закроется'),c:'#ff8a3d',sub:T('закрывается через')+' '+Math.max(1,Math.round(r.left))+' '+T('мин')});
+    var d=distM(b);
+    if(d!==null&&d<=400)out.push({tag:T('Совсем рядом'),c:'#D4FF4F',sub:(Math.round(d/10)*10)+' '+T('м от центра')});
+    try{if(tasteOf(b.k)>=1.2)out.push({tag:T('В твоём вкусе'),c:'#00E0C7',sub:T('ты любишь')+' '+String(z(b).n).toLowerCase()})}catch(e){}
+    var cu=cuisineName(b.cu);
+    if(cu)out.push({tag:T('Кухня'),c:'#7C3AFF',sub:T(cu)});
+    if(r&&(r.open||r.always))out.push({tag:T('Открыто сейчас'),c:'#4ade80',sub:r.always?T('круглосуточно'):(T('до')+' '+ohFmt(r.closes))});
+    if(b.r)out.push({tag:T('Оценка гостей'),c:'#FFB547',sub:b.r+'★'});
+    if(b.b==='new')out.push({tag:T('Новое место'),c:'#00E0C7',sub:T('недавно в CityHUB')});
+    return out;                        /* пусто — сказать нечего, карточки не будет */
+  }
+  /* Пул: партнёры по вкусу и состоянию, без двух подряд из одной ниши —
+     иначе ряд превращается в три кофейни и выглядит как сбой. */
+  var P=partnersOf(C).slice();
+  P.sort(function(a,b){
+    var ta=0,tb=0;try{ta=tasteOf(a.k);tb=tasteOf(b.k)}catch(e){}
+    var oa=0,ob=0;try{var ra=bizOpen(a),rb=bizOpen(b);oa=(ra&&(ra.open||ra.always))?1:0;ob=(rb&&(rb.open||rb.always))?1:0}catch(e){}
+    return (ob-oa)||(tb-ta)||((a.b==='promo'?0:1)-(b.b==='promo'?0:1));
+  });
+  var cards=[],lastK='',usedTag={};
+  for(var pass=0;pass<2&&cards.length<8;pass++){
+    for(var n=0;n<P.length&&cards.length<8;n++){
+      var b=P[n];
+      if(cards.some(function(c){return c.b===b}))continue;
+      if(pass===0&&b.k===lastK)continue;      /* первый проход — разводим ниши */
+      var rs=reasons(b);if(!rs.length)continue;
+      /* Берём сильнейший повод, который ещё не звучал; все прозвучали —
+         возвращаемся к сильнейшему, повтор лучше молчания. */
+      var rr=rs.filter(function(x){return !usedTag[x.tag]})[0]||rs[0];
+      usedTag[rr.tag]=1;
+      cards.push({tag:rr.tag,tagc:rr.c,t:bizName(b),sub:rr.sub,col:z(b).c,k:b.k,b:b});
+      lastK=b.k;
+    }
+  }
+  if(!cards.length){row.innerHTML='';return}
   row.innerHTML=cards.map(function(c){
-    var photo=c.b?ph(c.b.k,(c.b.n||'').length,c.b.n):'';
+    var photo=isPartner(c.b)?ph(c.b.k,(c.b.n||'').length,c.b.n):'';
     return '<div class="fm-card" onclick=\'openBiz('+jx(c.b)+')\' data-peek="'+encodeURIComponent(JSON.stringify(c.b))+'" style="--fmc:'+c.col+'">'+
-      (photo?'<img class="fm-photo" src="'+photo+'" alt="" loading="lazy" onerror="this.onerror=null;this.style.background=\'linear-gradient(135deg,'+c.col+'cc,'+c.col+'33)\';this.removeAttribute(\'src\')">':'')+
+      (photo?'<img class="fm-photo" src="'+photo+'" alt="" loading="lazy" onerror="this.onerror=null;this.style.background=\'linear-gradient(135deg,'+c.col+'cc,'+c.col+'33)\';this.removeAttribute(\'src\')">'
+            :'<span class="fm-sphere">'+sphere(c.b.n,c.col,c.b.k)+'</span>')+
       '<div class="fm-ov"></div>'+
       '<div class="fm-tag" style="color:'+c.tagc+'"><span class="fm-dot" style="background:'+c.tagc+'"></span>'+c.tag+'</div>'+
       '<div class="fm-bot">'+
         '<div class="fm-ic" style="background:'+c.col+'22;color:'+c.col+'">'+ico(c.k,c.col,2)+'</div>'+
-        '<div class="fm-t">'+c.t+'</div>'+
-        '<div class="fm-sub">'+c.sub+'</div>'+
+        '<div class="fm-t">'+revEsc(c.t)+'</div>'+
+        '<div class="fm-sub">'+revEsc(c.sub)+'</div>'+
       '</div>'+
     '</div>';
   }).join('');
 }
+
 // === QUEST SYSTEM v2 ===
 // шаблоны тематических квестов. niches[] — последовательность ниш для стопов; task[] — что делать на каждом стопе
 const QUEST_TPL=[
@@ -5314,7 +5414,7 @@ function renderMapTab(){
   var emoMap={coffee:'☕',food:'🍽️',bar:'🍸',gym:'🏋️',beauty:'💅',spa:'🧖',shop:'🛍️',sea:'🌊',art:'🎨',music:'🎵',travel:'🗺️',med:'🩺',kids:'🧸'};
   var __openN=C.biz.filter(function(b){var r=bizOpen(b);return !!(r&&r.open)}).length;
   document.getElementById('mapFilters').innerHTML='<button class="mood vibe'+(filter==='all'?' on':'')+'" data-filter="all"><span class="vibe-ic">'+ico('sparkle','currentColor',2)+'</span><span class="vibe-lb">'+T('Под тебя')+'</span></button>'+
-    (__openN?'<button class="mood vibe vibe-open'+(filter==='open'?' on':'')+'" data-filter="open"><span class="vibe-ic">'+ico('clock2','currentColor',2)+'</span><span class="vibe-lb">'+T('Открыто')+'<b class="vb-n">'+__openN+'</b></span></button>':'')+
+    (__openN?'<button class="mood vibe vibe-open'+(filter==='open'?' on':'')+'" data-filter="open"><span class="vibe-ic">'+ico('clock2','currentColor',2)+'</span><span class="vibe-lb">'+T('Открыто')+'</span></button>':'')+
     [...new Set(C.biz.map(function(b){return b.k}))].map(function(k){var n=NICHES.find(function(x){return x.k===k});return '<button class="mood vibe" data-filter="'+k+'"><span class="vibe-ic">'+ico(k,'currentColor',2)+'</span><span class="vibe-lb">'+n.n+'</span></button>'}).join('');
   renderList();
 }
@@ -7726,7 +7826,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=95;try{renderConsent()}catch(e){}
+var APP_V=97;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -10359,15 +10459,20 @@ function swipeBind(){
     if(!SW.on||!SW.el)return;SW.on=false;
     var dx=(e.clientX||SW.x)-SW.x,dt=Math.max(1,performance.now()-SW.t),v=Math.abs(dx)/dt;
     var dy=((e.clientY||SW.y)-SW.y);
-    if(SW.lock==='x'&&(Math.abs(dx)>90||v>0.45)){swipeCommit(dx>0?1:-1);return}
+    if(SW.lock==='x'&&(Math.abs(dx)>90||v>0.45)){
+      window.__swJust=1;setTimeout(function(){window.__swJust=0},420);
+      swipeCommit(dx>0?1:-1);return;
+    }
     /* Состояние жеста читаем ДО swipeReset(): он обнуляет SW, и проверка
        «палец никуда не поехал» после него уже смотрит в пустоту. */
     var wasTap=(SW.lock===null&&Math.abs(dx)<8&&Math.abs(dy)<8&&dt<600);
     var s=SW.el.querySelectorAll('.sw-stamp');[].forEach.call(s,function(x){x.style.opacity='0'});
     swipeReset();
-    if(wasTap){
-      try{var C=CITIES[CITY];if(C&&C.biz&&C.biz[0])openBiz(C.biz[0])}catch(err){}
-    }
+    /* Открытие по тапу переехало в heroTap (явный onclick). Держать его ещё
+       и здесь значит завести двух писателей на одно действие — карточка
+       открывалась бы дважды. Плюс тут бралось `C.biz[0]`, а герой — это
+       `partnersOf(C)[0]`: если в начале массива окажется не партнёр, тап
+       открывал бы не то, что человек видит. */
   };
   box.addEventListener('pointerup',end);
   box.addEventListener('pointercancel',function(){if(SW.on){SW.on=false;swipeReset()}});
