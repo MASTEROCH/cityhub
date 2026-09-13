@@ -5134,7 +5134,15 @@ function buildMap(){
   mapHitBind();
   if(!_LF_MAIN.__vpBound){
     _LF_MAIN.__vpBound=1;
-    _LF_MAIN.on('moveend zoomend',function(){try{mapDrawVisible(listItems())}catch(e){}});
+    /* Список считает расстояния от центра кадра — значит он обязан ехать
+       следом за картой, иначе метки перерисованы по новому порядку, а
+       карточки под ними остались от старого. С задержкой: пока палец ведёт
+       карту, перерисовывать 24 карточки на каждый кадр незачем. */
+    _LF_MAIN.on('moveend zoomend',function(){
+      try{mapDrawVisible(listItems())}catch(e){}
+      clearTimeout(window.__listSyncT);
+      window.__listSyncT=setTimeout(function(){try{renderList()}catch(e){}},420);
+    });
   }
   // подогнать viewport под все маркеры если есть
   if(items.length){
@@ -5318,14 +5326,52 @@ function partnersOf(C){return ((C&&C.biz)||[]).filter(isPartner)}
 /* «Открыто сейчас» — главный вопрос человека на улице, и теперь на него есть
    чем ответить: 876 расписаний из 2 814. Место без расписания в этот фильтр
    НЕ ПОПАДАЕТ: «не знаем» и «открыто» — разные вещи. */
+/* 🚨 Вкладка называется «Рядом», а сортировки по «рядом» в ней не было вовсе:
+   порядок брался из позиции в массиве. Строки при этом печатали «~1.2 км»,
+   прыгающие вверх-вниз, — подпись обещала близость, которую список не
+   соблюдал. Расстояние считается от ЦЕНТРА КАДРА карты, а не от центра
+   города: человек подвёл карту к своему району — список поехал следом.
+
+   Два яруса, и порядок ярусов важнее расстояния:
+   · партнёры (внутри — промо выше, дальше по близости) — они оплачены;
+   · фон города, где близость поправлена полезностью (bgScore считает то же
+     самое: часы, ссылка, адрес, вес ниши), иначе первыми у дома окажутся
+     три киоска, а кофейня через дорогу уедет вниз. */
+function listCenter(){
+  try{if(_LF_MAIN){var c=_LF_MAIN.getCenter();return [c.lat,c.lng]}}catch(e){}
+  var C=CITIES[CITY];return (C&&C.c)||[41.651,41.636];
+}
 function listItems(){
   var C=CITIES[CITY];if(!C||!C.biz)return [];
-  var rank=function(b){return b.b==='promo'?0:b.b==='new'?1:2};
+  var ctr=listCenter();
   return C.biz.filter(function(b){
       if(filter==='open'){var r=bizOpen(b);return !!(r&&r.open)}
       return filter==='all'||b.k===filter})
-    .map(function(b,i){return {b:b,i:i}})
-    .sort(function(x,y){var d=rank(x.b)-rank(y.b);return d||(x.i-y.i)})
+    .map(function(b,i){
+      var dy=b.o?(b.o[0]-ctr[0])*111000:9e6, dx=b.o?(b.o[1]-ctr[1])*82000:9e6;
+      var d=Math.sqrt(dx*dx+dy*dy);
+      /* Полезность укорачивает расстояние, но не переставляет ярусы:
+         богатая данными кофейня «ближе» киоска при равных метрах. */
+      if(!isPartner(b)){
+        var sc=0;
+        sc+=(NICHE_W[b.k]||0)*40;
+        if(b.h)sc+=120; if(b.u)sc+=80; if(b.ad)sc+=40; if(b.cu)sc+=40;
+        var oh=null;try{oh=bizOpen(b)}catch(e){}
+        if(oh&&(oh.open||oh.always))sc+=120;
+        d=Math.max(0,d-sc);
+      }
+      /* 🚨 Оплаченное место — СКИДКА К РАССТОЯНИЮ, а не обход реальности.
+         Когда промо стояло абсолютно выше, во вкладке «Рядом» зал в 3.8 км
+         оказывался над кофейней в 53 м — и подпись с метрами рядом сама это
+         показывала. Так теряют доверие к выдаче целиком, включая платную.
+         Скидка честна: партнёр выигрывает у сравнимых по близости, но не
+         у того, кто буквально через дорогу. */
+      if(b.b==='promo')d-=800; else if(b.b==='new')d-=300;
+      return {b:b,i:i,t:isPartner(b)?0:1,d:Math.max(0,d)};
+    })
+    .sort(function(x,y){
+      return (x.t-y.t)||(x.d-y.d)||(x.i-y.i);
+    })
     .map(function(x){return x.b});
 }
 /* 🚨 2 814 карточек в DOM вешают страницу: скриншот не снимается, любой
@@ -7481,7 +7527,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=91;try{renderConsent()}catch(e){}
+var APP_V=92;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
