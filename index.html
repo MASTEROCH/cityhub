@@ -2603,6 +2603,8 @@ input,textarea{font-size:16px!important}
 /* Эмблема места вместо чужого снимка: занимает тот же слот, что и фото. */
 .th-sphere{position:absolute;inset:0;display:grid;place-items:center;padding:14%}
 .th-sphere svg{width:100%;height:100%}
+.peek-sphere{position:absolute;inset:0;display:grid;place-items:center;padding:16% 16% 30%}
+.peek-sphere svg{width:100%;height:100%}
 
 .srch-item .si-i .oh-sm{margin-top:3px}
 /* Факты из OSM в карточке места. Ничего не придумано: строки нет там, где нет данных. */
@@ -4516,7 +4518,7 @@ function renderToday(){
     <div class="ct">
     <h1>${bizName(top)}</h1>
     <div class="meta-min"><span class="m-item">${ico(top.k,'currentColor',2)}${nz.n}</span>${dist?`<span class="m-dot"></span><span class="m-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${dist}</span>`:''}${promoChip}</div>
-    <span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${T(top.why)}</span>
+    <span class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l2.4 6.9L21.6 9l-5.6 4.3L18 21 12 16.9 6 21l2-7.7L2.4 9z"/></svg>${bizWhy(top)}</span>
     <div class="row"><button class="go-btn" onclick="openBiz(${jx(top)})">${(function(){
       /* Если открытых партнёров нет вовсе и герой всё-таки закрыт — кнопка
          говорит это прямо, а не зовёт «Идём» туда, где заперта дверь. */
@@ -5685,7 +5687,10 @@ function aiBuildContext(){
   var prefs={};try{prefs=JSON.parse(localStorage.getItem('cityhub_ai_prefs_v1')||'{}')}catch(e){}
   var places=C.biz.slice(0,40).map(function(b,i){
     var dist='';if(b.o&&C.c){var dm=Math.round(Math.hypot((b.o[0]-C.c[0])*111000,(b.o[1]-C.c[1])*82000));dist=dm<1000?(dm+'м'):(((dm/1000).toFixed(1))+'км')}
-    return (i+1)+'. '+bizName(b)+' | '+b.k+(b.r?' | ★'+b.r:'')+' | +'+b.pts+' Loop | '+dist+' | '+b.why;
+    /* Строка уходит в контекст Hub: `undefined` в ней научит модель врать
+       ровно так же, как научил бы человека. */
+    var w=bizWhy(b);
+    return (i+1)+'. '+bizName(b)+' | '+b.k+(b.r?' | ★'+b.r:'')+(+b.pts>0?' | +'+b.pts+' Loop':'')+' | '+dist+(w?' | '+w:'');
   }).join('\n');
   return {name:C.name,flag:C.flag||'',hh:hh,dayPart:dayPart,dow:dow,streak:streak,mult:mult,pts:pts,topTaste:topTaste,places:places,userName:userName,visited:visited,loved:loved,prefs:prefs};
 }
@@ -7527,7 +7532,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=93;try{renderConsent()}catch(e){}
+var APP_V=94;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8826,7 +8831,18 @@ function showPeek(b){
   var nz=NICHES.find(function(n){return n.k===b.k})||{c:'#7C3AFF',n:''};
   var ov=document.createElement('div');
   ov.id='peekOv';ov.className='peek-overlay';
-  ov.innerHTML='<div class="peek-card"><img src="'+ph(b.k,b.n.length,b.n)+'" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit"><div class="peek-grad"></div><div class="peek-body"><div class="peek-tag">'+nz.n+'</div><h3>'+bizName(b)+'</h3><div class="peek-meta"><span>★ '+b.r+'</span><span>+'+b.pts+' Loop</span><span>'+b.why+'</span></div></div></div>';
+  /* 🚨 Здесь печаталось «★ undefined» и «undefined» у каждого из 2 786
+     импортированных мест: рейтинга и вписанной причины у фона нет. Собираем
+     строку из того, что есть, — как в карточке и в поиске. Снимок тоже по
+     тиру: чужой сток выдавал себя за фото места. */
+  var __pm=[];
+  if(b.r)__pm.push('<span>\u2605 '+b.r+'</span>');
+  if(+b.pts>0)__pm.push('<span>+'+b.pts+' Loop</span>');
+  var __pw=bizWhy(b); if(__pw)__pm.push('<span>'+__pw+'</span>');
+  var __pimg=isPartner(b)
+    ? '<img src="'+ph(b.k,b.n.length,b.n)+'" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit">'
+    : '<span class="peek-sphere">'+sphere(b.n,nz.c,b.k)+'</span>';
+  ov.innerHTML='<div class="peek-card">'+__pimg+'<div class="peek-grad"></div><div class="peek-body"><div class="peek-tag">'+nz.n+'</div><h3>'+bizName(b)+'</h3><div class="peek-meta">'+__pm.join('')+'</div></div></div>';
   ov.addEventListener('click',hidePeek);
   document.body.appendChild(ov);
   requestAnimationFrame(function(){ov.classList.add('open')});
@@ -9243,7 +9259,7 @@ function _mascotReply(q){
   }
   if(q==='горячее'||/горяч|trending|сейчас/.test(q)){
     var hot=C.biz.filter(function(b){return b.b==='promo'}).slice(0,3);
-    mascotResp('🔥 Сейчас горячо:<ul>'+hot.map(function(b){return '<li><b>'+bizName(b)+'</b> — '+b.why+'</li>'}).join('')+'</ul>Везде <b>×2 баллы</b> сегодня.');return;
+    mascotResp('🔥 Сейчас горячо:<ul>'+hot.map(function(b){var w=bizWhy(b);return '<li><b>'+bizName(b)+'</b>'+(w?' — '+w:'')+'</li>'}).join('')+'</ul>Везде <b>×2 баллы</b> сегодня.');return;
   }
   if(/море|sea|пляж|закат/.test(q)){
     var sea=C.biz.filter(function(b){return b.k==='sea'||b.k==='bar'}).slice(0,3);
