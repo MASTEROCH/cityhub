@@ -5527,8 +5527,22 @@ function initBizMap(){
 function routeUrl(b,mode){
   var la=b.o?b.o[0]:0, lo=b.o?b.o[1]:0;
   var q=encodeURIComponent(bizName(b)+(b.ad?(' '+b.ad):''));
-  if(mode==='taxi_bolt')return 'https://bolt.eu/ride/?destination_lat='+la+'&destination_lng='+lo;
-  if(mode==='taxi_yandex')return 'https://3.redirect.appmetrica.yandex.com/route?end-lat='+la+'&end-lon='+lo+'&appmetrica_tracking_id=1178268795219780156';
+  /* 🚨 Обе ссылки на такси я сначала собрал ПО ПАМЯТИ, и обе оказались
+     дефектными — проверка заняла минуту и сэкономила две мёртвые кнопки:
+
+     · Bolt: `bolt.eu/ride/?...` отдаёт 404 — такого эндпойнта не существует.
+       У Bolt есть только схема `bolt://`, а она молча ничего не делает у
+       всех, у кого приложение не установлено, — то есть кнопка выглядит
+       рабочей и не работает. Убран до тех пор, пока не появится ссылка,
+       которую можно ПРОВЕРИТЬ. В Грузии это потеря, и её стоит закрыть
+       партнёрской ссылкой от самого Bolt.
+     · Yandex: работал, но тянул `appmetrica_tracking_id` ЧУЖОГО партнёра —
+       чужой идентификатор в наших ссылках это и чужая аналитика, и чужие
+       начисления. Убран: без него ссылка отвечает 200 и делает ровно то же.
+
+     Оставлены две, проверенные кодом ответа и работающие по всему миру. */
+  if(mode==='taxi_yandex')return 'https://taxi.yandex.ru/?gto='+la+','+lo;
+  if(mode==='taxi_uber')return 'https://m.uber.com/ul/?action=setPickup&dropoff%5Blatitude%5D='+la+'&dropoff%5Blongitude%5D='+lo;
   /* Пешком и транспортом отдаём картам: у них живое расписание и пробки. */
   var m=mode==='transit'?'transit':(mode==='drive'?'driving':'walking');
   return 'https://www.google.com/maps/dir/?api=1&destination='+la+','+lo+'&destination_place_id=&travelmode='+m+'&dir_action=navigate';
@@ -5557,8 +5571,8 @@ function cityServices(b){
       btn('transit','rocket',T('Транспортом'),T('маршрут в картах'))+
     '</div>'+
     '<div class="csv-row">'+
-      btn('taxi_bolt','scooter','Bolt',T('вызвать такси'))+
       btn('taxi_yandex','scooter','Yandex Go',T('вызвать такси'))+
+      btn('taxi_uber','scooter','Uber',T('вызвать такси'))+
     '</div>';
 }
 /* Факт из Википедии — только там, где у места есть статья (23 из 2 814).
@@ -8033,7 +8047,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=102;try{renderConsent()}catch(e){}
+var APP_V=103;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
