@@ -5312,8 +5312,22 @@ function bgScore(v){
   try{return chScore(v.b).v*(1+(NICHE_W[v.b.k]||0)*0.12)}catch(e){return 0}
 }
 function cluCell(z){return z<=12?150:z<=13?120:z<=14?96:z<=15?76:64}
-function mapDrawVisible(items){
+/* Перерисовка сносила ВСЕ метки и создавала заново — 24 мс на каждое движение
+   карты, даже когда набор не изменился. А он чаще всего и не меняется: сдвиг
+   на полэкрана оставляет тот же ближний круг. Считаем отпечаток набора и при
+   совпадении не делаем ничего — большинство панорамирований становятся
+   бесплатными. */
+var _mapSig='';
+function mapDrawVisible(items,force){
   if(!_LF_MAIN||!items)return;
+  var sig='';
+  try{
+    var z0=_LF_MAIN.getZoom(), b0=_LF_MAIN.getBounds();
+    sig=z0+'|'+b0.getSouth().toFixed(4)+'|'+b0.getWest().toFixed(4)+'|'+
+        b0.getNorth().toFixed(4)+'|'+b0.getEast().toFixed(4)+'|'+items.length+'|'+filter;
+  }catch(e){}
+  if(!force&&sig&&sig===_mapSig)return;
+  _mapSig=sig;
   try{_LF_MARKERS.forEach(function(m){_LF_MAIN.removeLayer(m)})}catch(e){}
   _LF_MARKERS=[];
   var z=15,b=null,c=null;
@@ -5700,34 +5714,51 @@ function listCenter(){
   try{if(_LF_MAIN){var c=_LF_MAIN.getCenter();return [c.lat,c.lng]}}catch(e){}
   var C=CITIES[CITY];return (C&&C.c)||[41.651,41.636];
 }
+/* 🚨 Закон считался для ВСЕХ 2 814 мест на каждый пересчёт — 24 мс, а список
+   зовётся на каждое движение карты. На телефоне это 80–100 мс и видимый
+   рывок при панорамировании.
+
+   Считать всё и не нужно: показываем 24 строки, а наверх может попасть только
+   то, что рядом. Поэтому сначала дешёвая прикидка по расстоянию, потом закон
+   — но лишь для ближнего круга. Дальние сохраняют порядок по расстоянию:
+   для них он и так единственный осмысленный. */
+var LIST_SCORED=250;
 function listItems(){
   var C=CITIES[CITY];if(!C||!C.biz)return [];
   var ctr=listCenter();
-  return C.biz.filter(function(b){
-      if(filter==='open'){var r=bizOpen(b);return !!(r&&r.open)}
-      return filter==='all'||b.k===filter})
-    .map(function(b,i){
-      var dy=b.o?(b.o[0]-ctr[0])*111000:9e6, dx=b.o?(b.o[1]-ctr[1])*82000:9e6;
-      var d=Math.sqrt(dx*dx+dy*dy);
-      /* Закон выдачи укорачивает расстояние: подходящее тебе место «ближе»
-         неподходящего при равных метрах. Ярусы он не переставляет — партнёр
-         остаётся в своём, и порядок остаётся объяснимым. */
-      var sc=0;try{sc=chScore(b,{center:ctr}).v}catch(e){}
-      d=Math.max(0,d-Math.min(700,sc*150));
-      /* 🚨 Оплаченное место — СКИДКА К РАССТОЯНИЮ, а не обход реальности.
-         Когда промо стояло абсолютно выше, во вкладке «Рядом» зал в 3.8 км
-         оказывался над кофейней в 53 м — и подпись с метрами рядом сама это
-         показывала. Так теряют доверие к выдаче целиком, включая платную.
-         Скидка честна: партнёр выигрывает у сравнимых по близости, но не
-         у того, кто буквально через дорогу. */
-      if(b.b==='promo')d-=800; else if(b.b==='new')d-=300;
-      return {b:b,i:i,t:isPartner(b)?0:1,d:Math.max(0,d)};
-    })
-    .sort(function(x,y){
-      return (x.t-y.t)||(x.d-y.d)||(x.i-y.i);
-    })
-    .map(function(x){return x.b});
+  /* ПРОХОД 1 — дешёвая прикидка: только расстояние и ярус. Ни одного вызова
+     закона, ни одного разбора часов. */
+  var rows=[];
+  var all=C.biz, n=all.length;
+  for(var i2=0;i2<n;i2++){
+    var b=all[i2];
+    if(filter==='open'){var r0=bizOpen(b);if(!(r0&&r0.open))continue}
+    else if(filter!=='all'&&b.k!==filter)continue;
+    var dy=b.o?(b.o[0]-ctr[0])*111000:9e6, dx=b.o?(b.o[1]-ctr[1])*82000:9e6;
+    rows.push({b:b,i:i2,t:isPartner(b)?0:1,d:Math.sqrt(dx*dx+dy*dy)});
+  }
+  rows.sort(function(x,y){return (x.t-y.t)||(x.d-y.d)});
+  /* ПРОХОД 2 — закон, но только для ближнего круга. Дальним он места не
+     изменил бы: они всё равно ниже двадцать четвёртой строки, а стоят
+     2 814 вызовов на каждое движение карты (24 мс, на телефоне под сотню). */
+  var lim=Math.min(rows.length,LIST_SCORED);
+  for(var k=0;k<lim;k++){
+    var x=rows[k], bb=x.b;
+    /* 🚨 Оплаченное место — СКИДКА К РАССТОЯНИЮ, а не обход реальности:
+       промо в 3.8 км не должно стоять над кофейней в 53 м, и подпись с
+       метрами рядом сама бы это показала. */
+    var cut=0;
+    if(bb.b==='promo')cut+=800; else if(bb.b==='new')cut+=300;
+    var sc=0;try{sc=chScore(bb,{center:ctr}).v}catch(e){}
+    cut+=Math.min(700,sc*150);
+    x.d=Math.max(0,x.d-cut);
+  }
+  rows.sort(function(x,y){return (x.t-y.t)||(x.d-y.d)||(x.i-y.i)});
+  var out=new Array(rows.length);
+  for(var q=0;q<rows.length;q++)out[q]=rows[q].b;
+  return out;
 }
+
 /* 🚨 2 814 карточек в DOM вешают страницу: скриншот не снимается, любой
    querySelector ползёт. Рисуем порциями — механика та же, что у «Показать ещё»
    на «Сегодня», человеку она уже знакома. */
@@ -5766,7 +5797,7 @@ function selectPlace(i,fromMap){
   var bi=items[i];if(bi&&bi.o&&_LF_MAIN){try{_LF_MAIN.panTo(bi.o,{animate:true,duration:.45});setTimeout(function(){_LF_MAIN.invalidateSize()},80)}catch(e){}}
   if(navigator.vibrate)navigator.vibrate(8);
 }
-function setFilter(f,el){try{edgeFadeAll()}catch(e){}filter=f;selIdx=-1;LIST_SHOWN=LIST_STEP;document.querySelectorAll('#mapFilters .mood,#mapFilters .ch').forEach(function(x){x.classList.remove('on')});if(el){el.classList.add('on');if(el.scrollIntoView){try{el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}catch(e){}}}buildMap();renderList();if(navigator.vibrate)navigator.vibrate(6)}
+function setFilter(f,el){try{edgeFadeAll()}catch(e){}filter=f;_mapSig='';selIdx=-1;LIST_SHOWN=LIST_STEP;document.querySelectorAll('#mapFilters .mood,#mapFilters .ch').forEach(function(x){x.classList.remove('on')});if(el){el.classList.add('on');if(el.scrollIntoView){try{el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}catch(e){}}}buildMap();renderList();if(navigator.vibrate)navigator.vibrate(6)}
 function showOnMap(name){
   filter='all';
   cgo('map');
@@ -7528,7 +7559,7 @@ function openBiz(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(
 function arrived(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(n=>n.k===b.k)||{c:'#7C3AFF',n:'Ниша'};
   document.getElementById('sheet-body').innerHTML=`<div class="grab"></div>
     <div class="arr-wrap">
-      <div class="arr-top"><span class="arr-place">${ico(b.k,nz.c,2)} ${bizName(b)}</span><span class="arr-loc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> ты на месте</span></div>
+      <div class="arr-top"><span class="arr-place">${ico(b.k,nz.c,2)} ${bizName(b)}</span><span class="arr-loc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2" style="display:inline-block;vertical-align:-.16em"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> ${T('Ты на месте')}</span></div>
       <div class="arr-qr-card"><div class="arr-scan"></div><div class="arr-qr" id="arrQr"></div><div class="arr-id">CityHUB ID · 4821 0934</div></div>
       <div class="arr-instr">Покажи этот QR на кассе</div>
       <div class="arr-rewards">
@@ -7540,6 +7571,24 @@ function arrived(b){if(typeof b==='string')b=JSON.parse(b);const nz=NICHES.find(
     </div>`;
   setTimeout(function(){var q=document.getElementById('arrQr');if(q)q.innerHTML=qr('CityHUB-CHECKIN-'+b.n)},30);
   if(navigator.vibrate)navigator.vibrate(10)}
+/* Ближайшая цель, до которой человеку осталось меньше всего. Только то, что
+   ДОСТИЖИМО в обозримом: цель, до которой идти месяц, не мотивирует, а гасит. */
+function nextGoal(){
+  var have=0;try{have=ptsGet()}catch(e){return ''}
+  var goals=[];
+  try{if(typeof SPIN_COST==='number')goals.push({n:T('спина'),c:SPIN_COST})}catch(e){}
+  try{(REWARDS||[]).forEach(function(r){if(r&&r.c)goals.push({n:(r.n||T('награды')).toLowerCase(),c:r.c})})}catch(e){}
+  var near=null;
+  goals.forEach(function(g){
+    var left=g.c-have;
+    if(left>0&&left<=400&&(!near||left<near.left))near={left:left,n:g.n};
+  });
+  if(near)return T('до')+' '+near.n+' '+T('осталось')+' '+near.left;
+  /* Хватает на что-то прямо сейчас — это и есть лучшая новость. */
+  var can=goals.filter(function(g){return g.c<=have});
+  if(can.length)return T('уже хватает на')+' '+can.sort(function(a,b){return b.c-a.c})[0].n;
+  return '';
+}
 function confirmArrived(pts,bizName){
   var ids=['chk1','chk2','chk3'];ids.forEach(function(id,i){setTimeout(function(){var e=document.getElementById(id);if(e){e.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>';e.classList.add('done')}if(navigator.vibrate)navigator.vibrate(12)},i*350)});
   var btn=document.getElementById('arrBtn');if(btn){btn.textContent='Готово! Баллы зачислены';btn.style.opacity='.7'}
@@ -7548,7 +7597,16 @@ function confirmArrived(pts,bizName){
   ptsAdd(pts,T('Визит')+(typeof bn!=='undefined'&&bn?': '+bn:''));haptic('reward');
   setTimeout(function(){
     closeSheet();
+    /* ═══ ЗАМЫКАНИЕ ПЕТЛИ ═══
+       Здесь показывали «+50 баллов» и закрывали окно. Человек получил валюту
+       и не узнал, зачем она ему: заработок и трата в продукте не связаны
+       ничем, кроме его собственной памяти. Петля без этой связи не петля,
+       а два отдельных экрана.
+
+       Говорим, к ЧЕМУ он приблизился — и называем ближайшее, а не любое:
+       «до спина 30» работает, «до награды 4 000» обескураживает. */
     var sub=mult>1?(T('Стрик')+' ×'+mult+' · '+(bizName||'')):(bizName||T('Визит засчитан'));
+    try{var nx=nextGoal();if(nx)sub=nx}catch(e){}
     try{celebrate({k:'loop',title:'+'+pts+' '+T('баллов'),sub:sub})}
     catch(e){toast('+'+pts+' '+T('баллов'))}
   },1300);
@@ -8051,7 +8109,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=104;try{renderConsent()}catch(e){}
+var APP_V=105;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -8646,7 +8704,18 @@ function ohDays(spec){
   });
   return ok?set:null;
 }
+/* Одна и та же строка расписания разбиралась заново на КАЖДЫЙ вызов, а вызовов
+   стало 2 814 на один пересчёт списка. Строк же в городе 283 уникальных —
+   разбираем каждую один раз за сессию. */
+var _ohCache={};
 function ohSpans(str){
+  if(!str)return null;
+  if(_ohCache.hasOwnProperty(str))return _ohCache[str];
+  var res=ohSpansCalc(str);
+  _ohCache[str]=res;
+  return res;
+}
+function ohSpansCalc(str){
   if(!str)return null;
   var s=String(str).trim();
   if(/^24\/7$/i.test(s))return 'always';
@@ -8746,7 +8815,19 @@ function bizHoursNote(b){
     .filter(function(p){return p&&!(/^\d{1,2}:\d{2}\s*—\s*\d{1,2}:\d{2}$/.test(p))});
   return notes.join(' · ');
 }
-function bizOpen(b){var h=bizHoursRaw(b);return h?ohEval(h,ohNow()):null}
+/* Открыто ли место — в пределах ОДНОЙ МИНУТЫ ответ не меняется, а спрашивают
+   его тысячи раз за перерисовку. Кэш сбрасывается сам при смене минуты. */
+var _openCache={},_openMin=-1;
+function bizOpen(b){
+  if(!b)return null;
+  var now=ohNow(), key=(b.n||'')+'|'+(b.h||'');
+  if(now.m!==_openMin){_openCache={};_openMin=now.m}
+  if(_openCache.hasOwnProperty(key))return _openCache[key];
+  var h=bizHoursRaw(b);
+  var r=h?ohEval(h,now):null;
+  _openCache[key]=r;
+  return r;
+}
 /* ═══════════ ФАКТЫ О МЕСТЕ ═══════════
    Всё, что ниже, пришло из OSM вместе с каталогом и НЕ ПРИДУМАНО ни на строку.
    Покрытие по Батуми: часы 876 · адрес 831 · телефон 196 · удобства 504 ·
