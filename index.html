@@ -4999,7 +4999,8 @@ function questPickStops(tpl,C){
    Три места считали это независимо, и progress мог оказаться больше, чем
    шагов, — после смены города список короче, а число на диске прежнее. */
 function questNow(){
-  var id=(typeof QUEST_STATE!=='undefined')&&QUEST_STATE.current;if(!id)return null;
+  var id=(typeof QUEST_STATE!=='undefined')&&QUEST_STATE.current;
+  if(!id)return null;                    /* квест выключен — карта чистая */
   var tpl=QUEST_TPL.find(function(t){return t.id===id});if(!tpl)return null;
   var stops=questPickStops(tpl,CITIES[CITY]);if(!stops.length)return null;
   return {id:id,tpl:tpl,stops:stops,done:Math.max(0,Math.min(QUEST_STATE.progress[id]||0,stops.length))};
@@ -5014,6 +5015,7 @@ function questCover(tpl,stops){
 }
 function openQuest(qid){
   var C=CITIES[CITY];
+  /* Лист открывается и с выключенным квестом — чтобы было откуда включить. */
   var tplId=qid||QUEST_STATE.current||'morning';
   QUEST_STATE.current=tplId;questSave();
   var tpl=QUEST_TPL.find(function(t){return t.id===tplId})||QUEST_TPL[0];
@@ -5055,7 +5057,11 @@ function openQuest(qid){
   var cta='<button class="cta lime" style="margin-top:6px" onclick="'+ctaAct+'">'+ctaText+'</button>';
   // hint with share + reset
   var hint='<div style="display:flex;gap:9px;margin-top:10px"><button class="cta ghost" style="flex:1;margin-top:0;padding:13px;font-size:13px" onclick="shareQuest(\''+tpl.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>'+T('Позвать друга')+'</button>'+(done>0&&done<stops.length?'<button class="cta ghost" style="flex:0 0 auto;margin-top:0;padding:13px 16px;font-size:13px" onclick="resetQuest(\''+tpl.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 1 0 8-8M4 4v4h4"/></svg></button>':'')+'</div>';
-  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+sel+hero+prog+stopsHTML+rew+cta+hint;
+  /* Отказаться так же просто, как начать: строка внизу, без предупреждений
+     и без «вы уверены?» — прогресс никуда не денется. */
+  var off='<button class="cta ghost" style="margin-top:10px;padding:12px;font-size:13px;color:var(--txt-3)" onclick="questOff()">'+
+    ico('nope','currentColor',2)+T('Убрать маршрут с карты')+'</button>';
+  document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+sel+hero+prog+stopsHTML+rew+cta+hint+off;
   questRefresh();/* сменили маршрут в листе — карта под ним обязана стать той же */
   _openSheet();if(navigator.vibrate)navigator.vibrate(10);
   // auto-scroll active quest selector chip into view
@@ -5069,6 +5075,22 @@ function claimQuest(qid){
   try{gameSet('questsDone',(gameGet('questsDone',0)||0)+1)}catch(e){}
   var bb=document.getElementById('balBig');if(bb)bb.textContent=PTS.toLocaleString('ru-RU');
   var pt=document.getElementById('ptsTop');if(pt)pt.textContent=PTS.toLocaleString('ru-RU');
+}
+/* 🚨 Квест нельзя было НЕ ИМЕТЬ: `current` выставлен в 'morning' по умолчанию,
+   плашка висела на карте всегда, линия маршрута тоже. Механика, от которой
+   нельзя отказаться, — не предложение, а навязывание: человек не просил
+   маршрут, а он занимает верх карты и рисует поверх города.
+
+   Выключение — не удаление: прогресс остаётся на диске, квест можно включить
+   обратно тем же листом, и всё окажется там, где было. */
+function questOff(){
+  QUEST_STATE.current=null;questSave();
+  closeSheet();questRefresh();
+  toast(T('Маршрут убран. Включить снова — в профиле, плитка «Квест»'));
+  try{haptic('tap')}catch(e){}
+}
+function questOn(id){
+  QUEST_STATE.current=id||'morning';questSave();questRefresh();openQuest(QUEST_STATE.current);
 }
 function resetQuest(qid){QUEST_STATE.progress[qid]=0;questSave();questRefresh();openQuest(qid);toast(T('Прогресс сброшен'));if(navigator.vibrate)navigator.vibrate([10,30,10])}
 function shareQuest(qid){var tpl=QUEST_TPL.find(function(t){return t.id===qid});if(!tpl)return;var url='https://t.me/CityHubBot?start=quest_'+qid;shareLink(url,tpl.emo+' '+tpl.n+' · '+T('ссылка скопирована'))}
@@ -5180,9 +5202,19 @@ function lfPinIcon(b,nz,z){
    кликабельны» — тап падал с ReferenceError, молча, без единого следа в UI.
    Урок: удаление диапазоном опаснее вставки, и после ЛЮБОЙ правки области
    клик проверяется заново, даже если он уже был проверен час назад. */
-function mapOpenPlace(i){
-  var items=listItems();var b=items[i];if(!b)return;
-  selIdx=i;
+/* 🚨 Метка помнила ИНДЕКС в списке, а список пересортировывается от центра
+   карты (v92). Между отрисовкой и тапом центр успевал сместиться — и индекс
+   указывал на другое заведение: замер показал 24 промаха из 41 метки.
+
+   Индекс в пересортируемом списке — дефект по устройству, а не по стечению
+   обстоятельств: любой, кто позже поменяет порядок, снова его воскресит.
+   Поэтому метка носит САМО МЕСТО, а индекс остаётся только для подсветки
+   карточки в списке — и вычисляется заново в момент тапа. */
+function mapOpenPlace(b){
+  if(typeof b==='number'){var it=listItems();b=it[b]}
+  if(!b)return;
+  var i=listItems().indexOf(b);
+  selIdx=(i>=0)?i:-1;
   try{haptic('tap')}catch(e){}
   if(b.o&&_LF_MAIN){try{_LF_MAIN.panTo(b.o,{animate:true,duration:.35})}catch(e){}}
   openBiz(b);
@@ -5210,7 +5242,7 @@ function mapHitBind(){
     _LF_QUEST_STOPS.forEach(function(m){test(m,0)});
     if(!best)return;
     if(best._qi!==undefined){questStepTap(best._qi);return}
-    if(best._idx!==undefined)mapOpenPlace(best._idx);
+    if(best._b)mapOpenPlace(best._b);
   });
 }
 /* ═══════════ МЕТКИ: ПРОРЕЖИВАНИЕ И МАСШТАБ ═══════════
@@ -5283,7 +5315,7 @@ function mapDrawVisible(items){
   function drawPin(v){
     var nz=NICHES.find(function(n){return n.k===v.b.k})||{c:'#7C3AFF',n:''};
     var m=L.marker(v.b.o,{icon:lfPinIcon(v.b,nz,z),riseOnHover:true});
-    m.on('click',function(){mapOpenPlace(v.i)});
+    m.on('click',function(){mapOpenPlace(v.b)});
     m._idx=v.i;m._b=v.b;m._lift=(isPartner(v.b)&&lfPinSize(z)>12)?Math.round(lfPinSize(z)*0.5):0;
     m.addTo(_LF_MAIN);_LF_MARKERS.push(m);
   }
@@ -7908,7 +7940,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=99;try{renderConsent()}catch(e){}
+var APP_V=100;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
