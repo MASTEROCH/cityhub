@@ -460,11 +460,12 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 .leaflet-popup-close-button{color:var(--txt-2)!important;font-size:20px!important;padding:5px 9px 0 0!important}
 /* Custom divIcon pins (CityHUB-style teardrop with category color) */
 .lf-pin-wrap{background:none!important;border:none!important}
-/* 🚨 Метка рисуется от масштаба и на общем плане это 9–12 px — палец в неё не
-   попадает, и метка выглядит «есть, но не нажимается». Видимый размер трогать
-   нельзя (иначе снова стена из шариков), поэтому зона нажатия отделена от
-   рисунка: прозрачный круг 44 px по центру метки — минимум Apple HIG. */
-.lf-pin-wrap::before,.lf-quest-num::before{content:'';position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%);border-radius:50%}
+/* 🚨 Здесь стоял невидимый круг 44 px вокруг каждой метки. Идея верная,
+   исполнение нет: на общем плане метки стоят в 15–20 px друг от друга, ореолы
+   НАКЛАДЫВАЮТСЯ, и тап достаётся не той метке, на которую смотрел палец, а
+   той, что выше по z-порядку. Настоящие карты цели не раздувают — они
+   РАЗРЕШАЮТ ПРОМАХ: тап по пустому месту ищет ближайшую метку в радиусе
+   пальца (mapHitBind). Один победитель, всегда ближайший, без борьбы z. */
 .lf-dot{border-radius:50%;border:1.5px solid rgba(255,255,255,.5);box-shadow:0 2px 6px rgba(0,0,0,.5);opacity:.72}
 .lf-dot.pt{border:2px solid rgba(255,255,255,.9);opacity:1;box-shadow:0 3px 10px rgba(0,0,0,.6)}
 .lf-dot.promo{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,181,71,.25),0 2px 8px rgba(0,0,0,.6)}
@@ -2807,7 +2808,7 @@ input,textarea{font-size:16px!important}
 /* Задание, механика которого ещё не включена — видно, что оно неактивно */
 .earn-soon{opacity:.55}
 .earn-soon .m{color:var(--txt-3)}
-/* ═══════════════ УДАЧА — задания · рулетка · куда потратить ═══════════════ */
+/* ═══════════════ УДАЧА — задания · призы · куда потратить ═══════════════ */
 /* HUD единой валюты — липнет к верху и виден на всех трёх вкладках */
 .luck-hud{transition:transform .28s var(--ease-out),opacity .22s var(--ease-out);
   position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:12px;margin:0 0 12px;border-radius:var(--r-md);background:linear-gradient(135deg,rgba(212,255,79,.12),rgba(0,224,199,.08));border:1px solid rgba(212,255,79,.24);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 8px 26px rgba(0,0,0,.4)}
@@ -2881,7 +2882,7 @@ input,textarea{font-size:16px!important}
 .task.tk-soon .tk-pts{color:var(--txt-3);background:rgba(255,255,255,.05);border-color:var(--stroke-soft)}
 .task .tk-check{width:20px;height:20px;flex-shrink:0;color:var(--lime)}
 
-/* ── Рулетка ── */
+/* ── Призы ── */
 .wheel-wrap{position:relative;display:grid;place-items:center;padding:6px 0 4px}
 .wheel-stage{position:relative;width:min(84vw,320px);aspect-ratio:1}
 .wheel-glow{position:absolute;inset:-14%;border-radius:50%;background:radial-gradient(closest-side,rgba(124,58,255,.35),transparent 70%);pointer-events:none}
@@ -3402,7 +3403,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
     </section>
 
     <!-- TAB: REWARDS -->
-    <!-- TAB: УДАЧА (задания · рулетка · куда потратить) -->
+    <!-- TAB: УДАЧА (задания · призы · куда потратить) -->
     <section class="screen" id="c-luck">
       <div class="hdr"><div class="hdr-title">Удача</div>
         <button class="htool" onclick="openWishlist()" title="Избранное" aria-label="Избранное" style="color:#ff5d8f"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C.9 8.5 2.2 4 6.5 4c2.4 0 3.7 1.4 5.5 3.2C13.8 5.4 15.1 4 17.5 4c4.3 0 5.6 4.5 4 8-2.5 4.5-9.5 9-9.5 9z"/></svg></button>
@@ -3422,7 +3423,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
         <!-- Вкладки -->
         <div class="luck-seg" id="luckSeg">
           <button class="on" data-l="tasks" onclick="luckGo('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Задания<span class="seg-dot" id="tasksDot"></span></button>
-          <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4.02 12a2.827 2.827 0 1 1 3.81-4.17A2.827 2.827 0 1 1 12 4.02a2.827 2.827 0 1 1 4.17 3.81A2.827 2.827 0 1 1 19.98 12a2.827 2.827 0 1 1-3.81 4.17A2.827 2.827 0 1 1 12 19.98a2.827 2.827 0 1 1-4.17-3.81A2.827 2.827 0 1 1 4.02 12z" stroke-linejoin="round"/><path d="m7.83 7.83 8.34 8.34"/></svg>Рулетка</button>
+          <button data-l="wheel" onclick="luckGo('wheel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4.02 12a2.827 2.827 0 1 1 3.81-4.17A2.827 2.827 0 1 1 12 4.02a2.827 2.827 0 1 1 4.17 3.81A2.827 2.827 0 1 1 19.98 12a2.827 2.827 0 1 1-3.81 4.17A2.827 2.827 0 1 1 12 19.98a2.827 2.827 0 1 1-4.17-3.81A2.827 2.827 0 1 1 4.02 12z" stroke-linejoin="round"/><path d="m7.83 7.83 8.34 8.34"/></svg>Призы</button>
           <button data-l="league" onclick="luckGo('league')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>Лига</button>
         </div>
 
@@ -4830,6 +4831,47 @@ function lfPinIcon(b,nz,z){
     html:'<div class="lf-pin'+promo+'" style="background:'+nz.c+';width:'+sz+'px;height:'+sz+'px">'+ic+'</div>',
     iconSize:[sz,sz],iconAnchor:[sz/2,sz],popupAnchor:[0,-sz+4]});
 }
+/* 🚨 ЭТА ФУНКЦИЯ БЫЛА ПОТЕРЯНА И ТРИ ВЕРСИИ ОТСУТСТВОВАЛА В ФАЙЛЕ.
+   Вызов `m.on('click',...mapOpenPlace(v.i))` остался, определение вырезала
+   чистка мёртвого кода: удаление шло ДВУМЯ ЯКОРЯМИ (`от lfClusterIcon до
+   комментария МЕТКИ`), а между ними лежала свежая функция, про которую я
+   забыл. Снаружи это выглядело ровно как жалоба Роча: «геометки не
+   кликабельны» — тап падал с ReferenceError, молча, без единого следа в UI.
+   Урок: удаление диапазоном опаснее вставки, и после ЛЮБОЙ правки области
+   клик проверяется заново, даже если он уже был проверен час назад. */
+function mapOpenPlace(i){
+  var items=listItems();var b=items[i];if(!b)return;
+  selIdx=i;
+  try{haptic('tap')}catch(e){}
+  if(b.o&&_LF_MAIN){try{_LF_MAIN.panTo(b.o,{animate:true,duration:.35})}catch(e){}}
+  openBiz(b);
+}
+/* Радиус прощения промаха в экранных пикселях. 26 — половина подушечки
+   пальца: больше уводит на соседнюю улицу, меньше не спасает от дрожания. */
+var MAP_HIT=26;
+function mapHitBind(){
+  if(!_LF_MAIN||_LF_MAIN.__hitBound)return;
+  _LF_MAIN.__hitBound=1;
+  /* Leaflet не шлёт click карты, когда попали ПО метке, — значит сюда мы
+     доходим только при промахе, и обработчики самих меток остаются главными. */
+  _LF_MAIN.on('click',function(e){
+    var pt=e.containerPoint,best=null,bd=MAP_HIT+1;
+    function test(m,lift){
+      if(!m)return;
+      var p;try{p=_LF_MAIN.latLngToContainerPoint(m.getLatLng())}catch(err){return}
+      var dx=p.x-pt.x, dy=(p.y-(lift||0))-pt.y;
+      var d=Math.sqrt(dx*dx+dy*dy);
+      if(d<bd){bd=d;best=m}
+    }
+    /* У капли якорь в остриё, тело на полразмера выше: целимся туда, куда
+       смотрит человек, а не в кончик. */
+    _LF_MARKERS.forEach(function(m){test(m,m._lift||0)});
+    _LF_QUEST_STOPS.forEach(function(m){test(m,0)});
+    if(!best)return;
+    if(best._qi!==undefined){questStepTap(best._qi);return}
+    if(best._idx!==undefined)mapOpenPlace(best._idx);
+  });
+}
 /* ═══════════ МЕТКИ: ПРОРЕЖИВАНИЕ И МАСШТАБ ═══════════
    Каталог — 2 814 точек. «Нарисовать все» даёт стену из пинов; первая попытка
    чинить это кластерами дала стену из кружков с числами — на скриншоте видно
@@ -4851,6 +4893,21 @@ function lfPinIcon(b,nz,z){
    Потолок остаётся: 2 792 DOM-метки вешают страницу так, что скриншот не
    снимается за 30 секунд — замерено. */
 var MAP_CAP=350;
+/* Чем место полезнее человеку, который смотрит на карту и решает, куда идти.
+   Ниши разведены намеренно: за кофе и едой в город ходят, за автозапчастями
+   едут по делу и ищут не здесь. Близость к центру кадра остаётся, но лишь
+   как разрешение ничьей — иначе снова побеждает самый частый киоск. */
+var NICHE_W={coffee:6,food:6,bar:5,sea:5,art:5,spa:4,gym:4,music:4,travel:3,beauty:3,kids:3,med:1,shop:0};
+function bgScore(v){
+  var b=v.b,sc=(NICHE_W[b.k]||0)*2;
+  if(b.h)sc+=3;
+  var oh=bizOpen(b);if(oh&&(oh.open||oh.always))sc+=2;
+  if(b.u)sc+=2;
+  if(b.ad)sc+=1;
+  if(b.am)sc+=1;
+  if(b.cu)sc+=1;
+  return sc-Math.min(1.5,(v.d||0)*900);   /* ничья решается близостью к центру кадра */
+}
 function cluCell(z){return z<=12?150:z<=13?120:z<=14?96:z<=15?76:64}
 function mapDrawVisible(items){
   if(!_LF_MAIN||!items)return;
@@ -4886,7 +4943,7 @@ function mapDrawVisible(items){
     var nz=NICHES.find(function(n){return n.k===v.b.k})||{c:'#7C3AFF',n:''};
     var m=L.marker(v.b.o,{icon:lfPinIcon(v.b,nz,z),riseOnHover:true});
     m.on('click',function(){mapOpenPlace(v.i)});
-    m._idx=v.i;m._b=v.b;
+    m._idx=v.i;m._b=v.b;m._lift=(isPartner(v.b)&&lfPinSize(z)>12)?Math.round(lfPinSize(z)*0.5):0;
     m.addTo(_LF_MAIN);_LF_MARKERS.push(m);
   }
   groups.forEach(function(g){
@@ -4897,11 +4954,17 @@ function mapDrawVisible(items){
     var pt=[],bg=[];
     g.forEach(function(v){(isPartner(v.b)?pt:bg).push(v)});
     pt.forEach(drawPin);
-    /* Фон — один представитель на ячейку, ближайший к центру кадра: остальные
-       в этом масштабе всё равно легли бы друг на друга. Ближе подвёл — ячейка
-       мельче, проступают соседи. Это и есть «чем ближе, тем больше». */
+    /* Фон — ОДИН представитель на ячейку, и это лучший, а не ближайший.
+       Замер по каталогу Батуми: из 2 786 фоновых мест 1 241 — «шопинг», а
+       внутри него 301 продуктовый киоск, 182 магазина одежды, 27 автосервисов.
+       Выбор «кто ближе к центру кадра» ставил на карту именно их, потому что
+       их больше всех. Данные ГЕО дают чем мерить: место с часами, ссылкой и
+       адресом полезнее безымянной точки, а открытое сейчас полезнее закрытого.
+       Так шум уходит сам, и при этом НИЧЕГО не удалено — подведи ближе, ячейка
+       мельче, и киоск проступит на своём месте. */
     if(bg.length){
-      var rep=bg[0];bg.forEach(function(v){if(v.d<rep.d)rep=v});
+      var rep=bg[0],rs=bgScore(bg[0]);
+      for(var bi=1;bi<bg.length;bi++){var sc=bgScore(bg[bi]);if(sc>rs){rs=sc;rep=bg[bi]}}
       drawPin(rep);
     }
   });
@@ -4940,6 +5003,7 @@ function buildMap(){
      хуже. Рисуем только то, что попадает в текущий кадр, и не больше MAP_CAP —
      остальное всё равно не видно, а список рядом показывает всё. */
   mapDrawVisible(items);
+  mapHitBind();
   if(!_LF_MAIN.__vpBound){
     _LF_MAIN.__vpBound=1;
     _LF_MAIN.on('moveend zoomend',function(){try{mapDrawVisible(listItems())}catch(e){}});
@@ -5004,6 +5068,7 @@ function drawQuestRoute(){
     var ic=L.divIcon({className:'lf-quest-num',html:'<div class="lqn '+st+'" style="background:'+bg+';color:'+col+'">'+label+'</div>',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]});
     var m=L.marker(b.o,{icon:ic,zIndexOffset:(st==='now'?980:900)}).addTo(_LF_MAIN);
     m.on('click',function(){questStepTap(i)});
+    m._qi=i;
     _LF_QUEST_STOPS.push(m);
   });
 }
@@ -5014,12 +5079,10 @@ function questStepTap(i){
   var q=questNow();if(!q)return;
   var b=q.stops[i];if(!b)return;
   try{haptic('tap')}catch(e){}
-  if(i>q.done){
-    var nx=q.stops[q.done];
-    toast(T('Сначала шаг')+' '+(q.done+1)+' · '+bizName(nx));
-    if(_LF_MAIN&&nx.o){try{_LF_MAIN.panTo(nx.o,{animate:true,duration:.45})}catch(e){}}
-    return;
-  }
+  /* 🚨 Запертый шаг УХОДИЛ в тост и карточку не открывал. Снаружи — «метка не
+     кликается»: тапнул точку и не получил ничего, кроме строчки внизу. Тап по
+     точке ОБЯЗАН открывать место; очередь шагов — подсказка поверх, не вместо. */
+  if(i>q.done)toast(T('По маршруту сейчас шаг')+' '+(q.done+1)+' · '+bizName(q.stops[q.done]));
   openBiz(b);
 }
 /* Показать текущий шаг крупно — когда человек потерял себя на карте. */
@@ -5097,7 +5160,7 @@ function renderMapTab(){
    целевой клиент, а не случайный прохожий.
 
    Отсюда два класса мест, и путать их нельзя:
-   · pr:1 — ПАРТНЁР. Живёт в «Сегодня», в рекомендациях, в рулетке, даёт
+   · pr:1 — ПАРТНЁР. Живёт в «Сегодня», в рекомендациях, в призах, даёт
             баллы за визит. Его мы обещали показывать.
    · pr:0 — ФОН ГОРОДА (импорт OSM). Существует на карте и в поиске, чтобы
             город не выглядел пустым и чтобы было из кого набирать партнёров.
@@ -5209,7 +5272,10 @@ function renderNiches(q){
 }
 function pl3(n,one,few,many){var a=Math.abs(n)%100,b=a%10;if(a>10&&a<20)return many;if(b>1&&b<5)return few;if(b===1)return one;return many}
 function plural(n){return n%10===1&&n%100!==11?'место':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20)?'места':'мест')}
-function openNiche(k){filter=k;cgo('map');setView('list');setTimeout(function(){document.querySelectorAll('#mapFilters .mood,#mapFilters .ch').forEach(function(x){x.classList.toggle('on',x.textContent.includes(NICHES.find(function(n){return n.k===k}).n))})},50);renderList();toast(NICHES.find(function(n){return n.k===k}).n)}
+/* 🚨 Здесь стоял вызов setView('list') — функции, которой в проекте нет: тап
+   по нише падал с ReferenceError и не долистывал до списка. Такой же осколок
+   удалённого кода, как потерянная mapOpenPlace. Ловится стражем DEADREF. */
+function openNiche(k){filter=k;cgo('map');setTimeout(function(){document.querySelectorAll('#mapFilters .mood,#mapFilters .ch').forEach(function(x){x.classList.toggle('on',x.textContent.includes(NICHES.find(function(n){return n.k===k}).n))})},50);renderList();toast(NICHES.find(function(n){return n.k===k}).n)}
 
 // ---------- AI CONCIERGE (real Anthropic API) ----------
 const QUICK=[{i:'coffee',t:'Кофе у моря'},{i:'night',t:'Вечер с друзьями'},{i:'gym',t:'Спорт рядом'},
@@ -5906,7 +5972,7 @@ function cgo(t){if(t==='ai'){try{openMascot()}catch(e){}return}
    buildMap() у контейнера нулевой размер, getBounds() пустой, и в кадр
    не попадает ни одна метка. invalidateSize() чинит размер, но сам по
    себе перерисовку меток не запускает. */
-mapDrawVisible(listItems())}}catch(e){}},d)})}if(t==='luck'){ptsSync();renderLuckHud();luckTickStart();luckScrollBind();luckGo('wheel');}  /* Вход в «Удачу» — всегда рулетка: это витрина раздела и
+mapDrawVisible(listItems())}}catch(e){}},d)})}if(t==='luck'){ptsSync();renderLuckHud();luckTickStart();luckScrollBind();luckGo('wheel');}  /* Вход в «Удачу» — всегда призы: это витрина раздела и
    то, ради чего сюда заходят. Память о последней вкладке (gameSet('luckTab'))
    остаётся — её читает восстановление состояния по системной кнопке «назад»,
    но на открытие раздела она больше не влияет. */if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8);
@@ -6131,7 +6197,7 @@ var DICT={"Скидка действует на всю компанию: пок�
 "выигран":["won", "მოგებული"],"Действует ещё":["Valid for", "მოქმედებს კიდევ"],"Использован":["Used", "გამოყენებული"],"Срок вышел":["Expired", "ვადა გავიდა"],"истёк":["expired", "ვადაგასული"],"отдан":["given away", "გადაცემული"],"без срока":["no expiry", "უვადო"],"ч":["h", "სთ"],"мин":["min", "წთ"],"Промокод":["Promo code", "პრომოკოდი"],"Использовать":["Use it", "გამოყენება"],"Подарить другу":["Give to a friend", "მეგობრისთვის ჩუქება"],"Промокод один: если отдашь его — воспользуется друг, а не ты.":["One code only: give it away and your friend uses it, not you.", "კოდი ერთია: თუ გადასცემ, მეგობარი ისარგებლებს, შენ — არა."],"Покажи это на кассе":["Show this at the counter", "აჩვენე ეს სალაროსთან"],"Готово, приз получен":["Done, prize collected", "მზადაა, პრიზი მიღებულია"],"Приз отмечен как использованный":["Prize marked as used", "პრიზი მონიშნულია გამოყენებულად"],"Держи подарок от CityHUB":["A gift from CityHUB", "საჩუქარი CityHUB-სგან"],"действует ещё":["valid for", "მოქმედებს კიდევ"],"Подарок отдан — код теперь у друга":["Gift sent — your friend has the code now", "საჩუქარი გადაეცა — კოდი მეგობართანაა"],"Скопировано — отправь другу":["Copied — send it to your friend", "დაკოპირდა — გაუგზავნე მეგობარს"],"Не получилось скопировать":["Could not copy", "ვერ დაკოპირდა"],"Твой приз в барабане":["Your prize in the drum", "შენი პრიზი დოლურაში"],"выпадает в спиннере · 10% шанс":["drops in the spinner · 10% chance", "ვარდება სპინერში · 10% შანსი"],"Сколько гость может им воспользоваться":["How long the guest can use it", "რამდენ ხანს შეუძლია სტუმარს გამოყენება"],"Срок считается с момента выигрыша. Короткое окно приводит гостя быстрее, длинное — не давит.":["Counted from the moment it is won. A short window brings the guest sooner; a long one does not push.", "ითვლება მოგების მომენტიდან. მოკლე ფანჯარა სტუმარს უფრო სწრაფად მოიყვანს, გრძელი — არ აჩქარებს."],"Срок приза обновлён":["Prize expiry updated", "პრიზის ვადა განახლდა"],"3 дня":["3 days", "3 დღე"],"7 дней":["7 days", "7 დღე"],"30 дней":["30 days", "30 დღე"],"90 дней":["90 days", "90 დღე"],"Бессрочно":["No expiry", "უვადოდ"],"горячая акция, приводит сразу":["hot deal, brings them in now", "ცხელი აქცია, მაშინვე მოჰყავს"],"неделя на визит":["a week to visit", "კვირა ვიზიტისთვის"],"по умолчанию — не давит на гостя":["default — no pressure on the guest", "ნაგულისხმევი — არ აჭერს სტუმარს"],"длинные подписки и крупные призы":["long subscriptions and big prizes", "გრძელი გამოწერები და დიდი პრიზები"],"без срока — гость придёт когда захочет":["no expiry — the guest comes whenever", "უვადო — სტუმარი მოვა როცა მოისურვებს"],
 "Закрыть":["Close", "დახურვა"],
 "Реклама в CityHUB":["Advertising on CityHUB", "რეკლამა CityHUB-ზე"],"Люди открывают приложение, когда решают, куда пойти. Место в этот момент — и есть реклама.":["People open the app at the moment they decide where to go. Being there at that moment is the ad.", "ხალხი აპს მაშინ ხსნის, როცა წყვეტს სად წავიდეს. სწორედ ეს მომენტია რეკლამა."],"Строка":["Ticker", "სტრიქონი"],"Баннер":["Banner", "ბანერი"],"Репортаж":["Feature", "რეპორტაჟი"],"Аукцион":["Auction", "აუქციონი"],"Название и иконка в бегущей строке «Сегодня». Тап ведёт на карточку заведения.":["Your name and icon in the Today ticker. A tap opens your place.", "თქვენი სახელი და იკონა «დღეს»-ის სტრიქონში. შეხება ხსნის თქვენს ბარათს."],"Главный баннер на «Сегодня» — место одно, его разыгрывает живой аукцион.":["The main Today banner — one slot, decided by a live auction.", "მთავარი ბანერი «დღეს»-ზე — ერთი ადგილი, რომელსაც ცოცხალი აუქციონი ანაწილებს."],"Съёмка и материал о заведении в наших соцсетях плюс закреп в приложении на месяц.":["A shoot and a story about you on our social media, plus a month pinned in the app.", "გადაღება და მასალა ჩვენს სოცქსელებში, პლუს თვიანი დამაგრება აპში."],"Показ всем в городе":["Shown to the whole city", "ჩვენება მთელ ქალაქს"],"Срок от 1 недели":["From 1 week", "1 კვირიდან"],"Тап → карточка и маршрут":["Tap → card and route", "შეხება → ბარათი და მარშრუტი"],"Первый экран «Сегодня»":["First screen of Today", "«დღეს»-ის პირველი ეკრანი"],"Ставка бьёт текущую":["Outbid the current leader", "ფსონი ჯობნის მიმდინარეს"],"Аналитика показов и переходов":["Impression and click analytics", "ჩვენებებისა და გადასვლების ანალიტიკა"],"Съёмка и текст — на нас":["Shoot and copy on us", "გადაღება და ტექსტი ჩვენზეა"],"Публикация в соцсетях CityHUB":["Published on CityHUB social", "პუბლიკაცია CityHUB-ის სოცქსელებში"],"Закреп в приложении на месяц":["Pinned in the app for a month", "დამაგრება აპში ერთი თვით"],"Промокод для читателей":["Promo code for readers", "პრომოკოდი მკითხველებისთვის"],"Сколько держим":["How long it runs", "რამდენ ხანს გასტანს"],"Итого":["Total", "ჯამი"],"за выпуск":["per feature", "გამოშვებაზე"],"Оставить заявку":["Send a request", "განაცხადის გაგზავნა"],"Заявка ни к чему не обязывает — сначала обсудим, что вам подходит.":["A request commits you to nothing — we will talk through what fits first.", "განაცხადი არაფერს გავალდებულებთ — ჯერ განვიხილავთ, რა გერგებათ."],"Баннер разыгрывает аукцион — ставка на главной бизнес-экрана":["The banner goes by auction — bid on the business home screen", "ბანერი აუქციონზეა — ფსონი ბიზნეს-ეკრანზე"],"Хочу рекламу в CityHUB":["I want to advertise on CityHUB", "მინდა რეკლამა CityHUB-ზე"],"Расскажи, что входит и как начать.":["Tell me what is included and how to start.", "მომიყევი, რა შედის და როგორ დავიწყო."],
-"баллов Loop":["Loop points", "Loop ქულა"],"копятся за визиты и задания, тратятся на награды и спины":["earned on visits and tasks, spent on rewards and spins", "გროვდება ვიზიტებსა და დავალებებზე, იხარჯება ჯილდოებსა და სპინებზე"],"Заработать":["Earn", "გამომუშავება"],"задания и визиты":["tasks and visits", "დავალებები და ვიზიტები"],"Потратить":["Spend", "დახარჯვა"],"награды партнёров":["partner rewards", "პარტნიორების ჯილდოები"],"Докупить":["Top up", "შევსება"],"пакеты баллов":["point packs", "ქულების პაკეტები"],"История":["History", "ისტორია"],"операция":["transaction", "ოპერაცია"],"Здесь появится история начислений и трат":["Your earnings and spending will show up here", "აქ გამოჩნდება დარიცხვებისა და ხარჯვის ისტორია"],"Квест":["Quest", "ქვესტი"],"Отзыв о месте":["Place review", "ადგილის შეფასება"],"Визит":["Visit", "ვიზიტი"],"Награда":["Reward", "ჯილდო"],"Приглашённый друг":["Invited friend", "მოწვეული მეგობარი"],"Серия дней":["Day streak", "დღეების სერია"],"Задание":["Task", "დავალება"],"Спин рулетки":["Roulette spin", "რულეტის სპინი"],
+"баллов Loop":["Loop points", "Loop ქულა"],"копятся за визиты и задания, тратятся на награды и спины":["earned on visits and tasks, spent on rewards and spins", "გროვდება ვიზიტებსა და დავალებებზე, იხარჯება ჯილდოებსა და სპინებზე"],"Заработать":["Earn", "გამომუშავება"],"задания и визиты":["tasks and visits", "დავალებები და ვიზიტები"],"Потратить":["Spend", "დახარჯვა"],"награды партнёров":["partner rewards", "პარტნიორების ჯილდოები"],"Докупить":["Top up", "შევსება"],"пакеты баллов":["point packs", "ქულების პაკეტები"],"История":["History", "ისტორია"],"операция":["transaction", "ოპერაცია"],"Здесь появится история начислений и трат":["Your earnings and spending will show up here", "აქ გამოჩნდება დარიცხვებისა და ხარჯვის ისტორია"],"Квест":["Quest", "ქვესტი"],"Отзыв о месте":["Place review", "ადგილის შეფასება"],"Визит":["Visit", "ვიზიტი"],"Награда":["Reward", "ჯილდო"],"Приглашённый друг":["Invited friend", "მოწვეული მეგობარი"],"Серия дней":["Day streak", "დღეების სერია"],"Задание":["Task", "დავალება"],"Спин":["Spin", "სპინი"],
 
 "Похоже, ты в городе":["Looks like you're in", "როგორც ჩანს, შენ ხარ ქალაქში"],"Переключиться и посмотреть, что рядом":["Switch and see what's nearby", "გადართე და ნახე, რა არის ახლოს"],"Не знаешь, с чего начать?":["Not sure where to start?", "არ იცი, საიდან დაიწყო?"],"Скажи настроение — подберу место под тебя":["Tell me your mood — I'll find the place", "მითხარი განწყობა — ადგილს შეგირჩევ"],"Спросить консьержа":["Ask the concierge", "ჰკითხე კონსიერჟს"],
 
@@ -6140,7 +6206,7 @@ var DICT={"Скидка действует на всю компанию: пок�
 'Нравится':['Like','მომწონს'],'Не то':['Not it','არა ეს'],
 'Серия прервалась':['Streak broken','სერია შეწყდა'],'Вернуть серию':['Restore streak','სერიის დაბრუნება'],
 'Начать заново':['Start over','თავიდან დაწყება'],'День':['Day','დღე'],'Первый день':['First day','პირველი დღე'],
-'баллов за вход':['points for logging in','ქულა შესვლისთვის'],'Крутить рулетку':['Spin the wheel','დაატრიალე რულეტკა'],
+'баллов за вход':['points for logging in','ქულა შესვლისთვის'],'Крутить барабан':['Spin the wheel','დაატრიალე რულეტკა'],
 'учусь…':['learning…','ვსწავლობ…'],
 'Лига':['League','ლიგა'],
 'Лига друзей':['Friends league','მეგობრების ლიგა'],
@@ -6150,7 +6216,7 @@ var DICT={"Скидка действует на всю компанию: пок�
 'Твой вкус':['Your taste','შენი გემოვნება'],
 'Удача':['Luck','ფორტუნა'],
 'Задания':['Tasks','დავალებები'],
-'Рулетка':['Wheel','რულეტკა'],
+'Призы':['Prizes','პრიზები'],
 'Потратить':['Spend','დახარჯვა'],
 'Бесплатный спин готов':['Free spin ready','უფასო დატრიალება მზადაა'],
 'Бесплатный спин через':['Free spin in','უფასო დატრიალება'],
@@ -6177,7 +6243,7 @@ var DICT={"Скидка действует на всю компанию: пок�
 'Канал откроется вместе с релизом бота':['The channel opens with the bot release','არხი გაიხსნება ბოტის რელიზთან ერთად'],
 'Не хватает баллов — выполни задание или докупи':['Not enough points — do a task or top up','ქულები არ ჰყოფნის — შეასრულე დავალება ან შეავსე'],
 'Докупить баллы':['Top up points','ქულების შევსება'],
-'Баллы нужны, чтобы крутить рулетку и менять на награды. Их всегда можно получить бесплатно — за визиты и задания.':['Points spin the wheel and buy rewards. You can always earn them free — by visiting places and doing tasks.','ქულებით ატრიალებ რულეტკას და ცვლი ჯილდოებზე. მათი უფასოდ მიღება ყოველთვის შეიძლება — ვიზიტებითა და დავალებებით.'],
+'Баллы нужны, чтобы крутить барабан и менять на награды. Их всегда можно получить бесплатно — за визиты и задания.':['Points spin the wheel and buy rewards. You can always earn them free — by visiting places and doing tasks.','ქულებით ატრიალებ რულეტკას და ცვლი ჯილდოებზე. მათი უფასოდ მიღება ყოველთვის შეიძლება — ვიზიტებითა და დავალებებით.'],
 'Бесплатный спин раз в 6 часов, задания и визиты дают баллы без покупки.':['A free spin every 6 hours; tasks and visits give points without paying.','უფასო დატრიალება 6 საათში ერთხელ; დავალებები და ვიზიტები ქულებს უფასოდ აძლევს.'],
 'Оплата включится вместе с релизом — пока баллы только за визиты и задания':['Payments go live with the release — for now points come from visits and tasks','გადახდა ჩაირთვება რელიზთან ერთად — ჯერჯერობით ქულები მხოლოდ ვიზიტებითა და დავალებებით'],
 'Ещё спин!':['Another spin!','კიდევ ერთი დატრიალება!'],
@@ -7224,7 +7290,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=85;try{renderConsent()}catch(e){}
+var APP_V=86;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -7380,6 +7446,19 @@ document.addEventListener('visibilitychange',function(){
   if(!document.hidden&&FC.mood==='idle'&&!FC.t)faceRest();
 });
 try{facePreload('idle');facePreload('fun');faceRest();faceIdleLoop()}catch(e){}
+/* Почему у маскота горит точка. 🚨 Функция вызывалась, но в файле её не было —
+   hubDotSync падал целиком, и точка жила своей жизнью из разметки.
+   Причина обязана быть НАСТОЯЩЕЙ и проверяемой: точка, которая горит всегда,
+   перестаёт что-либо значить и учит её игнорировать. */
+function hubReason(){
+  try{
+    if(typeof askDue==='function'&&askDue())return T('спрошу, как всё прошло');
+    if(typeof freeSpinReady==='function'&&freeSpinReady())return T('готов бесплатный спин');
+    if(typeof revNextVenue==='function'&&revNextVenue())return T('ждём твой отзыв');
+    if(typeof taskOpenSum==='function'&&taskOpenSum()>0)return T('есть незабранные баллы');
+  }catch(e){}
+  return '';
+}
 function hubDotSync(){
   var d=document.querySelector('.tab-mascot .tm-dot');if(!d)return;
   var why=hubReason();
@@ -8877,7 +8956,7 @@ function buildSpin(){
   track.style.transform='translateX('+spinOffset(spinRestIndex())+'px)';
 }
 /* В покое под меткой стоял WHEEL[0] — то есть «+20, утешительный»: первое, что
-   видел глаз, открыв рулетку, был худший лот барабана. Паркуемся на главном
+   видел глаз, открыв призы, был худший лот барабана. Паркуемся на главном
    призе: барабан в покое должен обещать, а не извиняться. */
 function spinRestIndex(){
   var mid=Math.floor(SPIN_LOOPS/2)*WHEEL.length, top=0, best=-1;
@@ -8894,7 +8973,7 @@ function spinRun(){
   if(__spinBusy)return;
   try{mascotFeel('wonder',4200)}catch(e){}
   var free=freeSpinReady();
-  if(!free&&!ptsSpend(SPIN_COST,T('Спин рулетки'))){
+  if(!free&&!ptsSpend(SPIN_COST,T('Спин'))){
     toast(T('Не хватает баллов — выполни задание или докупи'));
     try{haptic('error')}catch(e){}
     openBuyPts();return;
@@ -8944,7 +9023,7 @@ function spinRun(){
 }
 function spinPrize(i){
   var p=WHEEL[i];
-  if(p.k==='pts'){ptsAdd(p.v,T('Рулетка')+' · '+p.d);try{celebrate({k:'loop',title:'+'+p.v+' '+T('баллов'),sub:T('Рулетка')+' · '+p.d})}catch(e){toast('+'+p.v)}}
+  if(p.k==='pts'){ptsAdd(p.v,T('Приз')+' · '+p.d);try{celebrate({k:'loop',title:'+'+p.v+' '+T('баллов'),sub:T('Приз')+' · '+p.d})}catch(e){toast('+'+p.v)}}
   else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({k:'refresh',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
   else{
     var code='CH-'+Math.random().toString(36).slice(2,7).toUpperCase();
@@ -9324,7 +9403,7 @@ function dailySheet(streak,mode){
           '<b>'+T('ещё')+' '+Math.max(0,mile-streak)+'</b></div>'+
         '<div class="dl-mile-bar"><i style="width:'+Math.round(Math.min(1,streak/mile)*100)+'%"></i></div>'+
         '<div class="dl-mile-p">'+ei('loop','currentColor',12)+'+'+streakReward(mile)+' '+T('и множитель')+' ×'+(1+Math.min(1,mile/30)).toFixed(1)+'</div></div>':'');
-    /* Кнопка вела в рулетку — к серии это отношения не имеет. Экран ежедневного
+    /* Кнопка вела в призы — к серии это отношения не имеет. Экран ежедневного
        входа должен закрываться и возвращать туда, зачем человек открыл приложение. */
     cta='<button class="cta lime" onclick="closeSheet()">'+ico('check','#06210a',2.4)+T('Отлично')+'</button>';
   }
@@ -9638,7 +9717,7 @@ function edgeFadeAll(){document.querySelectorAll('.mood-scroll,.chips-row,.qsel,
 window.addEventListener('resize',function(){document.querySelectorAll('.edge-fade').forEach(edgeFadeUpdate)});
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   УДАЧА — единая валюта, задания, рулетка, магазин.
+   УДАЧА — единая валюта, задания, призы, магазин.
    Баллы Loop — ОДНА валюта на всё приложение: чек-ины, задания, спины, обмен.
    Единственная точка правды — ptsGet(); писать только через ptsAdd/ptsSpend,
    иначе экраны разъедутся (их четыре: HUD, чип «Сегодня», шторка магазина, профиль).
@@ -9774,9 +9853,45 @@ function starsPerUsd(){return 50}
    Зато рантаймом это ловится точно: пройти по видимому тексту всех экранов и
    поискать следы неприехавших значений. Без UI — вызывается из консоли и из
    регрессии перед деплоем: chSelfCheck(). */
+/* ═══════════ СТРАЖ МЁРТВОЙ ССЫЛКИ ═══════════
+   🚨 Оплачено дорого: чистка мёртвого кода удаляла диапазон «от A до B» и
+   вырезала лежавшую между ними живую функцию. Вызов остался, определение
+   исчезло — тап по геометке три версии подряд падал с ReferenceError молча,
+   без следа в интерфейсе. Ни один текстовый страж такого не видит: и вызов,
+   и разметка выглядят правильными.
+
+   Здесь спрашиваем не текст, а рантайм: каждое имя, которое разметка
+   собирается вызвать, обязано существовать. Дёшево, ловит весь класс. */
+function chDeadRefs(){
+  var bad={},out=[];
+  document.querySelectorAll('[onclick],[oninput],[onchange]').forEach(function(el){
+    ['onclick','oninput','onchange'].forEach(function(a){
+      var v=el.getAttribute(a);if(!v)return;
+      /* 🚨 Сначала выбрасываем СТРОКОВЫЕ ЛИТЕРАЛЫ. Без этого имя заведения
+         «Tobacco grower Lazare Biniat-Ogli (Biniashvili) house» читается как
+         вызов `Ogli(` — и страж кричит на совершенно исправный код. Страж,
+         который кричит зря, перестают читать вместе со всеми настоящими
+         находками, поэтому ложное срабатывание дороже пропущенного. */
+      v=v.replace(/'(\\.|[^'\\])*'/g,"''").replace(/"(\\.|[^"\\])*"/g,'""');
+      var re=/(^|[^\w$.])([a-zA-Z_$][\w$]*)\s*\(/g,m;
+      while((m=re.exec(v))){
+        var n=m[2];
+        if(/^(if|for|while|switch|catch|return|typeof|function|new|try|var|let|const|this|event|alert|confirm|Number|String|Boolean|Array|Object|JSON|Math|Date|parseInt|parseFloat|decodeURIComponent|encodeURIComponent|setTimeout|require)$/.test(n))continue;
+        if(typeof window[n]==='function'||bad[n])continue;
+        bad[n]=1;out.push(n+'() — вызывается из '+a+', но не определена');
+      }
+    });
+  });
+  /* Обработчики карты живут в JS, а не в разметке — перечисляем явно. */
+  ['mapOpenPlace','questStepTap','mapDrawVisible','mapHitBind','listItems','openBiz','bizOpen','bizFacts','bizTiles','openChip'].forEach(function(n){
+    if(typeof window[n]!=='function')out.push(n+'() — обработчик карты не определён');
+  });
+  return out;
+}
 function chSelfCheck(){
   var BAD=['NaN','не число','undefined','[object Object]','Infinity','не число'];
   var found=[],seenTxt={};
+  try{chDeadRefs().forEach(function(x){found.push('МЁРТВАЯ ССЫЛКА · '+x)})}catch(e){}
   /* 🚨 Пробелы тут не косметика: toLocaleString('ru-RU') для NaN отдаёт
      «не<NBSP>число» — с неразрывным пробелом. Проверка с обычным пробелом
      в игле молча не находит ровно тот дефект, ради которого написана,
@@ -10280,7 +10395,7 @@ function renderPool(){
 var __spinning=false;
 function wheelPrize(i){
   var p=WHEEL[i];
-  if(p.k==='pts'){ptsAdd(p.v,T('Рулетка')+' · '+p.d);try{celebrate({k:'loop',title:'+'+p.v+' '+T('баллов'),sub:T('Рулетка')+' · '+p.d})}catch(e){toast('+'+p.v+' '+T('баллов'))}}
+  if(p.k==='pts'){ptsAdd(p.v,T('Приз')+' · '+p.d);try{celebrate({k:'loop',title:'+'+p.v+' '+T('баллов'),sub:T('Приз')+' · '+p.d})}catch(e){toast('+'+p.v+' '+T('баллов'))}}
   else if(p.k==='spin'){gameSet('freeSpinAt',0);try{celebrate({k:'refresh',title:T('Ещё спин!'),sub:T('Барабан снова готов')})}catch(e){toast(T('Ещё спин!'))}}
   else{
     var code='CH-'+Math.random().toString(36).slice(2,7).toUpperCase();
@@ -10382,7 +10497,7 @@ var PACKS=[
 function openBuyPts(){
   document.getElementById('sheet-body').innerHTML='<div class="grab"></div>'+
     '<h2 style="font-weight:800;letter-spacing:-.02em;margin-bottom:4px">'+T('Докупить баллы')+'</h2>'+
-    '<p class="sub" style="margin-bottom:14px">'+T('Баллы нужны, чтобы крутить рулетку и менять на награды. Их всегда можно получить бесплатно — за визиты и задания.')+'</p>'+
+    '<p class="sub" style="margin-bottom:14px">'+T('Баллы нужны, чтобы крутить барабан и менять на награды. Их всегда можно получить бесплатно — за визиты и задания.')+'</p>'+
     PACKS.map(function(k,i){return '<div class="pack'+(k.best?' best':'')+'" onclick="buyPack('+i+')">'+
       (k.tag?'<span class="pk-tag">'+k.tag+'</span>':'')+
       '<div class="pk-v"><b>'+k.p.toLocaleString('ru-RU')+' '+T('баллов')+'</b><span>'+k.d+'</span></div>'+
