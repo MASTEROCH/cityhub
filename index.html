@@ -5753,6 +5753,23 @@ function listCenter(){
    километр — за его границей порядок оставался слепым к часам работы. 700 ≈
    6 мс (2 814 вызовов мерились в 24 мс), это весь город пешком. */
 var LIST_SCORED=700;
+/* ── ПЛАНКА КАЧЕСТВА: только места с картинкой ──────────────────────────────
+   Роч, 14.09.2026: «в рекомендациях показывай проекты только с фото пока что»,
+   затем «Рядом тоже», «Сегодня и рядом».
+
+   Что считается картинкой: своё фото (b.im — 88 штук, добраны из OSM,
+   Wikimedia Commons и с сайтов заведений) ЛИБО партнёрство (партнёру рисуется
+   изображение ниши, подписанное как изображение ниши). Итого 113 из 2 814.
+
+   🚨 Цена решения, названная до включения: лента «Рядом» и карта сжимаются
+   с 2 299 до ~92 мест, а ниши становятся тонкими — кофе 6 из 311, бары 5 из
+   106, спа 2 из 13. Это осознанная планка, а не баг: каталог никуда не делся,
+   он просто не показывается, пока у места нет лица.
+
+   Снимается ОДНОЙ строкой: PHOTO_ONLY=false. Настоящий выход из режима —
+   партнёрский онбординг, где заведение приносит своё фото само. */
+var PHOTO_ONLY=true;
+function hasPhoto(b){return !!(b&&(b.im||isPartner(b)))}
 function listItems(){
   var C=CITIES[CITY];if(!C||!C.biz)return [];
   var ctr=listCenter();
@@ -5763,6 +5780,7 @@ function listItems(){
   var all=C.biz, n=all.length;
   for(var i2=0;i2<n;i2++){
     var b=all[i2];
+    if(PHOTO_ONLY&&!hasPhoto(b))continue;
     if(filter==='open'){var r0=bizOpen(b);if(!(r0&&r0.open))continue}
     else if(filter!=='all'&&b.k!==filter)continue;
     var dy=b.o?(b.o[0]-ctr[0])*111000:9e6, dx=b.o?(b.o[1]-ctr[1])*82000:9e6;
@@ -8173,7 +8191,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=111;try{renderConsent()}catch(e){}
+var APP_V=112;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
