@@ -121,23 +121,37 @@
     }
     return false;
   }
+  /* 🚨 Непассивный touchmove на document — это налог на КАЖДОЕ касание в
+     приложении, а не только на краевой свайп: браузер обязан дождаться JS,
+     прежде чем сдвинуть пиксель, даже когда палец в середине списка и делать
+     нам нечего. Отсюда «свайпы дёрганные».
+
+     preventDefault нужен по-настоящему, поэтому пассивным этот обработчик
+     стать не может. Зато он может НЕ СУЩЕСТВОВАТЬ, пока не нужен: вешаем его
+     в момент, когда касание действительно началось у края, и снимаем на
+     touchend. Обычная прокрутка больше не проходит ни через один
+     непассивный слушатель. */
+  function onMove(e){
+    if(!st||!st.armed||e.touches.length!==1)return;
+    var t=e.touches[0], dx=t.clientX-st.x, dy=t.clientY-st.y;
+    if(Math.abs(dx)<4&&Math.abs(dy)<4)return;
+    if(Math.abs(dy)>Math.abs(dx)){st.armed=false;detach();return} /* вертикальная прокрутка — уходим с дороги сразу */
+    if(e.cancelable)e.preventDefault();                           /* горизонталь от края — гасим */
+  }
+  function attach(){document.addEventListener('touchmove',onMove,{passive:false})}
+  function detach(){document.removeEventListener('touchmove',onMove,{passive:false})}
   document.addEventListener('touchstart',function(e){
+    if(st)detach();
     st=null;
     if(e.touches.length!==1)return;
     var t=e.touches[0], w=window.innerWidth;
     if(t.clientX>EDGE && t.clientX<w-EDGE)return;          /* не край — не наше дело */
     if(scrollableX(e.target))return;                       /* лента у края должна листаться */
     st={x:t.clientX,y:t.clientY,armed:true};
-  },{passive:false});
-  document.addEventListener('touchmove',function(e){
-    if(!st||!st.armed||e.touches.length!==1)return;
-    var t=e.touches[0], dx=t.clientX-st.x, dy=t.clientY-st.y;
-    if(Math.abs(dx)<4&&Math.abs(dy)<4)return;
-    if(Math.abs(dy)>Math.abs(dx)){st.armed=false;return}    /* это вертикальная прокрутка */
-    if(e.cancelable)e.preventDefault();                     /* горизонталь от края — гасим */
-  },{passive:false});
-  document.addEventListener('touchend',function(){st=null},{passive:true});
-  document.addEventListener('touchcancel',function(){st=null},{passive:true});
+    attach();
+  },{passive:true});                                       /* сам по себе ничего не гасит */
+  document.addEventListener('touchend',function(){st=null;detach()},{passive:true});
+  document.addEventListener('touchcancel',function(){st=null;detach()},{passive:true});
 })();
 /* Вертикальный жест «смахнуть вниз, чтобы закрыть» в Mini App отключается
    официально — если клиент это умеет. */
@@ -216,6 +230,9 @@ body.is-day #app{background:radial-gradient(140% 90% at 50% -10%,#100e24,#060712
   --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-6:24px;--sp-8:32px;--sp-12:48px;
   --z-nav:500;--z-sheet:1000;--z-toast:2000;
   --ease-out:cubic-bezier(.16,1,.3,1);--ease-spring:cubic-bezier(.34,1.56,.64,1);--ease-in-out:cubic-bezier(.65,0,.35,1);
+  /* Уход разгоняется, вход замедляется — разные роли, разные кривые.
+     Один токен вместо голого cubic-bezier в JS-строке. */
+  --ease-in:cubic-bezier(.5,0,.75,0);
   --dur-fast:.18s;--dur:.3s;--dur-slow:.5s;
   --shadow-sm:0 2px 8px rgba(0,0,0,.25);--shadow-md:0 8px 28px rgba(0,0,0,.35);--shadow-lg:0 20px 60px rgba(0,0,0,.5);
   --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);--tab-h:72px;
@@ -297,10 +314,10 @@ html,body{overflow-x:hidden;overscroll-behavior:none;-webkit-text-size-adjust:10
    Ни одного кадра визуальной разницы, минус 8 непрерывных анимаций. */
 body.anim-halt .blob{animation-play-state:paused}
 .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.16;mix-blend-mode:screen;will-change:transform}
-.b1{width:62vw;height:62vw;background:#5b3cff;top:-18%;left:-14%;animation:drift1 38s cubic-bezier(.6,.04,.4,.96) infinite}
-.b2{width:56vw;height:56vw;background:#0fb6e6;bottom:-18%;right:-18%;animation:drift2 46s cubic-bezier(.6,.04,.4,.96) infinite;opacity:.14}
-.b3{width:46vw;height:46vw;background:#ff3d77;top:30%;right:-10%;opacity:.09;animation:drift3 52s cubic-bezier(.6,.04,.4,.96) infinite}
-.b4{width:38vw;height:38vw;background:#D4FF4F;top:55%;left:-10%;opacity:.07;animation:drift4 58s cubic-bezier(.6,.04,.4,.96) infinite;mix-blend-mode:screen}
+.b1{width:62vw;height:62vw;background:#5b3cff;top:-18%;left:-14%;animation:drift1 38s var(--ease-in-out) infinite}
+.b2{width:56vw;height:56vw;background:#0fb6e6;bottom:-18%;right:-18%;animation:drift2 46s var(--ease-in-out) infinite;opacity:.14}
+.b3{width:46vw;height:46vw;background:#ff3d77;top:30%;right:-10%;opacity:.09;animation:drift3 52s var(--ease-in-out) infinite}
+.b4{width:38vw;height:38vw;background:#D4FF4F;top:55%;left:-10%;opacity:.07;animation:drift4 58s var(--ease-in-out) infinite;mix-blend-mode:screen}
 body.biz .b1{background:#ffb14d}body.biz .b2{background:#7C3AFF}body.biz .b3{background:#00E0C7}body.biz .b4{background:#ff5d8f}
 /* === BIZ MODE — full accent swap (lime → gold) === */
 body.biz{--accent:var(--gold);--accent-grad:var(--grad-gold);--accent-ink:#2a1500;--accent-glow:rgba(255,181,71,.4);
@@ -330,10 +347,10 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .world.on{display:flex}
 .world.on .screen.active{display:flex!important}
 .screen{position:absolute;inset:0;display:none;flex-direction:column;padding-top:var(--safe-t)}
-.screen.active{display:flex;animation:scrIn .4s cubic-bezier(.2,.8,.2,1)}
+.screen.active{display:flex;animation:scrIn .4s var(--ease-out)}
 @keyframes scrIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
 .scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 52px)}
-.tilt-card{transition:transform .4s cubic-bezier(.2,.9,.3,1)}
+.tilt-card{transition:transform .4s var(--ease-out)}
 .scroll::-webkit-scrollbar{display:none}
 .hdr{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .hdr-loc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt-2);font-weight:700;background:var(--glass-strong);padding:7px 13px;border-radius:99px;border:1px solid var(--stroke)}
@@ -409,7 +426,7 @@ body.anim-halt .pp.pp-on .pp-in{animation-play-state:paused}
 .icon-btn{width:54px;height:54px;flex-shrink:0;border-radius:var(--r-md);background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;color:var(--txt);transition:transform .18s var(--ease-spring),background .25s,border-color .2s,box-shadow .25s;position:relative;overflow:hidden}
 .icon-btn:active{transform:scale(.9);background:rgba(255,255,255,.18);box-shadow:0 0 0 3px rgba(255,255,255,.08)}
 .icon-btn svg{width:22px;height:22px;stroke-width:2;transition:transform .2s var(--ease-spring)}
-.icon-btn.refresh svg{transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.icon-btn.refresh svg{transition:transform .6s var(--ease-out)}
 .icon-btn.refresh.spin svg{transform:rotate(-360deg)}
 /* legacy back-compat — kept compact, icon-only */
 .skip-btn,.map-btn{width:54px;height:54px;flex-shrink:0;border-radius:var(--r-md);background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;color:var(--txt);transition:transform .15s,background .2s;padding:0;min-width:54px;flex-direction:row;gap:0}
@@ -469,7 +486,7 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 .lf-dot{border-radius:50%;border:1.5px solid rgba(255,255,255,.5);box-shadow:0 2px 6px rgba(0,0,0,.5);opacity:.72}
 .lf-dot.pt{border:2px solid rgba(255,255,255,.9);opacity:1;box-shadow:0 3px 10px rgba(0,0,0,.6)}
 .lf-dot.promo{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,181,71,.25),0 2px 8px rgba(0,0,0,.6)}
-.lf-pin{width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.6);border:2.5px solid rgba(255,255,255,.85);position:relative;transition:transform .2s cubic-bezier(.2,1.4,.4,1)}
+.lf-pin{width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.6);border:2.5px solid rgba(255,255,255,.85);position:relative;transition:transform .2s var(--ease-spring)}
 .lf-pin svg{transform:rotate(45deg);width:18px;height:18px;color:#fff}
 .lf-pin.promo::after{content:'';position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:2px solid #05060a;transform:rotate(45deg);box-shadow:0 0 8px rgba(255,181,71,.6)}
 .lf-pin.promo::before{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 9px rgba(255,181,71,.18);pointer-events:none;opacity:0;animation:lfPinPulse 1.8s ease-in-out infinite}
@@ -484,7 +501,7 @@ body.biz .mini .pp::before{background:var(--gold);box-shadow:0 0 6px rgba(255,18
 /* 🚨 Здесь стояло pointer-events:none — к пузырькам шагов был привязан popup,
    который физически не мог открыться. Маршрут выглядел интерактивным и не был им. */
 .lf-quest-num{background:none!important;border:none!important}
-.lqn{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:12px;border:2.5px solid #05060a;box-shadow:0 4px 12px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;position:relative;transition:transform .18s cubic-bezier(.2,1.4,.4,1)}
+.lqn{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:12px;border:2.5px solid #05060a;box-shadow:0 4px 12px rgba(0,0,0,.5);font-variant-numeric:tabular-nums;position:relative;transition:transform .18s var(--ease-spring)}
 .lf-quest-num:active .lqn{transform:scale(.9)}
 /* Шаг, на котором человек стоит сейчас, обязан быть видно с одного взгляда. */
 .lqn.now{width:34px;height:34px;font-size:13px}
@@ -669,7 +686,7 @@ body.biz .msc-resp{background:rgba(255,181,71,.1);border-color:rgba(255,181,71,.
 /* CityHUB own map (no Leaflet) */
 .hmap{position:relative;width:100%;height:100%;border-radius:inherit;overflow:hidden;background:#0c1018}
 .hmap-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hmap-pin{position:absolute;transform:translate(-50%,-100%);z-index:2;cursor:pointer;transition:transform .18s cubic-bezier(.2,1.4,.4,1);animation:pinDrop .5s cubic-bezier(.2,1.2,.4,1) backwards}
+.hmap-pin{position:absolute;transform:translate(-50%,-100%);z-index:2;cursor:pointer;transition:transform .18s var(--ease-spring);animation:pinDrop .5s var(--ease-spring) backwards}
 .hmap-pin:active{transform:translate(-50%,-100%) scale(.88)}
 @keyframes pinDrop{0%{opacity:0;transform:translate(-50%,-160%)}100%{opacity:1;transform:translate(-50%,-100%)}}
 .hmap-me{position:absolute;transform:translate(-50%,-50%);z-index:3}
@@ -752,7 +769,7 @@ body.sw-teaching .sec-sw{opacity:0;pointer-events:none;transition:opacity .25s}
 .ach2-n{font-size:15px;font-weight:700}
 .ach2-p{font-size:13px;font-weight:800;color:var(--txt-3)}.ach2-p.on{color:var(--lime)}
 .ach2-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
-.ach2-fill{height:100%;border-radius:99px;transition:width .9s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 10px rgba(212,255,79,.4)}
+.ach2-fill{height:100%;border-radius:99px;transition:width .9s var(--ease-out);box-shadow:0 0 10px rgba(212,255,79,.4)}
 .ach2-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2);font-weight:600;margin-top:7px}
 .ach{border-radius:var(--r-md);padding:14px 10px;text-align:center;position:relative;overflow:hidden}
 .ach .ring{width:48px;height:48px;margin:0 auto 9px;border-radius:50%;display:grid;place-items:center}.ach .ring svg{width:23px;height:23px}
@@ -834,13 +851,13 @@ body.biz .cta.lime,body.biz .go-btn,body.biz .dgo,body.biz .lbtn.primary,body.bi
 .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
 .stat{border-radius:var(--r-md);padding:15px}.stat .v{font-size:26px;font-weight:900;letter-spacing:-.02em}.stat .l{font-size:12px;color:var(--txt-2);font-weight:600;margin-top:2px}
 .stat .d{font-size:11px;font-weight:700;margin-top:6px;display:flex;align-items:center;gap:3px}.stat .d.up{color:var(--lime)}.stat .d.down{color:var(--rose)}.stat .d svg{width:11px;height:11px}
-.spark{display:flex;align-items:flex-end;gap:4px;height:42px;margin-top:12px}.spark span{flex:1;border-radius:3px 3px 0 0;background:var(--grad);opacity:.85;transition:height .6s cubic-bezier(.2,.8,.2,1)}
+.spark{display:flex;align-items:flex-end;gap:4px;height:42px;margin-top:12px}.spark span{flex:1;border-radius:3px 3px 0 0;background:var(--grad);opacity:.85;transition:height .6s var(--ease-out)}
 .nav-fade{position:absolute;left:0;right:0;bottom:0;height:calc(var(--tab-h) + var(--safe-b) + 46px);z-index:400;pointer-events:none;background:linear-gradient(to top,var(--bg-0) 16%,rgba(5,6,10,.92) 42%,rgba(5,6,10,.55) 70%,transparent);-webkit-mask-image:linear-gradient(to top,#000 60%,transparent);mask-image:linear-gradient(to top,#000 60%,transparent);transition:opacity .25s}
 .world.hide-fade .nav-fade{opacity:0}
 .tabbar{position:absolute;left:14px;right:14px;bottom:calc(var(--safe-b) + 12px);z-index:500;height:var(--tab-h);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:space-around;padding:0 8px;background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(42px) saturate(200%) brightness(1.08);backdrop-filter:blur(42px) saturate(200%) brightness(1.08);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 20px 50px rgba(0,0,0,.55);overflow:visible}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0;border-radius:var(--r-sm);color:var(--txt-3);transition:color .2s,transform .18s var(--ease-spring);position:relative;-webkit-tap-highlight-color:transparent}
 .tab:active{transform:scale(.9)}.tab-mascot:active{transform:scale(.94)}
-.tab svg{width:23px;height:23px;transition:transform .25s cubic-bezier(.2,1.3,.4,1)}.tab span{font-size:10px;font-weight:700}
+.tab svg{width:23px;height:23px;transition:transform .25s var(--ease-spring)}.tab span{font-size:10px;font-weight:700}
 .tab.on{color:var(--lime)}.tab.on svg{transform:translateY(-2px) scale(1.08)}
 .tab.on::before{content:'';position:absolute;top:6px;width:40px;height:38px;border-radius:var(--r-sm);background:var(--grad-lime);opacity:.18;filter:blur(2px)}
 body.biz .tab.on{color:var(--gold)}
@@ -848,14 +865,14 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .sheet-bg.over-onb{z-index:3500}
 .sheet-bg{position:absolute;inset:0;z-index:1000;background:rgba(3,4,8,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:flex-end}
 .sheet-bg.open{display:flex;animation:fade .3s}@keyframes fade{from{opacity:0}to{opacity:1}}
-.sheet{width:100%;max-height:88%;border-radius:32px 32px 0 0;padding:8px 18px calc(var(--safe-b) + 22px);overflow-y:auto;background:linear-gradient(180deg,rgba(28,32,46,.88),rgba(16,20,31,.92));-webkit-backdrop-filter:blur(50px) saturate(200%) brightness(1.06);backdrop-filter:blur(50px) saturate(200%) brightness(1.06);border:1px solid rgba(255,255,255,.14);border-bottom:none;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.24),0 -24px 70px rgba(0,0,0,.65),0 -1px 0 rgba(255,255,255,.04);animation:sheetUp .42s cubic-bezier(.2,.9,.25,1);position:relative}
+.sheet{width:100%;max-height:88%;border-radius:32px 32px 0 0;padding:8px 18px calc(var(--safe-b) + 22px);overflow-y:auto;background:linear-gradient(180deg,rgba(28,32,46,.88),rgba(16,20,31,.92));-webkit-backdrop-filter:blur(50px) saturate(200%) brightness(1.06);backdrop-filter:blur(50px) saturate(200%) brightness(1.06);border:1px solid rgba(255,255,255,.14);border-bottom:none;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.24),0 -24px 70px rgba(0,0,0,.65),0 -1px 0 rgba(255,255,255,.04);animation:sheetUp .42s var(--ease-out);position:relative}
 .sheet::before{content:'';position:absolute;top:0;left:0;right:0;height:120px;background:linear-gradient(180deg,rgba(255,255,255,.05),transparent);pointer-events:none;border-radius:inherit;z-index:0}
 .sheet>*{position:relative;z-index:1}
 .sheet::-webkit-scrollbar{display:none}@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
 .grab{width:42px;height:5px;border-radius:99px;background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,.4) 50%,rgba(255,255,255,.18));margin:8px auto 16px;cursor:grab;transition:width .25s var(--ease-spring),background .2s;position:relative}
 .grab:hover{width:54px;background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,.55) 50%,rgba(255,255,255,.18))}
 /* premium micro-transitions */
-.tap-sink{transition:transform .25s cubic-bezier(.34,1.56,.64,1)!important;transform:scale(.96)!important;filter:brightness(.94)}
+.tap-sink{transition:transform .25s var(--ease-spring)!important;transform:scale(.96)!important;filter:brightness(.94)}
 .sheet>*{animation:sheetRise .5s var(--ease-out) backwards}
 .sheet>*:nth-child(1){animation-delay:.04s}
 .sheet>*:nth-child(2){animation-delay:.09s}
@@ -880,13 +897,13 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .bh-refresh{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;border-radius:50%;background:rgba(10,14,28,.5);-webkit-backdrop-filter:blur(14px) saturate(180%);backdrop-filter:blur(14px) saturate(180%);border:1px solid rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .25s var(--ease-spring),background .2s,border-color .2s;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .bh-refresh:hover{background:rgba(10,14,28,.7);border-color:rgba(255,255,255,.32)}
 .bh-refresh:active{transform:scale(.88);background:var(--lime);color:#06210a;border-color:transparent}
-.bh-refresh svg{width:17px;height:17px;transition:transform .55s cubic-bezier(.4,1.6,.5,1)}
+.bh-refresh svg{width:17px;height:17px;transition:transform .55s var(--ease-spring)}
 .bh-refresh.spin svg{transform:rotate(-360deg)}
 .bh-refresh.flash{box-shadow:0 0 0 0 rgba(212,255,79,.6),0 4px 14px rgba(0,0,0,.4);animation:bhFlash .42s ease-out}
 @keyframes bhFlash{0%{box-shadow:0 0 0 0 rgba(212,255,79,.8),0 4px 14px rgba(0,0,0,.4)}100%{box-shadow:0 0 0 18px rgba(212,255,79,0),0 4px 14px rgba(0,0,0,.4)}}
 /* Cinematic place-swap transition в sheet-body */
-#sheet-body.rp-out{animation:rpOut .28s cubic-bezier(.5,0,.55,1) forwards}
-#sheet-body.rp-in{animation:rpIn .5s cubic-bezier(.16,1,.3,1) backwards}
+#sheet-body.rp-out{animation:rpOut .28s var(--ease-in-out) forwards}
+#sheet-body.rp-in{animation:rpIn .5s var(--ease-out) backwards}
 @keyframes rpOut{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-22px) scale(.96)}}
 @keyframes rpIn{0%{opacity:0;transform:translateY(28px) scale(.94)}55%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
 .sheet h2{font-size:var(--fs-xl);font-weight:800}.sheet .sub{font-size:13px;color:var(--txt-2);margin-top:4px}
@@ -897,7 +914,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .hint{font-size:12px;color:var(--txt-3);text-align:center;margin-top:14px;line-height:1.5}
 .fadein{opacity:1}
 .screen.active .fadein,.world.on .screen.active .fadein{animation:fadein .5s both}@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.toast{position:absolute;left:50%;bottom:calc(var(--tab-h) + var(--safe-b) + 30px);transform:translateX(-50%) translateY(20px);z-index:2000;padding:13px 20px;border-radius:99px;font-size:13px;font-weight:700;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--stroke);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.2,.9,.25,1);display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.toast{position:absolute;left:50%;bottom:calc(var(--tab-h) + var(--safe-b) + 30px);transform:translateX(-50%) translateY(20px);z-index:2000;padding:13px 20px;border-radius:99px;font-size:13px;font-weight:700;background:rgba(16,20,31,.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--stroke);opacity:0;pointer-events:none;transition:all .35s var(--ease-out);display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast svg{width:16px;height:16px;color:var(--lime)}
 .toast::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(120deg,transparent 40%,rgba(212,255,79,.4) 50%,transparent 60%);background-size:200% 100%;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;padding:1px;pointer-events:none;opacity:0;transition:opacity .3s}
 .toast.show::before{opacity:1;animation:ctaEdgeShine 2.5s ease-in-out 1}
@@ -909,7 +926,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
    высота ограничена, а прокручивается ТОЛЬКО список: поиск, страны и кнопка
    гео остаются на месте — они и есть управление. */
 .city-modal{width:100%;max-width:380px;max-height:min(86vh,720px);display:flex;flex-direction:column;
-  border-radius:var(--r-lg);padding:22px;background:rgba(16,20,31,.9);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);border:1px solid var(--stroke);animation:scrIn .4s cubic-bezier(.2,.8,.2,1)}
+  border-radius:var(--r-lg);padding:22px;background:rgba(16,20,31,.9);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);border:1px solid var(--stroke);animation:scrIn .4s var(--ease-out)}
 .city-modal>h2,.city-modal>p,.city-modal>.city-srch,.city-modal>.city-cc,.city-modal>.geo-btn,.city-modal>.city-src{flex-shrink:0}
 #cityList{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
   margin:0 -4px;padding:2px 4px;overscroll-behavior:contain}
@@ -1010,7 +1027,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .onb-slide.scrollable{justify-content:flex-start;padding-top:32px;padding-bottom:16px}
 .onb-foot{flex-shrink:0}
 .onb-slide.active{display:flex}
-.onb-slide.active .onb-emoji,.onb-slide.active h1,.onb-slide.active p,.onb-slide.active .onb-ints{animation:riseIn .6s cubic-bezier(.2,.9,.3,1) backwards}
+.onb-slide.active .onb-emoji,.onb-slide.active h1,.onb-slide.active p,.onb-slide.active .onb-ints{animation:riseIn .6s var(--ease-out) backwards}
 .onb-slide.active h1{animation-delay:.08s}.onb-slide.active p{animation-delay:.16s}.onb-slide.active .onb-ints{animation-delay:.24s}
 @keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .onb-emoji{margin-bottom:30px;line-height:1;display:flex;justify-content:center;align-items:center;position:relative;width:160px;height:160px;margin-left:auto;margin-right:auto;filter:drop-shadow(0 12px 30px rgba(124,58,255,.5))}
@@ -1031,7 +1048,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .onb-slide p{font-size:17px;color:var(--txt-2);line-height:1.55;max-width:320px}
 .onb-slide p b{color:var(--lime);font-weight:700}
 .onb-dots{display:flex;gap:8px;justify-content:center;margin:20px 0}
-.onb-dots i{width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.18);transition:all .35s cubic-bezier(.2,.9,.3,1)}
+.onb-dots i{width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.18);transition:all .35s var(--ease-out)}
 .onb-dots i.on{width:28px;background:var(--grad)}
 .onb-foot{padding:0 24px 16px;position:relative;z-index:2}
 .onb-skip{position:absolute;top:calc(var(--safe-t) + 14px);right:20px;font-size:14px;font-weight:600;color:var(--txt-3);z-index:5;padding:8px}
@@ -1042,7 +1059,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .own-int input:focus{outline:none;border-color:var(--acc)}
 .own-int button{width:46px;height:46px;border-radius:50%;background:var(--grad);display:grid;place-items:center;flex-shrink:0;transition:transform .15s}
 .own-int button:active{transform:scale(.9)}.own-int button svg{width:20px;height:20px;color:#fff}
-.onb-int{padding:10px 15px;border-radius:99px;font-size:14px;font-weight:600;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);transition:all .2s cubic-bezier(.2,.9,.3,1);display:flex;align-items:center;gap:6px}
+.onb-int{padding:10px 15px;border-radius:99px;font-size:14px;font-weight:600;background:rgba(255,255,255,.05);border:1px solid var(--stroke-soft);transition:all .2s var(--ease-out);display:flex;align-items:center;gap:6px}
 .onb-int.on{background:var(--grad);border-color:transparent;font-weight:700;transform:scale(1.04)}
 .onb-int:active{transform:scale(.92)}
 /* CINEMATIC VOUCHER */
@@ -1062,7 +1079,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
   border:1px solid rgba(212,255,79,.35);
   box-shadow:0 40px 90px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04),0 0 80px rgba(212,255,79,.15),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -40px 80px rgba(0,0,0,.5);
   transform-style:preserve-3d;will-change:transform}
-.onb-slide.active .voucher-big{animation:ticketIn 1.3s cubic-bezier(.16,1,.3,1) backwards,ticketFloat 7s ease-in-out 1.4s infinite}
+.onb-slide.active .voucher-big{animation:ticketIn 1.3s var(--ease-out) backwards,ticketFloat 7s ease-in-out 1.4s infinite}
 @keyframes ticketIn{
   0%{opacity:0;transform:translateY(-70px) rotateY(-200deg) rotateX(-30deg) scale(.68)}
   45%{opacity:1}
@@ -1078,7 +1095,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
 .voucher-big .vholo{position:absolute;inset:-2px;pointer-events:none;border-radius:inherit;background:linear-gradient(115deg,transparent 32%,rgba(120,220,255,.1) 45%,rgba(212,255,79,.16) 50%,rgba(255,180,220,.1) 55%,transparent 68%);mix-blend-mode:screen;opacity:.7;animation:holoDrift 7s ease-in-out 1.4s infinite}
 @keyframes holoDrift{0%,100%{transform:translateX(-14%)}50%{transform:translateX(14%)}}
 .voucher-big .vshine{position:absolute;top:-50%;bottom:-50%;width:40%;left:-70%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-18deg);pointer-events:none;z-index:4;will-change:transform}
-.onb-slide.active .voucher-big .vshine{animation:shineSweep 1.7s cubic-bezier(.4,0,.2,1) 1.1s backwards}
+.onb-slide.active .voucher-big .vshine{animation:shineSweep 1.7s var(--ease-in-out) 1.1s backwards}
 @keyframes shineSweep{0%{transform:translateX(0) skewX(-18deg)}100%{transform:translateX(612%) skewX(-18deg)}}
 /* подарок-эмодзи в кружке сверху */
 .voucher-big .vgift{position:relative;z-index:2;width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font-size:32px;
@@ -1573,7 +1590,7 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
   0%{transform:translateY(54px) scale(.88);opacity:0}
   40%{opacity:1}
   100%{transform:none;opacity:1}}
-.deck-in{animation:deckIn .52s cubic-bezier(.18,.9,.24,1)}
+.deck-in{animation:deckIn .52s var(--ease-out)}
 /* Стопка позади героя: две карты со следующими местами. Не декорация —
    человек видит, что впереди ещё что-то есть, и жест читается сам. */
 .deck-stack{position:absolute;inset:0;z-index:0;pointer-events:none}
@@ -1687,11 +1704,11 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 .mascot-name{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
 .m-on{font-size:11px;font-weight:700;color:#4ade80}
 /* живое появление сообщений */
-.msg{animation:msgIn .4s cubic-bezier(.2,.9,.3,1) both}
+.msg{animation:msgIn .4s var(--ease-out) both}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
-.msg.user{animation:msgInR .4s cubic-bezier(.2,.9,.3,1) both}
+.msg.user{animation:msgInR .4s var(--ease-out) both}
 @keyframes msgInR{from{opacity:0;transform:translateY(10px) translateX(10px)}to{opacity:1;transform:none}}
-.chat-rec{animation:recIn .5s cubic-bezier(.16,1,.3,1) both}
+.chat-rec{animation:recIn .5s var(--ease-out) both}
 @keyframes recIn{from{opacity:0;transform:translateX(-14px) scale(.96)}to{opacity:1;transform:none}}
 /* красивый индикатор печати */
 .chat-typing{display:flex;gap:5px;padding:14px 18px;background:var(--glass-soft);border-radius:var(--r-md);border-bottom-left-radius:5px;align-self:flex-start;width:fit-content}
@@ -1728,7 +1745,7 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 .biz.sel{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime),0 8px 24px rgba(212,255,79,.18);background:rgba(212,255,79,.06)}
 /* подсветка пина на карте */
 .hmap-pin.sel{z-index:50}
-.hmap-pin.sel .mp{transform:scale(1.4);box-shadow:0 0 0 4px rgba(212,255,79,.35),0 6px 16px rgba(0,0,0,.5);animation:pinPop .4s cubic-bezier(.2,1.4,.4,1)}
+.hmap-pin.sel .mp{transform:scale(1.4);box-shadow:0 0 0 4px rgba(212,255,79,.35),0 6px 16px rgba(0,0,0,.5);animation:pinPop .4s var(--ease-spring)}
 @keyframes pinPop{0%{transform:scale(1)}60%{transform:scale(1.6)}100%{transform:scale(1.4)}}
 /* "Для тебя сейчас" — сводка */
 .forme-row{display:flex;gap:11px;overflow-x:auto;margin:0 -18px 14px;padding:2px 18px 6px;scrollbar-width:none}
@@ -1817,7 +1834,7 @@ button,[onclick],[role="button"]{transition:transform .12s var(--ease-out)}
 .qprog-i{flex:1;min-width:0}
 .qprog-i b{font-size:13px;display:block;font-weight:800}
 .qprog-bar{height:6px;border-radius:99px;background:rgba(0,0,0,.3);overflow:hidden;margin-top:6px}
-.qprog-fill{height:100%;border-radius:99px;background:var(--grad-lime);transition:width .8s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 8px rgba(212,255,79,.4);position:relative;overflow:hidden}
+.qprog-fill{height:100%;border-radius:99px;background:var(--grad-lime);transition:width .8s var(--ease-out);box-shadow:0 0 8px rgba(212,255,79,.4);position:relative;overflow:hidden}
 .qprog-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);background-size:200% 100%;animation:qprogShimmer 2.8s linear infinite}
 @keyframes qprogShimmer{from{background-position:200% 0}to{background-position:-100% 0}}
 .qprog-pct{flex-shrink:0;font-size:14px;font-weight:900;color:var(--lime);font-variant-numeric:tabular-nums}
@@ -1981,10 +1998,10 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
 .wl-form button:active{transform:scale(.9)}.wl-form button svg{width:20px;height:20px;color:#fff}
 .wl-count{font-size:12px;color:var(--lime);font-weight:600;position:relative;z-index:2}
 .sphere-th{background:none!important;display:grid;place-items:center;padding:2px;overflow:hidden!important}
-.sphere-th svg{transition:transform .2s cubic-bezier(.2,1.4,.4,1)}
+.sphere-th svg{transition:transform .2s var(--ease-spring)}
 .biz:active .sphere-th svg,.mini:active .sphere-th svg{transform:scale(1.08) rotate(-4deg)}
 /* реальное фото в кружке-превью */
-.th-img,.cr-th .th-img,.si-th .th-img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;transition:transform .25s cubic-bezier(.2,1.4,.4,1)}
+.th-img,.cr-th .th-img,.si-th .th-img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;transition:transform .25s var(--ease-spring)}
 .biz:active .th-img,.mini:active .th-img,.chat-rec:active .th-img,.srch-item:active .th-img{transform:scale(1.04)}
 .th,.cr-th,.si-th{overflow:hidden}
 .streak .sfreeze{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 10px;border-radius:var(--r-sm);background:rgba(0,224,199,.12);border:1px solid rgba(0,224,199,.3)}
@@ -2012,7 +2029,7 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
 .expire .ei svg{width:20px;height:20px;color:var(--rose)}
 .expire .et{flex:1}.expire .et b{font-size:13px;font-weight:800;display:block;color:var(--rose)}.expire .et span{font-size:12px;color:var(--txt-2)}
 /* daily reward chip in header */
-.daily-pop{position:absolute;top:calc(var(--safe-t) + 60px);left:50%;transform:translateX(-50%) translateY(-20px);z-index:1800;padding:14px 22px;border-radius:var(--r-md);background:rgba(16,20,31,.95);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(212,255,79,.4);box-shadow:0 16px 44px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:all .5s cubic-bezier(.2,.9,.3,1);text-align:center;min-width:200px}
+.daily-pop{position:absolute;top:calc(var(--safe-t) + 60px);left:50%;transform:translateX(-50%) translateY(-20px);z-index:1800;padding:14px 22px;border-radius:var(--r-md);background:rgba(16,20,31,.95);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(212,255,79,.4);box-shadow:0 16px 44px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:all .5s var(--ease-out);text-align:center;min-width:200px}
 .daily-pop.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .daily-pop .dpe{font-size:34px;line-height:1;margin-bottom:6px}
 .daily-pop b{font-size:16px;font-weight:800;display:block;background:var(--grad-lime);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -2030,6 +2047,23 @@ button,.biz,.mini,.fm-card,.qs-card,.shop-card,.mood,.quick,.tab{touch-action:ma
 .taste-body{overflow:hidden;max-height:640px;opacity:1;transition:max-height .34s var(--ease-out),opacity .24s var(--ease-out)}
 .taste-card.collapsed .taste-body{max-height:0;opacity:0}
 .taste-card.collapsed{padding-bottom:16px}
+/* ── ПРОФИЛЬ: тяжёлое под одним касанием ────────────────────────────────────
+   Замер: экран был 2 271 px — 2,8 высоты телефона, 10 блоков, 24 кнопки. Из них
+   больше половины высоты съедали три: настройки 476, QR 405, реферал 278.
+   Всё это нужное, но не нужное СРАЗУ: QR смотрят у кассы, настройки — раз в
+   месяц. Поэтому они не удалены, а свёрнуты — элементы остаются в DOM, и
+   renderGame по-прежнему пишет в #userqr и #refCode. */
+.pf-fold{border-radius:var(--r-lg);border:1px solid var(--stroke);background:var(--glass);overflow:hidden;margin-bottom:10px}
+.pf-foldh{width:100%;display:flex;align-items:center;gap:12px;padding:15px 16px;background:none;border:none;color:var(--txt);cursor:pointer;text-align:left;font:inherit}
+.pf-fh-t{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.pf-fh-t b{font-size:15px;font-weight:700}
+.pf-fh-t span{font-size:12px;color:var(--txt-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf-fh-c{width:18px;height:18px;flex-shrink:0;color:var(--txt-2);transition:transform .3s var(--ease-out)}
+.pf-fold.open .pf-fh-c{transform:rotate(180deg)}
+.pf-foldb{max-height:0;opacity:0;overflow:hidden;transition:max-height .36s var(--ease-out),opacity .24s var(--ease-out)}
+.pf-fold.open .pf-foldb{max-height:900px;opacity:1}
+.pf-foldb>*{margin:0 12px 12px}
+@media (prefers-reduced-motion:reduce){.pf-foldb,.pf-fh-c{transition:none}}
 .taste-head b{font-size:16px;font-weight:800}
 .taste-head .acc{font-size:12px;font-weight:800;color:var(--lime)}
 .taste-sub{font-size:12px;color:var(--txt-2);margin-bottom:16px}
@@ -2044,7 +2078,7 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 @media (prefers-reduced-motion:reduce){body #app{animation:none}}
 
 /* Number bump — реагирует когда число меняется */
-.bump{animation:numberBump .5s cubic-bezier(.34,1.56,.64,1)}
+.bump{animation:numberBump .5s var(--ease-spring)}
 @keyframes numberBump{0%{transform:scale(1)}40%{transform:scale(1.18);text-shadow:0 0 12px currentColor}100%{transform:scale(1)}}
 
 /* Touch glow — palец оставляет след */
@@ -2060,7 +2094,7 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 /* Long-press peek overlay */
 .peek-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);z-index:9000;display:grid;place-items:center;padding:32px;opacity:0;transition:opacity .2s var(--ease-out)}
 .peek-overlay.open{opacity:1}
-.peek-card{position:relative;width:100%;max-width:340px;aspect-ratio:3/4;border-radius:var(--r-lg);overflow:hidden;background:#0a0d16;border:1px solid rgba(255,255,255,.14);box-shadow:0 32px 100px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.18);transform:scale(.85);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.peek-card{position:relative;width:100%;max-width:340px;aspect-ratio:3/4;border-radius:var(--r-lg);overflow:hidden;background:#0a0d16;border:1px solid rgba(255,255,255,.14);box-shadow:0 32px 100px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.18);transform:scale(.85);transition:transform .35s var(--ease-spring)}
 .peek-overlay.open .peek-card{transform:scale(1)}
 .peek-grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(5,6,10,.95) 100%);z-index:1}
 .peek-body{position:absolute;left:0;right:0;bottom:0;padding:20px;z-index:2;color:#fff}
@@ -2081,9 +2115,9 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 .ach-reveal.open{opacity:1;pointer-events:auto}
 .ach-reveal .ar-beam{position:absolute;top:50%;left:50%;width:200vmax;height:120px;transform:translate(-50%,-50%) rotate(-12deg);background:linear-gradient(90deg,transparent,var(--ac,#D4FF4F) 50%,transparent);filter:blur(40px);opacity:.45;animation:arBeam 4.5s ease-in-out infinite}
 @keyframes arBeam{0%,100%{transform:translate(-50%,-50%) rotate(-12deg) scale(1);opacity:.45}50%{transform:translate(-50%,-50%) rotate(-12deg) scale(1.05);opacity:.6}}
-.ach-reveal .ar-card{position:relative;width:100%;max-width:340px;padding:32px 24px 24px;border-radius:var(--r-lg);background:linear-gradient(155deg,color-mix(in srgb,var(--ac) 22%,#0d1424),#0a0d16);border:1px solid color-mix(in srgb,var(--ac) 42%,transparent);box-shadow:0 40px 100px color-mix(in srgb,var(--ac) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.18);text-align:center;transform:scale(.7) translateY(50px);transition:transform .55s cubic-bezier(.34,1.56,.64,1)}
+.ach-reveal .ar-card{position:relative;width:100%;max-width:340px;padding:32px 24px 24px;border-radius:var(--r-lg);background:linear-gradient(155deg,color-mix(in srgb,var(--ac) 22%,#0d1424),#0a0d16);border:1px solid color-mix(in srgb,var(--ac) 42%,transparent);box-shadow:0 40px 100px color-mix(in srgb,var(--ac) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.18);text-align:center;transform:scale(.7) translateY(50px);transition:transform .55s var(--ease-spring)}
 .ach-reveal.open .ar-card{transform:scale(1) translateY(0)}
-.ach-reveal .ar-emo{font-size:72px;line-height:1;margin-bottom:10px;filter:drop-shadow(0 8px 24px color-mix(in srgb,var(--ac) 60%,transparent));animation:arEmoSpin 1s cubic-bezier(.34,1.56,.64,1) .2s backwards}
+.ach-reveal .ar-emo{font-size:72px;line-height:1;margin-bottom:10px;filter:drop-shadow(0 8px 24px color-mix(in srgb,var(--ac) 60%,transparent));animation:arEmoSpin 1s var(--ease-spring) .2s backwards}
 @keyframes arEmoSpin{0%{transform:scale(0) rotate(-180deg)}60%{transform:scale(1.18) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
 .ach-reveal .ar-rare{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:var(--ac);margin-bottom:6px;opacity:.85}
 .ach-reveal h2{font-size:24px;font-weight:900;letter-spacing:-.02em;color:#fff;margin-bottom:8px}
@@ -2375,7 +2409,7 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 .taste-row .tl .pct{font-weight:800;font-variant-numeric:tabular-nums}
 /* === PREMIUM PROGRESS BAR — complementary gradient + shimmer + glow === */
 .taste-bar{height:11px;border-radius:99px;background:rgba(255,255,255,.05);overflow:hidden;position:relative;box-shadow:inset 0 1.5px 3px rgba(0,0,0,.4),inset 0 -1px 0 rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-.taste-fill{height:100%;border-radius:99px;transition:width 1.1s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden;box-shadow:0 0 14px var(--tc,currentColor),inset 0 1px 0 rgba(255,255,255,.32),inset 0 -1px 0 rgba(0,0,0,.18)}
+.taste-fill{height:100%;border-radius:99px;transition:width 1.1s var(--ease-out);position:relative;overflow:hidden;box-shadow:0 0 14px var(--tc,currentColor),inset 0 1px 0 rgba(255,255,255,.32),inset 0 -1px 0 rgba(0,0,0,.18)}
 .taste-fill::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:translateX(-100%);animation:tasteSweep 2.6s ease-in-out infinite;animation-delay:1s}
 @keyframes tasteSweep{0%,40%{transform:translateX(-100%)}70%,100%{transform:translateX(220%)}}
 .taste-fill::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;border-radius:99px 99px 0 0;background:linear-gradient(180deg,rgba(255,255,255,.32),transparent);pointer-events:none}
@@ -2392,7 +2426,7 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 .lv-badge{width:58px;height:58px;border-radius:var(--r-md);background:var(--grad);display:grid;place-items:center;font-size:24px;font-weight:900;flex-shrink:0;box-shadow:0 8px 24px rgba(124,58,255,.5)}
 .level-top .lvi{flex:1}.level-top .lvi b{font-size:18px;font-weight:800;display:block}.level-top .lvi span{font-size:12px;color:var(--txt-2)}
 .lv-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:14px 0 6px;position:relative;z-index:2}
-.lv-fill{height:100%;border-radius:99px;background:var(--grad);transition:width 1s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 12px rgba(124,58,255,.6)}
+.lv-fill{height:100%;border-radius:99px;background:var(--grad);transition:width 1s var(--ease-out);box-shadow:0 0 12px rgba(124,58,255,.6)}
 .lv-xp{display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2);font-weight:600;position:relative;z-index:2}
 /* DAILY LOOTBOX */
 .loot{border-radius:var(--r-lg);padding:20px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(255,181,71,.2),rgba(255,93,143,.14));border:1.5px solid rgba(255,181,71,.35);text-align:center;margin-bottom:14px}
@@ -2405,7 +2439,7 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 .loot p{font-size:12px;color:var(--txt-2);margin-top:4px;position:relative;z-index:2}
 .loot-btn{margin-top:14px;padding:13px 24px;border-radius:99px;font-size:14px;font-weight:800;background:var(--grad-gold);color:#2a1500;position:relative;z-index:2;transition:transform .15s}
 .loot-btn:active{transform:scale(.96)}
-.loot.opened .loot-box{animation:lootPop .6s cubic-bezier(.2,1.4,.4,1)}
+.loot.opened .loot-box{animation:lootPop .6s var(--ease-spring)}
 @keyframes lootPop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
 /* QUESTS */
 .quest{display:flex;align-items:center;gap:13px;padding:14px;border-radius:var(--r-md);margin-bottom:10px;background:var(--glass-soft);border:1px solid var(--stroke-soft)}
@@ -2443,17 +2477,17 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 .big-cta:active{transform:scale(.97)}.big-cta svg{width:20px;height:20px}
 /* ===== PRO POLISH: микровзаимодействия, глубина, переходы ===== */
 /* кинематографичный вход экрана */
-.screen.active{animation:scrIn .5s cubic-bezier(.16,1,.3,1)}
+.screen.active{animation:scrIn .5s var(--ease-out)}
 @keyframes scrIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
 /* тактильный отклик всех кликабельных поверхностей */
-.biz,.mini,.shop-card,.city-row,.niche-row,.plan,.tier-card,.arr-rw,.star-opt,.shop-item,.vbanner,.upsell,.waitlist,.ref-card,.ach2,.deal,.answer,.cta,.go-btn,.dgo,.lbtn,.chip,.onb-int,.filter-chip,.tab,.sphere-th{transition:transform .15s cubic-bezier(.2,1.3,.4,1),box-shadow .2s,border-color .2s,background .2s}
+.biz,.mini,.shop-card,.city-row,.niche-row,.plan,.tier-card,.arr-rw,.star-opt,.shop-item,.vbanner,.upsell,.waitlist,.ref-card,.ach2,.deal,.answer,.cta,.go-btn,.dgo,.lbtn,.chip,.onb-int,.filter-chip,.tab,.sphere-th{transition:transform .15s var(--ease-spring),box-shadow .2s,border-color .2s,background .2s}
 .biz:active,.mini:active,.shop-card:active,.city-row:active,.niche-row:active,.plan:active,.tier-card:active,.arr-rw:active,.star-opt:active,.shop-item:active,.vbanner:active,.ref-card:active{transform:scale(.975)}
 .cta:active,.go-btn:active,.dgo:active,.lbtn:active{transform:scale(.95)}
 /* мягкое свечение primary-кнопок при наведении/нажатии */
 .go-btn:active,.dgo:active{box-shadow:0 6px 20px rgba(212,255,79,.45)}
 /* стаггер-появление элементов в списках */
 @keyframes itemIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.screen.active #listHolder>*,.screen.active #altList>*,.screen.active .shop-row>*,.screen.active #earn>*,.screen.active #quests>*{animation:itemIn .45s cubic-bezier(.2,.9,.3,1) both}
+.screen.active #listHolder>*,.screen.active #altList>*,.screen.active .shop-row>*,.screen.active #earn>*,.screen.active #quests>*{animation:itemIn .45s var(--ease-out) both}
 #listHolder>*:nth-child(1),#altList>*:nth-child(1),.shop-row>*:nth-child(1){animation-delay:.03s}
 #listHolder>*:nth-child(2),#altList>*:nth-child(2),.shop-row>*:nth-child(2){animation-delay:.08s}
 #listHolder>*:nth-child(3),#altList>*:nth-child(3),.shop-row>*:nth-child(3){animation-delay:.13s}
@@ -2463,7 +2497,7 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 #listHolder>*:nth-child(7){animation-delay:.32s}
 #listHolder>*:nth-child(n+8){animation-delay:.36s}
 /* sheet — более плавный, упругий вход */
-.sheet{animation:sheetUp .42s cubic-bezier(.16,1,.3,1)}
+.sheet{animation:sheetUp .42s var(--ease-out)}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 /* мягкий фон-затемнение шита с блюром */
 .sheet-bg.open{-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);background:rgba(3,4,8,.55)!important}
@@ -2473,10 +2507,10 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 .biz,.mini{box-shadow:0 4px 18px rgba(0,0,0,.28)}
 .biz:active,.mini:active{box-shadow:0 2px 10px rgba(0,0,0,.35)}
 /* плавная пульсация «живого» индикатора баллов в шапке */
-.pts-pill{transition:transform .2s cubic-bezier(.2,1.4,.4,1)}
+.pts-pill{transition:transform .2s var(--ease-spring)}
 .pts-pill:active{transform:scale(.93)}
 /* появление hero-ответа покрупнее */
-.screen.active #answerBox>*{animation:heroIn .7s cubic-bezier(.16,1,.3,1) both}
+.screen.active #answerBox>*{animation:heroIn .7s var(--ease-out) both}
 @keyframes heroIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
 /* мягкое «дыхание» лаймовых акцентных кнопок-приглашений */
 @keyframes breathe{0%,100%{box-shadow:0 10px 28px rgba(212,255,79,.28)}50%{box-shadow:0 10px 36px rgba(212,255,79,.42)}}
@@ -2543,7 +2577,7 @@ body.quiet *:not(.ad-track):not(.blob):not(.upd-banner):not(.upd-banner::after){
 @keyframes fadeBg{0%{opacity:0}100%{opacity:1}}
 /* exit-анимация шторки — мягкое закрытие вместо хард-ката */
 .sheet-bg.closing{display:flex!important;animation:fadeBgOut .25s var(--ease-in-out) forwards;pointer-events:none}
-.sheet-bg.closing .sheet{animation:sheetDown .28s cubic-bezier(.4,0,.85,.3) forwards}
+.sheet-bg.closing .sheet{animation:sheetDown .28s var(--ease-in) forwards}
 @keyframes fadeBgOut{from{opacity:1}to{opacity:0}}
 @keyframes sheetDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
 @media (prefers-reduced-motion:reduce){.sheet-bg.closing,.sheet-bg.closing .sheet{animation-duration:.01ms!important}}
@@ -2784,7 +2818,7 @@ input,textarea{font-size:16px!important}
 }
 /* прогрессивное раскрытие первого экрана */
 .more-today{display:none;overflow:hidden}
-.more-today.open{display:block;animation:moreExpand .55s cubic-bezier(.16,1,.3,1) both}
+.more-today.open{display:block;animation:moreExpand .55s var(--ease-out) both}
 @keyframes moreExpand{0%{opacity:0;transform:translateY(-12px) scale(.99)}100%{opacity:1;transform:translateY(0) scale(1)}}
 .show-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:14px;margin:14px 0 4px;border-radius:var(--r-md);background:var(--glass-soft);border:1px solid var(--stroke-soft);color:var(--txt-2);font-size:13px;font-weight:700;transition:all .25s var(--ease-spring);position:relative;overflow:hidden}
 .show-more:active{transform:scale(.97)}
@@ -2931,7 +2965,7 @@ input,textarea{font-size:16px!important}
 .bc-money b{color:var(--lime);font-weight:800}
 .bc-progress{position:relative;z-index:2;margin-bottom:18px}
 .bcp-bar{height:10px;border-radius:99px;background:rgba(0,0,0,.3);overflow:hidden;margin-bottom:8px}
-.bcp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#D4FF4F,#00E0C7);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bcp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#D4FF4F,#00E0C7);transition:width .8s var(--ease-out)}
 .bcp-txt{font-size:12px;color:var(--txt-2);line-height:1.4}
 .bcp-txt b{color:var(--txt);font-weight:800}
 .bc-actions{display:flex;gap:11px;position:relative;z-index:2}
@@ -3448,7 +3482,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 .av-h{font-size:20px;font-weight:800;line-height:1.25;letter-spacing:-.01em;margin:0}
 .av-sub{font-size:13px;color:var(--txt-3);margin:7px 0 16px}
 .av-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.av-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px 10px 14px;border-radius:18px;border:1px solid var(--stroke);background:var(--glass);color:var(--txt);cursor:pointer;transition:transform .16s cubic-bezier(.22,1,.36,1),background .16s,border-color .16s}
+.av-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px 10px 14px;border-radius:18px;border:1px solid var(--stroke);background:var(--glass);color:var(--txt);cursor:pointer;transition:transform .16s var(--ease-out),background .16s,border-color .16s}
 .av-btn:active{transform:scale(.96)}
 .av-btn svg{width:24px;height:24px}
 .av-btn b{font-size:15px;font-weight:800}
@@ -3714,9 +3748,8 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
 
         <div class="pf-recent" id="pfRecent"><div class="pf-empty"><span>Пока пусто — сходи в любое место, и визиты появятся здесь</span></div></div>
 
-        <!-- Settings rows -->
-        <div class="sec-h" style="margin-top:20px;margin-bottom:10px"><h2 style="font-size:16px">Настройки</h2></div>
-        <div class="pf-rows">
+        <!-- Настройки · QR · реферал — под раскрывашками, заголовок теперь в шапке каждой -->
+        <div class="pf-fold" id="fold-set"><button class="pf-foldh" onclick="pfFold('set')" aria-expanded="false"><span class="pf-fh-t"><b>Настройки</b><span>язык, уведомления, AI</span></span><svg class="pf-fh-c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="pf-foldb"><div class="pf-rows">
           <button class="pf-row" onclick="openLang()"><span class="pf-r-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg></span><span class="pf-r-t">Язык</span><span class="pf-r-v" id="pfLang">RU</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
           <button class="pf-row" onclick="openNotif()"><span class="pf-r-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span><span class="pf-r-t">Уведомления</span><span class="pf-r-v"><span class="pf-dot"></span> Вкл</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
           <button class="pf-row" onclick="openAISetup()"><span class="pf-r-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/><path d="M19 15l.7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7z"/></svg></span><span class="pf-r-t">AI · Claude</span><span class="pf-r-v" id="pfAI"><span class="pf-dot" style="background:#ff5d8f;box-shadow:0 0 6px #ff5d8f"></span> не подключён</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
@@ -3724,24 +3757,24 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
           <button class="pf-row" onclick="openMascot();setTimeout(function(){mascotIntent('Как пользоваться CityHUB? Объясни коротко: как копить баллы, что такое Loop и как найти место рядом.','Помощь')},300)"><span class="pf-r-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.2a3 3 0 0 1 5.6 1.2c0 2-2.8 2.4-2.8 4.1M12 17.5h.01"/></svg></span><span class="pf-r-t">Помощь</span><span class="pf-r-v">Спросить Hub</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
           <button class="pf-row" onclick="toggleMode()"><span class="pf-r-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="pf-r-t">Я владелец заведения</span><span class="pf-r-v">Кабинет бизнеса</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
           <button class="pf-row" onclick="openLegal()"><span class="pf-r-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span class="pf-r-t">Правовая информация</span><span class="pf-r-v">Политика, соглашение, авторство</span><svg class="pf-r-ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
-        </div>
+        </div></div></div>
 
         <!-- Мой CityHUB QR -->
-        <div class="qr-card glass">
+        <div class="pf-fold" id="fold-qr"><button class="pf-foldh" onclick="pfFold('qr')" aria-expanded="false"><span class="pf-fh-t"><b>Мой QR</b><span>покажи на кассе</span></span><svg class="pf-fh-c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="pf-foldb"><div class="qr-card glass">
           <div style="font-size:13px;color:var(--txt-2);font-weight:600;margin-bottom:4px">Мой QR · покажи на кассе</div>
           <div class="qr-box" id="userqr"><div class="qr-scan"></div></div>
           <div style="font-size:18px;font-weight:800" id="chId">CityHUB ID</div>
           <div style="font-size:12px;color:var(--txt-2);margin-top:4px">Единый ключ к партнёрам в любой стране</div>
           <button class="cta ghost" style="margin-top:14px" onclick="shareMyQR()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Поделиться</button>
-        </div>
+        </div></div></div>
 
-        <div class="ref-card fadein"><div class="rg"></div>
+        <div class="pf-fold" id="fold-ref"><button class="pf-foldh" onclick="pfFold('ref')" aria-expanded="false"><span class="pf-fh-t"><b>Пригласи друга</b><span>+200 баллов вам обоим</span></span><svg class="pf-fh-c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="pf-foldb"><div class="ref-card fadein"><div class="rg"></div>
           <h3 style="margin:0 0 6px;font-size:16px;font-weight:800">+200 баллов за каждого</h3>
           <p style="margin:0 0 12px;font-size:12px;color:var(--txt-2);line-height:1.45">Друг заходит по твоей ссылке — баллы получаете оба. Копятся без ограничений.</p>
           <div class="ref-code"><b id="refCode">…</b><button onclick="shareLink(refLinkSelf(),T('Ссылка скопирована'));refMarkSent()">Копировать</button></div>
           <div class="ref-status" id="refStatus"></div>
           <button class="cta lime" style="margin-top:12px" onclick="shareTelegram()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Пригласить друга</button>
-        </div>
+        </div></div></div>
 
         <!-- Твой вкус — компактно -->
         <div class="taste-card fadein collapsed" id="tasteCard"><button class="taste-head" onclick="toggleTaste()" aria-expanded="false"><b>Твой вкус</b><span class="acc" id="tasteAcc">точность 84%</span><svg class="taste-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -4799,7 +4832,7 @@ function nextPick(anim){
   if(next){var i=C.biz.indexOf(next);if(i>0){C.biz.splice(i,1);C.biz.unshift(next)}}
   if(anim){
     var card=document.getElementById('answerCard');
-    if(card){card.style.transition='transform .3s cubic-bezier(.5,0,.75,0),opacity .3s';
+    if(card){card.style.transition='transform .3s var(--ease-in),opacity .3s';
       card.style.transform='translateY(70%) scale(.9)';card.style.opacity='0'}
     setTimeout(function(){renderToday();var n=document.querySelector('#answerBox .answer');
       if(n){n.classList.add('deck-in');setTimeout(function(){n.classList.remove('deck-in')},540)}},280);
@@ -6639,18 +6672,53 @@ function renderStatic(){
 }
 
 // ---------- nav ----------
-function cgo(t){if(t==='ai'){try{openMascot()}catch(e){}return}
-  /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
-  if(t==='niches')t='map';if(t==='rewards')t='luck';
-  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN){_LF_MAIN.invalidateSize();/* 🚨 Вкладка становится видимой позже, чем строится карта: в момент
+/* ── ПЕРЕХОД МЕЖДУ ЭКРАНАМИ: тяжёлое уезжает за первый кадр ───────────────
+   Замер: cgo('map') стоил 42 мс синхронно, cgo('luck') — 19 мс, и тратились
+   они ровно в тот момент, когда стартует анимация входа экрана (scrIn .4s).
+   Три пропущенных кадра на десктопе превращаются в 130–170 мс на среднем
+   телефоне — это и есть «интерфейс стал дёрганный» при переключении вкладок.
+
+   Лечение не в том, чтобы ускорить buildMap, а в порядке: сначала показать
+   новый экран и дать ему начать движение, и только потом строить содержимое.
+   Человек видит плавный вход, а карта дособирается за ним.
+
+   🚨 rAF в скрытой вкладке не тикает (оплачено четырьмя ложными замерами,
+   запись #726) — поэтому в скрытом документе идём через setTimeout, иначе
+   отложенное не выполнится никогда. И есть sync-вход: chSmoke проверяет
+   экраны сразу после cgo и обязан видеть их наполненными. */
+function chAfterPaint(fn){
+  if(document.hidden||typeof requestAnimationFrame!=='function'){setTimeout(fn,0);return}
+  var done=false;
+  function run(){if(done)return;done=true;try{fn()}catch(e){}}
+  requestAnimationFrame(function(){requestAnimationFrame(run)});
+  setTimeout(run,120);                 /* страховка, если кадры не придут */
+}
+function cgoHeavy(t){if(t==='map'){renderMapTab();renderNiches('');buildMap();try{edgeFadeAll()}catch(e){}[80,420].forEach(function(d){setTimeout(function(){try{if(window._LF_MAIN){_LF_MAIN.invalidateSize();/* 🚨 Вкладка становится видимой позже, чем строится карта: в момент
    buildMap() у контейнера нулевой размер, getBounds() пустой, и в кадр
    не попадает ни одна метка. invalidateSize() чинит размер, но сам по
    себе перерисовку меток не запускает. */
 mapDrawVisible(listItems())}}catch(e){}},d)})}if(t==='luck'){ptsSync();renderLuckHud();luckTickStart();luckScrollBind();luckGo('wheel');}  /* Вход в «Удачу» — всегда призы: это витрина раздела и
    то, ради чего сюда заходят. Память о последней вкладке (gameSet('luckTab'))
    остаётся — её читает восстановление состояния по системной кнопке «назад»,
-   но на открытие раздела она больше не влияет. */if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}if(navigator.vibrate)navigator.vibrate(8);
+   но на открытие раздела она больше не влияет. */if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{pfFoldRestore()}catch(e){}try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}}
+function cgo(t,cgoSync){if(t==='ai'){try{openMascot()}catch(e){}return}
+  /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
+  if(t==='niches')t='map';if(t==='rewards')t='luck';
+  document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(cgoSync)cgoHeavy(t);else chAfterPaint(function(){cgoHeavy(t)});if(navigator.vibrate)navigator.vibrate(8);
   try{ppRefresh()}catch(e){}   /* экран стал видимым — перемерить бегунки */
+}
+function pfFold(k){
+  var el=document.getElementById('fold-'+k);if(!el)return;
+  var open=!el.classList.contains('open');
+  el.classList.toggle('open',open);
+  var b=el.querySelector('.pf-foldh');if(b)b.setAttribute('aria-expanded',open?'true':'false');
+  try{gameSet('fold_'+k,open?1:0)}catch(e){}
+  try{haptic('tap')}catch(e){}
+}
+function pfFoldRestore(){
+  ['qr','ref','set'].forEach(function(k){
+    try{ if(gameGet('fold_'+k,0)){var el=document.getElementById('fold-'+k);if(el){el.classList.add('open');var b=el.querySelector('.pf-foldh');if(b)b.setAttribute('aria-expanded','true')}} }catch(e){}
+  });
 }
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:10,mine:0,bids:[
@@ -7579,7 +7647,7 @@ function morphHero(srcImg){
     if(!url)return;
     var vw=window.innerWidth,vh=window.innerHeight;
     var g=document.createElement('div');g.className='hero-ghost';
-    g.style.cssText='position:fixed;z-index:1500;pointer-events:none;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;background:#0a0e1a center/cover no-repeat;background-image:url("'+url+'");border-radius:18px;box-shadow:0 26px 64px rgba(0,0,0,.55);will-change:left,top,width,height,border-radius;transition:left .44s cubic-bezier(.2,.9,.25,1),top .44s cubic-bezier(.2,.9,.25,1),width .44s cubic-bezier(.2,.9,.25,1),height .44s cubic-bezier(.2,.9,.25,1),border-radius .44s';
+    g.style.cssText='position:fixed;z-index:1500;pointer-events:none;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;background:#0a0e1a center/cover no-repeat;background-image:url("'+url+'");border-radius:18px;box-shadow:0 26px 64px rgba(0,0,0,.55);will-change:left,top,width,height,border-radius;transition:left .44s var(--ease-out),top .44s var(--ease-out),width .44s var(--ease-out),height .44s var(--ease-out),border-radius .44s';
     document.body.appendChild(g);
     var tl=18,tw=vw-36,th=130,tt=Math.round(vh*0.12)+28;
     requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -7763,6 +7831,11 @@ function celebrateClose(){
 function sheetAddX(){
   var panel=document.getElementById('sheet-body');if(!panel)return;
   if(panel.querySelector('.sheet-x'))return;
+  /* 🚨 У чата с Hub крестик СВОЙ и он слева (#mscCloseBtn, .msc-close), под него
+     в .msc-head зарезервированы 54px отступа. Общий крестик шторки добавлялся
+     сверху этого — и в чате получалось два крестика, причём правый наезжал на
+     переключатель «БИЗНЕС». Один экран — одна кнопка закрытия. */
+  if(panel.querySelector('.msc-shell'))return;
   var w=document.createElement('div');
   w.className='sheet-x-wrap';
   w.innerHTML='<button class="sheet-x" onclick="closeSheet()" aria-label="'+T('Закрыть')+'">'+
@@ -8191,7 +8264,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=113;try{renderConsent()}catch(e){}
+var APP_V=116;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
@@ -11369,12 +11442,12 @@ function chSmoke(){
   function need(what,n,min){if(!(n>=min))bad.push(what+': '+n+' (нужно ≥'+min+')')}
   var prev=null;try{prev=document.querySelector('#w-client .screen.active');prev=prev&&prev.id}catch(e){}
   try{
-    cgo('today');
+    cgo('today',true);
     need('герой «Сегодня»',document.querySelectorAll('#answerCard h1').length,1);
     need('«Для тебя сейчас»',document.querySelectorAll('#formeRow .fm-card').length,3);
     need('бегущая строка',document.querySelectorAll('.ad-track .ad-item').length,4);
 
-    cgo('map');
+    cgo('map',true);
     need('строки списка',document.querySelectorAll('#listHolder .biz').length,5);
     need('фильтры карты',document.querySelectorAll('#mapFilters .mood').length,3);
     /* 🚨 Первая версия этой строки давала ложную тревогу на ЗДОРОВОМ продукте:
@@ -11390,12 +11463,12 @@ function chSmoke(){
       }
     }catch(e){bad.push('карта упала: '+e.message)}
 
-    cgo('luck');luckGo('tasks');
+    cgo('luck',true);luckGo('tasks');
     need('задания',document.querySelectorAll('#taskList .task').length,3);
     luckGo('wheel');
     need('барабан',document.querySelectorAll('.spin-strip .sp-item,.spin-item,#spinStrip *').length,1);
 
-    cgo('me');
+    cgo('me',true);
     need('плитки профиля',document.querySelectorAll('.pf-tile').length,3);
 
     /* Выдача обязана что-то выдавать: пустой listItems — это пустой продукт. */
@@ -11426,12 +11499,12 @@ function chSelfCheck(){
   var back={mode:(document.body.classList.contains('biz')?'biz':'client'),luck:gameGet('luckTab','tasks')};
   try{
     look('старт');
-    ['today','map','luck','me'].forEach(function(t){cgo(t);look('client/'+t)});
-    cgo('luck');['tasks','wheel','league'].forEach(function(t){luckGo(t);look('luck/'+t)});
+    ['today','map','luck','me'].forEach(function(t){cgo(t,true);look('client/'+t)});
+    cgo('luck',true);['tasks','wheel','league'].forEach(function(t){luckGo(t);look('luck/'+t)});
     goBiz('home');['home','add','qr','boost'].forEach(function(t){bgo(t);look('biz/'+t)});
   }catch(e){found.push('упало на обходе: '+e.message)}
   try{                                   /* вернуть человека туда, где он был */
-    if(back.mode==='client'){goClient&&goClient();cgo('today')}
+    if(back.mode==='client'){goClient&&goClient();cgo('today',true)}
     luckGo(back.luck);
   }catch(e){}
   if(found.length)console.warn('chSelfCheck: '+found.length+'\n'+found.join('\n'));
