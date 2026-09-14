@@ -121,37 +121,33 @@
     }
     return false;
   }
-  /* 🚨 Непассивный touchmove на document — это налог на КАЖДОЕ касание в
-     приложении, а не только на краевой свайп: браузер обязан дождаться JS,
-     прежде чем сдвинуть пиксель, даже когда палец в середине списка и делать
-     нам нечего. Отсюда «свайпы дёрганные».
+  /* 🚨 ОТКАТ ОПТИМИЗАЦИИ v116. Я вешал этот touchmove только на время краевого
+     свайпа, чтобы обычная прокрутка не проходила через непассивный слушатель.
+     Это сломало главное: браузер решает, можно ли отменить жест, В МОМЕНТ
+     touchstart — по тому, существует ли тогда непассивный touchmove. Слушатель,
+     добавленный внутри touchstart, preventDefault уже не даёт, и свайп слева
+     направо сворачивал Mini App в Telegram.
 
-     preventDefault нужен по-настоящему, поэтому пассивным этот обработчик
-     стать не может. Зато он может НЕ СУЩЕСТВОВАТЬ, пока не нужен: вешаем его
-     в момент, когда касание действительно началось у края, и снимаем на
-     touchend. Обычная прокрутка больше не проходит ни через один
-     непассивный слушатель. */
-  function onMove(e){
-    if(!st||!st.armed||e.touches.length!==1)return;
-    var t=e.touches[0], dx=t.clientX-st.x, dy=t.clientY-st.y;
-    if(Math.abs(dx)<4&&Math.abs(dy)<4)return;
-    if(Math.abs(dy)>Math.abs(dx)){st.armed=false;detach();return} /* вертикальная прокрутка — уходим с дороги сразу */
-    if(e.cancelable)e.preventDefault();                           /* горизонталь от края — гасим */
-  }
-  function attach(){document.addEventListener('touchmove',onMove,{passive:false})}
-  function detach(){document.removeEventListener('touchmove',onMove,{passive:false})}
+     Значит он обязан висеть ЗАРАНЕЕ и постоянно. Цена — проверка `if(!st)` на
+     касание; настоящая дёрганность, как показал замер, жила не здесь, а в
+     синхронной работе в кадре перехода (cgo), и она вылечена отдельно. */
   document.addEventListener('touchstart',function(e){
-    if(st)detach();
     st=null;
     if(e.touches.length!==1)return;
     var t=e.touches[0], w=window.innerWidth;
     if(t.clientX>EDGE && t.clientX<w-EDGE)return;          /* не край — не наше дело */
     if(scrollableX(e.target))return;                       /* лента у края должна листаться */
     st={x:t.clientX,y:t.clientY,armed:true};
-    attach();
-  },{passive:true});                                       /* сам по себе ничего не гасит */
-  document.addEventListener('touchend',function(){st=null;detach()},{passive:true});
-  document.addEventListener('touchcancel',function(){st=null;detach()},{passive:true});
+  },{passive:false});
+  document.addEventListener('touchmove',function(e){
+    if(!st||!st.armed||e.touches.length!==1)return;        /* 99% касаний выходят здесь */
+    var t=e.touches[0], dx=t.clientX-st.x, dy=t.clientY-st.y;
+    if(Math.abs(dx)<4&&Math.abs(dy)<4)return;
+    if(Math.abs(dy)>Math.abs(dx)){st.armed=false;return}    /* это вертикальная прокрутка */
+    if(e.cancelable)e.preventDefault();                     /* горизонталь от края — гасим */
+  },{passive:false});
+  document.addEventListener('touchend',function(){st=null},{passive:true});
+  document.addEventListener('touchcancel',function(){st=null},{passive:true});
 })();
 /* Вертикальный жест «смахнуть вниз, чтобы закрыть» в Mini App отключается
    официально — если клиент это умеет. */
@@ -270,7 +266,7 @@ html,body{overflow-x:hidden;overscroll-behavior:none;-webkit-text-size-adjust:10
 
 /* === NARROW PHONES (≤360px — Galaxy A series, small Android) === */
 @media (max-width:360px){
-  .scroll{padding-left:14px;padding-right:14px}
+.scroll{padding-left:14px;padding-right:14px}
   .stat-grid{gap:7px}
   .stat .v{font-size:18px}
   .pts-chip{padding:5px 10px;font-size:12px}
@@ -347,6 +343,13 @@ body.biz .vbi b{color:var(--accent-ink)!important}
 .world.on{display:flex}
 .world.on .screen.active{display:flex!important}
 .screen{position:absolute;inset:0;display:none;flex-direction:column;padding-top:var(--safe-t)}
+/* 🚨 overscroll-behavior был auto: дойдя до конца ленты, прокрутка уходила
+   НАРУЖУ — странице, а в Telegram это его собственный жест закрытия окна.
+   Отсюда и «резиновый» рывок в конце списка, и сворачивание Mini App.
+   contain держит инерцию внутри ленты и ничего не ломает.
+   ⚠️ Первый заход этого правила попал ВНУТРЬ @media (max-width:360px) —
+   якорь оказался в медиазапросе. Поймано getComputedStyle, не глазами. */
+.screen .scroll{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .screen.active{display:flex;animation:scrIn .4s var(--ease-out)}
 @keyframes scrIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
 .scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 18px calc(var(--tab-h) + var(--safe-b) + 52px)}
@@ -2817,8 +2820,13 @@ input,textarea{font-size:16px!important}
   .poster-sheet{box-shadow:none!important;width:100%!important;border-radius:0!important;aspect-ratio:auto!important;min-height:96vh}
 }
 /* прогрессивное раскрытие первого экрана */
-.more-today{display:none;overflow:hidden}
-.more-today.open{display:block;animation:moreExpand .55s var(--ease-out) both}
+/* 🚨 Было display:none → block: высота появлялась МГНОВЕННО, а анимация играла
+   уже поверх выросшего блока. Лента прыгала под пальцем. Растим высоту
+   по-настоящему — от 0 до измеренной, и только потом отпускаем в none. */
+.more-today{max-height:0;opacity:0;overflow:hidden;transition:max-height .52s var(--ease-out),opacity .34s var(--ease-out)}
+.more-today.open{opacity:1}
+.more-today.done{max-height:none;overflow:visible}
+@media (prefers-reduced-motion:reduce){.more-today{transition:none}}
 @keyframes moreExpand{0%{opacity:0;transform:translateY(-12px) scale(.99)}100%{opacity:1;transform:translateY(0) scale(1)}}
 .show-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:14px;margin:14px 0 4px;border-radius:var(--r-md);background:var(--glass-soft);border:1px solid var(--stroke-soft);color:var(--txt-2);font-size:13px;font-weight:700;transition:all .25s var(--ease-spring);position:relative;overflow:hidden}
 .show-more:active{transform:scale(.97)}
@@ -4586,7 +4594,22 @@ function startDealTimer(){
 }
 function showDailyReward(){setTimeout(()=>{const p=document.getElementById('dailyPop');p.classList.add('show');if(navigator.vibrate)navigator.vibrate([10,30,10]);setTimeout(()=>p.classList.remove('show'),3200)},900)}
 
-function expandToday(){var m=document.getElementById('moreToday');var b=document.getElementById('showMore');if(m)m.classList.add('open');if(b)b.classList.add('hide');window.__todayExpanded=true;if(navigator.vibrate)navigator.vibrate(8)}
+function expandToday(){
+  var m=document.getElementById('moreToday');var b=document.getElementById('showMore');
+  if(b)b.classList.add('hide');
+  window.__todayExpanded=true;
+  if(!m)return;
+  if(m.classList.contains('open'))return;
+  /* Высота считается по содержимому, а не берётся «с запасом»: иначе кривая
+     времени врёт — блок долетает мгновенно и ждёт остаток анимации. */
+  var h=m.scrollHeight;
+  m.classList.add('open');
+  m.style.maxHeight=h+'px';
+  var fin=function(){m.classList.add('done');m.style.maxHeight='';m.removeEventListener('transitionend',fin)};
+  m.addEventListener('transitionend',fin);
+  setTimeout(fin,700);                       /* страховка, если transitionend не придёт */
+  if(navigator.vibrate)navigator.vibrate(8);
+}
 /* SCROLL-SNAP auto-expand: когда юзер скроллит мимо кнопки «Показать больше идей» —
    она сама срабатывает (как «защёлка»), и контент разворачивается inline. */
 function bindTodaySnapExpand(){
@@ -4623,7 +4646,12 @@ function bindTodaySnapExpand(){
       },90);
     }
   }
-  sc.addEventListener('scroll',checkAndFire,{passive:true});
+  /* 🚨 ЗАЩЁЛКА УБРАНА. Прокрутки на этом экране всего ~200 px (содержимое 836
+     при видимых 635), поэтому упор в низ наступал почти сразу — и лента
+     раскрывалась САМА, без просьбы, посреди движения пальца. Ровно это
+     ощущалось как «резкий рывок вместо плавного пролистывания».
+     Раскрытие осталось, но только по нажатию на «Показать больше идей». */
+  void checkAndFire;                          /* оставлено для истории, не подписано */
 }
 /* Ряд вайбов рисуется отдельно от карточки: порядок блоков на экране задаёт
    разметка, а не то, что они когда-то жили в одном шаблоне. */
@@ -8264,7 +8292,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=116;try{renderConsent()}catch(e){}
+var APP_V=117;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
