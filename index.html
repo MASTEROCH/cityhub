@@ -704,7 +704,7 @@ body.biz .msc-resp{background:rgba(255,181,71,.1);border-color:rgba(255,181,71,.
 .mp.promo{animation:pinPulse 1.8s ease-in-out infinite}
 @keyframes pinPulse{0%,100%{box-shadow:0 5px 14px rgba(0,0,0,.55)}50%{box-shadow:0 5px 14px rgba(0,0,0,.55),0 0 0 8px rgba(255,181,71,.18)}}
 .me-dot{width:16px;height:16px;border-radius:50%;background:var(--acc-2);border:3px solid #fff;box-shadow:0 0 0 6px rgba(0,224,199,.25)}
-.chips-row{display:flex;gap:4px;overflow-x:auto;overflow-y:visible;margin:0 0 14px;padding:5px;scrollbar-width:none;position:relative;z-index:5;border-radius:var(--r-md);background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(42px) saturate(200%) brightness(1.08);backdrop-filter:blur(42px) saturate(200%) brightness(1.08);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 18px 34px rgba(0,0,0,.55)}
+.chips-row{display:flex;gap:4px;overflow-x:auto;overflow-y:visible;margin:0 0 14px;padding:5px;scrollbar-width:none;position:relative;z-index:5;border-radius:var(--r-md);background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(1.06);backdrop-filter:blur(20px) saturate(180%) brightness(1.06);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 18px 34px rgba(0,0,0,.55)}
 .chips-row::-webkit-scrollbar{display:none}
 .ch{padding:8px 14px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap;background:var(--glass-soft);border:1px solid var(--stroke-soft);display:flex;align-items:center;gap:6px;flex-shrink:0}
 .ch.on{background:var(--grad);border-color:transparent}.ch svg{width:13px;height:13px}
@@ -857,7 +857,7 @@ body.biz .cta.lime,body.biz .go-btn,body.biz .dgo,body.biz .lbtn.primary,body.bi
 .spark{display:flex;align-items:flex-end;gap:4px;height:42px;margin-top:12px}.spark span{flex:1;border-radius:3px 3px 0 0;background:var(--grad);opacity:.85;transition:height .6s var(--ease-out)}
 .nav-fade{position:absolute;left:0;right:0;bottom:0;height:calc(var(--tab-h) + var(--safe-b) + 46px);z-index:400;pointer-events:none;background:linear-gradient(to top,var(--bg-0) 16%,rgba(5,6,10,.92) 42%,rgba(5,6,10,.55) 70%,transparent);-webkit-mask-image:linear-gradient(to top,#000 60%,transparent);mask-image:linear-gradient(to top,#000 60%,transparent);transition:opacity .25s}
 .world.hide-fade .nav-fade{opacity:0}
-.tabbar{position:absolute;left:14px;right:14px;bottom:calc(var(--safe-b) + 12px);z-index:500;height:var(--tab-h);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:space-around;padding:0 8px;background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(42px) saturate(200%) brightness(1.08);backdrop-filter:blur(42px) saturate(200%) brightness(1.08);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 20px 50px rgba(0,0,0,.55);overflow:visible}
+.tabbar{position:absolute;left:14px;right:14px;bottom:calc(var(--safe-b) + 12px);z-index:500;height:var(--tab-h);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:space-around;padding:0 8px;background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(1.06);backdrop-filter:blur(20px) saturate(180%) brightness(1.06);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 20px 50px rgba(0,0,0,.55);overflow:visible}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0;border-radius:var(--r-sm);color:var(--txt-3);transition:color .2s,transform .18s var(--ease-spring);position:relative;-webkit-tap-highlight-color:transparent}
 .tab:active{transform:scale(.9)}.tab-mascot:active{transform:scale(.94)}
 .tab svg{width:23px;height:23px;transition:transform .25s var(--ease-spring)}.tab span{font-size:10px;font-weight:700}
@@ -1359,7 +1359,7 @@ body.biz .mode-switch .ms-opt.on{background:var(--grad-gold);color:#2a1500;box-s
 .freeze-protect p{font-size:12px;color:var(--txt-2);line-height:1.45}
 /* mood solver */
 /* === MOOD-ROW v3 — единый glass-pill контейнер в стиле tabbar === */
-.mood-row{padding:5px;margin:0 0 14px;position:relative;z-index:5;border-radius:var(--r-md);background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(42px) saturate(200%) brightness(1.08);backdrop-filter:blur(42px) saturate(200%) brightness(1.08);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 18px 34px rgba(0,0,0,.55)}
+.mood-row{padding:5px;margin:0 0 14px;position:relative;z-index:5;border-radius:var(--r-md);background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(1.06);backdrop-filter:blur(20px) saturate(180%) brightness(1.06);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 18px 34px rgba(0,0,0,.55)}
 .mood-scroll{display:flex;gap:4px;overflow-x:auto;overflow-y:visible;scrollbar-width:none;border-radius:var(--r-md)}
 .mood-scroll::-webkit-scrollbar{display:none}
 /* Приветствие уезжает, когда человек уже начал читать ленту: шапка отдаёт
@@ -2823,9 +2823,7 @@ input,textarea{font-size:16px!important}
 /* 🚨 Было display:none → block: высота появлялась МГНОВЕННО, а анимация играла
    уже поверх выросшего блока. Лента прыгала под пальцем. Растим высоту
    по-настоящему — от 0 до измеренной, и только потом отпускаем в none. */
-.more-today{max-height:0;opacity:0;overflow:hidden;transition:max-height .52s var(--ease-out),opacity .34s var(--ease-out)}
-.more-today.open{opacity:1}
-.more-today.done{max-height:none;overflow:visible}
+.more-today{max-height:none;opacity:1;overflow:visible}
 @media (prefers-reduced-motion:reduce){.more-today{transition:none}}
 @keyframes moreExpand{0%{opacity:0;transform:translateY(-12px) scale(.99)}100%{opacity:1;transform:translateY(0) scale(1)}}
 .show-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:14px;margin:14px 0 4px;border-radius:var(--r-md);background:var(--glass-soft);border:1px solid var(--stroke-soft);color:var(--txt-2);font-size:13px;font-weight:700;transition:all .25s var(--ease-spring);position:relative;overflow:hidden}
@@ -2923,7 +2921,7 @@ input,textarea{font-size:16px!important}
 .notif-item.unread::before{content:'';position:absolute;left:6px;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:var(--rose)}
 .notif-item{will-change:transform,opacity;overflow:hidden}
 /* === WISHLIST heart button === */
-.wl-heart{width:38px;height:38px;border-radius:50%;background:rgba(5,6,10,.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.55);display:grid;place-items:center;cursor:pointer;transition:all .2s var(--ease-spring);padding:0;position:relative}
+.wl-heart{width:38px;height:38px;border-radius:50%;background:rgba(5,6,10,.66);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.55);display:grid;place-items:center;cursor:pointer;transition:all .2s var(--ease-spring);padding:0;position:relative}
 .wl-heart::after{content:'';position:absolute;inset:-4px;border-radius:50%}
 .wl-heart svg{width:18px;height:18px;transition:transform .25s var(--ease-spring)}
 .wl-heart:active{transform:scale(.88)}
@@ -3545,7 +3543,12 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
         <div class="ad-ticker" id="adTicker"></div>
         <div id="vibeBox"></div>
 
-        <button class="show-more" id="showMore" onclick="expandToday()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg><span data-i18n="show_more">Показать больше идей</span></button>
+        <!-- 🚨 Кнопка-гейт «Показать больше идей» убрана. За ней лежало ВСЁ
+             ценное разом: подарок, «Деал дня», «Для тебя сейчас». Человек
+             прокручивал короткий экран и упирался в пустоту — а раньше это
+             же раскрывала защёлка, то есть самопроизвольный рывок.
+             Прогрессивное раскрытие осталось там, где ему место: внутри
+             списка карточек живёт своё «Показать ещё 3». -->
 
         <div id="moreToday" class="more-today">
           <div class="vbanner fadein" id="voucherBanner" onclick="claimVoucher()"><div class="vbi"><b id="vbiAmt">10₾</b></div><div class="vbt"><b data-i18n="gift_t">Подарок города ждёт</b><span><span data-i18n="gift_s">Скидка 10₾</span> · <span class="vbt-timer" id="vbTimer">14:00:00</span></span></div><span class="vba" data-i18n="gift_a">Забрать</span></div>
@@ -4594,22 +4597,11 @@ function startDealTimer(){
 }
 function showDailyReward(){setTimeout(()=>{const p=document.getElementById('dailyPop');p.classList.add('show');if(navigator.vibrate)navigator.vibrate([10,30,10]);setTimeout(()=>p.classList.remove('show'),3200)},900)}
 
-function expandToday(){
-  var m=document.getElementById('moreToday');var b=document.getElementById('showMore');
-  if(b)b.classList.add('hide');
-  window.__todayExpanded=true;
-  if(!m)return;
-  if(m.classList.contains('open'))return;
-  /* Высота считается по содержимому, а не берётся «с запасом»: иначе кривая
-     времени врёт — блок долетает мгновенно и ждёт остаток анимации. */
-  var h=m.scrollHeight;
-  m.classList.add('open');
-  m.style.maxHeight=h+'px';
-  var fin=function(){m.classList.add('done');m.style.maxHeight='';m.removeEventListener('transitionend',fin)};
-  m.addEventListener('transitionend',fin);
-  setTimeout(fin,700);                       /* страховка, если transitionend не придёт */
-  if(navigator.vibrate)navigator.vibrate(8);
-}
+/* Лента «Сегодня» показывается сразу, гейта больше нет. Функция оставлена
+   живой: её зовут из нескольких мест, и она обязана быть безопасной, а не
+   отсутствующей. */
+function expandToday(){window.__todayExpanded=true}
+
 /* SCROLL-SNAP auto-expand: когда юзер скроллит мимо кнопки «Показать больше идей» —
    она сама срабатывает (как «защёлка»), и контент разворачивается inline. */
 function bindTodaySnapExpand(){
@@ -8292,7 +8284,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=117;try{renderConsent()}catch(e){}
+var APP_V=118;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
