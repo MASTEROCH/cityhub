@@ -859,7 +859,60 @@ body.biz .cta.lime,body.biz .go-btn,body.biz .dgo,body.biz .lbtn.primary,body.bi
 .world.hide-fade .nav-fade{opacity:0}
 .tabbar{position:absolute;left:14px;right:14px;bottom:calc(var(--safe-b) + 12px);z-index:500;height:var(--tab-h);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:space-around;padding:0 8px;background:linear-gradient(180deg,rgba(28,32,46,.6),rgba(16,20,31,.72));-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(1.06);backdrop-filter:blur(20px) saturate(180%) brightness(1.06);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.2),0 20px 50px rgba(0,0,0,.55);overflow:visible}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0;border-radius:var(--r-sm);color:var(--txt-3);transition:color .2s,transform .18s var(--ease-spring);position:relative;-webkit-tap-highlight-color:transparent}
-.tab:active{transform:scale(.9)}.tab-mascot:active{transform:scale(.94)}
+/* ══════════════ ПАТТЕРН «КУПОЛ» ══════════════════════════════════════════════
+   Найден Рочем 17.09.2026 в чужом календаре. Работает в нём НЕ свечение, а три
+   вещи, и порядок важности такой:
+
+   1. Подписи посажены на ДУГУ. Ряд одинаковых слов перестаёт быть списком и
+      становится предметом — куполом, циферблатом, линзой. Каждая подпись ещё и
+      повёрнута по касательной к дуге, иначе купол читается как опечатка.
+   2. Световая полоса сверху — ПРИЧИНА свечения, а не украшение. Заголовок
+      светится потому, что над ним источник. Убери полосу — свечение станет
+      неоном ради неона.
+   3. Второстепенные кнопки утоплены почти до невидимости. Иерархия: герой
+      светится, мебель молчит.
+
+   Почему именно нижняя панель, а не ряд вайбов: у панели РОВНО пять
+   фиксированных мест, значит дуга считается nth-child'ом и не стоит ни одного
+   transform на кадр прокрутки. В ряду вайбов 23 подписи с горизонтальной
+   прокруткой — там дуга требовала бы пересчёта на каждый кадр, а этот класс в
+   проекте уже отключали за джанк (initTilt).
+   И главное: центр панели УЖЕ физически приподнят маскотом. Дуга не украшает
+   форму, а договаривает её до правды.
+
+   Полоса света стоит над активной вкладкой: свет падает туда, где ты сейчас.
+   Ездит трансформацией, то есть на композиторе, и только по переключению —
+   не по прокрутке. */
+.tabbar{--glow-x:50%}
+.tabbar::before{content:'';position:absolute;top:-1px;left:0;width:44px;height:3px;margin-left:-22px;
+  transform:translateX(var(--glow-x));border-radius:0 0 4px 4px;
+  background:linear-gradient(90deg,transparent,var(--lime),transparent);
+  box-shadow:0 0 16px 1px rgba(212,255,79,.5);
+  transition:transform .44s var(--ease-out);pointer-events:none;z-index:3}
+/* Ореол под полосой — то, чем свет ложится на поверхность. */
+.tabbar::after{content:'';position:absolute;top:0;left:0;width:150px;height:46px;margin-left:-75px;
+  transform:translateX(var(--glow-x));
+  background:radial-gradient(60% 100% at 50% 0%,rgba(212,255,79,.16),transparent 70%);
+  transition:transform .44s var(--ease-out);pointer-events:none;z-index:1}
+/* Дуга. Смещение и поворот идут через переменные, чтобы :active мог добавить
+   своё сжатие, а не затереть купол. */
+.tab{--arc-y:0px;--arc-r:0deg;transform:translateY(var(--arc-y)) rotate(var(--arc-r))}
+/* 🚨 Дуга ОБЯЗАНА знать число мест. Первая версия была зашита под пять, а в
+   кабинете бизнеса вкладок четыре — вершина купола уехала на третье из
+   четырёх, и вместо купола вышла наклонённая плоскость. Считаем от КОНЦА
+   ряда тоже (:nth-last-child), тогда симметрия держится сама. */
+/* пять мест: центр — маскот, он и есть вершина */
+.tabbar .tab:nth-child(1):nth-last-child(5){--arc-y:4px;--arc-r:-2.4deg}
+.tabbar .tab:nth-child(2):nth-last-child(4){--arc-y:1px;--arc-r:-1deg}
+.tabbar .tab:nth-child(4):nth-last-child(2){--arc-y:1px;--arc-r:1deg}
+.tabbar .tab:nth-child(5):nth-last-child(1){--arc-y:4px;--arc-r:2.4deg}
+/* четыре места: вершина между второй и третьей */
+.tabbar .tab:nth-child(1):nth-last-child(4){--arc-y:3px;--arc-r:-2deg}
+.tabbar .tab:nth-child(2):nth-last-child(3){--arc-y:0px;--arc-r:-.7deg}
+.tabbar .tab:nth-child(3):nth-last-child(2){--arc-y:0px;--arc-r:.7deg}
+.tabbar .tab:nth-child(4):nth-last-child(1){--arc-y:3px;--arc-r:2deg}
+.tab:active{transform:translateY(var(--arc-y)) rotate(var(--arc-r)) scale(.9)}
+@media (prefers-reduced-motion:reduce){.tabbar::before,.tabbar::after{transition:none}}.tab-mascot:active{transform:scale(.94)}
 .tab svg{width:23px;height:23px;transition:transform .25s var(--ease-spring)}.tab span{font-size:10px;font-weight:700}
 .tab.on{color:var(--lime)}.tab.on svg{transform:translateY(-2px) scale(1.08)}
 .tab.on::before{content:'';position:absolute;top:6px;width:40px;height:38px;border-radius:var(--r-sm);background:var(--grad-lime);opacity:.18;filter:blur(2px)}
@@ -892,7 +945,7 @@ body.biz .tab.on::before{background:var(--grad-gold);opacity:.2}
    самого изображения. Мелкая, в нижнем правом углу, поверх затемнения — не
    спорит с заголовком, но читается. */
 .ph-credit{position:absolute;right:8px;bottom:8px;z-index:2;max-width:62%;
-  font-size:9px;line-height:1.25;letter-spacing:.01em;color:rgba(255,255,255,.72);
+  font-size:10px;line-height:1.25;letter-spacing:.01em;color:rgba(255,255,255,.72);
   background:rgba(5,6,10,.46);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   padding:3px 6px;border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Сток с Pexels — не снимок этого места, и подпись обязана этого не скрывать. */
@@ -3686,7 +3739,7 @@ body.anim-halt .upd-banner::after{animation-play-state:paused}
               <div class="pf-name"><span id="pfNameTx">Гость</span><button class="pf-edit" onclick="openEditName()" aria-label="Изменить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5l4 4-12 12-5 1 1-5z"/></svg></button></div>
               <div class="pf-handle" id="pfHandle">CityHUB</div>
               <div class="pf-badge-row">
-                <span class="pf-tier">Серебро · ×1.4 кэшбэк</span>
+                <span class="pf-tier">·</span>
               </div>
             </div>
           </div>
@@ -6720,11 +6773,12 @@ function cgoHeavy(t){if(t==='map'){renderMapTab();renderNiches('');buildMap();tr
 mapDrawVisible(listItems())}}catch(e){}},d)})}if(t==='luck'){ptsSync();renderLuckHud();luckTickStart();luckScrollBind();luckGo('wheel');}  /* Вход в «Удачу» — всегда призы: это витрина раздела и
    то, ради чего сюда заходят. Память о последней вкладке (gameSet('luckTab'))
    остаётся — её читает восстановление состояния по системной кнопке «назад»,
-   но на открытие раздела она больше не влияет. */if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{pfFoldRestore()}catch(e){}try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}}
+   но на открытие раздела она больше не влияет. */if(t==='rewards'){animAch();animGame()}if(t==='me'){renderGame();try{renderTier()}catch(e){}try{pfFoldRestore()}catch(e){}try{ptsSync();renderTasteBars()}catch(e){}try{var __tc=document.getElementById('tasteCard');if(__tc)__tc.classList.toggle('collapsed',!gameGet('tasteOpen',0))}catch(e){}}}
 function cgo(t,cgoSync){if(t==='ai'){try{openMascot()}catch(e){}return}
   /* старые входы: «Ниши» переехали в «Рядом», «Мои баллы» — в «Удачу» */
   if(t==='niches')t='map';if(t==='rewards')t='luck';
   document.querySelectorAll('#w-client .screen').forEach(x=>x.classList.remove('active'));const sc=document.getElementById('c-'+t);if(!sc)return;sc.classList.add('active');const navT=t;document.querySelectorAll('#clientTabs .tab').forEach(x=>x.classList.toggle('on',x.dataset.t===navT));const s=sc.querySelector('.scroll');if(s)s.scrollTop=0;var __h=sc.querySelector('.hdr');if(__h)__h.classList.remove('shrunk');if(cgoSync)cgoHeavy(t);else chAfterPaint(function(){cgoHeavy(t)});if(navigator.vibrate)navigator.vibrate(8);
+  try{tabGlowMove()}catch(e){}
   try{ppRefresh()}catch(e){}   /* экран стал видимым — перемерить бегунки */
 }
 function pfFold(k){
@@ -6739,6 +6793,64 @@ function pfFoldRestore(){
   ['qr','ref','set'].forEach(function(k){
     try{ if(gameGet('fold_'+k,0)){var el=document.getElementById('fold-'+k);if(el){el.classList.add('open');var b=el.querySelector('.pf-foldh');if(b)b.setAttribute('aria-expanded','true')}} }catch(e){}
   });
+}
+/* Свет падает туда, где ты сейчас. Считается один раз на переключение вкладки;
+   ездит transform'ом, поэтому это композитор, а не перерисовка. */
+function tabGlowMove(){
+  try{
+    document.querySelectorAll('.tabbar').forEach(function(bar){
+      var on=bar.querySelector('.tab.on');if(!on)return;
+      var br=bar.getBoundingClientRect(),r=on.getBoundingClientRect();
+      if(!br.width||!r.width)return;
+      bar.style.setProperty('--glow-x',(r.left+r.width/2-br.left).toFixed(1)+'px');
+    });
+  }catch(e){}
+}
+/* ═══ УРОВЕНЬ: настоящий, из баллов ═══════════════════════════════════════
+   🚨 Здесь было два вранья в одном блоке, оба зашиты прямо в разметку:
+   · <span class="pf-status"> — кружок 26px, сверстанный под значок
+     (display:grid;place-items:center), но ПУСТОЙ. Во всём файле класс
+     встречался дважды: стиль и пустой тег. На аватаре висела чёрная дырка,
+     и Роч справедливо спросил, что это за шильдик.
+   · «Серебро · ×1.4 кэшбэк» — текст в разметке, одинаковый для всех. Новичок
+     с нулём баллов видел себя Серебром. А множителя ×1.4 не существует
+     вовсе: ptsAdd прибавляет ровно столько, сколько пришло.
+   Пороги взяты не с потолка — это те же числа, по которым выдаются ачивки
+   level_silver / level_gold / level_diamond. Один источник, иначе разъедется. */
+var TIERS=[
+  /* gen — родительный падеж: «до Золота», а не «до Золото». Отдельным полем,
+     потому что склонять строку кодом в трёх языках дороже, чем написать. */
+  {k:'bronze', n:'Бронза',  gen:'Бронзы',  emo:'🥉', col:'#c8834a', from:0},
+  {k:'silver', n:'Серебро', gen:'Серебра', emo:'🥈', col:'#cbd5e0', from:1000},
+  {k:'gold',   n:'Золото',  gen:'Золота',  emo:'🥇', col:'#FFB547', from:5000},
+  {k:'diamond',n:'Diamond', gen:'Diamond', emo:'💎', col:'#00E0C7', from:15000}
+];
+function tierNow(pts){
+  if(typeof pts!=='number'){try{pts=ptsGet()}catch(e){pts=0}}
+  var cur=TIERS[0],next=null;
+  for(var i=0;i<TIERS.length;i++){
+    if(pts>=TIERS[i].from)cur=TIERS[i];
+    else {next=TIERS[i];break}
+  }
+  return {cur:cur,next:next,left:next?Math.max(0,next.from-pts):0,pts:pts};
+}
+function renderTier(){
+  var t=tierNow();
+  var st=document.querySelector('.pf-status');
+  if(st){
+    st.textContent=t.cur.emo;
+    st.style.background='rgba(16,20,31,.95)';
+    st.style.borderColor=t.cur.col;
+    st.style.boxShadow='0 4px 10px rgba(0,0,0,.4), 0 0 0 1px '+t.cur.col+'55';
+    st.setAttribute('title',T('Уровень')+' '+t.cur.n);
+  }
+  var tr=document.querySelector('.pf-tier');
+  if(tr){
+    tr.textContent=t.next
+      ? t.cur.n+' · '+T('до')+' '+(t.next.gen||t.next.n)+' '+(t.left).toLocaleString('ru-RU')
+      : t.cur.n+' · '+T('высший уровень');
+    tr.style.color=t.cur.col;
+  }
 }
 function animAch(){const fills=document.querySelectorAll('.ach2-fill');fills.forEach(f=>{const w=f.style.width;f.style.width='0';setTimeout(()=>f.style.width=w,60)})}
 var AUC={step:10,mine:0,bids:[
@@ -8284,7 +8396,7 @@ safe(function(){
 });
 /* ═══ АВТО-ОБНОВЛЕНИЕ — Telegram/GH Pages кэшируют index.html до ~10 мин.
    Сверяем version.json (no-store) с вшитой версией: при расхождении — баннер «Обновить». ═══ */
-var APP_V=118;try{renderConsent()}catch(e){}
+var APP_V=120;try{renderConsent()}catch(e){}
 safe(function(){
   function check(){
     try{
